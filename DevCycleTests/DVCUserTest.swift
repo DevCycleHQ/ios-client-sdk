@@ -19,7 +19,6 @@ class DVCUserTest: XCTestCase {
     
     func testCreateUser() {
         let user = DVCUser()
-        XCTAssert(user.isAnonymous)
         XCTAssert(user.platform == "iOS")
         XCTAssertNotNil(user.createdDate)
         XCTAssertNotNil(user.platformVersion)
@@ -28,4 +27,23 @@ class DVCUserTest: XCTestCase {
         XCTAssertNotNil(user.sdkVersion)
     }
 
+    func testBuilderReturnsNilIfNoUserIdOrIsAnonymous() {
+        let user = DVCUser.builder()
+                    .build()
+        XCTAssertNil(user)
+    }
+    
+    func testBuilderReturnsUserIfUserIdSet() {
+        let user = DVCUser.builder().userId(userId: "my_user").build()!
+        XCTAssertNotNil(user)
+        XCTAssert(user.userId == "my_user")
+        XCTAssert(!user.isAnonymous!)
+    }
+    
+    func testBuilderReturnsUserIfIsAnonymousSet() {
+        let user = DVCUser.builder().isAnonymous(isAnonymous: true).build()!
+        XCTAssertNotNil(user)
+        XCTAssert(user.isAnonymous!)
+        XCTAssert(user.userId == "random_id")
+    }
 }
