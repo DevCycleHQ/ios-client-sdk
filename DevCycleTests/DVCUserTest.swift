@@ -44,6 +44,6 @@ class DVCUserTest: XCTestCase {
         let user = DVCUser.builder().isAnonymous(isAnonymous: true).build()!
         XCTAssertNotNil(user)
         XCTAssert(user.isAnonymous!)
-        XCTAssert(user.userId == "random_id")
+        XCTAssert(UUID(uuidString: user.userId!) != nil)
     }
 }
