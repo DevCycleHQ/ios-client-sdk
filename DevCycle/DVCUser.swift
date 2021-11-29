@@ -34,66 +34,66 @@ public class DVCUser {
         self.sdkVersion = "0.0.1"
     }
     
-    class UserBuilder {
+    public class UserBuilder {
         var user: DVCUser
         
         init() {
             self.user = DVCUser()
         }
         
-        func userId(userId: String) -> UserBuilder {
+        public func userId(userId: String) -> UserBuilder {
             self.user.userId = userId
             self.user.isAnonymous = false
             return self
         }
         
-        func isAnonymous(isAnonymous: Bool) -> UserBuilder {
+        public func isAnonymous(isAnonymous: Bool) -> UserBuilder {
             self.user.isAnonymous = isAnonymous
             self.user.userId = UUID().uuidString
             return self
         }
         
-        func email(email: String) -> UserBuilder {
+        public func email(email: String) -> UserBuilder {
             self.user.email = email
             return self
         }
         
-        func name(name: String) -> UserBuilder {
+        public func name(name: String) -> UserBuilder {
             self.user.name = name
             return self
         }
         
-        func language(language: String) -> UserBuilder {
+        public func language(language: String) -> UserBuilder {
             self.user.language = language
             return self
         }
         
-        func country(country: String) -> UserBuilder {
+        public func country(country: String) -> UserBuilder {
             self.user.country = country
             return self
         }
         
-        func appVersion(appVersion: String) -> UserBuilder {
+        public func appVersion(appVersion: String) -> UserBuilder {
             self.user.appVersion = appVersion
             return self
         }
         
-        func appBuild(appBuild: Int) -> UserBuilder {
+        public func appBuild(appBuild: Int) -> UserBuilder {
             self.user.appBuild = appBuild
             return self
         }
         
-        func customData(customData: [String:Any]) -> UserBuilder {
+        public func customData(customData: [String:Any]) -> UserBuilder {
             self.user.customData = customData
             return self
         }
         
-        func publicCustomData(publicCustomData: [String:Any]) -> UserBuilder {
+        public func publicCustomData(publicCustomData: [String:Any]) -> UserBuilder {
             self.user.publicCustomData = publicCustomData
             return self
         }
         
-        func build() -> DVCUser? {
+        public func build() -> DVCUser? {
             guard let _ = self.user.userId, let _ = self.user.isAnonymous else {
                 return nil
             }
@@ -104,7 +104,7 @@ public class DVCUser {
         }
     }
     
-    static func builder() -> UserBuilder {
+    public static func builder() -> UserBuilder {
         return UserBuilder()
     }
 }

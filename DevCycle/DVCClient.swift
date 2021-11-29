@@ -65,17 +65,17 @@ public class DVCClient {
             self.client = DVCClient()
         }
         
-        func environmentKey(key: String) -> ClientBuilder {
+        public func environmentKey(key: String) -> ClientBuilder {
             self.client.setEnvironmentKey(environmentKey: key)
             return self
         }
         
-        func user(user: DVCUser) -> ClientBuilder {
+        public func user(user: DVCUser) -> ClientBuilder {
             self.client.setUser(user: user)
             return self
         }
         
-        func build() -> DVCClient? {
+        public func build() -> DVCClient? {
             if (self.client.environmentKey == nil) {
                 print("Missing Environment Key")
                 return nil
@@ -92,7 +92,7 @@ public class DVCClient {
         }
     }
     
-    static func builder() -> ClientBuilder {
+    public static func builder() -> ClientBuilder {
         return ClientBuilder()
     }
 }
