@@ -49,7 +49,7 @@ public class DVCUser {
         
         func isAnonymous(isAnonymous: Bool) -> UserBuilder {
             self.user.isAnonymous = isAnonymous
-            self.user.userId = "random_id" // TODO: Create random user id
+            self.user.userId = UUID().uuidString
             return self
         }
         
