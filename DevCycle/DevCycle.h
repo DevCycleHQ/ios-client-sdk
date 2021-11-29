@@ -2,7 +2,6 @@
 //  DevCycle.h
 //  DevCycle
 //
-//  Created by Jason Salaber on 2021-11-25.
 //
 
 #import <Foundation/Foundation.h>
