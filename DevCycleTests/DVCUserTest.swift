@@ -21,6 +21,7 @@ class DVCUserTest: XCTestCase {
         let user = DVCUser()
         XCTAssert(user.platform == "iOS")
         XCTAssertNotNil(user.createdDate)
+        XCTAssertNotNil(user.lastSeenDate)
         XCTAssertNotNil(user.platformVersion)
         XCTAssertNotNil(user.deviceModel == "iPhone")
         XCTAssert(user.sdkType == "client")
@@ -34,16 +35,46 @@ class DVCUserTest: XCTestCase {
     }
     
     func testBuilderReturnsUserIfUserIdSet() {
-        let user = DVCUser.builder().userId(userId: "my_user").build()!
+        let user = DVCUser.builder().userId("my_user").build()!
         XCTAssertNotNil(user)
         XCTAssert(user.userId == "my_user")
         XCTAssert(!user.isAnonymous!)
     }
     
     func testBuilderReturnsUserIfIsAnonymousSet() {
-        let user = DVCUser.builder().isAnonymous(isAnonymous: true).build()!
+        let user = DVCUser.builder().isAnonymous(true).build()!
         XCTAssertNotNil(user)
         XCTAssert(user.isAnonymous!)
         XCTAssert(UUID(uuidString: user.userId!) != nil)
+    }
+    
+    func testToStringOnlyOutputsNonNilProperties() {
+        let userString = buildTestUser().toString()
+        XCTAssertNotNil(userString)
+        XCTAssert(userString.contains("userId=my_user"))
+        XCTAssert(userString.contains("isAnonymous=false"))
+        XCTAssertFalse(userString.contains("country"))
+    }
+    
+    func testToStringOuputsDatesAndMapCorrectly() {
+        let userString = buildTestUser().toString()
+        let params = userString.split(separator: "&")
+        for param in params {
+            if (param.contains("createdDate")) {
+                let date = param.split(separator: "=").last!
+                XCTAssertNoThrow(Int(date), "")
+            }
+        }
+        XCTAssert(userString.contains("customData={\"custom\":\"key\"}"))
+    }
+}
+
+extension DVCUserTest {
+    func buildTestUser() -> DVCUser {
+        return DVCUser.builder()
+            .userId("my_user")
+            .isAnonymous(false)
+            .customData(customData: ["custom": "key"])
+            .build()!
     }
 }
