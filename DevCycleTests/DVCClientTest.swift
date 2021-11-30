@@ -20,7 +20,7 @@ class DVCClientTest: XCTestCase {
     
     func testBuilderReturnsNilIfNoEnvKey() {
         let user = DVCUser.builder()
-                    .userId(userId: "my_user")
+                    .userId("my_user")
                     .build()!
         XCTAssertNil(DVCClient.builder().user(user: user).build())
     }
@@ -31,7 +31,7 @@ class DVCClientTest: XCTestCase {
     
     func testBuilderReturnsClient() {
         let user = DVCUser.builder()
-                    .userId(userId: "my_user")
+                    .userId("my_user")
                     .build()!
         let client = DVCClient.builder().user(user: user).environmentKey(key: "my_env_key").build()
         XCTAssertNotNil(client)
