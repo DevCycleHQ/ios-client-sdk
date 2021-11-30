@@ -152,7 +152,7 @@ extension DVCUser {
     
     func toString() -> String {
         let builder = StringBuilder(user: self)
-            .formatToQueryParam(name: "userId", value: self.userId)
+            .formatToQueryParam(name: "user_id", value: self.userId)
             .formatToQueryParam(name: "isAnonymous", value: self.isAnonymous)
             .formatToQueryParam(name: "email", value: self.email)
             .formatToQueryParam(name: "name", value: self.name)

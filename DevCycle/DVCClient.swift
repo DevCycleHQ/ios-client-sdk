@@ -16,17 +16,35 @@ import Foundation
 public class DVCClient {
     private var environmentKey: String?
     private var user: DVCUser?
+    private var config: DVCConfig?
+    
+    private var service: DevCycleService?
     
     init(environmentKey: String? = nil, user: DVCUser? = nil) {
         self.environmentKey = environmentKey
         self.user = user
     }
     
-    fileprivate func setEnvironmentKey(environmentKey: String) {
+    fileprivate func setup() {
+        let config = DVCConfig(environmentKey: self.environmentKey!, user: self.user!)
+        self.config = config
+        self.service = DevCycleService(config: config)
+        self.service?.getConfig(completion: { [weak self] config, error in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error: \(error)")
+                return
+            }
+            self.config?.config = config
+            print("Config: \(config)")
+        })
+    }
+    
+    fileprivate func setEnvironmentKey(_ environmentKey: String) {
         self.environmentKey = environmentKey
     }
     
-    fileprivate func setUser(user: DVCUser) {
+    fileprivate func setUser(_ user: DVCUser) {
         self.user = user
     }
     
@@ -65,13 +83,13 @@ public class DVCClient {
             self.client = DVCClient()
         }
         
-        public func environmentKey(key: String) -> ClientBuilder {
-            self.client.setEnvironmentKey(environmentKey: key)
+        public func environmentKey(_ key: String) -> ClientBuilder {
+            self.client.setEnvironmentKey(key)
             return self
         }
         
-        public func user(user: DVCUser) -> ClientBuilder {
-            self.client.setUser(user: user)
+        public func user(_ user: DVCUser) -> ClientBuilder {
+            self.client.setUser(user)
             return self
         }
         
@@ -85,7 +103,8 @@ public class DVCClient {
                 print("Missing User")
                 return nil
             }
-                    
+            
+            self.client.setup()
             let result = self.client
             self.client = DVCClient()
             return result

@@ -14,6 +14,8 @@
 		5268DB6727501D6000D17A40 /* DVCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6527501D6000D17A40 /* DVCUser.swift */; };
 		5268DB69275020D900D17A40 /* DVCUserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB68275020D900D17A40 /* DVCUserTest.swift */; };
 		5268DB6B275020F800D17A40 /* DVCClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6A275020F800D17A40 /* DVCClientTest.swift */; };
+		52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693E927567E2600B52375 /* DevCycleService.swift */; };
+		52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693EC2756816A00B52375 /* DVCConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +37,8 @@
 		5268DB6527501D6000D17A40 /* DVCUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DVCUser.swift; sourceTree = "<group>"; };
 		5268DB68275020D900D17A40 /* DVCUserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCUserTest.swift; sourceTree = "<group>"; };
 		5268DB6A275020F800D17A40 /* DVCClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCClientTest.swift; sourceTree = "<group>"; };
+		52E693E927567E2600B52375 /* DevCycleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleService.swift; sourceTree = "<group>"; };
+		52E693EC2756816A00B52375 /* DVCConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCConfig.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +81,8 @@
 		5268DB4E27501CFC00D17A40 /* DevCycle */ = {
 			isa = PBXGroup;
 			children = (
+				52E693EB2756815C00B52375 /* Models */,
+				52E693E827557B5700B52375 /* Networking */,
 				5268DB6427501D6000D17A40 /* DVCClient.swift */,
 				5268DB6527501D6000D17A40 /* DVCUser.swift */,
 				5268DB4F27501CFC00D17A40 /* DevCycle.h */,
@@ -92,6 +98,22 @@
 				5268DB68275020D900D17A40 /* DVCUserTest.swift */,
 			);
 			path = DevCycleTests;
+			sourceTree = "<group>";
+		};
+		52E693E827557B5700B52375 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				52E693E927567E2600B52375 /* DevCycleService.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		52E693EB2756815C00B52375 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				52E693EC2756816A00B52375 /* DVCConfig.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -203,6 +225,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
+				52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */,
 				5268DB6727501D6000D17A40 /* DVCUser.swift in Sources */,
 				5268DB6627501D6000D17A40 /* DVCClient.swift in Sources */,
 				5268DB5127501CFC00D17A40 /* DevCycle.docc in Sources */,
