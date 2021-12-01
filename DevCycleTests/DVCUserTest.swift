@@ -49,15 +49,15 @@ class DVCUserTest: XCTestCase {
     }
     
     func testToStringOnlyOutputsNonNilProperties() {
-        let userString = buildTestUser().toString()
+        let userString = getTestUser().toString()
         XCTAssertNotNil(userString)
-        XCTAssert(userString.contains("userId=my_user"))
+        XCTAssert(userString.contains("user_id=my_user"))
         XCTAssert(userString.contains("isAnonymous=false"))
         XCTAssertFalse(userString.contains("country"))
     }
     
     func testToStringOuputsDatesAndMapCorrectly() {
-        let userString = buildTestUser().toString()
+        let userString = getTestUser().toString()
         let params = userString.split(separator: "&")
         for param in params {
             if (param.contains("createdDate")) {
@@ -70,11 +70,11 @@ class DVCUserTest: XCTestCase {
 }
 
 extension DVCUserTest {
-    func buildTestUser() -> DVCUser {
+    func getTestUser() -> DVCUser {
         return DVCUser.builder()
             .userId("my_user")
             .isAnonymous(false)
-            .customData(customData: ["custom": "key"])
+            .customData(["custom": "key"])
             .build()!
     }
 }
