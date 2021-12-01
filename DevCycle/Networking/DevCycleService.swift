@@ -25,7 +25,11 @@ struct NetworkingConstants {
     }
 }
 
-class DevCycleService {
+protocol DevCycleServiceProtocol {
+    func getConfig(completion: @escaping ConfigCompletionHandler)
+}
+
+class DevCycleService: DevCycleServiceProtocol {
     var session: URLSession
     var config: DVCConfig
     
