@@ -112,65 +112,57 @@ public class DVCUser {
 }
 
 extension DVCUser {
-    class StringBuilder {
-        var description: String
+    class QueryItemBuilder {
+        var items: [URLQueryItem]
         let user: DVCUser
         
         init(user: DVCUser) {
-            self.description = ""
+            self.items = []
             self.user = user
         }
         
-        func formatToQueryParam<T>(name: String, value: T?) -> StringBuilder {
+        func formatToQueryItem<T>(name: String, value: T?) -> QueryItemBuilder {
             guard let property = value else { return self }
-            var userParam = ""
             if let map = property as? [String: Any] {
                 guard let data = try? JSONSerialization.data(withJSONObject: map, options: []) else {
                     return self
                 }
-                userParam = "\(name)=\(String(data: data, encoding: String.Encoding.utf8) ?? "{}")"
+                items.append(URLQueryItem(name: name, value: String(data: data, encoding: String.Encoding.utf8)))
             } else if let date = property as? Date {
-                userParam = "\(name)=\(Int(date.timeIntervalSince1970))"
+                items.append(URLQueryItem(name: name, value: "\(Int(date.timeIntervalSince1970))"))
             } else {
-                userParam = "\(name)=\(property)"
+                items.append(URLQueryItem(name: name, value: "\(property)"))
             }
             
-            if (self.description.isEmpty) {
-                self.description = userParam
-            } else {
-                self.description.append("&\(userParam)")
-            }
             return self
         }
         
-        func build() -> String {
-            let result = self.description
-            self.description = ""
+        func build() -> [URLQueryItem] {
+            let result = self.items
+            self.items = []
             return result
         }
     }
     
-    func toString() -> String {
-        let builder = StringBuilder(user: self)
-            .formatToQueryParam(name: "user_id", value: self.userId)
-            .formatToQueryParam(name: "isAnonymous", value: self.isAnonymous)
-            .formatToQueryParam(name: "email", value: self.email)
-            .formatToQueryParam(name: "name", value: self.name)
-            .formatToQueryParam(name: "language", value: self.language)
-            .formatToQueryParam(name: "country", value: self.country)
-            .formatToQueryParam(name: "appVersion", value: self.appVersion)
-            .formatToQueryParam(name: "appBuild", value: self.appBuild)
-            .formatToQueryParam(name: "customData", value: self.customData)
-            .formatToQueryParam(name: "publicCustomData", value: self.publicCustomData)
-            .formatToQueryParam(name: "lastSeenDate", value: self.lastSeenDate)
-            .formatToQueryParam(name: "createdDate", value: self.createdDate)
-            .formatToQueryParam(name: "platform", value: self.platform)
-            .formatToQueryParam(name: "platformVersion", value: self.platformVersion)
-            .formatToQueryParam(name: "deviceModel", value: self.deviceModel)
-            .formatToQueryParam(name: "sdkType", value: self.sdkType)
-            .formatToQueryParam(name: "sdkVersion", value: self.sdkVersion)
+    func toQueryItems() -> [URLQueryItem] {
+        let builder = QueryItemBuilder(user: self)
+            .formatToQueryItem(name: "user_id", value: self.userId)
+            .formatToQueryItem(name: "isAnonymous", value: self.isAnonymous)
+            .formatToQueryItem(name: "email", value: self.email)
+            .formatToQueryItem(name: "name", value: self.name)
+            .formatToQueryItem(name: "language", value: self.language)
+            .formatToQueryItem(name: "country", value: self.country)
+            .formatToQueryItem(name: "appVersion", value: self.appVersion)
+            .formatToQueryItem(name: "appBuild", value: self.appBuild)
+            .formatToQueryItem(name: "customData", value: self.customData)
+            .formatToQueryItem(name: "publicCustomData", value: self.publicCustomData)
+            .formatToQueryItem(name: "lastSeenDate", value: self.lastSeenDate)
+            .formatToQueryItem(name: "createdDate", value: self.createdDate)
+            .formatToQueryItem(name: "platform", value: self.platform)
+            .formatToQueryItem(name: "platformVersion", value: self.platformVersion)
+            .formatToQueryItem(name: "deviceModel", value: self.deviceModel)
+            .formatToQueryItem(name: "sdkType", value: self.sdkType)
+            .formatToQueryItem(name: "sdkVersion", value: self.sdkVersion)
         return builder.build()
     }
-    
-
 }
