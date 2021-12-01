@@ -49,23 +49,27 @@ class DVCUserTest: XCTestCase {
     }
     
     func testToStringOnlyOutputsNonNilProperties() {
-        let userString = getTestUser().toString()
-        XCTAssertNotNil(userString)
-        XCTAssert(userString.contains("user_id=my_user"))
-        XCTAssert(userString.contains("isAnonymous=false"))
-        XCTAssertFalse(userString.contains("country"))
+        var components = URLComponents(string: "test.com")
+        components?.queryItems = getTestUser().toQueryItems()
+        let urlString = components?.url?.absoluteString
+        XCTAssertNotNil(urlString)
+        XCTAssert(urlString!.contains("user_id=my_user"))
+        XCTAssert(urlString!.contains("isAnonymous=false"))
+        XCTAssertFalse(urlString!.contains("country"))
     }
     
     func testToStringOuputsDatesAndMapCorrectly() {
-        let userString = getTestUser().toString()
-        let params = userString.split(separator: "&")
+        var components = URLComponents(string: "test.com")
+        components?.queryItems = getTestUser().toQueryItems()
+        let urlString = components?.url?.absoluteString
+        let params = urlString!.split(separator: "?")[1].split(separator: "&")
         for param in params {
             if (param.contains("createdDate")) {
                 let date = param.split(separator: "=").last!
                 XCTAssertNoThrow(Int(date), "")
             }
         }
-        XCTAssert(userString.contains("customData={\"custom\":\"key\"}"))
+        XCTAssert(urlString!.contains("customData=%7B%22custom%22:%22key%22%7D"))
     }
 }
 

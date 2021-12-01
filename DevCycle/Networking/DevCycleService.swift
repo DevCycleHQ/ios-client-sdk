@@ -61,10 +61,12 @@ class DevCycleService: DevCycleServiceProtocol {
         var configUrl = NetworkingConstants.baseUrl
         configUrl.append("\(NetworkingConstants.Version.v1)")
         configUrl.append("\(NetworkingConstants.UrlPaths.config)")
-        configUrl.append("?envKey=\(config.environmentKey)")
-        configUrl.append("&\(user.toString())")
-        let url = URL(string: configUrl)
-        return URLRequest(url: url!)
+        var urlComponents = URLComponents(string: configUrl)
+        var queryItems = user.toQueryItems()
+        queryItems.append(URLQueryItem(name: "envKey", value: config.environmentKey))
+        urlComponents?.queryItems = queryItems
+        let url = urlComponents!.url!
+        return URLRequest(url: url)
     }
 }
 
