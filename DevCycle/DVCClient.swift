@@ -4,6 +4,8 @@
 //
 //
 
+import Foundation
+
 enum ClientError: Error {
     case NotImplemented
     case BuiltClient
@@ -11,7 +13,7 @@ enum ClientError: Error {
     case InvalidUser
 }
 
-import Foundation
+public typealias ClientInitializedHandler = (Error?) -> Void
 
 public class DVCClient {
     private var environmentKey: String?
@@ -21,23 +23,28 @@ public class DVCClient {
     private var service: DevCycleServiceProtocol?
     
     /**
-        Setup client with the DevCycleService after client builder calls .build()
+        Method to initialize the Client object after building
      */
-    func setup(_ service: DevCycleServiceProtocol? = nil) {
+    public func initialize(callback: ClientInitializedHandler?) {
         self.config = DVCConfig(environmentKey: self.environmentKey!, user: self.user!)
-        if let service = service {
-            self.service = service
-        } else {
-            self.service = DevCycleService(config: self.config!)
-        }
-        
+        let service = DevCycleService(config: self.config!)
+        self.setup(service: service, callback: callback)
+    }
+    
+    /**
+        Setup client with the DevCycleService and the callback
+     */
+    func setup(service: DevCycleServiceProtocol, callback: ClientInitializedHandler? = nil) {
+        self.service = service
         self.service?.getConfig(completion: { [weak self] config, error in
             guard let self = self else { return }
             if let error = error {
                 print("Error: \(error)")
+                callback?(error)
                 return
             }
             self.config?.config = config
+            callback?(nil)
             print("Config: \(config)")
         })
     }
@@ -104,8 +111,6 @@ public class DVCClient {
                 print("Missing User")
                 return nil
             }
-            
-            self.client.setup()
             
             let result = self.client
             self.client = DVCClient()
