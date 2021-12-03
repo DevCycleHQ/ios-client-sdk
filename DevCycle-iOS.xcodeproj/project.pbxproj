@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5264A77B275E9A7E00FEDB43 /* ObjCDVCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A77A275E9A7E00FEDB43 /* ObjCDVCClient.swift */; };
+		5264A77F275EACA300FEDB43 /* ObjcDVCClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5264A77E275EACA300FEDB43 /* ObjcDVCClientTests.m */; };
 		5268DB5127501CFC00D17A40 /* DevCycle.docc in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB5027501CFC00D17A40 /* DevCycle.docc */; };
 		5268DB5727501CFC00D17A40 /* DevCycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5268DB4D27501CFC00D17A40 /* DevCycle.framework */; };
 		5268DB5D27501CFC00D17A40 /* DevCycle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5268DB4F27501CFC00D17A40 /* DevCycle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -32,6 +34,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5264A77A275E9A7E00FEDB43 /* ObjCDVCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDVCClient.swift; sourceTree = "<group>"; };
+		5264A77D275EACA300FEDB43 /* DevCycleTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DevCycleTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		5264A77E275EACA300FEDB43 /* ObjcDVCClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjcDVCClientTests.m; sourceTree = "<group>"; };
 		5268DB4D27501CFC00D17A40 /* DevCycle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DevCycle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5268DB4F27501CFC00D17A40 /* DevCycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DevCycle.h; sourceTree = "<group>"; };
 		5268DB5027501CFC00D17A40 /* DevCycle.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = DevCycle.docc; sourceTree = "<group>"; };
@@ -66,6 +71,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5264A779275E994B00FEDB43 /* ObjC */ = {
+			isa = PBXGroup;
+			children = (
+				5264A77A275E9A7E00FEDB43 /* ObjCDVCClient.swift */,
+			);
+			path = ObjC;
+			sourceTree = "<group>";
+		};
 		5268DB2427501C8600D17A40 = {
 			isa = PBXGroup;
 			children = (
@@ -87,6 +100,7 @@
 		5268DB4E27501CFC00D17A40 /* DevCycle */ = {
 			isa = PBXGroup;
 			children = (
+				5264A779275E994B00FEDB43 /* ObjC */,
 				52E693EB2756815C00B52375 /* Models */,
 				52E693E827557B5700B52375 /* Networking */,
 				5268DB6427501D6000D17A40 /* DVCClient.swift */,
@@ -100,10 +114,12 @@
 		5268DB5A27501CFC00D17A40 /* DevCycleTests */ = {
 			isa = PBXGroup;
 			children = (
+				5264A77E275EACA300FEDB43 /* ObjcDVCClientTests.m */,
 				5268DB6A275020F800D17A40 /* DVCClientTest.swift */,
 				5268DB68275020D900D17A40 /* DVCUserTest.swift */,
 				52E693F52758032500B52375 /* DevCycleServiceTests.swift */,
 				5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */,
+				5264A77D275EACA300FEDB43 /* DevCycleTests-Bridging-Header.h */,
 			);
 			path = DevCycleTests;
 			sourceTree = "<group>";
@@ -190,6 +206,7 @@
 					};
 					5268DB5527501CFC00D17A40 = {
 						CreatedOnToolsVersion = 13.1;
+						LastSwiftMigration = 1310;
 					};
 				};
 			};
@@ -234,6 +251,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5264A77B275E9A7E00FEDB43 /* ObjCDVCClient.swift in Sources */,
 				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
 				52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */,
 				5268DB6727501D6000D17A40 /* DVCUser.swift in Sources */,
@@ -248,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5276C9F2275E6E0D00B9A324 /* DVCOptionsTest.swift in Sources */,
+				5264A77F275EACA300FEDB43 /* ObjcDVCClientTests.m in Sources */,
 				52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */,
 				5268DB6B275020F800D17A40 /* DVCClientTest.swift in Sources */,
 				5268DB69275020D900D17A40 /* DVCUserTest.swift in Sources */,
@@ -451,6 +470,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ASZYP8H6QE;
@@ -465,6 +485,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.devcycle.DevCycleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "DevCycleTests/DevCycleTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -474,6 +496,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ASZYP8H6QE;
@@ -488,6 +511,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.devcycle.DevCycleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "DevCycleTests/DevCycleTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
