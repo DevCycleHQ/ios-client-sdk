@@ -42,7 +42,7 @@ class DVCClientTest: XCTestCase {
         let service = MockService() // will assert if getConfig was called
         client.setEnvironmentKey("")
         client.setUser(getTestUser())
-        client.setup(service)
+        client.setup(service: service)
     }
 }
 
