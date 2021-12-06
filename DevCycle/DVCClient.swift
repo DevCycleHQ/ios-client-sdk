@@ -16,9 +16,10 @@ enum ClientError: Error {
 public typealias ClientInitializedHandler = (Error?) -> Void
 
 public class DVCClient {
-    private var environmentKey: String?
-    private var user: DVCUser?
-    private var config: DVCConfig?
+    var environmentKey: String?
+    var user: DVCUser?
+    var config: DVCConfig?
+    var options: DVCOptions?
     
     private var service: DevCycleServiceProtocol?
     
@@ -55,6 +56,10 @@ public class DVCClient {
     
     func setUser(_ user: DVCUser) {
         self.user = user
+    }
+    
+    func setOptions(_ options: DVCOptions) {
+        self.options = options
     }
     
     public func identifyUser() throws -> String {
@@ -99,6 +104,11 @@ public class DVCClient {
         
         public func user(_ user: DVCUser) -> ClientBuilder {
             self.client.setUser(user)
+            return self
+        }
+        
+        public func options(_ options: DVCOptions) -> ClientBuilder {
+            self.client.setOptions(options)
             return self
         }
         

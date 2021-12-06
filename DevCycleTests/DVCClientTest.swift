@@ -23,8 +23,11 @@ class DVCClientTest: XCTestCase {
         let user = DVCUser.builder()
                     .userId("my_user")
                     .build()!
-        let client = DVCClient.builder().user(user).environmentKey("my_env_key").build()
+        let client = DVCClient.builder().user(user).environmentKey("my_env_key").build()!
         XCTAssertNotNil(client)
+        XCTAssertNotNil(client.user)
+        XCTAssertNotNil(client.environmentKey)
+        XCTAssertNil(client.options)
     }
     
     func testSetupCallsGetConfig() {
@@ -33,6 +36,18 @@ class DVCClientTest: XCTestCase {
         client.setEnvironmentKey("")
         client.setUser(getTestUser())
         client.setup(service: service)
+    }
+    
+    func testBuilderReturnsClientWithOptions() {
+        let user = DVCUser.builder()
+                    .userId("my_user")
+                    .build()!
+        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(100).build()
+        let client = DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build()!
+        XCTAssertNotNil(client)
+        XCTAssertNotNil(client.options)
+        XCTAssertNotNil(client.user)
+        XCTAssertNotNil(client.environmentKey)
     }
 }
 
