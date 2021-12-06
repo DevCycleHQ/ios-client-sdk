@@ -14,6 +14,8 @@
 		5268DB6727501D6000D17A40 /* DVCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6527501D6000D17A40 /* DVCUser.swift */; };
 		5268DB69275020D900D17A40 /* DVCUserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB68275020D900D17A40 /* DVCUserTest.swift */; };
 		5268DB6B275020F800D17A40 /* DVCClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6A275020F800D17A40 /* DVCClientTest.swift */; };
+		5276C9F0275E682B00B9A324 /* DVCOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9EF275E682B00B9A324 /* DVCOptions.swift */; };
+		5276C9F2275E6E0D00B9A324 /* DVCOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */; };
 		52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693E927567E2600B52375 /* DevCycleService.swift */; };
 		52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693EC2756816A00B52375 /* DVCConfig.swift */; };
 		52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693F52758032500B52375 /* DevCycleServiceTests.swift */; };
@@ -38,6 +40,8 @@
 		5268DB6527501D6000D17A40 /* DVCUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DVCUser.swift; sourceTree = "<group>"; };
 		5268DB68275020D900D17A40 /* DVCUserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCUserTest.swift; sourceTree = "<group>"; };
 		5268DB6A275020F800D17A40 /* DVCClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCClientTest.swift; sourceTree = "<group>"; };
+		5276C9EF275E682B00B9A324 /* DVCOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCOptions.swift; sourceTree = "<group>"; };
+		5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCOptionsTest.swift; sourceTree = "<group>"; };
 		52E693E927567E2600B52375 /* DevCycleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleService.swift; sourceTree = "<group>"; };
 		52E693EC2756816A00B52375 /* DVCConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCConfig.swift; sourceTree = "<group>"; };
 		52E693F52758032500B52375 /* DevCycleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleServiceTests.swift; sourceTree = "<group>"; };
@@ -99,6 +103,7 @@
 				5268DB6A275020F800D17A40 /* DVCClientTest.swift */,
 				5268DB68275020D900D17A40 /* DVCUserTest.swift */,
 				52E693F52758032500B52375 /* DevCycleServiceTests.swift */,
+				5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */,
 			);
 			path = DevCycleTests;
 			sourceTree = "<group>";
@@ -115,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				52E693EC2756816A00B52375 /* DVCConfig.swift */,
+				5276C9EF275E682B00B9A324 /* DVCOptions.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -232,6 +238,7 @@
 				52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */,
 				5268DB6727501D6000D17A40 /* DVCUser.swift in Sources */,
 				5268DB6627501D6000D17A40 /* DVCClient.swift in Sources */,
+				5276C9F0275E682B00B9A324 /* DVCOptions.swift in Sources */,
 				5268DB5127501CFC00D17A40 /* DevCycle.docc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -240,6 +247,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5276C9F2275E6E0D00B9A324 /* DVCOptionsTest.swift in Sources */,
 				52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */,
 				5268DB6B275020F800D17A40 /* DVCClientTest.swift in Sources */,
 				5268DB69275020D900D17A40 /* DVCUserTest.swift in Sources */,
