@@ -31,10 +31,10 @@ public class ObjCDVCClient: NSObject {
             return self
         }
         
-        @objc public func build() -> ObjCDVCClient {
+        @objc public func build() -> ObjCDVCClient? {
             guard let clientBuilder = self.objcClient.clientBuilder, let swiftClient = clientBuilder.build() else {
                 print("Error building client")
-                return self.objcClient
+                return nil
             }
             self.objcClient.client = swiftClient
             return self.objcClient
