@@ -14,7 +14,9 @@
 @implementation ObjcDVCClientTests
 
 - (void)testBuilderReturnsNilIfNoEnvKey {
-    DVCUser *user = [[[DVCUser builder] userId:@"my_user"] build];
+    DVCUser *user = [DVCUser build:^(DVCUserBuilder *builder) {
+        builder.userId = @"my_user";
+    }];
     DVCClient *client = [[[DVCClient builder] user:user] build];
     XCTAssertNil(client);
 }
