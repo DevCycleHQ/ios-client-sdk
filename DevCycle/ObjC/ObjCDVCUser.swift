@@ -40,77 +40,58 @@ public class ObjCDVCUser: NSObject {
         return props
     }
     
-    @objc public class ObjCUserBuilder: NSObject {
-        var objcUser: ObjCDVCUser
-        var userBuilder: DVCUser.UserBuilder
-        
-        override init() {
-            self.objcUser = ObjCDVCUser()
-            self.userBuilder = DVCUser.builder()
+    init(builder: ObjCUserBuilder) {
+        var userBuilder = DVCUser.builder()
+        if let userId = builder.userId {
+            userBuilder = userBuilder.userId(userId)
         }
-        
-        @objc public func userId(_ userId: String) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.userId(userId)
-            return self
+        if let isAnonymous = builder.isAnonymous {
+            userBuilder = userBuilder.isAnonymous(isAnonymous.boolValue)
         }
-        
-        @objc public func isAnonymous(_ isAnonymous: Bool) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.isAnonymous(isAnonymous)
-            return self
+        if let email = builder.email {
+            userBuilder = userBuilder.email(email)
         }
-        
-        @objc public func email(_ email: String) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.email(email)
-            return self
+        if let name = builder.name {
+            userBuilder = userBuilder.name(name)
         }
-        
-        @objc public func name(_ name: String) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.name(name)
-            return self
+        if let language = builder.language {
+            userBuilder = userBuilder.language(language)
         }
-        
-        @objc public func language(_ language: String) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.language(language)
-            return self
+        if let country = builder.country {
+            userBuilder = userBuilder.country(country)
         }
-        
-        @objc public func country(_ country: String) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.country(country)
-            return self
+        if let appVersion = builder.appVersion {
+            userBuilder = userBuilder.appVersion(appVersion)
         }
-        
-        @objc public func appVersion(_ appVersion: String) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.appVersion(appVersion)
-            return self
+        if let customData = builder.customData {
+            userBuilder = userBuilder.customData(customData)
         }
-        
-        @objc public func appBuild(_ appBuild: Int) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.appBuild(appBuild)
-            return self
+        if let publicCustomData = builder.publicCustomData {
+            userBuilder = userBuilder.publicCustomData(publicCustomData)
         }
-        
-        @objc public func customData(_ customData: [String:Any]) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.customData(customData)
-            return self
+        guard let user = userBuilder.build() else {
+            print("Error making user")
+            return
         }
-        
-        @objc public func publicCustomData(_ publicCustomData: [String:Any]) -> ObjCUserBuilder {
-            self.userBuilder = self.userBuilder.publicCustomData(publicCustomData)
-            return self
-        }
-        
-        @objc public func build() -> ObjCDVCUser? {
-            guard let result = self.userBuilder.build() else {
-                print("Something went wrong with building user")
-                return nil
-            }
-            self.objcUser.user = result
-            self.userBuilder = DVCUser.builder()
-            return self.objcUser
-        }
+        self.user = user
     }
     
-    @objc public static func builder() -> ObjCUserBuilder {
-        return ObjCUserBuilder()
+    @objc(DVCUserBuilder)
+    public class ObjCUserBuilder: NSObject {
+        @objc public var userId: String?
+        @objc public var isAnonymous: NSNumber?
+        @objc public var email: String?
+        @objc public var name: String?
+        @objc public var language: String?
+        @objc public var country: String?
+        @objc public var appVersion: String?
+        @objc public var customData: [String: Any]?
+        @objc public var publicCustomData: [String: Any]?
+    }
+    
+    @objc public static func build(_ block: ((ObjCUserBuilder) -> Void)) -> ObjCDVCUser {
+        let builder = ObjCUserBuilder()
+        block(builder)
+        return ObjCDVCUser(builder: builder)
     }
 }
