@@ -14,18 +14,23 @@
 @implementation ObjcDVCUserTests
 
 - (void)testCreateUser {
-    DVCUser *user = [[[DVCUser builder] userId:@"my_user"] build];
+    DVCUser *user = [DVCUser build:^(DVCUserBuilder *builder) {
+        builder.userId = @"my_user";
+    }];
     XCTAssertNotNil(user);
 }
 
 - (void)testUserIsNil {
-    DVCUser *user = [[DVCUser builder] build];
-    XCTAssertNil(user);
+    DVCUser *user = [DVCUser build:^(DVCUserBuilder *builder) {}];
+    NSDictionary *dic = user.properties;
+    XCTAssert(dic.count == 0);
 }
 
 
 - (void)testNonUserIdPropertiesAreNil {
-    DVCUser *user = [[[DVCUser builder] userId:@"my_user"] build];
+    DVCUser *user = [DVCUser build:^(DVCUserBuilder *builder) {
+        builder.userId = @"my_user";
+    }];
     XCTAssertNotNil(user);
     XCTAssert([user.properties[@"user_id"] isEqual:@"my_user"]);
     XCTAssertFalse([user.properties[@"isAnonymous"] boolValue]);
@@ -35,6 +40,24 @@
     XCTAssertNil(user.properties[@"appVersion"]);
     XCTAssertNil(user.properties[@"customData"]);
     XCTAssertNil(user.properties[@"publicCustomData"]);
+}
+
+- (void)testNonUserIdPropertiesAreNotNil {
+    DVCUser *user = [DVCUser build:^(DVCUserBuilder *builder) {
+        builder.userId = @"my_user";
+        builder.isAnonymous = @NO;
+        builder.email = @"email.com";
+        builder.name = @"Jason Smith";
+        builder.country = @"CAN";
+        builder.appVersion = @"1.0.0";
+    }];
+    XCTAssertNotNil(user);
+    XCTAssert([user.properties[@"user_id"] isEqual:@"my_user"]);
+    XCTAssertFalse([user.properties[@"isAnonymous"] boolValue]);
+    XCTAssertEqual(user.properties[@"email"], @"email.com");
+    XCTAssertEqual(user.properties[@"name"], @"Jason Smith");
+    XCTAssertEqual(user.properties[@"country"], @"CAN");
+    XCTAssertEqual(user.properties[@"appVersion"], @"1.0.0");
 }
 
 @end
