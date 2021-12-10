@@ -9,38 +9,46 @@ import Foundation
 @objc(DVCUser)
 public class ObjCDVCUser: NSObject {
     var user: DVCUser?
-    @objc public var properties: [String: Any] {
-        guard let user = self.user else { return [:] }
-        guard let userId = user.userId, let isAnonymous = user.isAnonymous else { return [:] }
-        var props: [String:Any] = [
-            "user_id": userId,
-            "isAnonymous": NSNumber(value: isAnonymous),
-        ]
-        if let email = user.email {
-            props["email"] = email
+    @objc public var userId: String? {
+        get { user?.userId }
+    }
+    @objc public var isAnonymous: NSNumber? {
+        get {
+            if let isAnonymous = user?.isAnonymous {
+                return NSNumber(value: isAnonymous)
+            }
+            return nil
         }
-        if let name = user.name {
-            props["name"] = name
-        }
-        if let language = user.language {
-            props["language"] = language
-        }
-        if let country = user.country {
-            props["country"] = country
-        }
-        if let appVersion = user.appVersion {
-            props["appVersion"] = appVersion
-        }
-        if let customData = user.customData {
-            props["customData"] = customData
-        }
-        if let publicCustomData = user.publicCustomData {
-            props["publicCustomData"] = publicCustomData
-        }
-        return props
+    }
+    @objc public var email: String? {
+        get { user?.email }
+    }
+    @objc public var name: String? {
+        get { user?.name }
+    }
+    @objc public var language: String? {
+        get { user?.language }
+    }
+    @objc public var country: String? {
+        get { user?.country }
+    }
+    @objc public var appVersion: String? {
+        get { user?.appVersion }
+    }
+    @objc public var customData: [String:Any]? {
+        get { user?.customData }
+    }
+    @objc public var publicCustomData: [String:Any]? {
+        get { user?.publicCustomData }
     }
     
-    init(builder: ObjCUserBuilder) {
+    init(builder: ObjCUserBuilder) throws {
+        if builder.userId == nil && builder.isAnonymous == false {
+            throw ObjCUserErrors.MissingUserId
+        } else if builder.userId == nil && builder.isAnonymous == nil {
+            throw ObjCUserErrors.MissingIsAnonymous
+        }
+        
         var userBuilder = DVCUser.builder()
         if let userId = builder.userId {
             userBuilder = userBuilder.userId(userId)
@@ -71,7 +79,7 @@ public class ObjCDVCUser: NSObject {
         }
         guard let user = userBuilder.build() else {
             print("Error making user")
-            return
+            throw ObjCUserErrors.InvalidUser
         }
         self.user = user
     }
@@ -89,9 +97,10 @@ public class ObjCDVCUser: NSObject {
         @objc public var publicCustomData: [String: Any]?
     }
     
-    @objc public static func build(_ block: ((ObjCUserBuilder) -> Void)) -> ObjCDVCUser {
+    @objc(build:block:) public static func build(_ block: ((ObjCUserBuilder) -> Void)) throws -> ObjCDVCUser {
         let builder = ObjCUserBuilder()
         block(builder)
-        return ObjCDVCUser(builder: builder)
+        let client = try ObjCDVCUser(builder: builder)
+        return client
     }
 }
