@@ -11,41 +11,54 @@ public class ObjCDVCClient: NSObject {
     
     var client: DVCClient?
     
-    @objc(DVCClientBuilder)
-    public class ObjCClientBuilder: NSObject {
-        var objcClient: ObjCDVCClient
-        var clientBuilder: DVCClient.ClientBuilder
-        
-        override init() {
-            self.objcClient = ObjCDVCClient()
-            self.clientBuilder = DVCClient.builder()
-        }
-        
-        @objc public func environmentKey(_ environmentKey: String) -> ObjCClientBuilder {
-            self.clientBuilder = self.clientBuilder.environmentKey(environmentKey)
-            return self
-        }
-        
-        @objc public func user(_ user: ObjCDVCUser) -> ObjCClientBuilder {
-            guard let user = user.user else {
-                print("User is not valid")
-                return self
+    init(builder: ObjCClientBuilder) throws {
+        guard let environmentKey = builder.environmentKey,
+              let objcUser = builder.user,
+              let user = objcUser.user
+        else {
+            if (builder.environmentKey == nil) {
+                print("Environment key missing")
+                throw ObjCClientErrors.MissingEnvironmentKey
+            } else if (builder.user == nil) {
+                print("User missing")
+                throw ObjCClientErrors.MissingUser
+            } else if (builder.user != nil && builder.user?.user == nil) {
+                print("User is invalid")
+                throw ObjCClientErrors.InvalidUser
             }
-            self.clientBuilder = self.clientBuilder.user(user)
-            return self
+            return
         }
-        
-        @objc public func build() -> ObjCDVCClient? {
-            guard let swiftClient = self.clientBuilder.build() else {
-                print("Error building client")
-                return nil
-            }
-            self.objcClient.client = swiftClient
-            return self.objcClient
+        guard let client = DVCClient.builder()
+                .environmentKey(environmentKey)
+                .user(user)
+                .build()
+        else {
+            print("Error creating client")
+            throw ObjCClientErrors.InvalidClient
+        }
+        self.client = client
+    }
+    
+    @objc public func initialize(_ block: ((Error?) -> Void)?) {
+        guard let client = self.client else {
+            print("Client wasn't created properly")
+            return
+        }
+        client.initialize { err in
+            block?(err)
         }
     }
     
-    @objc public static func builder() -> ObjCClientBuilder {
-        return ObjCClientBuilder()
+    @objc(DVCClientBuilder)
+    public class ObjCClientBuilder: NSObject {
+        @objc public var environmentKey: String?
+        @objc public var user: ObjCDVCUser?
+    }
+    
+    @objc(build:block:) public static func build(block: ((ObjCClientBuilder) -> Void)) throws -> ObjCDVCClient {
+        let builder = ObjCClientBuilder()
+        block(builder)
+        let client = try ObjCDVCClient(builder: builder)
+        return client
     }
 }

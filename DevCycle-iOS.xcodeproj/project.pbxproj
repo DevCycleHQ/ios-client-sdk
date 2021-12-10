@@ -11,6 +11,7 @@
 		5264A77F275EACA300FEDB43 /* ObjCDVCClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5264A77E275EACA300FEDB43 /* ObjCDVCClientTests.m */; };
 		5264A781275EB7DC00FEDB43 /* ObjCDVCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A780275EB7DC00FEDB43 /* ObjCDVCUser.swift */; };
 		5264A783275FB4E700FEDB43 /* ObjcDVCUserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5264A782275FB4E700FEDB43 /* ObjcDVCUserTests.m */; };
+		5264A78727626A2200FEDB43 /* ObjCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A78627626A2200FEDB43 /* ObjCErrors.swift */; };
 		5268DB5127501CFC00D17A40 /* DevCycle.docc in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB5027501CFC00D17A40 /* DevCycle.docc */; };
 		5268DB5727501CFC00D17A40 /* DevCycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5268DB4D27501CFC00D17A40 /* DevCycle.framework */; };
 		5268DB5D27501CFC00D17A40 /* DevCycle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5268DB4F27501CFC00D17A40 /* DevCycle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -41,6 +42,7 @@
 		5264A77E275EACA300FEDB43 /* ObjCDVCClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjCDVCClientTests.m; sourceTree = "<group>"; };
 		5264A780275EB7DC00FEDB43 /* ObjCDVCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDVCUser.swift; sourceTree = "<group>"; };
 		5264A782275FB4E700FEDB43 /* ObjcDVCUserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjcDVCUserTests.m; sourceTree = "<group>"; };
+		5264A78627626A2200FEDB43 /* ObjCErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCErrors.swift; sourceTree = "<group>"; };
 		5268DB4D27501CFC00D17A40 /* DevCycle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DevCycle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5268DB4F27501CFC00D17A40 /* DevCycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DevCycle.h; sourceTree = "<group>"; };
 		5268DB5027501CFC00D17A40 /* DevCycle.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = DevCycle.docc; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 			children = (
 				5264A77A275E9A7E00FEDB43 /* ObjCDVCClient.swift */,
 				5264A780275EB7DC00FEDB43 /* ObjCDVCUser.swift */,
+				5264A78627626A2200FEDB43 /* ObjCErrors.swift */,
 			);
 			path = ObjC;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
 				52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */,
 				5268DB6727501D6000D17A40 /* DVCUser.swift in Sources */,
+				5264A78727626A2200FEDB43 /* ObjCErrors.swift in Sources */,
 				5268DB6627501D6000D17A40 /* DVCClient.swift in Sources */,
 				5276C9F0275E682B00B9A324 /* DVCOptions.swift in Sources */,
 				5268DB5127501CFC00D17A40 /* DevCycle.docc in Sources */,
