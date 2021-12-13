@@ -50,6 +50,9 @@ class DevCycleService: DevCycleServiceProtocol {
     }
     
     func makeRequest(request: URLRequest, completion: CompletionHandler?) {
+        if let urlString = request.url?.absoluteString {
+            print("Making request: " + urlString)
+        }
         self.session.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 completion?((data, response, error))
@@ -72,11 +75,17 @@ class DevCycleService: DevCycleServiceProtocol {
 
 extension DevCycleService {
     func processConfig(_ responseData: Data?) -> Any? {
-        guard let data = responseData,
-              let config = try? JSONSerialization.jsonObject(with: data, options: [])
-        else {
+        guard let data = responseData else {
+            print("No config data")
             return nil
         }
-        return config
+        do {
+            let config: UserConfig = try JSONDecoder().decode(UserConfig.self, from: data)
+            return config
+        } catch {
+            print("Failed to decode config")
+            print(error)
+        }
+        return nil
     }
 }

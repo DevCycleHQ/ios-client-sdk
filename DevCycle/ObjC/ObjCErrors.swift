@@ -18,3 +18,9 @@ public enum ObjCUserErrors: Error {
     case MissingIsAnonymous
     case InvalidUser
 }
+
+public enum ObjCConfigErrors: Error {
+    case EnvironmentMissing
+    case FeatureVariationMapMissing
+    case ProjectMissing
+}
