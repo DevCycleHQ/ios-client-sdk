@@ -14,11 +14,18 @@ class DevCycleServiceTests: XCTestCase {
         XCTAssert(url!.contains("user_id=my_user"))
     }
     
-    func testProcessConfig() throws {
+    func testProcessConfigReturnsNilIfMissingProperties() throws {
         let service = getService()
         let data = "{\"config\":\"key\"}".data(using: .utf8)
         let config = service.processConfig(data)
-        XCTAssertNotNil(config)
+        XCTAssertNil(config)
+    }
+    
+    func testProcessConfigReturnsNilIfBrokenJson() throws {
+        let service = getService()
+        let data = "{\"config\":\"key}".data(using: .utf8)
+        let config = service.processConfig(data)
+        XCTAssertNil(config)
     }
 }
 
