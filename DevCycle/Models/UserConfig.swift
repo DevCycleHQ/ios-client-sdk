@@ -44,6 +44,7 @@ public struct Variable: Decodable {
         case bool(Bool)
         case number(Int)
         case json([String: JSONValue])
+        
         public init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             if let intValue = try? container.decode(Int.self) {
@@ -65,6 +66,18 @@ public struct Variable: Decodable {
             throw DecodingError.typeMismatch(JSONValue.self, DecodingError.Context.init(codingPath: [CodingKeys.value], debugDescription: "Couldn't find type to cast JSON value to", underlyingError: nil))
         }
 
+        func get() -> Any {
+            switch self {
+            case .number(let num):
+                return num
+            case .json(let json):
+                return json
+            case .bool(let bool):
+                return bool
+            case .string(let string):
+                return string
+            }
+        }
     }
     
     public init(from decoder: Decoder) throws {
