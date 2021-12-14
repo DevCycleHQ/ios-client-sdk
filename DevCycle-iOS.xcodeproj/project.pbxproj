@@ -13,6 +13,8 @@
 		5264A783275FB4E700FEDB43 /* ObjcDVCUserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5264A782275FB4E700FEDB43 /* ObjcDVCUserTests.m */; };
 		5264A78727626A2200FEDB43 /* ObjCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A78627626A2200FEDB43 /* ObjCErrors.swift */; };
 		5264A78B2763F6D800FEDB43 /* UserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A78A2763F6D800FEDB43 /* UserConfig.swift */; };
+		5264A78E2768E94600FEDB43 /* test_config.json in Resources */ = {isa = PBXBuildFile; fileRef = 5264A78D2768E94500FEDB43 /* test_config.json */; };
+		5264A7902768E9F400FEDB43 /* UserConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A78F2768E9F400FEDB43 /* UserConfigTests.swift */; };
 		5268DB5127501CFC00D17A40 /* DevCycle.docc in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB5027501CFC00D17A40 /* DevCycle.docc */; };
 		5268DB5727501CFC00D17A40 /* DevCycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5268DB4D27501CFC00D17A40 /* DevCycle.framework */; };
 		5268DB5D27501CFC00D17A40 /* DevCycle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5268DB4F27501CFC00D17A40 /* DevCycle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -45,6 +47,8 @@
 		5264A782275FB4E700FEDB43 /* ObjcDVCUserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjcDVCUserTests.m; sourceTree = "<group>"; };
 		5264A78627626A2200FEDB43 /* ObjCErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCErrors.swift; sourceTree = "<group>"; };
 		5264A78A2763F6D800FEDB43 /* UserConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfig.swift; sourceTree = "<group>"; };
+		5264A78D2768E94500FEDB43 /* test_config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_config.json; sourceTree = "<group>"; };
+		5264A78F2768E9F400FEDB43 /* UserConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfigTests.swift; sourceTree = "<group>"; };
 		5268DB4D27501CFC00D17A40 /* DevCycle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DevCycle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5268DB4F27501CFC00D17A40 /* DevCycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DevCycle.h; sourceTree = "<group>"; };
 		5268DB5027501CFC00D17A40 /* DevCycle.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = DevCycle.docc; sourceTree = "<group>"; };
@@ -89,6 +93,15 @@
 			path = ObjC;
 			sourceTree = "<group>";
 		};
+		5264A78C2768E87C00FEDB43 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5264A78F2768E9F400FEDB43 /* UserConfigTests.swift */,
+				5264A78D2768E94500FEDB43 /* test_config.json */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		5268DB2427501C8600D17A40 = {
 			isa = PBXGroup;
 			children = (
@@ -124,6 +137,7 @@
 		5268DB5A27501CFC00D17A40 /* DevCycleTests */ = {
 			isa = PBXGroup;
 			children = (
+				5264A78C2768E87C00FEDB43 /* Models */,
 				5264A782275FB4E700FEDB43 /* ObjcDVCUserTests.m */,
 				5264A77E275EACA300FEDB43 /* ObjCDVCClientTests.m */,
 				5268DB6A275020F800D17A40 /* DVCClientTest.swift */,
@@ -253,6 +267,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5264A78E2768E94600FEDB43 /* test_config.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5276C9F2275E6E0D00B9A324 /* DVCOptionsTest.swift in Sources */,
+				5264A7902768E9F400FEDB43 /* UserConfigTests.swift in Sources */,
 				5264A77F275EACA300FEDB43 /* ObjCDVCClientTests.m in Sources */,
 				52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */,
 				5268DB6B275020F800D17A40 /* DVCClientTest.swift in Sources */,
