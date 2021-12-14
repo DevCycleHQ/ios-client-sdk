@@ -1,0 +1,53 @@
+{
+    "project": {
+        "_id": "id1",
+        "key": "default"
+    },
+    "environment": {
+        "_id": "id2",
+        "key": "development"
+    },
+    "features": {
+        "new-feature": {
+            "_id": "id3",
+            "key": "new-feature",
+            "type": "release",
+            "_variation": "id4"
+        }
+    },
+    "featureVariationMap": {
+        "id3": "id4"
+    },
+    "knownVariableKeys": [],
+    "variables": {
+        "boolVar": {
+            "_id": "id5",
+            "key": "boolVar",
+            "type": "Boolean",
+            "value": true
+        },
+        "jsonVar": {
+            "_id": "id6",
+            "key": "jsonVar",
+            "type": "JSON",
+            "value": {
+                "key1": "value1",
+                "key2": {
+                    "nestedKey1": "nestedValue1"
+                }
+            }
+        },
+        "stringVar": {
+            "_id": "id7",
+            "key": "stringVar",
+            "type": "String",
+            "value": "string1"
+        },
+        "numVar": {
+            "_id": "id8",
+            "key": "numVar",
+            "type": "Number",
+            "value": 4
+        }
+    }
+}
