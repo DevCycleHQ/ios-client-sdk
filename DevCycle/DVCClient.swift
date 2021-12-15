@@ -22,6 +22,7 @@ public class DVCClient {
     var options: DVCOptions?
     
     private var service: DevCycleServiceProtocol?
+    private var eventQueue: [DVCEvent] = []
     
     /**
         Method to initialize the Client object after building
@@ -82,8 +83,8 @@ public class DVCClient {
         throw ClientError.NotImplemented
     }
 
-    public func track() throws -> String {
-        throw ClientError.NotImplemented
+    public func track(event: DVCEvent) {
+        self.eventQueue.append(event)
     }
 
     public func flushEvents() throws -> String {
