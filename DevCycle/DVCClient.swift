@@ -83,7 +83,7 @@ public class DVCClient {
         throw ClientError.NotImplemented
     }
 
-    public func track(event: DVCEvent) {
+    public func track(_ event: DVCEvent) {
         self.eventQueue.append(event)
     }
 
