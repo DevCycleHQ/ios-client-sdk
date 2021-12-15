@@ -36,10 +36,24 @@ public class ObjCDVCUser: NSObject {
         get { user?.appVersion }
     }
     @objc public var customData: [String:Any]? {
-        get { user?.customData }
+        get {
+            guard let customData = user?.customData,
+                  let data = try? JSONSerialization.jsonObject(with: customData, options: []) as? [String: Any]
+            else {
+                return nil
+            }
+            return data
+        }
     }
     @objc public var publicCustomData: [String:Any]? {
-        get { user?.publicCustomData }
+        get {
+            guard let publicCustomData = user?.publicCustomData,
+                  let data = try? JSONSerialization.jsonObject(with: publicCustomData, options: []) as? [String: Any]
+            else {
+                return nil
+            }
+            return data
+        }
     }
     
     init(builder: ObjCUserBuilder) throws {

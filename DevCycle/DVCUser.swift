@@ -6,7 +6,7 @@
 
 import Foundation
 
-public class DVCUser {
+public class DVCUser: Codable {
     public var userId: String?
     public var isAnonymous: Bool?
     public var email: String?
@@ -15,8 +15,8 @@ public class DVCUser {
     public var country: String?
     public var appVersion: String?
     public var appBuild: Int?
-    public var customData: [String:Any]?
-    public var publicCustomData: [String:Any]?
+    public var customData: Data?
+    public var publicCustomData: Data?
     public var lastSeenDate: Date
     public let createdDate: Date
     public let platform: String
@@ -86,12 +86,18 @@ public class DVCUser {
         }
         
         public func customData(_ customData: [String:Any]) -> UserBuilder {
-            self.user.customData = customData
+            guard let data = try? JSONSerialization.data(withJSONObject: customData, options: []) else {
+                return self
+            }
+            self.user.customData = data
             return self
         }
         
         public func publicCustomData(_ publicCustomData: [String:Any]) -> UserBuilder {
-            self.user.publicCustomData = publicCustomData
+            guard let data = try? JSONSerialization.data(withJSONObject: publicCustomData, options: []) else {
+                return self
+            }
+            self.user.publicCustomData = data
             return self
         }
         
@@ -123,11 +129,8 @@ extension DVCUser {
         
         func formatToQueryItem<T>(name: String, value: T?) -> QueryItemBuilder {
             guard let property = value else { return self }
-            if let map = property as? [String: Any] {
-                guard let data = try? JSONSerialization.data(withJSONObject: map, options: []) else {
-                    return self
-                }
-                items.append(URLQueryItem(name: name, value: String(data: data, encoding: String.Encoding.utf8)))
+            if let map = property as? Data {
+                items.append(URLQueryItem(name: name, value: String(data: map, encoding: String.Encoding.utf8)))
             } else if let date = property as? Date {
                 items.append(URLQueryItem(name: name, value: "\(Int(date.timeIntervalSince1970))"))
             } else {

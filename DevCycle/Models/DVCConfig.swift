@@ -10,5 +10,5 @@ import Foundation
 public struct DVCConfig {
     var environmentKey: String
     var user: DVCUser
-    var config: Any?
+    var userConfig: UserConfig?
 }
