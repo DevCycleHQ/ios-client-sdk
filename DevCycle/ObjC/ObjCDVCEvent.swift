@@ -2,16 +2,23 @@
 //  ObjCDVCEvent.swift
 //  DevCycle
 //
-//  Created by Kaushal Kapasi on 2021-12-15.
 //
 
 import Foundation
 
 @objc(DVCEvent)
 public class ObjCDVCEvent: NSObject {
-    var type: String = ""
-    var target: String?
-    var date: NSDate?
-    var value: Int?
-    var metaData: [String: Any]?
+    @objc var type: String
+    @objc var target: String?
+    @objc var date: NSDate?
+    @objc var value: NSNumber?
+    @objc var metaData: NSDictionary?
+    
+    @objc public init(type: String, target: String?, date: NSDate?, value: NSNumber?, metaData: NSDictionary?) {
+        self.type = type
+        if target != nil { self.target = target }
+        if date != nil { self.date = date }
+        if value != nil { self.value = value }
+        if metaData != nil { self.metaData = metaData }
+    }
 }
