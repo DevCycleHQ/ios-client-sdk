@@ -11,6 +11,8 @@ public class ObjCDVCClient: NSObject {
     
     var client: DVCClient?
     
+    private var eventQueue: [ObjCDVCEvent] = []
+    
     init(builder: ObjCClientBuilder) throws {
         guard let environmentKey = builder.environmentKey,
               let objcUser = builder.user,
@@ -60,5 +62,9 @@ public class ObjCDVCClient: NSObject {
         block(builder)
         let client = try ObjCDVCClient(builder: builder)
         return client
+    }
+    
+    @objc public func track(_ event: ObjCDVCEvent) {
+        self.eventQueue.append(event)
     }
 }

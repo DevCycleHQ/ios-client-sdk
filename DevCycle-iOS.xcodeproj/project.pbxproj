@@ -28,6 +28,7 @@
 		52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693EC2756816A00B52375 /* DVCConfig.swift */; };
 		52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693F52758032500B52375 /* DevCycleServiceTests.swift */; };
 		D9341C12276967DE00BC753F /* DVCEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C11276967DE00BC753F /* DVCEvent.swift */; };
+		D9341C14276A3C8A00BC753F /* ObjCDVCEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		52E693EC2756816A00B52375 /* DVCConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCConfig.swift; sourceTree = "<group>"; };
 		52E693F52758032500B52375 /* DevCycleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleServiceTests.swift; sourceTree = "<group>"; };
 		D9341C11276967DE00BC753F /* DVCEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCEvent.swift; sourceTree = "<group>"; };
+		D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDVCEvent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 				5264A77A275E9A7E00FEDB43 /* ObjCDVCClient.swift */,
 				5264A780275EB7DC00FEDB43 /* ObjCDVCUser.swift */,
 				5264A78627626A2200FEDB43 /* ObjCErrors.swift */,
+				D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */,
 			);
 			path = ObjC;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 			files = (
 				5264A78B2763F6D800FEDB43 /* UserConfig.swift in Sources */,
 				5264A781275EB7DC00FEDB43 /* ObjCDVCUser.swift in Sources */,
+				D9341C14276A3C8A00BC753F /* ObjCDVCEvent.swift in Sources */,
 				5264A77B275E9A7E00FEDB43 /* ObjCDVCClient.swift in Sources */,
 				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
 				52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */,
