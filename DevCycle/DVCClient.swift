@@ -21,8 +21,9 @@ public class DVCClient {
     var config: DVCConfig?
     var options: DVCOptions?
     
+    internal var eventQueue: [DVCEvent] = []
+    
     private var service: DevCycleServiceProtocol?
-    private var eventQueue: [DVCEvent] = []
     
     /**
         Method to initialize the Client object after building
