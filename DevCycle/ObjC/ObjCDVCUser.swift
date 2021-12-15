@@ -91,7 +91,7 @@ public class ObjCDVCUser: NSObject {
         if let publicCustomData = builder.publicCustomData {
             userBuilder = userBuilder.publicCustomData(publicCustomData)
         }
-        guard let user = userBuilder.build() else {
+        guard let user = try? userBuilder.build() else {
             print("Error making user")
             throw ObjCUserErrors.InvalidUser
         }
