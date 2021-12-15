@@ -11,7 +11,7 @@ public class ObjCDVCClient: NSObject {
     
     var client: DVCClient?
     
-    internal var eventQueue: [ObjCDVCEvent] = []
+    @objc public var eventQueue: [ObjCDVCEvent] = []
     
     init(builder: ObjCClientBuilder) throws {
         guard let environmentKey = builder.environmentKey,
