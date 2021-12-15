@@ -8,7 +8,7 @@ import Foundation
 
 enum ClientError: Error {
     case NotImplemented
-    case BuiltClient
+    case MissingEnvironmentKeyOrUser
     case InvalidEnvironmentKey
     case InvalidUser
 }
@@ -23,13 +23,20 @@ public class DVCClient {
     var eventQueue: [DVCEvent] = []
     
     private var service: DevCycleServiceProtocol?
+    private var cacheService: CacheServiceProtocol = CacheService()
+    private var cache: Cache?
     
     /**
         Method to initialize the Client object after building
      */
     public func initialize(callback: ClientInitializedHandler?) {
-        self.config = DVCConfig(environmentKey: self.environmentKey!, user: self.user!)
-        let service = DevCycleService(config: self.config!)
+        guard let user = self.user, let environmentKey = self.environmentKey else {
+            callback?(ClientError.MissingEnvironmentKeyOrUser)
+            return
+        }
+        self.config = DVCConfig(environmentKey: environmentKey, user: user)
+        let service = DevCycleService(config: self.config!, cacheService: self.cacheService)
+        service.cacheService = cacheService
         self.setup(service: service, callback: callback)
     }
     
@@ -42,12 +49,13 @@ public class DVCClient {
             guard let self = self else { return }
             if let error = error {
                 print("Error: \(error)")
+                self.cache = self.cacheService.load()
                 callback?(error)
                 return
             }
-            self.config?.config = config
+            self.config?.userConfig = config
             callback?(nil)
-            print("Config: \(config)")
+            print("Config: \(config!)")
         })
     }
     

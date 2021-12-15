@@ -10,7 +10,7 @@ import Foundation
 typealias DataResponse = (data: Data?, urlResponse: URLResponse?, error: Error?)
 typealias CompletionHandler = (DataResponse) -> Void
 
-typealias Config = (config: Any, error: Error?)
+typealias Config = (config: UserConfig?, error: Error?)
 typealias ConfigCompletionHandler = (Config) -> Void
 
 struct NetworkingConstants {
@@ -33,16 +33,21 @@ class DevCycleService: DevCycleServiceProtocol {
     var session: URLSession
     var config: DVCConfig
     
-    init(config: DVCConfig) {
+    var cacheService: CacheServiceProtocol
+    
+    init(config: DVCConfig, cacheService: CacheServiceProtocol) {
         let sessionConfig = URLSessionConfiguration.default
         self.session = URLSession(configuration: sessionConfig)
         self.config = config
+        self.cacheService = cacheService
     }
     
     func getConfig(completion: @escaping ConfigCompletionHandler) {
+        cacheService.save(user: config.user)
         let configRequest = createConfigRequest(user: config.user)
         self.makeRequest(request: configRequest) { response in
             guard let config = self.processConfig(response.data) else {
+                completion((nil, response.error))
                 return
             }
             completion((config, response.error))
@@ -74,13 +79,14 @@ class DevCycleService: DevCycleServiceProtocol {
 }
 
 extension DevCycleService {
-    func processConfig(_ responseData: Data?) -> Any? {
+    func processConfig(_ responseData: Data?) -> UserConfig? {
         guard let data = responseData else {
             print("No config data")
             return nil
         }
         do {
             let config: UserConfig = try JSONDecoder().decode(UserConfig.self, from: data)
+            cacheService.save(config: data)
             return config
         } catch {
             print("Failed to decode config")
