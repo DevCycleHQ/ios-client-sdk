@@ -49,6 +49,23 @@ class DVCClientTest: XCTestCase {
         XCTAssertNotNil(client.user)
         XCTAssertNotNil(client.environmentKey)
     }
+    
+    func testTrackWithValidDVCEventNoOptionals() {
+        let client = DVCClient()
+        let event: DVCEvent = DVCEvent(type: "test")
+        
+        client.track(event)
+        XCTAssertTrue(client.eventQueue.count == 1)
+    }
+    
+    func testTrackWithValidDVCEventWithAllParamsDefined() {
+        let client = DVCClient()
+        let data: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
+        let event: DVCEvent = DVCEvent(type: "test", target: "test", date: Date(), value: 1, metaData: data)
+        
+        client.track(event)
+        XCTAssertTrue(client.eventQueue.count == 1)
+    }
 }
 
 extension DVCClientTest {
