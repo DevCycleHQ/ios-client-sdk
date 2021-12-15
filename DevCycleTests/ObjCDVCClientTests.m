@@ -48,5 +48,37 @@
     XCTAssertNotNil(client);
 }
 
+- (void)testTrackWithValidDVCEventNoOptionals {
+    NSError *err = nil;
+    DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder *builder) {
+        builder.userId = @"my_user";
+    }];
+    DVCClient *client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
+        builder.environmentKey = @"my_env_key";
+        builder.user = user;
+    }];
+    DVCEvent *event = [[DVCEvent alloc] initWithType:@"test" target:nil date:nil value:nil metaData:nil];
+    
+    [client track:event];
+    XCTAssertTrue(client.eventQueue.count == 1);
+}
+
+- (void)testTrackWithValidDVCEventWithAllParamsDefined {
+    NSError *err = nil;
+    DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder *builder) {
+        builder.userId = @"my_user";
+    }];
+    DVCClient *client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
+        builder.environmentKey = @"my_env_key";
+        builder.user = user;
+    }];
+    NSDate *testDate = [NSDate date];
+    NSDictionary<NSString *, id> *testMetaData = @{ @"test1": @"key", @"test2": @2, @"test3": @false };
+    DVCEvent *event = [[DVCEvent alloc] initWithType:@"test" target:@"test" date:testDate value:@1 metaData:testMetaData];
+    
+    [client track:event];
+    XCTAssertTrue(client.eventQueue.count == 1);
+}
+
 
 @end

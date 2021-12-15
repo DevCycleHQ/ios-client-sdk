@@ -20,8 +20,7 @@ public class DVCClient {
     var user: DVCUser?
     var config: DVCConfig?
     var options: DVCOptions?
-    
-    internal var eventQueue: [DVCEvent] = []
+    var eventQueue: [DVCEvent] = []
     
     private var service: DevCycleServiceProtocol?
     
