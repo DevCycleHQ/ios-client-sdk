@@ -121,14 +121,14 @@ public class DVCClient {
             return self
         }
         
-        public func build() -> DVCClient? {
+        public func build() throws -> DVCClient {
             guard self.client.environmentKey != nil else {
                 print("Missing Environment Key")
-                return nil
+                throw ClientError.MissingEnvironmentKeyOrUser
             }
             guard self.client.user != nil else {
                 print("Missing User")
-                return nil
+                throw ClientError.MissingEnvironmentKeyOrUser
             }
             
             let result = self.client

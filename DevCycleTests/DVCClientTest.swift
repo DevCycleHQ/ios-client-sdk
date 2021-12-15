@@ -9,21 +9,21 @@ import XCTest
 
 class DVCClientTest: XCTestCase {
     func testBuilderReturnsNilIfNoEnvKey() {
-        let user = DVCUser.builder()
+        let user = try! DVCUser.builder()
                     .userId("my_user")
-                    .build()!
-        XCTAssertNil(DVCClient.builder().user(user).build())
+                    .build()
+        XCTAssertNil(try? DVCClient.builder().user(user).build())
     }
     
     func testBuilderReturnsNilIfNoUser() {
-        XCTAssertNil(DVCClient.builder().environmentKey("my_env_key").build())
+        XCTAssertNil(try? DVCClient.builder().environmentKey("my_env_key").build())
     }
     
     func testBuilderReturnsClient() {
-        let user = DVCUser.builder()
+        let user = try! DVCUser.builder()
                     .userId("my_user")
-                    .build()!
-        let client = DVCClient.builder().user(user).environmentKey("my_env_key").build()!
+                    .build()
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").build()
         XCTAssertNotNil(client)
         XCTAssertNotNil(client.user)
         XCTAssertNotNil(client.environmentKey)
@@ -39,11 +39,9 @@ class DVCClientTest: XCTestCase {
     }
     
     func testBuilderReturnsClientWithOptions() {
-        let user = DVCUser.builder()
-                    .userId("my_user")
-                    .build()!
+        let user = getTestUser()
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(100).build()
-        let client = DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build()!
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build()
         XCTAssertNotNil(client)
         XCTAssertNotNil(client.options)
         XCTAssertNotNil(client.user)
@@ -76,8 +74,8 @@ extension DVCClientTest {
     }
     
     func getTestUser() -> DVCUser {
-        return DVCUser.builder()
+        return try! DVCUser.builder()
             .userId("my_user")
-            .build()!
+            .build()
     }
 }

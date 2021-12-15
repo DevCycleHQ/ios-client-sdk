@@ -30,7 +30,7 @@ public class ObjCDVCClient: NSObject {
             }
             return
         }
-        guard let client = DVCClient.builder()
+        guard let client = try? DVCClient.builder()
                 .environmentKey(environmentKey)
                 .user(user)
                 .build()

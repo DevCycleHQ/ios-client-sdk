@@ -76,8 +76,8 @@ extension DevCycleServiceTests {
     }
     
     func getTestUser() -> DVCUser {
-        return DVCUser.builder()
+        return try! DVCUser.builder()
             .userId("my_user")
-            .build()!
+            .build()
     }
 }

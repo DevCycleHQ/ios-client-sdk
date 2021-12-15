@@ -6,6 +6,12 @@
 
 import Foundation
 
+enum UserError: Error {
+    case MissingUserId
+    case MissingUserIdAndIsAnonymousFalse
+    case InvalidUser
+}
+
 public class DVCUser: Codable {
     public var userId: String?
     public var isAnonymous: Bool?
@@ -101,10 +107,13 @@ public class DVCUser: Codable {
             return self
         }
         
-        public func build() -> DVCUser? {
-            guard let _ = self.user.userId, let _ = self.user.isAnonymous else {
-                return nil
+        public func build() throws -> DVCUser {
+            guard let _ = self.user.userId,
+                  let _ = self.user.isAnonymous
+            else {
+                throw UserError.MissingUserIdAndIsAnonymousFalse
             }
+
             
             let result = self.user
             self.user = DVCUser()
