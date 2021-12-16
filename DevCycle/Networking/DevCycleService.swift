@@ -14,7 +14,9 @@ typealias Config = (config: UserConfig?, error: Error?)
 typealias ConfigCompletionHandler = (Config) -> Void
 
 struct NetworkingConstants {
-    static let baseUrl = "https://sdk-api.devcycle.com"
+    static let hostUrl = ".devcycle.com"
+    static let sdkUrl = "https://sdk-api"
+    static let eventsUrl = "https://events"
     
     struct Version {
         static let v1 = "/v1"
@@ -22,11 +24,13 @@ struct NetworkingConstants {
     
     struct UrlPaths {
         static let config = "/sdkConfig"
+        static let events = "/events"
     }
 }
 
 protocol DevCycleServiceProtocol {
     func getConfig(completion: @escaping ConfigCompletionHandler)
+    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping ConfigCompletionHandler)
 }
 
 class DevCycleService: DevCycleServiceProtocol {
@@ -54,6 +58,31 @@ class DevCycleService: DevCycleServiceProtocol {
         }
     }
     
+    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping ConfigCompletionHandler) {
+        var eventsRequest = createEventsRequest()
+        let eventPayload = self.generateEventPayload(events, user.userId ?? "anonymous_user", self.config.userConfig?.featureVariationMap ?? [:])
+        let requestBody: [String: Any] = [
+            "events": eventPayload,
+            "user": user
+        ]
+        
+        eventsRequest.httpMethod = "POST"
+        eventsRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        eventsRequest.addValue("application/json", forHTTPHeaderField: "Accept")
+        eventsRequest.httpBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
+        
+        self.makeRequest(request: eventsRequest) { data, response, error in
+            if let httpResponse = response as? HTTPURLResponse {
+                print("statusCode: \(httpResponse.statusCode)")
+                return
+            }
+            if error != nil || data == nil {
+                print("Failed to Post Events!")
+                return
+            }
+        }
+    }
+    
     func makeRequest(request: URLRequest, completion: CompletionHandler?) {
         if let urlString = request.url?.absoluteString {
             print("Making request: " + urlString)
@@ -66,15 +95,55 @@ class DevCycleService: DevCycleServiceProtocol {
     }
     
     func createConfigRequest(user: DVCUser) -> URLRequest {
-        var configUrl = NetworkingConstants.baseUrl
-        configUrl.append("\(NetworkingConstants.Version.v1)")
-        configUrl.append("\(NetworkingConstants.UrlPaths.config)")
-        var urlComponents = URLComponents(string: configUrl)
-        var queryItems = user.toQueryItems()
-        queryItems.append(URLQueryItem(name: "envKey", value: config.environmentKey))
-        urlComponents?.queryItems = queryItems
-        let url = urlComponents!.url!
+        let userQueryItems: [URLQueryItem] = user.toQueryItems()
+        let urlComponents: URLComponents = createRequestUrl("config", userQueryItems)
+        let url = urlComponents.url!
         return URLRequest(url: url)
+    }
+    
+    func createEventsRequest() -> URLRequest {
+        let urlComponents: URLComponents = createRequestUrl("event", nil)
+        let url = urlComponents.url!
+        return URLRequest(url: url)
+    }
+    
+    private func createRequestUrl(_ type: String, _ queryItems: [URLQueryItem]?) -> URLComponents {
+        var url: String
+        switch(type) {
+        case "event":
+            url = NetworkingConstants.eventsUrl + NetworkingConstants.hostUrl
+            url.append("\(NetworkingConstants.Version.v1)")
+            url.append("\(NetworkingConstants.UrlPaths.events)")
+        default:
+            url = NetworkingConstants.sdkUrl + NetworkingConstants.hostUrl
+            url.append("\(NetworkingConstants.Version.v1)")
+            url.append("\(NetworkingConstants.UrlPaths.config)")
+        }
+        var urlComponents: URLComponents = URLComponents(string: url)!
+        if (queryItems != nil && queryItems?.isEmpty == false) {
+            var querySpecificItems: [URLQueryItem] = queryItems ?? []
+            querySpecificItems.append(URLQueryItem(name: "envKey", value: config.environmentKey))
+            urlComponents.queryItems = querySpecificItems
+        } else {
+            urlComponents.queryItems = [URLQueryItem(name: "envKey", value: config.environmentKey)]
+        }
+        return urlComponents
+    }
+    
+    private func generateEventPayload(_ events: [DVCEvent], _ user_id: String, _ featureVariables: [String: String]) -> Any {
+        var eventsJSON: [Any] = []
+        
+        for event in events {
+            let eventDate: Date = event.date ?? Date()
+            let eventToPost: DVCEvent = DVCEvent(type: event.type, target: event.target, date: eventDate, value: event.value, metaData: event.metaData, user_id: user_id, featureVars: featureVariables)
+            guard let encodedEventData = try? JSONSerialization.data(withJSONObject: eventToPost, options: []) else {
+                continue
+            }
+            
+            eventsJSON.append(encodedEventData)
+        }
+        
+        return eventsJSON
     }
 }
 

@@ -71,6 +71,10 @@ extension DVCClientTest {
         func getConfig(completion: @escaping ConfigCompletionHandler) {
             XCTAssert(true)
         }
+
+        func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping ConfigCompletionHandler) {
+            XCTAssert(true)
+        }
     }
     
     func getTestUser() -> DVCUser {

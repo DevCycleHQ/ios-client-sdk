@@ -11,6 +11,7 @@ enum ClientError: Error {
     case MissingEnvironmentKeyOrUser
     case InvalidEnvironmentKey
     case InvalidUser
+    case APIError
 }
 
 public typealias ClientInitializedHandler = (Error?) -> Void
@@ -117,8 +118,15 @@ public class DVCClient {
         self.eventQueue.append(event)
     }
 
-    public func flushEvents() throws -> String {
-        throw ClientError.NotImplemented
+    public func flushEvents() {
+        self.service?.publishEvents(events: self.eventQueue, user: self.user!, completion: { [weak self] success, error in
+            if let error = error {
+                print("Error: \(error)")
+                return
+            }
+            print("Sent: \(String(describing: self?.eventQueue.count)) events")
+            self?.eventQueue = []
+        })
     }
     
     public class ClientBuilder {
