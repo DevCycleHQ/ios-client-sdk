@@ -82,6 +82,11 @@ public class ObjCDVCClient: NSObject {
     }
     
     @objc public func track(_ event: ObjCDVCEvent) {
-        self.eventQueue.append(event)
+        let dvcEvent: DVCEvent = DVCEvent(type: event.type, target: event.target ?? nil, date: event.date as Date? ?? nil, value: (event.value as! Int), metaData: (event.metaData as! [String: Any]), user_id: nil, featureVars: nil)
+        self.client?.track(dvcEvent)
+    }
+    
+    @objc public func flushEvents() {
+        self.client?.flushEvents()
     }
 }
