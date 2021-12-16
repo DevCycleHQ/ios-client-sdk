@@ -12,4 +12,6 @@ public struct DVCEvent {
     var date: Date?
     var value: Int?
     var metaData: [String: Any]?
+    var user_id: String?
+    var featureVars: [String: String]?
 }
