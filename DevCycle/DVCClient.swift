@@ -64,6 +64,10 @@ public class DVCClient {
             self.initialized = true
             self.configCompletionHandlers = []
         })
+
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(((options?.flushEventsIntervalMs ?? 10000)/100)), repeats: true) { timer in
+            self.flushEvents()
+        }
     }
     
     func setEnvironmentKey(_ environmentKey: String) {
