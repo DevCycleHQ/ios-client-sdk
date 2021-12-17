@@ -17,7 +17,7 @@ public class DVCOptions {
             self.options = DVCOptions()
         }
         
-        public func flushEventsIntervalMs(_ interval: Int) -> OptionsBuilder {
+        public func flushEventsIntervalMs(_ interval: Int? = 10000) -> OptionsBuilder {
             self.options.flushEventsIntervalMs = interval
             return self
         }
