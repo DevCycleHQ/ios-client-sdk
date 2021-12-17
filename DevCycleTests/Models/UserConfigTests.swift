@@ -87,7 +87,7 @@ class UserConfigTests: XCTestCase {
         let variable = config.variables["numVar"]
         XCTAssert(variable?.key == "numVar")
         XCTAssert(variable?.type == "Number")
-        XCTAssert((variable?.value as! Int) == 4)
+        XCTAssert((variable?.value as! Double) == 4)
     }
     
     func testConfigVariableJson() throws {

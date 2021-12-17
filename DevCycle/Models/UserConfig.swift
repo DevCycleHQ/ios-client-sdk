@@ -31,6 +31,7 @@ public struct Variable: Decodable {
     var key: String
     var type: String
     var value: Any
+    var evalReason: String?
     
     enum CodingKeys: String, CodingKey {
         case _id
@@ -42,13 +43,13 @@ public struct Variable: Decodable {
     enum JSONValue: Decodable {
         case string(String)
         case bool(Bool)
-        case number(Int)
-        case json([String: JSONValue])
+        case number(Double)
+        case json([String:JSONValue])
         
         public init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
-            if let intValue = try? container.decode(Int.self) {
-                self = .number(intValue)
+            if let doubleValue = try? container.decode(Double.self) {
+                self = .number(doubleValue)
                 return
             }
             if let stringValue = try? container.decode(String.self) {
@@ -92,7 +93,7 @@ public struct Variable: Decodable {
         case "Boolean":
             value = try container.decode(Bool.self, forKey: .value)
         case "Number":
-            value = try container.decode(Int.self, forKey: .value)
+            value = try container.decode(Double.self, forKey: .value)
         case "String":
             value = try container.decode(String.self, forKey: .value)
         default:
