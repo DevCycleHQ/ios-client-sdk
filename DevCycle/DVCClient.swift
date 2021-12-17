@@ -75,8 +75,18 @@ public class DVCClient {
         throw ClientError.NotImplemented
     }
     
-    public func variable() throws -> String {
-        throw ClientError.NotImplemented
+    public func variable<T>(key: String, defaultValue: T) throws -> DVCVariable<T> {
+        var variable: DVCVariable<T>
+        if let config = self.config?.userConfig,
+           let variableFromApi = config.variables[key] {
+            variable = try DVCVariable(from: variableFromApi, defaultValue: defaultValue)
+        } else {
+            variable = DVCVariable(key: key, type: String(describing: T.self), value: nil, defaultValue: defaultValue, evalReason: nil)
+        }
+        
+        // TODO: add config handler that will update the variable when the config returns
+        
+        return variable
     }
     
     public func resetUser() throws -> String {
