@@ -137,7 +137,7 @@ class DevCycleService: DevCycleServiceProtocol {
         
         for event in events {
             let eventDate: Date = event.date ?? Date()
-            let eventToPost: DVCEvent = DVCEvent(type: event.type, target: event.target, date: eventDate, value: event.value, metaData: event.metaData, user_id: user_id, featureVars: featureVariables)
+            let eventToPost: DVCEvent = DVCEvent(type: event.type, target: event.target, clientDate: eventDate, value: event.value, metaData: event.metaData, user_id: user_id, date: Date(), featureVars: featureVariables)
             guard let encodedEventData = try? JSONSerialization.data(withJSONObject: eventToPost, options: []) else {
                 continue
             }
