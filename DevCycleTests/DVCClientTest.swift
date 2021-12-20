@@ -58,8 +58,8 @@ class DVCClientTest: XCTestCase {
     
     func testTrackWithValidDVCEventWithAllParamsDefined() {
         let client = DVCClient()
-        let data: [String: Any] = ["test1": "key", "test2": 2, "test3": false]
-        let event: DVCEvent = DVCEvent(type: "test", target: "test", date: Date(), value: 1, metaData: data)
+        let data: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
+        let event: DVCEvent = DVCEvent(type: "test", target: "test", clientDate: Date(), value: 1, metaData: data)
         
         client.track(event)
         XCTAssertTrue(client.eventQueue.count == 1)
