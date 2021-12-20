@@ -21,6 +21,12 @@ public class ObjCDVCVariable: NSObject {
         self.type = type
         self.evalReason = evalReason
         self.defaultValue = defaultValue
-        self.value = value != nil ? value! : defaultValue
+        self.value = value ?? defaultValue
+    }
+    
+    func update(from variable: Variable) {
+        self.value = variable.value
+        self.type = variable.type
+        self.evalReason = variable.evalReason
     }
 }

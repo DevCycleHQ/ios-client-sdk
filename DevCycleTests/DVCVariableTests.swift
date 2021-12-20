@@ -2,7 +2,6 @@
 //  DVCVariableTests.swift
 //  DevCycleTests
 //
-//  Created by Jason Salaber on 2021-12-17.
 //  Copyright © 2021 Taplytics. All rights reserved.
 //
 
@@ -13,6 +12,29 @@ class DVCVariableTests: XCTestCase {
     func testVariableCreatedFromParams() {
         let variable = DVCVariable(key: "key", type: "String", value: nil, defaultValue: "default_value", evalReason: nil)
         XCTAssertNotNil(variable)
+    }
+    
+    func testVariableUpdatesFromVariable() throws {
+        let data = """
+        {
+            "_id": "variable_id",
+            "key": "my_key",
+            "type": "String",
+            "value": "my_value"
+        }
+        """.data(using: .utf8)!
+        let variableFromApi = try JSONDecoder().decode(Variable.self, from: data)
+        let variable = DVCVariable(key: "my_key", type: "String", value: nil, defaultValue: "my_default", evalReason: nil)
+        XCTAssertNotNil(variable)
+        
+        try variable.update(from: variableFromApi)
+        XCTAssertNotNil(variable)
+        XCTAssertEqual(variable.key, "my_key")
+        XCTAssertEqual(variable.value, "my_value")
+        XCTAssertEqual(variable.type, "String")
+        XCTAssertEqual(variable.defaultValue, "my_default")
+        XCTAssertFalse(variable.isDefaulted)
+        XCTAssertNil(variable.evalReason)
     }
     
     func testStringVariableCreatedFromVariable() throws {
@@ -31,6 +53,7 @@ class DVCVariableTests: XCTestCase {
         XCTAssertEqual(variable.value, "my_value")
         XCTAssertEqual(variable.type, "String")
         XCTAssertEqual(variable.defaultValue, "my_default")
+        XCTAssertFalse(variable.isDefaulted)
         XCTAssertNil(variable.evalReason)
     }
     
@@ -50,6 +73,7 @@ class DVCVariableTests: XCTestCase {
         XCTAssertEqual(variable.value, true)
         XCTAssertEqual(variable.type, "Boolean")
         XCTAssertEqual(variable.defaultValue, false)
+        XCTAssertFalse(variable.isDefaulted)
         XCTAssertNil(variable.evalReason)
     }
     
@@ -69,6 +93,7 @@ class DVCVariableTests: XCTestCase {
         XCTAssertEqual(variable.value, 2.3)
         XCTAssertEqual(variable.type, "Number")
         XCTAssertEqual(variable.defaultValue, 1.1)
+        XCTAssertFalse(variable.isDefaulted)
         XCTAssertNil(variable.evalReason)
     }
     
@@ -94,6 +119,7 @@ class DVCVariableTests: XCTestCase {
         XCTAssertNotNil(variable.value)
         XCTAssertEqual(variable.type, "JSON")
         XCTAssertEqual(variable.defaultValue["key1"] as! String, "value2")
+        XCTAssertFalse(variable.isDefaulted)
         XCTAssertNil(variable.evalReason)
     }
     
