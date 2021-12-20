@@ -18,6 +18,7 @@ public class DVCVariable<T> {
     public var type: String
     public var handler: VariableValueHandler<T>?
     public var evalReason: String?
+    public var isDefaulted: Bool
     
     public var value: T
     public var defaultValue: T
@@ -25,8 +26,9 @@ public class DVCVariable<T> {
     init (key: String, type: String, value: T?, defaultValue: T, evalReason: String?) {
         self.key = key
         self.type = type
-        self.value = value != nil ? value! : defaultValue
+        self.value = value ?? defaultValue
         self.defaultValue = defaultValue
+        self.isDefaulted = value == nil
         self.evalReason = evalReason
     }
     
@@ -38,7 +40,18 @@ public class DVCVariable<T> {
         self.value = value
         self.defaultValue = defaultValue
         self.type = variable.type
+        self.isDefaulted = false
         self.evalReason = variable.evalReason
+    }
+    
+    func update(from variable: Variable) throws {
+        guard let value = variable.value as? T else {
+            throw VariableError.DefaultValueAndValueTypeMismatch
+        }
+        self.value = value
+        self.type = variable.type
+        self.evalReason = variable.evalReason
+        self.isDefaulted = false
     }
     
     public func onUpdate(handler: @escaping VariableValueHandler<T>) -> DVCVariable {
