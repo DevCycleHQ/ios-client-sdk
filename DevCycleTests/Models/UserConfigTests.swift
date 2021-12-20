@@ -11,7 +11,8 @@ import XCTest
 class UserConfigTests: XCTestCase {
     func testCreatesConfigFromData() throws {
         let data = getConfigData(name: "test_config")
-        let config = try JSONDecoder().decode(UserConfig.self, from: data)
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let config = try UserConfig(from: dictionary)
         XCTAssertNotNil(config)
         XCTAssertNotNil(config.project)
         XCTAssertNotNil(config.environment)
@@ -32,7 +33,8 @@ class UserConfigTests: XCTestCase {
         }
 
         """.data(using: .utf8)!
-        let config = try? JSONDecoder().decode(UserConfig.self, from: data)
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let config = try? UserConfig(from: dictionary)
         XCTAssertNil(config)
     }
     
@@ -54,7 +56,8 @@ class UserConfigTests: XCTestCase {
         }
 
         """.data(using: .utf8)!
-        let config = try JSONDecoder().decode(UserConfig.self, from: data)
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let config = try UserConfig(from: dictionary)
         XCTAssertNotNil(config)
         XCTAssertNotNil(config.project)
         XCTAssertNotNil(config.environment)
@@ -65,7 +68,8 @@ class UserConfigTests: XCTestCase {
     
     func testConfigVariableBool() throws {
         let data = getConfigData(name: "test_config")
-        let config = try JSONDecoder().decode(UserConfig.self, from: data)
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let config = try UserConfig(from: dictionary)
         let variable = config.variables["boolVar"]
         XCTAssert(variable?.key == "boolVar")
         XCTAssert(variable?.type == "Boolean")
@@ -74,7 +78,8 @@ class UserConfigTests: XCTestCase {
     
     func testConfigVariableString() throws {
         let data = getConfigData(name: "test_config")
-        let config = try JSONDecoder().decode(UserConfig.self, from: data)
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let config = try UserConfig(from: dictionary)
         let variable = config.variables["stringVar"]
         XCTAssert(variable?.key == "stringVar")
         XCTAssert(variable?.type == "String")
@@ -83,7 +88,8 @@ class UserConfigTests: XCTestCase {
     
     func testConfigVariableNumber() throws {
         let data = getConfigData(name: "test_config")
-        let config = try JSONDecoder().decode(UserConfig.self, from: data)
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let config = try UserConfig(from: dictionary)
         let variable = config.variables["numVar"]
         XCTAssert(variable?.key == "numVar")
         XCTAssert(variable?.type == "Number")
@@ -92,9 +98,10 @@ class UserConfigTests: XCTestCase {
     
     func testConfigVariableJson() throws {
         let data = getConfigData(name: "test_config")
-        let config = try JSONDecoder().decode(UserConfig.self, from: data)
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let config = try UserConfig(from: dictionary)
         let variable = config.variables["jsonVar"]
-        let json = (variable?.value as! [String: Variable.JSONValue])
+        let json = (variable?.value as! [String: Any])
         let nestedJson = json["key2"]
         XCTAssert(variable?.key == "jsonVar")
         XCTAssert(variable?.type == "JSON")
