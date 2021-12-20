@@ -123,12 +123,12 @@ public class DVCClient {
     }
 
     public func flushEvents() {
-        self.service?.publishEvents(events: self.eventQueue, user: self.user!, completion: { [weak self] success, error in
+        self.service?.publishEvents(events: self.eventQueue, user: self.user!, completion: { [weak self] data, response, error in
             if let error = error {
                 print("Error: \(error)")
                 return
             }
-            print("Sent: \(String(describing: self?.eventQueue.count)) events")
+            print("Submitted: \(String(describing: self?.eventQueue.count)) events")
             self?.eventQueue = []
         })
     }
