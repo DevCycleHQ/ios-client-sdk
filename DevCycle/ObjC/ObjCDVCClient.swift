@@ -50,6 +50,44 @@ public class ObjCDVCClient: NSObject {
             block?(err)
         }
     }
+
+    /**
+     public func variable<T>(key: String, defaultValue: T) throws -> DVCVariable<T> {
+         var variable: DVCVariable<T>
+         if let config = self.config?.userConfig,
+            let variableFromApi = config.variables[key] {
+             variable = try DVCVariable(from: variableFromApi, defaultValue: defaultValue)
+         } else {
+             variable = DVCVariable(key: key, type: String(describing: T.self), value: nil, defaultValue: defaultValue, evalReason: nil)
+         }
+         
+         // TODO: add config handler that will update the variable when the config returns
+         
+         return variable
+     }
+     */
+    
+    @objc public func variable(key: String, defaultValue: Any) -> ObjCDVCVariable {
+        var variable: ObjCDVCVariable
+        if let variableFromConfig = self.client?.config?.userConfig?.variables[key] {
+            variable = ObjCDVCVariable(key: key, type: variableFromConfig.type, evalReason: variableFromConfig.evalReason, value: variableFromConfig.value, defaultValue: defaultValue)
+        } else {
+            variable = ObjCDVCVariable(key: key, type: nil, evalReason: nil, value: nil, defaultValue: defaultValue)
+        }
+        return variable
+    }
+    
+    @objc public func stringVariable(key: String, defaultValue: String) {
+
+    }
+    
+    @objc public func numberVariable(key: String, defaultValue: Double) {
+
+    }
+    
+    @objc public func jsonVariable(key: String, defaultValue: [String: Any]) {
+
+    }
     
     @objc(DVCClientBuilder)
     public class ObjCClientBuilder: NSObject {
