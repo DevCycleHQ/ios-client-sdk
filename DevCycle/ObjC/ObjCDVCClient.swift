@@ -77,18 +77,6 @@ public class ObjCDVCClient: NSObject {
         return variable
     }
     
-    @objc public func stringVariable(key: String, defaultValue: String) {
-
-    }
-    
-    @objc public func numberVariable(key: String, defaultValue: Double) {
-
-    }
-    
-    @objc public func jsonVariable(key: String, defaultValue: [String: Any]) {
-
-    }
-    
     @objc(DVCClientBuilder)
     public class ObjCClientBuilder: NSObject {
         @objc public var environmentKey: String?
