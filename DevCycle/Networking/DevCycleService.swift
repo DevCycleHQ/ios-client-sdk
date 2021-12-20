@@ -13,6 +13,8 @@ typealias CompletionHandler = (DataResponse) -> Void
 typealias Config = (config: UserConfig?, error: Error?)
 typealias ConfigCompletionHandler = (Config) -> Void
 
+typealias PublishEventsCompletionHandler = (DataResponse) -> Void
+
 struct NetworkingConstants {
     static let hostUrl = ".devcycle.com"
     static let sdkUrl = "https://sdk-api"
@@ -30,7 +32,7 @@ struct NetworkingConstants {
 
 protocol DevCycleServiceProtocol {
     func getConfig(completion: @escaping ConfigCompletionHandler)
-    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping ConfigCompletionHandler)
+    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler)
 }
 
 class DevCycleService: DevCycleServiceProtocol {
@@ -58,7 +60,7 @@ class DevCycleService: DevCycleServiceProtocol {
         }
     }
     
-    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping ConfigCompletionHandler) {
+    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
         var eventsRequest = createEventsRequest()
         let eventPayload = self.generateEventPayload(events, user.userId ?? "anonymous_user", self.config.userConfig?.featureVariationMap ?? [:])
         let requestBody: [String: Any] = [
@@ -72,12 +74,12 @@ class DevCycleService: DevCycleServiceProtocol {
         eventsRequest.httpBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
         
         self.makeRequest(request: eventsRequest) { data, response, error in
-            if let httpResponse = response as? HTTPURLResponse {
-                print("statusCode: \(httpResponse.statusCode)")
-                return
-            }
             if error != nil || data == nil {
                 print("Failed to Post Events!")
+                return
+            }
+            if let httpResponse = response as? HTTPURLResponse {
+                print("statusCode: \(httpResponse.statusCode)")
                 return
             }
         }
