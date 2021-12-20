@@ -85,12 +85,12 @@ extension DevCycleService {
             return nil
         }
         do {
-            let config: UserConfig = try JSONDecoder().decode(UserConfig.self, from: data)
+            let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+            let userConfig = try UserConfig(from: dictionary)
             cacheService.save(config: data)
-            return config
+            return userConfig
         } catch {
-            print("Failed to decode config")
-            print(error)
+            print("Failed to decode config: \(error)")
         }
         return nil
     }

@@ -92,8 +92,8 @@
     DVCClient *client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
         builder.environmentKey = @"my_env_key";
         builder.user = user;
-    }];
-    DVCVariable *variable = [client variableWithKey:@"my-key" defaultValue:@"default-value"];
+    } onInitialized:nil];
+    DVCVariable *variable = [client variableWithKey:@"my-key" defaultValue:@"default-value" error:&err];
     XCTAssertNotNil(variable);
     XCTAssertNil(variable.type);
     XCTAssertNil(variable.evalReason);

@@ -27,8 +27,11 @@ class CacheService: CacheServiceProtocol {
         let defaults = UserDefaults.standard
         var userConfig: UserConfig?
         var dvcUser: DVCUser?
-        if let data = defaults.object(forKey: CacheKeys.config) as? Data {
-            userConfig = try? JSONDecoder().decode(UserConfig.self, from: data)
+        if let data = defaults.object(forKey: CacheKeys.config) as? Data,
+           let dictionary = try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String:Any],
+           let config = try? UserConfig(from: dictionary)
+        {
+            userConfig = config
         }
         if let data = defaults.object(forKey: CacheKeys.user) as? Data {
             dvcUser = try? JSONDecoder().decode(DVCUser.self, from: data)

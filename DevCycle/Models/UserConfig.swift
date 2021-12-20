@@ -6,98 +6,98 @@
 
 import Foundation
 
-public struct UserConfig: Decodable {
+enum UserConfigError: Error {
+    case MissingInConfig(String)
+    case MissingProperty(String)
+}
+
+public struct UserConfig {
     var environment: KeyedProperty
     var featureVariationMap: [String: String]
     var features: [String: Feature]
     var variables: [String: Variable]
     var project: KeyedProperty
+    
+    init(from dictionary: [String:Any]) throws {
+        guard let environment = dictionary["environment"] as? [String: String] else { throw UserConfigError.MissingInConfig("environment") }
+        guard let project = dictionary["project"] as? [String: String] else { throw UserConfigError.MissingInConfig("project") }
+        guard let featureVariationMap = dictionary["featureVariationMap"] as? [String: String] else { throw UserConfigError.MissingInConfig("featureVariationMap") }
+        guard var featureMap = dictionary["features"] as? [String: Any] else { throw UserConfigError.MissingInConfig("features") }
+        guard var variablesMap = dictionary["variables"] as? [String: Any] else { throw UserConfigError.MissingInConfig("variables") }
+        self.environment = try KeyedProperty(from: environment, name: "environment")
+        self.project = try KeyedProperty(from: project, name: "project")
+        self.featureVariationMap = featureVariationMap
+        
+        let featureKeys = Array(featureMap.keys)
+        let variableKeys = Array(variablesMap.keys)
+        
+        for key in featureKeys {
+            if let featureDict = featureMap[key] as? [String:String]
+            {
+                let feature = try Feature(from: featureDict)
+                featureMap[key] = feature
+            }
+        }
+        
+        for key in variableKeys {
+            if let variableDict = variablesMap[key] as? [String:Any]
+            {
+                let variable = try Variable(from: variableDict)
+                variablesMap[key] = variable
+            }
+        }
+        
+        self.features = featureMap as! [String: Feature]
+        self.variables = variablesMap as! [String: Variable]
+    }
 }
 
-public struct KeyedProperty: Decodable {
+public struct KeyedProperty {
     var key: String
     var _id: String
+    
+    init (from dictionary: [String: String], name: String) throws {
+        guard let key = dictionary["key"] else { throw UserConfigError.MissingProperty("key in \(name)") }
+        guard let id = dictionary["_id"] else { throw UserConfigError.MissingProperty("_id in \(name)") }
+        self.key = key
+        self._id = id
+    }
 }
 
-public struct Feature: Decodable {
+public struct Feature {
     var _id: String
     var _variation: String
     var key: String
     var type: String
+    
+    init (from dictionary: [String: String]) throws {
+        guard let id = dictionary["_id"] else { throw UserConfigError.MissingProperty("_id in Feature object") }
+        guard let variation = dictionary["_variation"] else { throw UserConfigError.MissingProperty("_variation in Feature object") }
+        guard let key = dictionary["key"] else { throw UserConfigError.MissingProperty("key in Feature object") }
+        guard let type = dictionary["type"] else { throw UserConfigError.MissingProperty("type in Feature object") }
+        self._id = id
+        self._variation = variation
+        self.key = key
+        self.type = type
+    }
 }
 
-public struct Variable: Decodable {
+public struct Variable {
     var _id: String
     var key: String
     var type: String
     var value: Any
     var evalReason: String?
     
-    enum CodingKeys: String, CodingKey {
-        case _id
-        case key
-        case type
-        case value
-    }
-    
-    enum JSONValue: Decodable {
-        case string(String)
-        case bool(Bool)
-        case number(Double)
-        case json([String:JSONValue])
-        
-        public init(from decoder: Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            if let doubleValue = try? container.decode(Double.self) {
-                self = .number(doubleValue)
-                return
-            }
-            if let stringValue = try? container.decode(String.self) {
-                self = .string(stringValue)
-                return
-            }
-            if let boolValue = try? container.decode(Bool.self) {
-                self = .bool(boolValue)
-                return
-            }
-            if let jsonValue = try? container.decode([String:JSONValue].self) {
-                self = .json(jsonValue)
-                return
-            }
-            throw DecodingError.typeMismatch(JSONValue.self, DecodingError.Context.init(codingPath: [CodingKeys.value], debugDescription: "Couldn't find type to cast JSON value to", underlyingError: nil))
-        }
-
-        func get() -> Any {
-            switch self {
-            case .number(let num):
-                return num
-            case .json(let json):
-                return json
-            case .bool(let bool):
-                return bool
-            case .string(let string):
-                return string
-            }
-        }
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        _id = try container.decode(String.self, forKey: ._id)
-        key = try container.decode(String.self, forKey: .key)
-        type = try container.decode(String.self, forKey: .type)
-        
-        switch type {
-        case "JSON":
-            value = try container.decode([String:JSONValue].self, forKey: .value)
-        case "Boolean":
-            value = try container.decode(Bool.self, forKey: .value)
-        case "Number":
-            value = try container.decode(Double.self, forKey: .value)
-        case "String":
-            value = try container.decode(String.self, forKey: .value)
-        default:
-            value = try container.decode(String.self, forKey: .value)
-        }
+    init (from dictionary: [String: Any]) throws {
+        guard let id = dictionary["_id"] as? String else { throw UserConfigError.MissingProperty("_id in Variable object") }
+        guard let key = dictionary["key"] as? String else { throw UserConfigError.MissingProperty("key in Variable object") }
+        guard let type = dictionary["type"] as? String else { throw UserConfigError.MissingProperty("type in Variable object") }
+        guard let value = dictionary["value"] else { throw UserConfigError.MissingProperty("value in Variable object") }
+        self._id = id
+        self.key = key
+        self.type = type
+        self.value = value
+        self.evalReason = dictionary["evalReason"] as? String
     }
 }
