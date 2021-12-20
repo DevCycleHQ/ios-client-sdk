@@ -29,7 +29,7 @@ public class DVCClient {
     /**
         Method to initialize the Client object after building
      */
-    public func initialize(callback: ClientInitializedHandler?) {
+    func initialize(callback: ClientInitializedHandler?) {
         guard let user = self.user, let environmentKey = self.environmentKey else {
             callback?(ClientError.MissingEnvironmentKeyOrUser)
             return
@@ -121,7 +121,7 @@ public class DVCClient {
             return self
         }
         
-        public func build() throws -> DVCClient {
+        public func build(onInitialized: ClientInitializedHandler?) throws -> DVCClient {
             guard self.client.environmentKey != nil else {
                 print("Missing Environment Key")
                 throw ClientError.MissingEnvironmentKeyOrUser
@@ -133,6 +133,7 @@ public class DVCClient {
             
             let result = self.client
             self.client = DVCClient()
+            self.client.initialize(callback: onInitialized)
             return result
         }
     }

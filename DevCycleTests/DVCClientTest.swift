@@ -12,18 +12,18 @@ class DVCClientTest: XCTestCase {
         let user = try! DVCUser.builder()
                     .userId("my_user")
                     .build()
-        XCTAssertNil(try? DVCClient.builder().user(user).build())
+        XCTAssertNil(try? DVCClient.builder().user(user).build(onInitialized: nil))
     }
     
     func testBuilderReturnsNilIfNoUser() {
-        XCTAssertNil(try? DVCClient.builder().environmentKey("my_env_key").build())
+        XCTAssertNil(try? DVCClient.builder().environmentKey("my_env_key").build(onInitialized: nil))
     }
     
     func testBuilderReturnsClient() {
         let user = try! DVCUser.builder()
                     .userId("my_user")
                     .build()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").build()
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").build(onInitialized: nil)
         XCTAssertNotNil(client)
         XCTAssertNotNil(client.user)
         XCTAssertNotNil(client.environmentKey)
@@ -41,7 +41,7 @@ class DVCClientTest: XCTestCase {
     func testBuilderReturnsClientWithOptions() {
         let user = getTestUser()
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(100).build()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build()
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
         XCTAssertNotNil(client)
         XCTAssertNotNil(client.options)
         XCTAssertNotNil(client.user)
