@@ -64,16 +64,59 @@ class DVCClientTest: XCTestCase {
         client.track(event)
         XCTAssertTrue(client.eventQueue.count == 1)
     }
+    
+    func testFlushEventsWithOneEventInQueue() {
+        let user = getTestUser()
+        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build()
+        let service = MockService() // will assert if publishEvents was called
+        client.setEnvironmentKey("")
+        client.setUser(getTestUser())
+        client.setup(service: service)
+        let event: DVCEvent = DVCEvent(type: "test")
+        
+        client.track(event)
+        XCTAssertTrue(client.eventQueue.count == 1)
+        client.flushEvents()
+        XCTAssertTrue(service.publishCallCount == 1)
+    }
+    
+    func testPeriodicFlushEventsWithSomeEventsInQueue() {
+        let user = getTestUser()
+        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(500).build()
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build()
+        let service = MockService() // will assert if publishEvents was called
+        client.setEnvironmentKey("")
+        client.setUser(getTestUser())
+        client.setup(service: service)
+        let event: DVCEvent = DVCEvent(type: "test")
+        
+        client.track(event)
+        client.track(event)
+        client.track(event)
+        XCTAssertTrue(client.eventQueue.count == 3)
+        let expec = expectation(description: "Timer expectation") // create an expectation
+        service.publishEvents(events: client.eventQueue, user: user, completion: { data, response, error in
+            expec.fulfill()
+        })
+        // wait for fulfilling every expectation (in this case only one), timeout must be greater than the timer interval
+        wait(for: [expec], timeout: 1.0)
+        XCTAssertTrue(service.publishCallCount == 1)
+    }
 }
 
 extension DVCClientTest {
     class MockService: DevCycleServiceProtocol {
+        public var publishCallCount: Int = 0
+        
         func getConfig(completion: @escaping ConfigCompletionHandler) {
             XCTAssert(true)
         }
 
-        func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping ConfigCompletionHandler) {
+        func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
+            self.publishCallCount += 1
             XCTAssert(true)
+            completion((data: nil, urlResponse: nil, error: nil))
         }
     }
     
