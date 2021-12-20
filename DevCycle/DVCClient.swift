@@ -20,6 +20,8 @@ public class DVCClient {
     var user: DVCUser?
     var config: DVCConfig?
     var options: DVCOptions?
+    var configCompletionHandlers: [ClientInitializedHandler] = []
+    var initialized: Bool = false
     var eventQueue: [DVCEvent] = []
     
     private var service: DevCycleServiceProtocol?
@@ -36,7 +38,6 @@ public class DVCClient {
         }
         self.config = DVCConfig(environmentKey: environmentKey, user: user)
         let service = DevCycleService(config: self.config!, cacheService: self.cacheService)
-        service.cacheService = cacheService
         self.setup(service: service, callback: callback)
     }
     
@@ -50,12 +51,17 @@ public class DVCClient {
             if let error = error {
                 print("Error: \(error)")
                 self.cache = self.cacheService.load()
-                callback?(error)
-                return
+            } else {
+                print("Config: \(String(describing: config))")
+                self.config?.userConfig = config
             }
-            self.config?.userConfig = config
-            callback?(nil)
-            print("Config: \(config!)")
+            
+            for handler in self.configCompletionHandlers {
+                handler(error)
+            }
+            callback?(error)
+            self.initialized = true
+            self.configCompletionHandlers = []
         })
     }
     
@@ -84,7 +90,13 @@ public class DVCClient {
             variable = DVCVariable(key: key, type: String(describing: T.self), value: nil, defaultValue: defaultValue, evalReason: nil)
         }
         
-        // TODO: add config handler that will update the variable when the config returns
+        if (!self.initialized) {
+            self.configCompletionHandlers.append { error in
+                if let variableFromApi = self.config?.userConfig?.variables[key] {
+                    try? variable.update(from: variableFromApi)
+                }
+            }
+        }
         
         return variable
     }
