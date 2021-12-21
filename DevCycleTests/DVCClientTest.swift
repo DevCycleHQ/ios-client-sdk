@@ -68,7 +68,7 @@ class DVCClientTest: XCTestCase {
     func testFlushEventsWithOneEventInQueue() {
         let user = getTestUser()
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build()
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
         let service = MockService() // will assert if publishEvents was called
         client.setEnvironmentKey("")
         client.setUser(getTestUser())
@@ -84,7 +84,7 @@ class DVCClientTest: XCTestCase {
     func testPeriodicFlushEventsWithSomeEventsInQueue() {
         let user = getTestUser()
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(500).build()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build()
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
         let service = MockService() // will assert if publishEvents was called
         client.setEnvironmentKey("")
         client.setUser(getTestUser())

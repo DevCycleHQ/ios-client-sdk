@@ -58,7 +58,7 @@
     DVCClient *client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
         builder.environmentKey = @"my_env_key";
         builder.user = user;
-    }];
+    } onInitialized: nil];
     DVCVariable *variable = [client variableWithKey:@"my-key" defaultValue:@"default-value"];
     XCTAssertNotNil(variable);
     XCTAssertNil(variable.type);
