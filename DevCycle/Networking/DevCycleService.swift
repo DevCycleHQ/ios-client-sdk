@@ -62,7 +62,12 @@ class DevCycleService: DevCycleServiceProtocol {
     
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
         var eventsRequest = createEventsRequest()
-        let eventPayload = self.generateEventPayload(events, user.userId ?? "anonymous_user", self.config.userConfig?.featureVariationMap ?? [:])
+        guard let userId = user.userId, let featureVariationMap = self.config.userConfig?.featureVariationMap else {
+            return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
+        }
+
+        let eventPayload = self.generateEventPayload(events, userId, featureVariationMap)
+        
         let requestBody: [String: Any] = [
             "events": eventPayload,
             "user": user
@@ -132,12 +137,12 @@ class DevCycleService: DevCycleServiceProtocol {
         return urlComponents
     }
     
-    private func generateEventPayload(_ events: [DVCEvent], _ user_id: String, _ featureVariables: [String: String]) -> Any {
+    private func generateEventPayload(_ events: [DVCEvent], _ userId: String, _ featureVariables: [String: String]) -> Any {
         var eventsJSON: [Any] = []
         
         for event in events {
             let eventDate: Date = event.date ?? Date()
-            let eventToPost: DVCEvent = DVCEvent(type: event.type, target: event.target, clientDate: eventDate, value: event.value, metaData: event.metaData, user_id: user_id, date: Date(), featureVars: featureVariables)
+            let eventToPost: DVCEvent = DVCEvent(type: event.type, target: event.target, clientDate: eventDate, value: event.value, metaData: event.metaData, user_id: userId, date: Date(), featureVars: featureVariables)
             guard let encodedEventData = try? JSONSerialization.data(withJSONObject: eventToPost, options: []) else {
                 continue
             }
