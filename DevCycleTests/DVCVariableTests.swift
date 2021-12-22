@@ -135,5 +135,19 @@ class DVCVariableTests: XCTestCase {
         let variableFromApi = try JSONDecoder().decode(Variable.self, from: data)
         XCTAssertThrowsError(try DVCVariable(from: variableFromApi, defaultValue: 4))
     }
+    
+    func testThrowsIfValueFromUpdateDoesntMatchDefaultValue() throws {
+        let data = """
+        {
+            "_id": "variable_id",
+            "key": "my_key",
+            "type": "String",
+            "value": "my_value"
+        }
+        """.data(using: .utf8)!
+        let variableFromApi = try JSONDecoder().decode(Variable.self, from: data)
+        let variable = DVCVariable(key: "my_key", type: "Number", value: nil, defaultValue: 4, evalReason: nil)
+        XCTAssertThrowsError(try variable.update(from: variableFromApi))
+    }
 
 }
