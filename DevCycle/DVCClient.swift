@@ -26,6 +26,7 @@ public class DVCClient {
     var initialized: Bool = false
     var eventQueue: [DVCEvent] = []
     
+    private let defaultFlushInterval: Int = 10000
     private var service: DevCycleServiceProtocol?
     private var cacheService: CacheServiceProtocol = CacheService()
     private var cache: Cache?
@@ -66,7 +67,7 @@ public class DVCClient {
             self.configCompletionHandlers = []
         })
 
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(((options?.flushEventsIntervalMs ?? 10000)/100)), repeats: true) { timer in
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(((options?.flushEventsIntervalMs ?? self.defaultFlushInterval)/100)), repeats: true) { timer in
             self.flushEvents()
         }
     }
