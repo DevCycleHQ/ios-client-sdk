@@ -36,6 +36,7 @@ public class DVCVariable<T> {
         guard let value = variable.value as? T else {
             throw VariableError.DefaultValueAndValueTypeMismatch
         }
+        
         self.key = variable.key
         self.value = value
         self.defaultValue = defaultValue

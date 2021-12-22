@@ -51,17 +51,17 @@ public class ObjCDVCClient: NSObject {
         }
     }
     
-    @objc public func variable(key: String, defaultValue: Any) -> ObjCDVCVariable {
+    @objc public func variable(key: String, defaultValue: Any) throws -> ObjCDVCVariable {
         var variable: ObjCDVCVariable
         if let variableFromConfig = self.client?.config?.userConfig?.variables[key] {
-            variable = ObjCDVCVariable(key: key, type: variableFromConfig.type, evalReason: variableFromConfig.evalReason, value: variableFromConfig.value, defaultValue: defaultValue)
+            variable = try ObjCDVCVariable(key: key, type: variableFromConfig.type, evalReason: variableFromConfig.evalReason, value: variableFromConfig.value, defaultValue: defaultValue)
         } else {
-            variable = ObjCDVCVariable(key: key, type: nil, evalReason: nil, value: nil, defaultValue: defaultValue)
+            variable = try ObjCDVCVariable(key: key, type: nil, evalReason: nil, value: nil, defaultValue: defaultValue)
         }
         
         client?.configCompletionHandlers.append({ error in
             if let variableFromApi = self.client?.config?.userConfig?.variables[key] {
-                variable.update(from: variableFromApi)
+                try? variable.update(from: variableFromApi)
             }
         })
         
