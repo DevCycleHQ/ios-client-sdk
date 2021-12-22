@@ -154,9 +154,8 @@
 		5268DB5A27501CFC00D17A40 /* DevCycleTests */ = {
 			isa = PBXGroup;
 			children = (
+				529F0C8E277373D10075AAB4 /* ObjC */,
 				5264A78C2768E87C00FEDB43 /* Models */,
-				5264A782275FB4E700FEDB43 /* ObjcDVCUserTests.m */,
-				5264A77E275EACA300FEDB43 /* ObjCDVCClientTests.m */,
 				524F4E61276D20A500CB9069 /* DVCVariableTests.swift */,
 				5268DB6A275020F800D17A40 /* DVCClientTest.swift */,
 				5268DB68275020D900D17A40 /* DVCUserTest.swift */,
