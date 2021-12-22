@@ -58,25 +58,6 @@
     DVCClient *client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
         builder.environmentKey = @"my_env_key";
         builder.user = user;
-    } onInitialized: nil];
-    DVCVariable *variable = [client variableWithKey:@"my-key" defaultValue:@"default-value"];
-    XCTAssertNotNil(variable);
-    XCTAssertNil(variable.type);
-    XCTAssertNil(variable.evalReason);
-    XCTAssertEqual(variable.value, @"default-value");
-    XCTAssertEqual(variable.defaultValue, @"default-value");
-}
-
-#pragma mark - Variable Tests
-
-- (void)testVariableIsCreated {
-    NSError *err = nil;
-    DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder *builder) {
-        builder.userId = @"my_user";
-    }];
-    DVCClient *client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
-        builder.environmentKey = @"my_env_key";
-        builder.user = user;
     } onInitialized:nil];
     DVCVariable *variable = [client variableWithKey:@"my-key" defaultValue:@"default-value" error:&err];
     XCTAssertNotNil(variable);
