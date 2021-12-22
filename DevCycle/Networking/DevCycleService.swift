@@ -103,19 +103,22 @@ class DevCycleService: DevCycleServiceProtocol {
     
     func createConfigRequest(user: DVCUser) -> URLRequest {
         let userQueryItems: [URLQueryItem] = user.toQueryItems()
-        let urlComponents: URLComponents = createRequestUrl("config", userQueryItems)
+        let urlComponents: URLComponents = createRequestUrl(type: "config", userQueryItems)
         let url = urlComponents.url!
         return URLRequest(url: url)
     }
     
     func createEventsRequest() -> URLRequest {
-        let urlComponents: URLComponents = createRequestUrl("event", nil)
+        let urlComponents: URLComponents = createRequestUrl(type: "event")
         let url = urlComponents.url!
         return URLRequest(url: url)
     }
     
-    private func createRequestUrl(_ type: String, _ queryItems: [URLQueryItem]?) -> URLComponents {
+    private func createRequestUrl(type: String, _ queryItems: [URLQueryItem] = []) -> URLComponents {
         var url: String
+        var querySpecificItems: [URLQueryItem] = queryItems
+        querySpecificItems.append(URLQueryItem(name: "envKey", value: config.environmentKey))
+        
         switch(type) {
         case "event":
             url = NetworkingConstants.eventsUrl + NetworkingConstants.hostUrl
@@ -127,13 +130,7 @@ class DevCycleService: DevCycleServiceProtocol {
             url.append("\(NetworkingConstants.UrlPaths.config)")
         }
         var urlComponents: URLComponents = URLComponents(string: url)!
-        if (queryItems != nil && queryItems?.isEmpty == false) {
-            var querySpecificItems: [URLQueryItem] = queryItems ?? []
-            querySpecificItems.append(URLQueryItem(name: "envKey", value: config.environmentKey))
-            urlComponents.queryItems = querySpecificItems
-        } else {
-            urlComponents.queryItems = [URLQueryItem(name: "envKey", value: config.environmentKey)]
-        }
+        urlComponents.queryItems = querySpecificItems
         return urlComponents
     }
     

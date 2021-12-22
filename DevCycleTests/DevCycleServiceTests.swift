@@ -8,10 +8,18 @@ import XCTest
 @testable import DevCycle
 
 class DevCycleServiceTests: XCTestCase {
-    func testCreateGetURLRequest() throws {
+    func testCreateConfigURLRequest() throws {
         let url = getService().createConfigRequest(user: getTestUser()).url?.absoluteString
+        XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/sdkConfig"))
         XCTAssert(url!.contains("envKey=my_env_key"))
         XCTAssert(url!.contains("user_id=my_user"))
+    }
+    
+    func testCreateEventURLRequest() throws {
+        let url = getService().createEventsRequest().url?.absoluteString
+        XCTAssert(url!.contains("https://events.devcycle.com/v1/events"))
+        XCTAssert(url!.contains("envKey=my_env_key"))
+        XCTAssertFalse(url!.contains("user_id=my_user"))
     }
     
     func testProcessConfigReturnsNilIfMissingProperties() throws {
@@ -67,8 +75,8 @@ extension DevCycleServiceTests {
         func save(config: Data) {
             self.saveConfigCalled = true
         }
-        
     }
+
     func getService() -> DevCycleService {
         let user = getTestUser()
         let config = DVCConfig(environmentKey: "my_env_key", user: user)
