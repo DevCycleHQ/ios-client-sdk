@@ -16,6 +16,7 @@ enum ClientError: Error {
 }
 
 public typealias ClientInitializedHandler = (Error?) -> Void
+public typealias IdentifyCompletedHandler = (Error?, [String: Variable]?) -> Void
 
 public class DVCClient {
     var environmentKey: String?
@@ -49,8 +50,12 @@ public class DVCClient {
         Setup client with the DevCycleService and the callback
      */
     func setup(service: DevCycleServiceProtocol, callback: ClientInitializedHandler? = nil) {
+        guard let user = self.user else {
+            callback?(ClientError.MissingEnvironmentKeyOrUser)
+            return
+        }
         self.service = service
-        self.service?.getConfig(completion: { [weak self] config, error in
+        self.service?.getConfig(user: user, completion: { [weak self] config, error in
             guard let self = self else { return }
             if let error = error {
                 print("Error: \(error)")
@@ -85,8 +90,29 @@ public class DVCClient {
         self.options = options
     }
     
-    public func identifyUser() throws -> String {
-        throw ClientError.NotImplemented
+    public func identifyUser(user: DVCUser, callback: IdentifyCompletedHandler? = nil) throws {
+        guard let currentUser = self.user, let userId = currentUser.userId, let incomingUserId = user.userId else {
+            throw ClientError.InvalidUser
+        }
+        var updateUser: DVCUser = currentUser
+        if (userId == incomingUserId) {
+            updateUser.update(with: user)
+        } else {
+            updateUser = user
+        }
+        
+        self.service?.getConfig(user: updateUser, completion: { [weak self] config, error in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error: \(error)")
+                self.cache = self.cacheService.load()
+            } else {
+                print("Config: \(String(describing: config))")
+                self.config?.userConfig = config
+            }
+            self.cacheService.save(user: user)
+            callback?(error, config?.variables)
+        })
     }
     
     public func variable<T>(key: String, defaultValue: T) throws -> DVCVariable<T> {
@@ -158,7 +184,7 @@ public class DVCClient {
             return self
         }
         
-        public func build(onInitialized: ClientInitializedHandler?) throws -> DVCClient {
+        public func build(_ onInitialized: ClientInitializedHandler?) throws -> DVCClient {
             guard self.client.environmentKey != nil else {
                 print("Missing Environment Key")
                 throw ClientError.MissingEnvironmentKeyOrUser
@@ -169,8 +195,8 @@ public class DVCClient {
             }
             
             let result = self.client
+            result.initialize(callback: onInitialized)
             self.client = DVCClient()
-            self.client.initialize(callback: onInitialized)
             return result
         }
     }

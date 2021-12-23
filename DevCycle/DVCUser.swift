@@ -41,6 +41,18 @@ public class DVCUser: Codable {
         self.sdkVersion = "0.0.1"
     }
     
+    public func update(with user: DVCUser) {
+        self.lastSeenDate = Date()
+        self.email = user.email
+        self.name = user.name
+        self.language = user.language
+        self.country = user.country
+        self.appVersion = user.appVersion
+        self.appBuild = user.appBuild
+        self.customData = user.customData
+        self.publicCustomData = user.publicCustomData
+    }
+    
     public class UserBuilder {
         var user: DVCUser
         
