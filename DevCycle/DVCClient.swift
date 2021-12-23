@@ -139,12 +139,12 @@ public class DVCClient {
         throw ClientError.NotImplemented
     }
 
-    public func allFeatures() throws -> String {
-        throw ClientError.NotImplemented
+    public func allFeatures() -> [String: Feature] {
+        return self.config?.userConfig?.features ?? [:]
     }
 
-    public func allVariables() throws -> String {
-        throw ClientError.NotImplemented
+    public func allVariables() -> [String: Variable] {
+        return self.config?.userConfig?.variables ?? [:]
     }
 
     public func track(_ event: DVCEvent) {
