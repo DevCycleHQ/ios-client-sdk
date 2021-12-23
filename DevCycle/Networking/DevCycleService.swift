@@ -31,7 +31,7 @@ struct NetworkingConstants {
 }
 
 protocol DevCycleServiceProtocol {
-    func getConfig(completion: @escaping ConfigCompletionHandler)
+    func getConfig(user:DVCUser, completion: @escaping ConfigCompletionHandler)
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler)
 }
 
@@ -48,14 +48,15 @@ class DevCycleService: DevCycleServiceProtocol {
         self.cacheService = cacheService
     }
     
-    func getConfig(completion: @escaping ConfigCompletionHandler) {
-        cacheService.save(user: config.user)
-        let configRequest = createConfigRequest(user: config.user)
-        self.makeRequest(request: configRequest) { response in
+    func getConfig(user: DVCUser, completion: @escaping ConfigCompletionHandler) {
+        let configRequest = createConfigRequest(user: user)
+        self.makeRequest(request: configRequest) { [weak self] response in
+            guard let self = self else { return }
             guard let config = self.processConfig(response.data) else {
                 completion((nil, response.error))
                 return
             }
+            self.cacheService.save(user: user)
             completion((config, response.error))
         }
     }

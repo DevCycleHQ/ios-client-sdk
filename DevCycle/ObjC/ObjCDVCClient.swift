@@ -33,7 +33,7 @@ public class ObjCDVCClient: NSObject {
         guard let client = try? DVCClient.builder()
                 .environmentKey(environmentKey)
                 .user(user)
-                .build(onInitialized: onIntialized)
+                .build(onIntialized)
         else {
             print("Error creating client")
             throw ObjCClientErrors.InvalidClient
