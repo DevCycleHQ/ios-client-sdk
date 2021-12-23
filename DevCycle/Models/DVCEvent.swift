@@ -12,7 +12,12 @@ public struct DVCEvent {
     var clientDate: Date?
     var value: Int?
     var metaData: [String: Any]?
-    var user_id: String?
-    var date: Date?
-    var featureVars: [String: String]?
+    
+    public init (type: String, target: String?, clientDate: Date?, value: Int?, metaData: [String: Any]?) {
+        self.type =  type
+        if (target != nil) {self.target = target}
+        if (clientDate != nil) {self.clientDate = clientDate}
+        if (value != nil) {self.value = value}
+        if (metaData != nil) {self.metaData = metaData}
+    }
 }

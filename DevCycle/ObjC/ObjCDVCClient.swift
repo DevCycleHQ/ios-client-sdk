@@ -82,7 +82,7 @@ public class ObjCDVCClient: NSObject {
     }
     
     @objc public func track(_ event: ObjCDVCEvent) {
-        let dvcEvent: DVCEvent = DVCEvent(type: event.type, target: event.target ?? nil, clientDate: event.date as Date? ?? Date(), value: (event.value as! Int), metaData: (event.metaData as! [String: Any]), user_id: nil, date: Date(), featureVars: nil)
+        let dvcEvent: DVCEvent = DVCEvent(type: event.type, target: event.target ?? nil, clientDate: event.date as Date? ?? Date(), value: (event.value as! Int), metaData: (event.metaData as! [String: Any]))
         self.client?.track(dvcEvent)
     }
     

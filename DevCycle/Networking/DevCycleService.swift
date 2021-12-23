@@ -143,17 +143,27 @@ class DevCycleService: DevCycleServiceProtocol {
     
     private func generateEventPayload(_ events: [DVCEvent], _ userId: String, _ featureVariables: [String: String]) -> Any {
         var eventsJSON: [Any] = []
+        let formatter = ISO8601DateFormatter()
         
         for event in events {
-            let eventDate: Date = event.date ?? Date()
-            let eventToPost: DVCEvent = DVCEvent(type: event.type, target: event.target, clientDate: eventDate, value: event.value, metaData: event.metaData, user_id: userId, date: Date(), featureVars: featureVariables)
+            let eventDate: Date = event.clientDate ?? Date()
+            var eventToPost: [String: Any] = [
+                "type": event.type,
+                "clientDate": formatter.string(from: eventDate),
+                "user_id": userId,
+                "featureVars": featureVariables
+            ]
+
+            if(event.target != nil) {eventToPost["target"] = event.target }
+            if(event.value != nil) { eventToPost["value"] = event.value }
+            if(event.metaData != nil) { eventToPost["metaData"] = event.metaData }
             guard let encodedEventData = try? JSONSerialization.data(withJSONObject: eventToPost, options: []) else {
                 continue
             }
             
             eventsJSON.append(encodedEventData)
         }
-        
+
         return eventsJSON
     }
 }
