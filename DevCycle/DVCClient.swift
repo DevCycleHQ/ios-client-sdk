@@ -137,20 +137,22 @@ public class DVCClient {
     
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
         self.cache = cacheService.load()
-        print("Cache: \(self.cache)")
+        var anonUser: DVCUser
+        if let cachedAnonUser = self.cache?.anonUser {
+            anonUser = cachedAnonUser
+        } else {
+            anonUser = try DVCUser.builder().isAnonymous(true).build()
+        }
         
-//        self.service?.getConfig(user: updateUser, completion: { [weak self] config, error in
-//            guard let self = self else { return }
-//            if let error = error {
-//                print("Error: \(error)")
-//                self.cache = self.cacheService.load()
-//            } else {
-//                print("Config: \(String(describing: config))")
-//                self.config?.userConfig = config
-//            }
-//            self.cacheService.save(user: user, anonymous: true)
-//            callback?(error, config?.variables)
-//        })
+        self.service?.getConfig(user: anonUser, completion: { [weak self] config, error in
+            guard let self = self else { return }
+            if (error == nil) {
+                print("Config: \(String(describing: config))")
+                self.config?.userConfig = config
+            }
+            self.cacheService.save(user: anonUser, anonymous: true)
+            callback?(error, config?.variables)
+        })
     }
 
     public func allFeatures() -> [String: Feature] {
