@@ -109,7 +109,7 @@ extension DVCClientTest {
     class MockService: DevCycleServiceProtocol {
         public var publishCallCount: Int = 0
         
-        func getConfig(completion: @escaping ConfigCompletionHandler) {
+        func getConfig(user: DVCUser, completion: @escaping ConfigCompletionHandler) {
             XCTAssert(true)
         }
 
