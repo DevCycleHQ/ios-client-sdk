@@ -184,7 +184,7 @@ public class DVCClient {
             return self
         }
         
-        public func build(_ onInitialized: ClientInitializedHandler?) throws -> DVCClient {
+        public func build(onInitialized: ClientInitializedHandler?) throws -> DVCClient {
             guard self.client.environmentKey != nil else {
                 print("Missing Environment Key")
                 throw ClientError.MissingEnvironmentKeyOrUser
