@@ -71,11 +71,13 @@ class DevCycleService: DevCycleServiceProtocol {
         }
 
         let eventPayload = self.generateEventPayload(events, userId, featureVariationMap)
-        let userBody = try? JSONSerialization.jsonObject(with: userData, options: .fragmentsAllowed)
+        guard let userBody = try? JSONSerialization.jsonObject(with: userData, options: .fragmentsAllowed) else {
+            return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
+        }
         
         let requestBody: [String: Any] = [
             "events": eventPayload,
-            "user": user
+            "user": userBody
         ]
         
         eventsRequest.httpMethod = "POST"
