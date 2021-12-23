@@ -38,9 +38,7 @@ class DevCycleServiceTests: XCTestCase {
     
     func testServiceSavesConfigToCache() throws {
         let service = getService()
-        let bundle = Bundle(for: type(of: self))
-        let fileUrl = bundle.url(forResource: "test_config", withExtension: "json")
-        let data = try! Data(contentsOf: fileUrl!)
+        let data = getConfigData()
         let config = service.processConfig(data)
         XCTAssertNotNil(config)
         XCTAssert((service.cacheService as! MockCacheService).saveConfigCalled)
@@ -48,13 +46,20 @@ class DevCycleServiceTests: XCTestCase {
     
     func testServiceSavesUserToCache() throws {
         let service = getService()
-        let data = "{\"config\":\"key}".data(using: .utf8)
-        let config = service.processConfig(data)
-        service.getConfig { config in
-            //
+        let data = getConfigData()
+        
+        let mockSession = URLSessionMock()
+        mockSession.data = data
+        service.session = mockSession
+        let exp = expectation(description: "Saves user to cache")
+        
+        let user = try! DVCUser.builder().userId("dummy_user").build()
+        service.getConfig(user: user) { config in
+            XCTAssert((service.cacheService as! MockCacheService).saveUserCalled)
+            exp.fulfill()
         }
-        XCTAssertNil(config)
-        XCTAssert((service.cacheService as! MockCacheService).saveUserCalled)
+        
+        waitForExpectations(timeout:  2)
     }
 }
 
@@ -88,4 +93,12 @@ extension DevCycleServiceTests {
             .userId("my_user")
             .build()
     }
+    
+    func getConfigData() -> Data {
+        let bundle = Bundle(for: type(of: self))
+        let fileUrl = bundle.url(forResource: "test_config", withExtension: "json")
+        return try! Data(contentsOf: fileUrl!)
+    }
 }
+
+
