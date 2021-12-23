@@ -50,7 +50,7 @@ class DVCClientTest: XCTestCase {
     
     func testTrackWithValidDVCEventNoOptionals() {
         let client = DVCClient()
-        let event: DVCEvent = DVCEvent(type: "test")
+        let event: DVCEvent = DVCEvent(type: "test", target: nil, clientDate: Date(), value: nil, metaData: nil)
         
         client.track(event)
         XCTAssertTrue(client.eventQueue.count == 1)
@@ -73,7 +73,7 @@ class DVCClientTest: XCTestCase {
         client.setEnvironmentKey("")
         client.setUser(getTestUser())
         client.setup(service: service)
-        let event: DVCEvent = DVCEvent(type: "test")
+        let event: DVCEvent = DVCEvent(type: "test", target: nil, clientDate: Date(), value: nil, metaData: nil)
         
         client.track(event)
         XCTAssertTrue(client.eventQueue.count == 1)
@@ -89,7 +89,7 @@ class DVCClientTest: XCTestCase {
         client.setEnvironmentKey("")
         client.setUser(getTestUser())
         client.setup(service: service)
-        let event: DVCEvent = DVCEvent(type: "test")
+        let event: DVCEvent = DVCEvent(type: "test", target: nil, clientDate: Date(), value: nil, metaData: nil)
         
         client.track(event)
         client.track(event)
