@@ -90,31 +90,6 @@ public class DVCClient {
         self.options = options
     }
     
-    public func identifyUser(user: DVCUser, callback: IdentifyCompletedHandler? = nil) throws {
-        guard let currentUser = self.user, let userId = currentUser.userId, let incomingUserId = user.userId else {
-            throw ClientError.InvalidUser
-        }
-        var updateUser: DVCUser = currentUser
-        if (userId == incomingUserId) {
-            updateUser.update(with: user)
-        } else {
-            updateUser = user
-        }
-        
-        self.service?.getConfig(user: updateUser, completion: { [weak self] config, error in
-            guard let self = self else { return }
-            if let error = error {
-                print("Error: \(error)")
-                self.cache = self.cacheService.load()
-            } else {
-                print("Config: \(String(describing: config))")
-                self.config?.userConfig = config
-            }
-            self.cacheService.save(user: user)
-            callback?(error, config?.variables)
-        })
-    }
-    
     public func variable<T>(key: String, defaultValue: T) throws -> DVCVariable<T> {
         var variable: DVCVariable<T>
         if let config = self.config?.userConfig,
@@ -135,8 +110,47 @@ public class DVCClient {
         return variable
     }
     
-    public func resetUser() throws -> String {
-        throw ClientError.NotImplemented
+    public func identifyUser(user: DVCUser, callback: IdentifyCompletedHandler? = nil) throws {
+        guard let currentUser = self.user, let userId = currentUser.userId, let incomingUserId = user.userId else {
+            throw ClientError.InvalidUser
+        }
+        var updateUser: DVCUser = currentUser
+        if (userId == incomingUserId) {
+            updateUser.update(with: user)
+        } else {
+            updateUser = user
+        }
+        
+        self.service?.getConfig(user: updateUser, completion: { [weak self] config, error in
+            guard let self = self else { return }
+            if let error = error {
+                print("Error: \(error)")
+                self.cache = self.cacheService.load()
+            } else {
+                print("Config: \(String(describing: config))")
+                self.config?.userConfig = config
+            }
+            self.cacheService.save(user: user, anonymous: user.isAnonymous ?? false)
+            callback?(error, config?.variables)
+        })
+    }
+    
+    public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
+        self.cache = cacheService.load()
+        print("Cache: \(self.cache)")
+        
+//        self.service?.getConfig(user: updateUser, completion: { [weak self] config, error in
+//            guard let self = self else { return }
+//            if let error = error {
+//                print("Error: \(error)")
+//                self.cache = self.cacheService.load()
+//            } else {
+//                print("Config: \(String(describing: config))")
+//                self.config?.userConfig = config
+//            }
+//            self.cacheService.save(user: user, anonymous: true)
+//            callback?(error, config?.variables)
+//        })
     }
 
     public func allFeatures() -> [String: Feature] {

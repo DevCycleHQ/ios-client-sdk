@@ -8,7 +8,7 @@ import Foundation
 
 protocol CacheServiceProtocol {
     func load() -> Cache
-    func save(user: DVCUser)
+    func save(user: DVCUser, anonymous: Bool)
     func save(config: Data)
 }
 
@@ -20,6 +20,7 @@ struct Cache {
 class CacheService: CacheServiceProtocol {
     struct CacheKeys {
         static let user = "user"
+        static let anonUser = "anon-user"
         static let config = "config"
     }
     
@@ -45,10 +46,13 @@ class CacheService: CacheServiceProtocol {
         defaults.set(config, forKey: CacheKeys.config)
     }
     
-    func save(user: DVCUser) {
+    func save(user: DVCUser, anonymous: Bool) {
         let defaults = UserDefaults.standard
         if let data = try? JSONEncoder().encode(user) {
             defaults.set(data, forKey: CacheKeys.user)
+            if (anonymous) {
+                defaults.set(data, forKey: CacheKeys.anonUser)
+            }
         }
     }
 }
