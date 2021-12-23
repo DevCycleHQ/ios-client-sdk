@@ -2,7 +2,6 @@
 //  DevCycleService.swift
 //  DevCycle
 //
-//  Created by Jason Salaber on 2021-11-30.
 //
 
 import Foundation
@@ -56,7 +55,7 @@ class DevCycleService: DevCycleServiceProtocol {
                 completion((nil, response.error))
                 return
             }
-            self.cacheService.save(user: user)
+            self.cacheService.save(user: user, anonymous: user.isAnonymous ?? false)
             completion((config, response.error))
         }
     }
@@ -66,8 +65,13 @@ class DevCycleService: DevCycleServiceProtocol {
         guard let userId = user.userId, let featureVariationMap = self.config.userConfig?.featureVariationMap else {
             return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
         }
+        
+        guard let userData = try? JSONEncoder().encode(user) else {
+            return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
+        }
 
         let eventPayload = self.generateEventPayload(events, userId, featureVariationMap)
+        let userBody = try? JSONSerialization.jsonObject(with: userData, options: .fragmentsAllowed)
         
         let requestBody: [String: Any] = [
             "events": eventPayload,

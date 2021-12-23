@@ -73,7 +73,7 @@ extension DevCycleServiceTests {
             return Cache(config: nil, user: nil)
         }
         
-        func save(user: DVCUser) {
+        func save(user: DVCUser, anonymous: Bool) {
             self.saveUserCalled = true
         }
         
