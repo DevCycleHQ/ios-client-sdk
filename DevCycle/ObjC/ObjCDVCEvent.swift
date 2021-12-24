@@ -16,9 +16,9 @@ public class ObjCDVCEvent: NSObject {
     
     @objc public init(type: String, target: String?, date: NSDate?, value: NSNumber?, metaData: NSDictionary?) {
         self.type = type
-        if (target != nil) { self.target = target }
-        if (date != nil) { self.date = date }
-        if (value != nil) { self.value = value }
-        if (metaData != nil) { self.metaData = metaData }
+        self.target = target
+        self.date = date
+        self.value = value
+        self.metaData = metaData
     }
 }

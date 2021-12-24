@@ -15,9 +15,9 @@ public struct DVCEvent {
     
     public init (type: String, target: String?, clientDate: Date?, value: Int?, metaData: [String: Any]?) {
         self.type =  type
-        if (target != nil) {self.target = target}
-        if (clientDate != nil) {self.clientDate = clientDate}
-        if (value != nil) {self.value = value}
-        if (metaData != nil) {self.metaData = metaData}
+        self.target = target
+        self.clientDate = clientDate
+        self.value = value
+        self.metaData = metaData
     }
 }
