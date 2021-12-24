@@ -29,9 +29,11 @@ public class DVCClient {
     
     private let defaultFlushInterval: Int = 10000
     private let msToSecond: Int = 1000
+    
     private var service: DevCycleServiceProtocol?
     private var cacheService: CacheServiceProtocol = CacheService()
     private var cache: Cache?
+    private var aggregateEventQueue: DVCEventTypes = DVCEventTypes()
     
     /**
         Method to initialize the Client object after building
@@ -107,6 +109,12 @@ public class DVCClient {
             }
         }
         
+        if (variable.isDefaulted) {
+            self.aggregateEventQueue.track(variableKey: variable.key, eventType: "variabledDefaulted")
+        } else {
+            self.aggregateEventQueue.track(variableKey: variable.key, eventType: "variabledEvaluated")
+        }
+        
         return variable
     }
     
@@ -168,13 +176,20 @@ public class DVCClient {
     }
 
     public func flushEvents() {
-        self.service?.publishEvents(events: self.eventQueue, user: self.user!, completion: { [weak self] data, response, error in
+        var eventsToFlushQueue: [DVCEvent] = self.eventQueue
+        eventsToFlushQueue.append(contentsOf: self.aggregateEventQueue.VariableDefaulted.map { (key: String, defaultedEvent: DVCEvent) -> DVCEvent in
+            defaultedEvent
+        })
+        eventsToFlushQueue.append(contentsOf: self.aggregateEventQueue.VariableEvaluated.map { (key: String, evaluatedEvent: DVCEvent) -> DVCEvent in
+            evaluatedEvent
+        })
+        self.service?.publishEvents(events: eventsToFlushQueue, user: self.user!, completion: { [weak self] data, response, error in
             if let error = error {
                 print("Error: \(error)")
                 return
             }
             print("Submitted: \(String(describing: self?.eventQueue.count)) events")
-            self?.eventQueue = []
+            self?.resetQueues()
         })
     }
     
@@ -219,5 +234,10 @@ public class DVCClient {
     
     public static func builder() -> ClientBuilder {
         return ClientBuilder()
+    }
+    
+    private func resetQueues() {
+        self.eventQueue = []
+        self.aggregateEventQueue = DVCEventTypes()
     }
 }
