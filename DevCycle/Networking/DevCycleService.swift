@@ -62,11 +62,9 @@ class DevCycleService: DevCycleServiceProtocol {
     
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
         var eventsRequest = createEventsRequest()
-        guard let userId = user.userId, let featureVariationMap = self.config.userConfig?.featureVariationMap else {
-            return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
-        }
-        
-        guard let userData = try? JSONEncoder().encode(user) else {
+        let userEncoder = JSONEncoder()
+        userEncoder.dateEncodingStrategy = .iso8601
+        guard let userId = user.userId, let userData = try? userEncoder.encode(user), let featureVariationMap = self.config.userConfig?.featureVariationMap else {
             return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
         }
 
@@ -141,27 +139,24 @@ class DevCycleService: DevCycleServiceProtocol {
         return urlComponents
     }
     
-    private func generateEventPayload(_ events: [DVCEvent], _ userId: String, _ featureVariables: [String: String]) -> Any {
-        var eventsJSON: [Any] = []
+    private func generateEventPayload(_ events: [DVCEvent], _ userId: String, _ featureVariables: [String:String]) -> [[String:Any]] {
+        var eventsJSON: [[String:Any]] = []
         let formatter = ISO8601DateFormatter()
         
         for event in events {
             let eventDate: Date = event.clientDate ?? Date()
-            var eventToPost: [String: Any] = [
+            var eventToPost: [String:Any] = [
                 "type": event.type,
                 "clientDate": formatter.string(from: eventDate),
                 "user_id": userId,
                 "featureVars": featureVariables
             ]
 
-            if(event.target != nil) {eventToPost["target"] = event.target }
-            if(event.value != nil) { eventToPost["value"] = event.value }
-            if(event.metaData != nil) { eventToPost["metaData"] = event.metaData }
-            guard let encodedEventData = try? JSONSerialization.data(withJSONObject: eventToPost, options: []) else {
-                continue
-            }
+            if (event.target != nil) { eventToPost["target"] = event.target }
+            if (event.value != nil) { eventToPost["value"] = event.value }
+            if (event.metaData != nil) { eventToPost["metaData"] = event.metaData }
             
-            eventsJSON.append(encodedEventData)
+            eventsJSON.append(eventToPost)
         }
 
         return eventsJSON
