@@ -109,11 +109,7 @@ public class DVCClient {
             }
         }
         
-        if (variable.isDefaulted) {
-            self.aggregateEventQueue.track(variableKey: variable.key, eventType: "variabledDefaulted")
-        } else {
-            self.aggregateEventQueue.track(variableKey: variable.key, eventType: "variabledEvaluated")
-        }
+        self.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
         
         return variable
     }
@@ -188,9 +184,17 @@ public class DVCClient {
                 print("Error: \(error)")
                 return
             }
-            print("Submitted: \(String(describing: self?.eventQueue.count)) events")
+            print("Submitted: \(String(describing: eventsToFlushQueue.count)) events")
             self?.resetQueues()
         })
+    }
+    
+    func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool) {
+        if (variableIsDefaulted) {
+            self.aggregateEventQueue.track(variableKey: variableKey, eventType: "variabledDefaulted")
+        } else {
+            self.aggregateEventQueue.track(variableKey: variableKey, eventType: "variabledEvaluated")
+        }
     }
     
     public class ClientBuilder {
