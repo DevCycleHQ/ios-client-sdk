@@ -6,27 +6,31 @@
 
 import Foundation
 
-struct DVCEventTypes {
-    var VariableDefaulted: [String:DVCEvent]
-    var VariableEvaluated: [String:DVCEvent]
+enum DVCEventTypes: String {
+    case VariableDefaulted, VariableEvaluated
+}
+
+struct DVCAggregateEvents {
+    var variableDefaulted: [String:DVCEvent]
+    var variableEvaluated: [String:DVCEvent]
     
     init () {
-        self.VariableDefaulted = [:]
-        self.VariableEvaluated = [:]
+        self.variableDefaulted = [:]
+        self.variableEvaluated = [:]
     }
     
-    mutating func track(variableKey: String, eventType: String) {
-        if (eventType == "variableEvaluated") {
-            if var variableEvaluatedEvent = self.VariableEvaluated[variableKey] {
+    mutating func track(variableKey: String, eventType: DVCEventTypes) {
+        if (eventType == DVCEventTypes.VariableEvaluated) {
+            if var variableEvaluatedEvent = self.variableEvaluated[variableKey] {
                 variableEvaluatedEvent.value = variableEvaluatedEvent.value! + 1
             } else {
-                self.VariableEvaluated[variableKey] = DVCEvent(type: "variableEvaluated", target: variableKey, clientDate: nil, value: 1, metaData: nil)
+                self.variableEvaluated[variableKey] = DVCEvent(type: "variableEvaluated", target: variableKey, clientDate: nil, value: 1, metaData: nil)
             }
         } else {
-            if var variableDefaultedEvent = self.VariableDefaulted[variableKey] {
+            if var variableDefaultedEvent = self.variableDefaulted[variableKey] {
                 variableDefaultedEvent.value = variableDefaultedEvent.value! + 1
             } else {
-                self.VariableDefaulted[variableKey] = DVCEvent(type: "variableDefaulted", target: variableKey, clientDate: nil, value: 1, metaData: nil)
+                self.variableDefaulted[variableKey] = DVCEvent(type: "variableDefaulted", target: variableKey, clientDate: nil, value: 1, metaData: nil)
             }
         }
     }
