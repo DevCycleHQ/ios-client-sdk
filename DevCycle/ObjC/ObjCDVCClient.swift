@@ -65,6 +65,8 @@ public class ObjCDVCClient: NSObject {
             }
         })
         
+        self.client?.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+        
         return variable
     }
     

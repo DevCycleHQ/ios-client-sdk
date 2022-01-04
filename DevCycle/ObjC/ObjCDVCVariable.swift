@@ -16,6 +16,7 @@ public class ObjCDVCVariable: NSObject {
     @objc public var key: String
     @objc public var type: String?
     @objc public var evalReason: String?
+    @objc public var isDefaulted: Bool
     
     @objc public var value: Any
     @objc public var defaultValue: Any
@@ -29,6 +30,7 @@ public class ObjCDVCVariable: NSObject {
         self.evalReason = evalReason
         self.defaultValue = defaultValue
         self.value = value ?? defaultValue
+        self.isDefaulted = value == nil
     }
     
     func update(from variable: Variable) throws {
@@ -39,5 +41,6 @@ public class ObjCDVCVariable: NSObject {
         self.value = variable.value
         self.type = variable.type
         self.evalReason = variable.evalReason
+        self.isDefaulted = false
     }
 }
