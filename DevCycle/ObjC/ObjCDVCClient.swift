@@ -13,7 +13,7 @@ public class ObjCDVCClient: NSObject {
     
     @objc public var eventQueue: [ObjCDVCEvent] = []
     
-    init(builder: ObjCClientBuilder, onIntialized: ((Error?) -> Void)?) throws {
+    init(builder: ObjCClientBuilder, onInitialized: ((Error?) -> Void)?) throws {
         guard let environmentKey = builder.environmentKey,
               let objcUser = builder.user,
               let user = objcUser.user
@@ -33,22 +33,12 @@ public class ObjCDVCClient: NSObject {
         guard let client = try? DVCClient.builder()
                 .environmentKey(environmentKey)
                 .user(user)
-                .build(onInitialized: onIntialized)
+                .build(onInitialized: onInitialized)
         else {
             print("Error creating client")
             throw ObjCClientErrors.InvalidClient
         }
         self.client = client
-    }
-    
-    @objc public func initialize(_ block: ((Error?) -> Void)?) {
-        guard let client = self.client else {
-            print("Client wasn't created properly")
-            return
-        }
-        client.initialize { err in
-            block?(err)
-        }
     }
     
     @objc public func variable(key: String, defaultValue: Any) throws -> ObjCDVCVariable {
@@ -74,12 +64,13 @@ public class ObjCDVCClient: NSObject {
     public class ObjCClientBuilder: NSObject {
         @objc public var environmentKey: String?
         @objc public var user: ObjCDVCUser?
+        @objc public var options: ObjCDVCOptions?
     }
     
     @objc(build:block:onInitialized:) public static func build(block: ((ObjCClientBuilder) -> Void), onInitialized: ((Error?) -> Void)?) throws -> ObjCDVCClient {
         let builder = ObjCClientBuilder()
         block(builder)
-        let client = try ObjCDVCClient(builder: builder, onIntialized: onInitialized)
+        let client = try ObjCDVCClient(builder: builder, onInitialized: onInitialized)
         return client
     }
     
