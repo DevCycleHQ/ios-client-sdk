@@ -177,10 +177,10 @@ public class DVCClient {
 
     public func flushEvents() {
         var eventsToFlushQueue: [DVCEvent] = self.eventQueue
-        eventsToFlushQueue.append(contentsOf: self.aggregateEventQueue.VariableDefaulted.map { (key: String, defaultedEvent: DVCEvent) -> DVCEvent in
+        eventsToFlushQueue.append(contentsOf: self.aggregateEventQueue.VariableDefaulted.map { (_: String, defaultedEvent: DVCEvent) -> DVCEvent in
             defaultedEvent
         })
-        eventsToFlushQueue.append(contentsOf: self.aggregateEventQueue.VariableEvaluated.map { (key: String, evaluatedEvent: DVCEvent) -> DVCEvent in
+        eventsToFlushQueue.append(contentsOf: self.aggregateEventQueue.VariableEvaluated.map { (_: String, evaluatedEvent: DVCEvent) -> DVCEvent in
             evaluatedEvent
         })
         self.service?.publishEvents(events: eventsToFlushQueue, user: self.user!, completion: { [weak self] data, response, error in
