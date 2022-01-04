@@ -9,9 +9,7 @@ import Foundation
 @objc(DVCUser)
 public class ObjCDVCUser: NSObject {
     var user: DVCUser?
-    @objc public var userId: String? {
-        get { user?.userId }
-    }
+    @objc public var userId: String? { return user?.userId }
     @objc public var isAnonymous: NSNumber? {
         get {
             if let isAnonymous = user?.isAnonymous {
@@ -20,21 +18,11 @@ public class ObjCDVCUser: NSObject {
             return nil
         }
     }
-    @objc public var email: String? {
-        get { user?.email }
-    }
-    @objc public var name: String? {
-        get { user?.name }
-    }
-    @objc public var language: String? {
-        get { user?.language }
-    }
-    @objc public var country: String? {
-        get { user?.country }
-    }
-    @objc public var appVersion: String? {
-        get { user?.appVersion }
-    }
+    @objc public var email: String? { return user?.email }
+    @objc public var name: String? { return user?.name }
+    @objc public var language: String? { return user?.language }
+    @objc public var country: String? { return user?.country }
+    @objc public var appVersion: String? { return user?.appVersion }
     @objc public var customData: [String:Any]? {
         get {
             guard let customData = user?.customData,
@@ -114,7 +102,7 @@ public class ObjCDVCUser: NSObject {
     @objc(build:block:) public static func build(_ block: ((ObjCUserBuilder) -> Void)) throws -> ObjCDVCUser {
         let builder = ObjCUserBuilder()
         block(builder)
-        let client = try ObjCDVCUser(builder: builder)
-        return client
+        let user = try ObjCDVCUser(builder: builder)
+        return user
     }
 }

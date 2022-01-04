@@ -30,6 +30,7 @@
 		5276C9F2275E6E0D00B9A324 /* DVCOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */; };
 		529F0C90277374150075AAB4 /* ObjcDVCVariableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 529F0C8F277374150075AAB4 /* ObjcDVCVariableTests.m */; };
 		529F0CA52774D6BE0075AAB4 /* URLSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529F0CA42774D6BE0075AAB4 /* URLSessionMock.swift */; };
+		52A486762784A3E600DABA34 /* ObjCDVCOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A486752784A3E600DABA34 /* ObjCDVCOptions.swift */; };
 		52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693E927567E2600B52375 /* DevCycleService.swift */; };
 		52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693EC2756816A00B52375 /* DVCConfig.swift */; };
 		52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693F52758032500B52375 /* DevCycleServiceTests.swift */; };
@@ -73,6 +74,7 @@
 		5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCOptionsTest.swift; sourceTree = "<group>"; };
 		529F0C8F277374150075AAB4 /* ObjcDVCVariableTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjcDVCVariableTests.m; sourceTree = "<group>"; };
 		529F0CA42774D6BE0075AAB4 /* URLSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionMock.swift; sourceTree = "<group>"; };
+		52A486752784A3E600DABA34 /* ObjCDVCOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDVCOptions.swift; sourceTree = "<group>"; };
 		52E693E927567E2600B52375 /* DevCycleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleService.swift; sourceTree = "<group>"; };
 		52E693EC2756816A00B52375 /* DVCConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCConfig.swift; sourceTree = "<group>"; };
 		52E693F52758032500B52375 /* DevCycleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleServiceTests.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 				5264A780275EB7DC00FEDB43 /* ObjCDVCUser.swift */,
 				5264A78627626A2200FEDB43 /* ObjCErrors.swift */,
 				D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */,
+				52A486752784A3E600DABA34 /* ObjCDVCOptions.swift */,
 			);
 			path = ObjC;
 			sourceTree = "<group>";
@@ -325,6 +328,7 @@
 				5264A77B275E9A7E00FEDB43 /* ObjCDVCClient.swift in Sources */,
 				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
 				5264A7BD2769381600FEDB43 /* Cache.swift in Sources */,
+				52A486762784A3E600DABA34 /* ObjCDVCOptions.swift in Sources */,
 				52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */,
 				5268DB6727501D6000D17A40 /* DVCUser.swift in Sources */,
 				5264A78727626A2200FEDB43 /* ObjCErrors.swift in Sources */,
