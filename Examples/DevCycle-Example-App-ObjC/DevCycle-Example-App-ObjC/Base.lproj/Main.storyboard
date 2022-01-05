@@ -11,54 +11,54 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="DevCycle_Example_App" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z9S-Ee-0As">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OaN-Zb-JX2">
                                 <rect key="frame" x="175" y="344" width="64" height="31"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Log in"/>
                                 <connections>
-                                    <action selector="loginButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Pbm-Am-G5k"/>
+                                    <action selector="loginButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ugI-1d-lhg"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="arc-Dw-zmU">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="phz-ke-Znl">
                                 <rect key="frame" x="177" y="383" width="60" height="31"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Track"/>
                                 <connections>
-                                    <action selector="track:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gun-DG-ggH"/>
+                                    <action selector="track:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jHC-Ht-Rrz"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oBF-y6-vgu">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QKc-GM-dDd">
                                 <rect key="frame" x="107.5" y="422" width="199" height="31"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Log All Features / Variables"/>
                                 <connections>
-                                    <action selector="logAllFeatures:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2LB-5h-ybe"/>
+                                    <action selector="logAllFeatures:" destination="BYZ-38-t0r" eventType="touchUpInside" id="EdQ-MI-TIM"/>
                                 </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="arc-Dw-zmU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7Uk-SU-0nF"/>
-                            <constraint firstItem="arc-Dw-zmU" firstAttribute="top" secondItem="Z9S-Ee-0As" secondAttribute="bottom" constant="8" symbolic="YES" id="9rK-W4-xDp"/>
-                            <constraint firstItem="oBF-y6-vgu" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="heW-Bs-xmf"/>
-                            <constraint firstItem="Z9S-Ee-0As" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="300" id="nEq-LN-oq2"/>
-                            <constraint firstItem="Z9S-Ee-0As" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="snx-Qh-j7f"/>
-                            <constraint firstItem="oBF-y6-vgu" firstAttribute="top" secondItem="arc-Dw-zmU" secondAttribute="bottom" constant="8" symbolic="YES" id="xYU-wu-pbN"/>
+                            <constraint firstItem="phz-ke-Znl" firstAttribute="top" secondItem="OaN-Zb-JX2" secondAttribute="bottom" constant="8" symbolic="YES" id="Avd-bG-zIB"/>
+                            <constraint firstItem="OaN-Zb-JX2" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="FtW-HV-7rx"/>
+                            <constraint firstItem="OaN-Zb-JX2" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="300" id="JXJ-Tj-GXr"/>
+                            <constraint firstItem="QKc-GM-dDd" firstAttribute="top" secondItem="phz-ke-Znl" secondAttribute="bottom" constant="8" symbolic="YES" id="OWW-rb-tEr"/>
+                            <constraint firstItem="phz-ke-Znl" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="V6I-zL-nmj"/>
+                            <constraint firstItem="QKc-GM-dDd" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="wzr-U2-ONx"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="loginButton" destination="Z9S-Ee-0As" id="u1t-A0-Ct3"/>
+                        <outlet property="loginButton" destination="OaN-Zb-JX2" id="oSp-u6-GTt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5.7971014492753632" y="44.866071428571423"/>
+            <point key="canvasLocation" x="20" y="94"/>
         </scene>
     </scenes>
     <resources>
