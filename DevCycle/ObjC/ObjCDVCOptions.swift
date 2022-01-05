@@ -35,7 +35,7 @@ public class ObjCDVCOptions: NSObject {
     @objc(build:block:) public static func build(_ block: ((ObjCOptionsBuilder) -> Void)) throws -> ObjCDVCOptions {
         let builder = ObjCOptionsBuilder()
         block(builder)
-        let options = try ObjCDVCOptions(builder: builder)
+        let options = ObjCDVCOptions(builder: builder)
         return options
     }
 }
