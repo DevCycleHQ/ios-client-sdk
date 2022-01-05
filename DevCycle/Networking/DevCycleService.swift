@@ -86,13 +86,9 @@ class DevCycleService: DevCycleServiceProtocol {
         
         self.makeRequest(request: eventsRequest) { data, response, error in
             if error != nil || data == nil {
-                print("Failed to Post Events!")
-                return completion((nil, nil, error))
+                return completion((data, response, error))
             }
-            if let httpResponse = response as? HTTPURLResponse {
-                print("statusCode: \(httpResponse.statusCode)")
-                return
-            }
+            return completion((data, response, nil))
         }
     }
     
