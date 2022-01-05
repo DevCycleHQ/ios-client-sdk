@@ -23,6 +23,10 @@ public class ObjCDVCUser: NSObject {
     @objc public var language: String? { return user?.language }
     @objc public var country: String? { return user?.country }
     @objc public var appVersion: String? { return user?.appVersion }
+    @objc public var appBuild: NSNumber? {
+        guard let appBuild = user?.appBuild else { return nil }
+        return NSNumber(integerLiteral: appBuild)
+    }
     @objc public var customData: [String:Any]? {
         get {
             guard let customData = user?.customData,

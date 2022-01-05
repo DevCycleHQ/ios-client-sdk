@@ -19,7 +19,25 @@
 @implementation ViewController
 
 - (IBAction)loginButtonPressed:(id)sender {
-
+    NSError *err = nil;
+    if (self.loggedIn) {
+        
+    } else {
+        DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder * builder) {
+            builder.userId = @"my-user";
+            builder.name = @"My Name";
+            builder.language = @"EN-CA";
+            builder.appVersion = @"1.0.0";
+            builder.country = @"CA";
+            builder.email = @"my@email.com";
+        }];
+        __weak typeof(self) weakSelf = self;
+        [self.client identifyWithUser:user error:&err callback:^(NSError * error, NSDictionary<NSString *,id> *variables) {
+            NSLog(@"Identified User!");
+            NSLog(@"%@", variables);
+            weakSelf.loggedIn = YES;
+        }];
+    }
 }
 
 - (IBAction)track:(id)sender {

@@ -53,9 +53,22 @@ public class DVCUser: Codable {
         self.publicCustomData = user.publicCustomData
     }
     
-    enum CodingKeys: String, CodingKey {
-        case userId = "user_id"
-        case isAnonymous, email, name, language, country, appVersion, appBuild, customData, publicCustomData, lastSeenDate, createdDate, platform, platformVersion, deviceModel, sdkType, sdkVersion
+    func update(with user: ObjCDVCUser) {
+        self.userId = user.userId
+        self.isAnonymous = user.isAnonymous != nil ? Bool(truncating: user.isAnonymous!) : false
+        self.lastSeenDate = Date()
+        self.email = user.email
+        self.name = user.name
+        self.language = user.language
+        self.country = user.country
+        self.appVersion = user.appVersion
+        self.appBuild = user.appBuild?.intValue
+        if let customData = user.customData, let data = try? JSONSerialization.data(withJSONObject: customData, options: []) {
+            self.customData = data
+        }
+        if let publicCustomData = user.publicCustomData, let data = try? JSONSerialization.data(withJSONObject: publicCustomData, options: []) {
+            self.publicCustomData = data
+        }
     }
     
     public class UserBuilder {

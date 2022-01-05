@@ -41,6 +41,35 @@ public class ObjCDVCClient: NSObject {
         self.client = client
     }
     
+    @objc public func identify(user: ObjCDVCUser, callback: ((Error?, [String: Any]) -> Void)?) throws {
+        guard let client = self.client else { return }
+        let createdUser = DVCUser()
+        createdUser.update(with: user)
+        
+        try client.identifyUser(user: createdUser, callback: { error, variables in
+            guard let callback = callback else { return }
+            var variableDict: [String: [String: Any]] = [:]
+            if let variables = variables {
+                for (key, value) in variables {
+                    variableDict[key] = [
+                        "_id": value._id,
+                        "key": value.key,
+                        "type": value.type,
+                        "value": value.value
+                    ]
+                    if let evalReason = value.evalReason, var dict = variableDict[key] {
+                        dict["evalReason"] = evalReason
+                    }
+                }
+            }
+            callback(error, variableDict)
+        })
+    }
+    
+    @objc public func reset() {
+        
+    }
+    
     @objc public func variable(key: String, defaultValue: Any) throws -> ObjCDVCVariable {
         var variable: ObjCDVCVariable
         if let variableFromConfig = self.client?.config?.userConfig?.variables[key] {
