@@ -179,14 +179,16 @@ public class DVCClient {
         eventsToFlushQueue.append(contentsOf: self.aggregateEventQueue.variableEvaluated.map { (_: String, evaluatedEvent: DVCEvent) -> DVCEvent in
             evaluatedEvent
         })
-        self.service?.publishEvents(events: eventsToFlushQueue, user: self.user!, completion: { [weak self] data, response, error in
-            if let error = error {
-                print("Error: \(error)")
-                return
-            }
-            print("Submitted: \(String(describing: eventsToFlushQueue.count)) events")
-            self?.resetQueues()
-        })
+        if (!eventsToFlushQueue.isEmpty) {
+            self.service?.publishEvents(events: eventsToFlushQueue, user: self.user!, completion: { [weak self] data, response, error in
+                if let error = error {
+                    print("Error: \(error)")
+                    return
+                }
+                print("Submitted: \(String(describing: eventsToFlushQueue.count)) events")
+                self?.resetQueues()
+            })
+        }
     }
     
     func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool) {
