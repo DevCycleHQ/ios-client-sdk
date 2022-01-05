@@ -41,33 +41,30 @@ public class ObjCDVCClient: NSObject {
         self.client = client
     }
     
-    @objc public func identify(user: ObjCDVCUser, callback: ((Error?, [String: Any]) -> Void)?) throws {
+    
+    @objc(identifyUser:user:)
+    public func identify(user: ObjCDVCUser, callback: ((Error?, [String: Any]?) -> Void)?) {
         guard let client = self.client else { return }
+        guard user.userId != nil else {
+            callback?(NSError(), nil)
+            return
+        }
         let createdUser = DVCUser()
         createdUser.update(with: user)
         
-        try client.identifyUser(user: createdUser, callback: { error, variables in
+        try? client.identifyUser(user: createdUser, callback: { error, variables in
             guard let callback = callback else { return }
-            var variableDict: [String: [String: Any]] = [:]
-            if let variables = variables {
-                for (key, value) in variables {
-                    variableDict[key] = [
-                        "_id": value._id,
-                        "key": value.key,
-                        "type": value.type,
-                        "value": value.value
-                    ]
-                    if let evalReason = value.evalReason, var dict = variableDict[key] {
-                        dict["evalReason"] = evalReason
-                    }
-                }
-            }
-            callback(error, variableDict)
+            callback(error, self.variableToDictionary(variables: variables))
         })
     }
     
-    @objc public func reset() {
-        
+    @objc(resetUser:)
+    public func reset(callback: ((Error?, [String: Any]) -> Void)?) {
+        guard let client = self.client else { return }
+        try? client.resetUser { error, variables in
+            guard let callback = callback else { return }
+            callback(error, self.variableToDictionary(variables: variables))
+        }
     }
     
     @objc public func variable(key: String, defaultValue: Any) throws -> ObjCDVCVariable {
@@ -116,5 +113,25 @@ public class ObjCDVCClient: NSObject {
     
     @objc public func flushEvents() {
         self.client?.flushEvents()
+    }
+}
+
+extension ObjCDVCClient {
+    func variableToDictionary(variables: [String: Variable]?) -> [String: [String: Any]] {
+        var variableDict: [String: [String: Any]] = [:]
+        if let variables = variables {
+            for (key, value) in variables {
+                variableDict[key] = [
+                    "_id": value._id,
+                    "key": value.key,
+                    "type": value.type,
+                    "value": value.value
+                ]
+                if let evalReason = value.evalReason, var dict = variableDict[key] {
+                    dict["evalReason"] = evalReason
+                }
+            }
+        }
+        return variableDict
     }
 }

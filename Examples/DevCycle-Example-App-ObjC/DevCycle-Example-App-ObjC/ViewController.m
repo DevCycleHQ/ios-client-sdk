@@ -20,8 +20,13 @@
 
 - (IBAction)loginButtonPressed:(id)sender {
     NSError *err = nil;
+    __weak typeof(self) weakSelf = self;
     if (self.loggedIn) {
-        
+        [self.client resetUser:^(NSError *error, NSDictionary<NSString *,id> *variables) {
+            NSLog(@"Reset User!");
+            NSLog(@"%@", variables);
+            weakSelf.loggedIn = NO;
+        }];
     } else {
         DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder * builder) {
             builder.userId = @"my-user";
@@ -31,8 +36,7 @@
             builder.country = @"CA";
             builder.email = @"my@email.com";
         }];
-        __weak typeof(self) weakSelf = self;
-        [self.client identifyWithUser:user error:&err callback:^(NSError * error, NSDictionary<NSString *,id> *variables) {
+        [self.client identifyUser:user user:^(NSError *error, NSDictionary<NSString *,id> *variables) {
             NSLog(@"Identified User!");
             NSLog(@"%@", variables);
             weakSelf.loggedIn = YES;
