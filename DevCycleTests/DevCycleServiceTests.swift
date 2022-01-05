@@ -10,7 +10,7 @@ import XCTest
 class DevCycleServiceTests: XCTestCase {
     func testCreateConfigURLRequest() throws {
         let url = getService().createConfigRequest(user: getTestUser()).url?.absoluteString
-        XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/sdkConfig"))
+        XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/mobileSDKConfig"))
         XCTAssert(url!.contains("envKey=my_env_key"))
         XCTAssert(url!.contains("user_id=my_user"))
     }
@@ -18,7 +18,6 @@ class DevCycleServiceTests: XCTestCase {
     func testCreateEventURLRequest() throws {
         let url = getService().createEventsRequest().url?.absoluteString
         XCTAssert(url!.contains("https://events.devcycle.com/v1/events"))
-        XCTAssert(url!.contains("envKey=my_env_key"))
         XCTAssertFalse(url!.contains("user_id=my_user"))
     }
     

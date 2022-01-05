@@ -53,6 +53,11 @@ public class DVCUser: Codable {
         self.publicCustomData = user.publicCustomData
     }
     
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case isAnonymous, email, name, language, country, appVersion, appBuild, customData, publicCustomData, lastSeenDate, createdDate, platform, platformVersion, deviceModel, sdkType, sdkVersion
+    }
+    
     public class UserBuilder {
         var user: DVCUser
         
