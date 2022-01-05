@@ -24,7 +24,7 @@ struct NetworkingConstants {
     }
     
     struct UrlPaths {
-        static let config = "/sdkConfig"
+        static let config = "/mobileSDKConfig"
         static let events = "/events"
     }
 }
@@ -81,6 +81,7 @@ class DevCycleService: DevCycleServiceProtocol {
         eventsRequest.httpMethod = "POST"
         eventsRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         eventsRequest.addValue("application/json", forHTTPHeaderField: "Accept")
+        eventsRequest.addValue(config.environmentKey, forHTTPHeaderField: "Authorization")
         eventsRequest.httpBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
         
         self.makeRequest(request: eventsRequest) { data, response, error in
@@ -122,7 +123,6 @@ class DevCycleService: DevCycleServiceProtocol {
     private func createRequestUrl(type: String, _ queryItems: [URLQueryItem] = []) -> URLComponents {
         var url: String
         var querySpecificItems: [URLQueryItem] = queryItems
-        querySpecificItems.append(URLQueryItem(name: "envKey", value: config.environmentKey))
         
         switch(type) {
         case "event":
@@ -133,9 +133,12 @@ class DevCycleService: DevCycleServiceProtocol {
             url = NetworkingConstants.sdkUrl + NetworkingConstants.hostUrl
             url.append("\(NetworkingConstants.Version.v1)")
             url.append("\(NetworkingConstants.UrlPaths.config)")
+            querySpecificItems.append(URLQueryItem(name: "envKey", value: config.environmentKey))
         }
         var urlComponents: URLComponents = URLComponents(string: url)!
-        urlComponents.queryItems = querySpecificItems
+        if (!querySpecificItems.isEmpty) {
+            urlComponents.queryItems = querySpecificItems
+        }
         return urlComponents
     }
     
