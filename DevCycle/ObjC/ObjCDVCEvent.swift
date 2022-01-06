@@ -8,17 +8,54 @@ import Foundation
 
 @objc(DVCEvent)
 public class ObjCDVCEvent: NSObject {
-    @objc var type: String
+    var event: DVCEvent?
+    @objc var type: String?
     @objc var target: String?
-    @objc var date: NSDate?
+    @objc var clientDate: NSDate?
     @objc var value: NSNumber?
     @objc var metaData: NSDictionary?
+
+    init(builder: ObjCEventBuilder) throws {
+        if builder.type == nil {
+            throw ObjCEventErrors.MissingEventType
+        }
+        
+        var eventBuilder = DVCEvent.builder()
+        if let eventType = builder.type {
+            eventBuilder = eventBuilder.type(eventType)
+        }
+        if let eventTarget = builder.target {
+            eventBuilder = eventBuilder.target(eventTarget)
+        }
+        if let eventDate = builder.clientDate {
+            eventBuilder = eventBuilder.clientDate(eventDate as Date)
+        }
+        if let eventValue = builder.value {
+            eventBuilder = eventBuilder.value(eventValue as! Int)
+        }
+        if let eventMetaData = builder.metaData {
+            eventBuilder = eventBuilder.metaData(eventMetaData as! [String : Any])
+        }
+        guard let event = try? eventBuilder.build() else {
+            print("Error making event")
+            throw ObjCEventErrors.InvalidEvent
+        }
+        self.event = event
+    }
     
-    @objc public init(type: String, target: String?, date: NSDate?, value: NSNumber?, metaData: NSDictionary?) {
-        self.type = type
-        self.target = target
-        self.date = date
-        self.value = value
-        self.metaData = metaData
+    @objc(DVCEventBuilder)
+    public class ObjCEventBuilder: NSObject {
+        @objc var type: String?
+        @objc var target: String?
+        @objc var clientDate: NSDate?
+        @objc var value: NSNumber?
+        @objc var metaData: NSDictionary?
+    }
+    
+    @objc(build:block:) public static func build(_ block: ((ObjCEventBuilder) -> Void)) throws -> ObjCDVCEvent {
+        let builder = ObjCEventBuilder()
+        block(builder)
+        let event = try ObjCDVCEvent(builder: builder)
+        return event
     }
 }

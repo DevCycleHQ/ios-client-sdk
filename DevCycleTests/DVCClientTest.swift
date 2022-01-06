@@ -50,7 +50,7 @@ class DVCClientTest: XCTestCase {
     
     func testTrackWithValidDVCEventNoOptionals() {
         let client = DVCClient()
-        let event: DVCEvent = DVCEvent(type: "test", target: nil, clientDate: Date(), value: nil, metaData: nil)
+        let event: DVCEvent = try! DVCEvent.builder().type("test").build()
         
         client.track(event)
         XCTAssertTrue(client.eventQueue.count == 1)
@@ -58,8 +58,8 @@ class DVCClientTest: XCTestCase {
     
     func testTrackWithValidDVCEventWithAllParamsDefined() {
         let client = DVCClient()
-        let data: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
-        let event: DVCEvent = DVCEvent(type: "test", target: "test", clientDate: Date(), value: 1, metaData: data)
+        let metaData: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
+        let event: DVCEvent = try! DVCEvent.builder().type("test").target("test").clientDate(Date()).value(1).metaData(metaData).build()
         
         client.track(event)
         XCTAssertTrue(client.eventQueue.count == 1)
@@ -70,10 +70,8 @@ class DVCClientTest: XCTestCase {
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
         let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
         let service = MockService() // will assert if publishEvents was called
-        client.setEnvironmentKey("")
-        client.setUser(getTestUser())
         client.setup(service: service)
-        let event: DVCEvent = DVCEvent(type: "test", target: nil, clientDate: Date(), value: nil, metaData: nil)
+        let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
         
         client.track(event)
         XCTAssertTrue(client.eventQueue.count == 1)
@@ -86,10 +84,8 @@ class DVCClientTest: XCTestCase {
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(500).build()
         let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
         let service = MockService() // will assert if publishEvents was called
-        client.setEnvironmentKey("")
-        client.setUser(getTestUser())
         client.setup(service: service)
-        let event: DVCEvent = DVCEvent(type: "test", target: nil, clientDate: Date(), value: nil, metaData: nil)
+        let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
         
         client.track(event)
         client.track(event)

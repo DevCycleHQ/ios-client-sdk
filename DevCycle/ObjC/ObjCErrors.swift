@@ -24,3 +24,8 @@ public enum ObjCConfigErrors: Error {
     case FeatureVariationMapMissing
     case ProjectMissing
 }
+
+public enum ObjCEventErrors: Error {
+    case MissingEventType
+    case InvalidEvent
+}

@@ -78,7 +78,7 @@ public class ObjCDVCClient: NSObject {
         let dvcEvent: DVCEvent = DVCEvent(
             type: event.type,
             target: event.target ?? nil,
-            clientDate: event.date as Date? ?? Date(),
+            clientDate: event.clientDate as Date? ?? Date(),
             value: (event.value as! Int),
             metaData: (event.metaData as! [String: Any])
         )
