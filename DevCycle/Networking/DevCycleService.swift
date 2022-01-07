@@ -39,10 +39,12 @@ class DevCycleService: DevCycleServiceProtocol {
     var config: DVCConfig
     
     var cacheService: CacheServiceProtocol
-    
+
+    private var newUser: DVCUser?
+    private var currentUser: DVCUser?
     private var configRequestInFlight: Bool = false
-    private var pendingUserData: DVCUser = DVCUser()
-    private var pendingCallbacks: [ConfigCompletionHandler] = []
+    private var pendingNewUserCallbacks: [ConfigCompletionHandler] = []
+    private var pendingCurrentUserCallbacks: [ConfigCompletionHandler] = []
     
     init(config: DVCConfig, cacheService: CacheServiceProtocol) {
         let sessionConfig = URLSessionConfiguration.default
@@ -53,26 +55,37 @@ class DevCycleService: DevCycleServiceProtocol {
     
     func getConfig(user: DVCUser, completion: @escaping ConfigCompletionHandler) {
         if (configRequestInFlight) {
-            self.pendingUserData = user
-            self.pendingCallbacks.append(completion)
+            if (user.userId == self.currentUser?.userId) {
+                self.pendingCurrentUserCallbacks.append(completion)
+            } else {
+                self.newUser = user
+                self.pendingNewUserCallbacks.append(completion)
+            }
         } else {
             self.configRequestInFlight = true
-            
+            self.currentUser = user
             let configRequest = createConfigRequest(user: user)
             self.makeRequest(request: configRequest) { [weak self] response in
                 guard let self = self else { return }
-                self.configRequestInFlight = false
 
                 guard let config = self.processConfig(response.data) else {
                     completion((nil, response.error))
-                    self.resolveQueuedConfigRequests(user: self.pendingUserData, callbacks: self.pendingCallbacks)
-                    self.pendingCallbacks = []
+                    for currentUserCallback in self.pendingCurrentUserCallbacks {
+                        currentUserCallback((nil, response.error))
+                    }
+                    self.pendingCurrentUserCallbacks = []
+                    self.configRequestInFlight = false
+                    self.checkNewUserConfigs()
                     return
                 }
                 self.cacheService.save(user: user, anonymous: user.isAnonymous ?? false)
-                self.resolveQueuedConfigRequests(user: self.pendingUserData, callbacks: self.pendingCallbacks)
-                self.pendingCallbacks = []
                 completion((config, response.error))
+                for currentUserCallback in self.pendingCurrentUserCallbacks {
+                    currentUserCallback((config, response.error))
+                }
+                self.pendingCurrentUserCallbacks = []
+                self.configRequestInFlight = false
+                self.checkNewUserConfigs()
             }
         }
     }
@@ -178,26 +191,17 @@ class DevCycleService: DevCycleServiceProtocol {
         return eventsJSON
     }
     
-    private func resolveQueuedConfigRequests(user: DVCUser, callbacks: [ConfigCompletionHandler]) {
-        self.configRequestInFlight = true
-
-        let configRequest = createConfigRequest(user: user)
-        self.makeRequest(request: configRequest) { [weak self] response in
-            guard let self = self else { return }
-            self.configRequestInFlight = false
-
-            guard let config = self.processConfig(response.data) else {
-                for completion in callbacks {
-                    completion((nil, response.error))
-                }
-                self.configRequestInFlight = false
-                return
-            }
-            self.cacheService.save(user: user, anonymous: user.isAnonymous ?? false)
-            for completion in callbacks {
-                completion((config, response.error))
-            }
-            self.configRequestInFlight = false
+    private func checkNewUserConfigs() {
+        guard let user = self.newUser else {
+            return
+        }
+    
+        if (!self.pendingNewUserCallbacks.isEmpty) {
+            self.currentUser = user
+            self.newUser = nil
+            self.pendingCurrentUserCallbacks = self.pendingNewUserCallbacks
+            self.pendingNewUserCallbacks = []
+            self.getConfig(user: user, completion: {_ in })
         }
     }
 }
