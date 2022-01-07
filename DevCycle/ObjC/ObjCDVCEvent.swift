@@ -45,11 +45,11 @@ public class ObjCDVCEvent: NSObject {
     
     @objc(DVCEventBuilder)
     public class ObjCEventBuilder: NSObject {
-        @objc var type: String?
-        @objc var target: String?
-        @objc var clientDate: NSDate?
-        @objc var value: NSNumber?
-        @objc var metaData: NSDictionary?
+        @objc public var type: String?
+        @objc public var target: String?
+        @objc public var clientDate: NSDate?
+        @objc public var value: NSNumber?
+        @objc public var metaData: NSDictionary?
     }
     
     @objc(build:block:) public static func build(_ block: ((ObjCEventBuilder) -> Void)) throws -> ObjCDVCEvent {
