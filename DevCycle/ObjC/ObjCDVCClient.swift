@@ -43,7 +43,7 @@ public class ObjCDVCClient: NSObject {
     
     
     @objc(identifyUser:user:)
-    public func identify(user: ObjCDVCUser, callback: ((Error?, [String: Any]?) -> Void)?) {
+    public func identify(user: ObjCDVCUser, callback: ((Error?, [String: ObjCVariable]?) -> Void)?) {
         guard let client = self.client else { return }
         guard user.userId != nil else {
             callback?(NSError(), nil)
@@ -54,16 +54,16 @@ public class ObjCDVCClient: NSObject {
         
         try? client.identifyUser(user: createdUser, callback: { error, variables in
             guard let callback = callback else { return }
-            callback(error, self.variableToDictionary(variables: variables))
+            callback(error, self.variableToObjCVariable(variables: variables))
         })
     }
     
     @objc(resetUser:)
-    public func reset(callback: ((Error?, [String: Any]) -> Void)?) {
+    public func reset(callback: ((Error?, [String: ObjCVariable]) -> Void)?) {
         guard let client = self.client else { return }
         try? client.resetUser { error, variables in
             guard let callback = callback else { return }
-            callback(error, self.variableToDictionary(variables: variables))
+            callback(error, self.variableToObjCVariable(variables: variables))
         }
     }
     
@@ -84,6 +84,16 @@ public class ObjCDVCClient: NSObject {
         self.client?.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
         
         return variable
+    }
+    
+    @objc public func allFeatures() -> [String: ObjCFeature]? {
+        guard let client = self.client else { return [:] }
+        return featureToObjCFeature(features: client.allFeatures())
+    }
+    
+    @objc public func allVariables() -> [String: ObjCVariable]? {
+        guard let client = self.client else { return [:] }
+        return variableToObjCVariable(variables: client.allVariables())
     }
     
     @objc(DVCClientBuilder)
@@ -117,21 +127,23 @@ public class ObjCDVCClient: NSObject {
 }
 
 extension ObjCDVCClient {
-    func variableToDictionary(variables: [String: Variable]?) -> [String: [String: Any]] {
-        var variableDict: [String: [String: Any]] = [:]
-        if let variables = variables {
-            for (key, value) in variables {
-                variableDict[key] = [
-                    "_id": value._id,
-                    "key": value.key,
-                    "type": value.type,
-                    "value": value.value
-                ]
-                if let evalReason = value.evalReason, var dict = variableDict[key] {
-                    dict["evalReason"] = evalReason
-                }
+    func featureToObjCFeature(features: [String: Feature]?) -> [String: ObjCFeature] {
+        var objcFeatures: [String: ObjCFeature] = [:]
+        if let features = features {
+            for (key, value) in features {
+                objcFeatures[key] = ObjCFeature.create(from: value)
             }
         }
-        return variableDict
+        return objcFeatures
+    }
+    
+    func variableToObjCVariable(variables: [String: Variable]?) -> [String: ObjCVariable] {
+        var objcVariables: [String: ObjCVariable] = [:]
+        if let variables = variables {
+            for (key, value) in variables {
+                objcVariables[key] = ObjCVariable.create(from: value)
+            }
+        }
+        return objcVariables
     }
 }
