@@ -41,6 +41,11 @@ public class DVCUser: Codable {
         self.sdkVersion = "0.0.1"
     }
     
+    enum CodingKeys: String, CodingKey {
+           case userId = "user_id"
+           case isAnonymous, email, name, language, country, appVersion, appBuild, customData, publicCustomData, lastSeenDate, createdDate, platform, platformVersion, deviceModel, sdkType, sdkVersion
+    }
+    
     public func update(with user: DVCUser) {
         self.lastSeenDate = Date()
         self.email = user.email

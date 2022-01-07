@@ -51,8 +51,10 @@ class ViewController: UIViewController {
     
     @IBAction func track(_ sender: Any) {
         guard let client = self.client else { return }
-        let event = DVCEvent(type: "my_event", target: nil, clientDate: Date(), value: nil, metaData:nil)
-        client.track(event)
+        let event = try? DVCEvent.builder().type("my_event").clientDate(Date()).build()
+        if let event = event {
+            client.track(event)
+        }
     }
     
     @IBAction func logAllFeatures(_ sender: Any) {

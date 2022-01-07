@@ -9,7 +9,7 @@
 
 @implementation DevCycleManager
 
-static NSString *const DEVELOPMENT_KEY = @"client-123fde1a-2e2b-40a7-bfac-10e47d2608f8";
+static NSString *const DEVELOPMENT_KEY = @"mobile-af49df8f-f39b-4863-a960-c0dc6165874a";
 
 + (id)sharedManager {
     static DevCycleManager *sharedMyManager = nil;

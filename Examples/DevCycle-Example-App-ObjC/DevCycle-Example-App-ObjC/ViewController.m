@@ -45,14 +45,18 @@
 }
 
 - (IBAction)track:(id)sender {
-    DVCEvent *event = [[DVCEvent alloc] initWithType:@"my-event" target:nil date:[NSDate date] value:nil metaData:nil];
+    NSError *err = nil;
+    DVCEvent *event = [DVCEvent build:&err block:^(DVCEventBuilder *builder) {
+        builder.type = @"my-event";
+        builder.clientDate = [NSDate date];
+    }];
     [self.client track:event];
 }
 
 
 - (IBAction)logAllFeatures:(id)sender {
-    NSLog(@"All Features");
-    NSLog(@"All Variables");
+    NSLog(@"All Features: %@", [self.client allFeatures]);
+    NSLog(@"All Variables: %@", [self.client allVariables]);
 }
 
 
