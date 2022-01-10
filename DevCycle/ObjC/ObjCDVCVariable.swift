@@ -35,7 +35,7 @@ public class ObjCDVCVariable: NSObject {
     
     func update(from variable: Variable) throws {
         guard Swift.type(of: self.defaultValue) != Swift.type(of: variable.value) else {
-            print("Variable value of type \(Swift.type(of: variable.value)) doesn't match default value type: \(self.defaultValue)")
+            Log.error("Variable value of type \(Swift.type(of: variable.value)) doesn't match default value type: \(self.defaultValue)", tags: ["variable", "objc"])
             return
         }
         self.value = variable.value
