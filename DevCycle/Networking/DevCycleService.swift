@@ -124,7 +124,7 @@ class DevCycleService: DevCycleServiceProtocol {
     
     func makeRequest(request: URLRequest, completion: CompletionHandler?) {
         if let urlString = request.url?.absoluteString {
-            print("Making request: " + urlString)
+            Log.debug("Making request: " + urlString, tags:["request"])
         }
         self.session.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
@@ -173,9 +173,13 @@ class DevCycleService: DevCycleServiceProtocol {
         let formatter = ISO8601DateFormatter()
         
         for event in events {
+            if event.type == nil {
+                Log.debug("Skipping event, missing type: \(event)", tags: ["event"])
+                continue
+            }
             let eventDate: Date = event.clientDate ?? Date()
-            var eventToPost: [String:Any] = [
-                "type": event.type,
+            var eventToPost: [String: Any] = [
+                "type": event.type!,
                 "clientDate": formatter.string(from: eventDate),
                 "user_id": userId,
                 "featureVars": featureVariables
@@ -209,7 +213,7 @@ class DevCycleService: DevCycleServiceProtocol {
 extension DevCycleService {
     func processConfig(_ responseData: Data?) -> UserConfig? {
         guard let data = responseData else {
-            print("No config data")
+            Log.error("No response data from request", tags: ["service", "request"])
             return nil
         }
         do {
@@ -218,7 +222,7 @@ extension DevCycleService {
             cacheService.save(config: data)
             return userConfig
         } catch {
-            print("Failed to decode config: \(error)")
+            Log.error("Failed to decode config: \(error)", tags: ["service", "request"])
         }
         return nil
     }

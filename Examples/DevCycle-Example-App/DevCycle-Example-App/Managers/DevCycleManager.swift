@@ -8,7 +8,7 @@ import Foundation
 import DevCycle
 
 struct DevCycleKeys {
-    static var DEVELOPMENT = "client-123fde1a-2e2b-40a7-bfac-10e47d2608f8"
+    static var DEVELOPMENT = "mobile-af49df8f-f39b-4863-a960-c0dc6165874a"
 }
 
 class DevCycleManager {
@@ -17,9 +17,14 @@ class DevCycleManager {
     static let shared = DevCycleManager()
     
     func initialize(user: DVCUser) {
+        let options = DVCOptions.builder()
+                                .logLevel(.debug)
+                                .build()
+        
         guard let client = try? DVCClient.builder()
                 .environmentKey(DevCycleKeys.DEVELOPMENT)
                 .user(user)
+                .options(options)
                 .build(onInitialized: nil)
         else {
             return

@@ -43,6 +43,13 @@ public class DVCClient {
             callback?(ClientError.MissingEnvironmentKeyOrUser)
             return
         }
+        
+        if let options = self.options {
+            Log.level = options.logLevel
+        } else {
+            Log.level = .error
+        }
+        
         self.config = DVCConfig(environmentKey: environmentKey, user: user)
         let service = DevCycleService(config: self.config!, cacheService: self.cacheService)
         self.setup(service: service, callback: callback)
@@ -60,10 +67,12 @@ public class DVCClient {
         self.service?.getConfig(user: user, completion: { [weak self] config, error in
             guard let self = self else { return }
             if let error = error {
-                print("Error: \(error)")
+                Log.error("Error getting config: \(error)", tags: ["setup"])
                 self.cache = self.cacheService.load()
             } else {
-                print("Config: \(String(describing: config))")
+                if let config = config {
+                    Log.debug("Config: \(config)", tags: ["setup"])
+                }
                 self.config?.userConfig = config
             }
             
@@ -128,10 +137,12 @@ public class DVCClient {
         self.service?.getConfig(user: updateUser, completion: { [weak self] config, error in
             guard let self = self else { return }
             if let error = error {
-                print("Error: \(error)")
+                Log.error("Error getting config: \(error)", tags: ["identify"])
                 self.cache = self.cacheService.load()
             } else {
-                print("Config: \(String(describing: config))")
+                if let config = config {
+                    Log.debug("Config: \(config)", tags: ["identify"])
+                }
                 self.config?.userConfig = config
             }
             self.cacheService.save(user: user, anonymous: user.isAnonymous ?? false)
@@ -151,7 +162,7 @@ public class DVCClient {
         self.service?.getConfig(user: anonUser, completion: { [weak self] config, error in
             guard let self = self else { return }
             if (error == nil) {
-                print("Config: \(String(describing: config))")
+                if let config = config { Log.debug("Config: \(config)", tags: ["reset"]) }
                 self.config?.userConfig = config
             }
             self.cacheService.save(user: anonUser, anonymous: true)
@@ -182,10 +193,10 @@ public class DVCClient {
         if (!eventsToFlushQueue.isEmpty) {
             self.service?.publishEvents(events: eventsToFlushQueue, user: self.user!, completion: { [weak self] data, response, error in
                 if let error = error {
-                    print("Error: \(error)")
+                    Log.error("Error: \(error)", tags: ["events", "flush"])
                     return
                 }
-                print("Submitted: \(String(describing: eventsToFlushQueue.count)) events")
+                Log.info("Submitted: \(String(describing: eventsToFlushQueue.count)) events", tags: ["events", "flush"])
                 self?.resetQueues()
             })
         }
@@ -219,11 +230,11 @@ public class DVCClient {
         
         public func build(onInitialized: ClientInitializedHandler?) throws -> DVCClient {
             guard self.client.environmentKey != nil else {
-                print("Missing Environment Key")
+                Log.error("Missing Environment Key", tags: ["build"])
                 throw ClientError.MissingEnvironmentKeyOrUser
             }
             guard self.client.user != nil else {
-                print("Missing User")
+                Log.error("Missing User", tags: ["build"])
                 throw ClientError.MissingEnvironmentKeyOrUser
             }
             

@@ -37,7 +37,7 @@ public class ObjCDVCEvent: NSObject {
             eventBuilder = eventBuilder.metaData(eventMetaData as! [String : Any])
         }
         guard let event = try? eventBuilder.build() else {
-            print("Error making event")
+            Log.error("Error making event", tags: ["event", "build"])
             throw ObjCEventErrors.InvalidEvent
         }
         self.event = event
