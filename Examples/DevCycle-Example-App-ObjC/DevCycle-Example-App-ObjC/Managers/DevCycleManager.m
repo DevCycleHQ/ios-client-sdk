@@ -29,9 +29,13 @@ static NSString *const DEVELOPMENT_KEY = @"mobile-af49df8f-f39b-4863-a960-c0dc61
 
 - (void)initialize:(DVCUser *)user {
     NSError *err = nil;
+    DVCOptions *options = [DVCOptions build:&err block:^(DVCOptionsBuilder *builder) {
+        builder.logLevel = LogLevel.debug;
+    }];
     self.client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
         builder.user = user;
         builder.environmentKey = DEVELOPMENT_KEY;
+        builder.options = options;
     } onInitialized:nil];
 }
 

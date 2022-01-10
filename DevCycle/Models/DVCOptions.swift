@@ -9,6 +9,7 @@ import Foundation
 public class DVCOptions {
     var flushEventsIntervalMs: Int?
     var disableEventLogging: Bool?
+    var logLevel: LogLevel = .error
     
     public class OptionsBuilder {
         var options: DVCOptions
@@ -24,6 +25,11 @@ public class DVCOptions {
         
         public func disableEventLogging(_ disable: Bool) -> OptionsBuilder {
             self.options.disableEventLogging = disable
+            return self
+        }
+        
+        public func logLevel(_ level: LogLevel) -> OptionsBuilder {
+            self.options.logLevel = level
             return self
         }
         

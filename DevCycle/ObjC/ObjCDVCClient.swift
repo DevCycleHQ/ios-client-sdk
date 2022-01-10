@@ -19,23 +19,29 @@ public class ObjCDVCClient: NSObject {
               let user = objcUser.user
         else {
             if (builder.environmentKey == nil) {
-                print("Environment key missing")
+                Log.error("Environment key missing", tags: ["build", "objc"])
                 throw ObjCClientErrors.MissingEnvironmentKey
             } else if (builder.user == nil) {
-                print("User missing")
+                Log.error("User missing", tags: ["build", "objc"])
                 throw ObjCClientErrors.MissingUser
             } else if (builder.user != nil && builder.user?.user == nil) {
-                print("User is invalid")
+                Log.error("User is invalid", tags: ["build", "objc"])
                 throw ObjCClientErrors.InvalidUser
             }
             return
         }
-        guard let client = try? DVCClient.builder()
-                .environmentKey(environmentKey)
-                .user(user)
-                .build(onInitialized: onInitialized)
+        
+        var clientBuilder = DVCClient.builder()
+            .environmentKey(environmentKey)
+            .user(user)
+        
+        if let options = builder.options?.options {
+            clientBuilder = clientBuilder.options(options)
+        }
+        
+        guard let client = try? clientBuilder.build(onInitialized: onInitialized)
         else {
-            print("Error creating client")
+            Log.error("Error creating client", tags: ["build", "objc"])
             throw ObjCClientErrors.InvalidClient
         }
         self.client = client
