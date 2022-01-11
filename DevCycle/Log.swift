@@ -10,6 +10,7 @@ import Foundation
 public enum LogLevel: Int {
     case debug
     case info
+    case warn
     case error
 }
 
@@ -26,14 +27,18 @@ class Log {
     }
     
     static func debug(_ message: String, tags: [String] = []) {
-        Log.log(.debug, message, tags)
+        Log.log(.debug, message, ["debug"] + tags)
     }
     
     static func info(_ message: String, tags: [String] = []) {
-        Log.log(.info, message, tags)
+        Log.log(.info, message, ["info"] + tags)
+    }
+    
+    static func warn(_ message: String, tags: [String] = []) {
+        Log.log(.warn, message, ["warn"] + tags)
     }
     
     static func error(_ message: String, tags: [String] = []) {
-        Log.log(.error, message, tags)
+        Log.log(.error, message, ["error"] + tags)
     }
 }

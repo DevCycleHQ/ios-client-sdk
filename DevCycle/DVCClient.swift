@@ -101,11 +101,11 @@ public class DVCClient {
         self.options = options
     }
     
-    public func variable<T>(key: String, defaultValue: T) throws -> DVCVariable<T> {
+    public func variable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
         var variable: DVCVariable<T>
         if let config = self.config?.userConfig,
            let variableFromApi = config.variables[key] {
-            variable = try DVCVariable(from: variableFromApi, defaultValue: defaultValue)
+            variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue)
         } else {
             variable = DVCVariable(key: key, type: String(describing: T.self), value: nil, defaultValue: defaultValue, evalReason: nil)
         }
@@ -113,7 +113,7 @@ public class DVCClient {
         if (!self.initialized) {
             self.configCompletionHandlers.append { error in
                 if let variableFromApi = self.config?.userConfig?.variables[key] {
-                    try? variable.update(from: variableFromApi)
+                    variable.update(from: variableFromApi)
                 }
             }
         }

@@ -97,7 +97,12 @@ public struct Variable {
         self._id = id
         self.key = key
         self.type = type
-        self.value = value
         self.evalReason = dictionary["evalReason"] as? String
+        
+        if (type == "Boolean") {
+            self.value = value as? Bool ?? value
+        } else {
+            self.value = value
+        }
     }
 }
