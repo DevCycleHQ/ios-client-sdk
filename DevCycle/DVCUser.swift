@@ -22,7 +22,7 @@ public class DVCUser: Codable {
     public var appVersion: String?
     public var appBuild: Int?
     public var customData: Data?
-    public var publicCustomData: Data?
+    public var privateCustomData: Data?
     public var lastSeenDate: Date
     public let createdDate: Date
     public let platform: String
@@ -43,7 +43,7 @@ public class DVCUser: Codable {
     
     enum CodingKeys: String, CodingKey {
            case userId = "user_id"
-           case isAnonymous, email, name, language, country, appVersion, appBuild, customData, publicCustomData, lastSeenDate, createdDate, platform, platformVersion, deviceModel, sdkType, sdkVersion
+           case isAnonymous, email, name, language, country, appVersion, appBuild, customData, privateCustomData, lastSeenDate, createdDate, platform, platformVersion, deviceModel, sdkType, sdkVersion
     }
     
     public func update(with user: DVCUser) {
@@ -55,7 +55,7 @@ public class DVCUser: Codable {
         self.appVersion = user.appVersion
         self.appBuild = user.appBuild
         self.customData = user.customData
-        self.publicCustomData = user.publicCustomData
+        self.privateCustomData = user.privateCustomData
     }
     
     func update(with user: ObjCDVCUser) {
@@ -71,8 +71,8 @@ public class DVCUser: Codable {
         if let customData = user.customData, let data = try? JSONSerialization.data(withJSONObject: customData, options: []) {
             self.customData = data
         }
-        if let publicCustomData = user.publicCustomData, let data = try? JSONSerialization.data(withJSONObject: publicCustomData, options: []) {
-            self.publicCustomData = data
+        if let privateCustomData = user.privateCustomData, let data = try? JSONSerialization.data(withJSONObject: privateCustomData, options: []) {
+            self.privateCustomData = data
         }
     }
     
@@ -134,11 +134,11 @@ public class DVCUser: Codable {
             return self
         }
         
-        public func publicCustomData(_ publicCustomData: [String:Any]) -> UserBuilder {
-            guard let data = try? JSONSerialization.data(withJSONObject: publicCustomData, options: []) else {
+        public func privateCustomData(_ privateCustomData: [String:Any]) -> UserBuilder {
+            guard let data = try? JSONSerialization.data(withJSONObject: privateCustomData, options: []) else {
                 return self
             }
-            self.user.publicCustomData = data
+            self.user.privateCustomData = data
             return self
         }
         
@@ -202,7 +202,7 @@ extension DVCUser {
             .formatToQueryItem(name: "appVersion", value: self.appVersion)
             .formatToQueryItem(name: "appBuild", value: self.appBuild)
             .formatToQueryItem(name: "customData", value: self.customData)
-            .formatToQueryItem(name: "publicCustomData", value: self.publicCustomData)
+            .formatToQueryItem(name: "privateCustomData", value: self.privateCustomData)
             .formatToQueryItem(name: "lastSeenDate", value: self.lastSeenDate)
             .formatToQueryItem(name: "createdDate", value: self.createdDate)
             .formatToQueryItem(name: "platform", value: self.platform)

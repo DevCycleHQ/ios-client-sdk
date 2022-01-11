@@ -37,10 +37,10 @@ public class ObjCDVCUser: NSObject {
             return data
         }
     }
-    @objc public var publicCustomData: [String:Any]? {
+    @objc public var privateCustomData: [String:Any]? {
         get {
-            guard let publicCustomData = user?.publicCustomData,
-                  let data = try? JSONSerialization.jsonObject(with: publicCustomData, options: []) as? [String: Any]
+            guard let privateCustomData = user?.privateCustomData,
+                  let data = try? JSONSerialization.jsonObject(with: privateCustomData, options: []) as? [String: Any]
             else {
                 return nil
             }
@@ -80,8 +80,8 @@ public class ObjCDVCUser: NSObject {
         if let customData = builder.customData {
             userBuilder = userBuilder.customData(customData)
         }
-        if let publicCustomData = builder.publicCustomData {
-            userBuilder = userBuilder.publicCustomData(publicCustomData)
+        if let privateCustomData = builder.privateCustomData {
+            userBuilder = userBuilder.privateCustomData(privateCustomData)
         }
         guard let user = try? userBuilder.build() else {
             Log.error("Error making user", tags: ["user", "build"])
@@ -100,7 +100,7 @@ public class ObjCDVCUser: NSObject {
         @objc public var country: String?
         @objc public var appVersion: String?
         @objc public var customData: [String: Any]?
-        @objc public var publicCustomData: [String: Any]?
+        @objc public var privateCustomData: [String: Any]?
     }
     
     @objc(build:block:) public static func build(_ block: ((ObjCUserBuilder) -> Void)) throws -> ObjCDVCUser {
