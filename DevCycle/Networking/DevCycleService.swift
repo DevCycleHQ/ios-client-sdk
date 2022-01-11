@@ -14,6 +14,10 @@ typealias ConfigCompletionHandler = (Config) -> Void
 
 typealias PublishEventsCompletionHandler = (DataResponse) -> Void
 
+private enum APIError: Error {
+    case NoResponse
+}
+
 struct NetworkingConstants {
     static let hostUrl = ".devcycle.com"
     static let sdkUrl = "https://sdk-api"
@@ -128,6 +132,23 @@ class DevCycleService: DevCycleServiceProtocol {
         }
         self.session.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
+                guard let responseDataJson = try? JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String:Any] else {
+                    Log.error("Unable to parse API Response", tags: ["api"])
+                    completion?((nil, nil, APIError.NoResponse))
+                    return
+                }
+                guard responseDataJson["statusCode"] == nil else {
+                    var errorResponse: String
+                    if (responseDataJson["message"] is [String]) {
+                        errorResponse = (responseDataJson["message"] as! [String]).joined(separator: ", ")
+                    } else {
+                        errorResponse = String(describing: responseDataJson["message"])
+                    }
+
+                    Log.error("Error: \(errorResponse)", tags: ["api", String(describing: responseDataJson["statusCode"])])
+                    completion?((nil, nil, errorResponse as? Error))
+                    return
+                }
                 completion?((data, response, error))
             }
         }.resume()

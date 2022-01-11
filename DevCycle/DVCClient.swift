@@ -11,7 +11,6 @@ enum ClientError: Error {
     case MissingEnvironmentKeyOrUser
     case InvalidEnvironmentKey
     case InvalidUser
-    case APIError
     case MissingUserOrFeatureVariationsMap
 }
 
