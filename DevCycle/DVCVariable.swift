@@ -9,10 +9,6 @@ import Foundation
 
 public typealias VariableValueHandler<T> = (T) -> Void
 
-public enum VariableError: Error {
-    case DefaultValueAndValueTypeMismatch
-}
-
 public class DVCVariable<T> {
     public var key: String
     public var type: String
@@ -23,7 +19,7 @@ public class DVCVariable<T> {
     public var value: T
     public var defaultValue: T
     
-    init (key: String, type: String, value: T?, defaultValue: T, evalReason: String?) {
+    init(key: String, type: String, value: T?, defaultValue: T, evalReason: String?) {
         self.key = key
         self.type = type
         self.value = value ?? defaultValue
@@ -32,24 +28,27 @@ public class DVCVariable<T> {
         self.evalReason = evalReason
     }
     
-    init (from variable: Variable, defaultValue: T) throws {
-        guard let value = variable.value as? T else {
-            throw VariableError.DefaultValueAndValueTypeMismatch
+    init(from variable: Variable, defaultValue: T) {
+        if let value = variable.value as? T {
+            self.value = value
+        } else {
+            Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
+            self.value = defaultValue
         }
         
         self.key = variable.key
-        self.value = value
         self.defaultValue = defaultValue
         self.type = variable.type
         self.isDefaulted = false
         self.evalReason = variable.evalReason
     }
     
-    func update(from variable: Variable) throws {
-        guard let value = variable.value as? T else {
-            throw VariableError.DefaultValueAndValueTypeMismatch
+    func update(from variable: Variable) {
+        if let value = variable.value as? T {
+            self.value = value
+        } else {
+            Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
         }
-        self.value = value
         self.type = variable.type
         self.evalReason = variable.evalReason
         self.isDefaulted = false
