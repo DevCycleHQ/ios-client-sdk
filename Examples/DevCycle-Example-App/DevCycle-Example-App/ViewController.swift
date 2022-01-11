@@ -35,7 +35,7 @@ class ViewController: UIViewController {
                               .customData([
                                 "customkey": "customValue"
                               ])
-                              .publicCustomData([
+                              .privateCustomData([
                                 "customkey2": "customValue2"
                               ])
                               .build()
