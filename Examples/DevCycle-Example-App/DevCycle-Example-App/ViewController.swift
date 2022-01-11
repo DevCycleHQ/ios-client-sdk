@@ -45,6 +45,11 @@ class ViewController: UIViewController {
                 self.loginButton.setTitle("Log out", for: .normal)
                 print("Logged in as User: \(String(describing: user?.userId))!")
                 print("Variables: \(String(describing: variables))")
+                
+                let variable = client.variable(key: "default-faeture-from-phong-tap-google-auth", defaultValue: false)
+                if (variable.value) {
+                    print("Feature on!")
+                }
             }
         }
     }

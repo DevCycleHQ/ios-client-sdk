@@ -28,7 +28,7 @@ class DVCVariableTests: XCTestCase {
         let variable = DVCVariable(key: "my_key", type: "String", value: nil, defaultValue: "my_default", evalReason: nil)
         XCTAssertNotNil(variable)
         
-        try variable.update(from: variableFromApi)
+        variable.update(from: variableFromApi)
         XCTAssertNotNil(variable)
         XCTAssertEqual(variable.key, "my_key")
         XCTAssertEqual(variable.value, "my_value")
@@ -49,7 +49,7 @@ class DVCVariableTests: XCTestCase {
         """.data(using: .utf8)!
         let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
-        let variable = try DVCVariable(from: variableFromApi, defaultValue: "my_default")
+        let variable = DVCVariable(from: variableFromApi, defaultValue: "my_default")
         XCTAssertNotNil(variable)
         XCTAssertEqual(variable.key, "my_key")
         XCTAssertEqual(variable.value, "my_value")
@@ -70,7 +70,7 @@ class DVCVariableTests: XCTestCase {
         """.data(using: .utf8)!
         let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
-        let variable = try DVCVariable(from: variableFromApi, defaultValue: false)
+        let variable = DVCVariable(from: variableFromApi, defaultValue: false)
         XCTAssertNotNil(variable)
         XCTAssertEqual(variable.key, "my_key")
         XCTAssertEqual(variable.value, true)
@@ -91,7 +91,7 @@ class DVCVariableTests: XCTestCase {
         """.data(using: .utf8)!
         let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
-        let variable = try DVCVariable(from: variableFromApi, defaultValue: 1.1)
+        let variable = DVCVariable(from: variableFromApi, defaultValue: 1.1)
         XCTAssertNotNil(variable)
         XCTAssertEqual(variable.key, "my_key")
         XCTAssertEqual(variable.value, 2.3)
@@ -118,7 +118,7 @@ class DVCVariableTests: XCTestCase {
         let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let defaultValue = ["key1": "value2"]
-        let variable = try DVCVariable(from: variableFromApi, defaultValue: defaultValue as [String:Any])
+        let variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue as [String:Any])
         XCTAssertNotNil(variable)
         XCTAssertEqual(variable.key, "my_key")
         XCTAssertNotNil(variable.value)
@@ -128,7 +128,7 @@ class DVCVariableTests: XCTestCase {
         XCTAssertNil(variable.evalReason)
     }
     
-    func testThrowsIfValueDoesntMatchDefaultValue() throws {
+    func testReturnsDefaultValueIfValueDoesntMatchDefaultValue() throws {
         let data = """
         {
             "_id": "variable_id",
@@ -139,10 +139,11 @@ class DVCVariableTests: XCTestCase {
         """.data(using: .utf8)!
         let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
-        XCTAssertThrowsError(try DVCVariable(from: variableFromApi, defaultValue: 4))
+        let variable = DVCVariable(from: variableFromApi, defaultValue: 4)
+        XCTAssertEqual(variable.value, 4)
     }
     
-    func testThrowsIfValueFromUpdateDoesntMatchDefaultValue() throws {
+    func testDefaultValueIfValueFromUpdateDoesntMatchDefaultValue() throws {
         let data = """
         {
             "_id": "variable_id",
@@ -154,7 +155,8 @@ class DVCVariableTests: XCTestCase {
         let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let variable = DVCVariable(key: "my_key", type: "Number", value: nil, defaultValue: 4, evalReason: nil)
-        XCTAssertThrowsError(try variable.update(from: variableFromApi))
+        variable.update(from: variableFromApi)
+        XCTAssertEqual(variable.value, 4)
     }
 
 }
