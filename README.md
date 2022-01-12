@@ -10,42 +10,30 @@ This version of the DevCycle iOS Client SDK supports a minimum of iOS 12.
 
 ## Installation
 
-The SDK can be installed into your iOS project by adding the following to *build.gradle*:
+The SDK can be installed into your iOS project by adding the following to your cocoapod spec:
 
 ```swift
-import DevCycle
+    pod 'DevCycle'
 ```
 
 ## Usage
 
 ### Initializing the SDK
 
-Using the builder pattern we can initialize the DevCycle SDK by providing the `applicationContext`, 
-DVCUser, and DevCycle mobile environment key:
+Using the builder pattern we can initialize the DevCycle SDK by providing the DVCUser and DevCycle mobile environment key:
 
-```kotlin
-val dvcClient: DVCClient = DVCClient.builder()
-    .withContext(applicationContext)
-    .withUser(
-        DVCUser.builder()
-            .withUserId("test_user")
-            .build()
-    )
-    .withEnvironmentKey("<DEVCYCLE_MOBILE_ENVIRONMENT_KEY>")
-    .build()
+```swift
+let user = try DVCUser.builder()
+                    .userId("my-user1")
+                    .build()
 
-dvcClient.initialize(object : DVCCallback<String?> {
-    override fun onSuccess(result: String?) {
-        // User Configuration loaded successfully from DevCycle
-    }
-
-    override fun onError(t: Throwable) {
-        // User Configuration failed to load from DevCycle, default values will be used for Variables.
-    }
-})
+guard let client = try DVCClient.builder()
+        .environmentKey("<DEVCYCLE_MOBILE_ENVIRONMENT_KEY>")
+        .user(user)
+        .build(onInitialized: nil)
 ```
 
-The user object needs either a `user_id`, or `isAnonymous` set to `true` for an anonymous user.
+The user object needs either a `user_id`, or `isAnonymous` set to `true` for an anonymous user. 
 
 ## Using Variable Values
 
@@ -53,16 +41,16 @@ To get values from your Features, the `variable()` method is used to fetch varia
 the variable's identifier `key` coupled with a default value. The default value can be of type 
 string, boolean, number, or JSONObject:
 
-```kotlin
-var strVariable: Variable<String> = dvcClient.variable("str_key", "default")
-var boolVariable: Variable<Boolean> = dvcClient.variable("bool_key", false)
-var numVariable: Variable<Number> = dvcClient.variable("bool_key", 0)
-var jsonVariable: Variable<JSONObject> = dvcClient.variable("json_key", JSONObject("{ \"key\": \"value\" }"))
+```swift
+let strVariable: DVCVariable<String> = client.variable(key: "str_key", defaultValue: "default")
+let boolVariable: DVCVariable<Bool> = client.variable(key: "bool_key", defaultValue: false)
+let numVariable: DVCVariable<Int> = client.variable(key: "num_key", defaultValue: 4)
+let jsonVariable: DVCVariable<[String:Any]> = client.variable(key: "json_key", defaultValue: [:])
 ```
 
 To grab the value, there is a property on the object returned to grab the value:
 
-```kotlin
+```swift
 if (boolVariable.value == true) {
     // Run Feature Flag Code
 } else {
@@ -84,9 +72,9 @@ If the value is not ready, it will return the default value passed in the creati
 
 To grab all the Features or Variables returned in the config:
 
-```kotlin
-var features: Map<String, Feature>? = dvcClient.allFeatures()
-var variables: Map<String, Variable<Any>>? = dvcClient.allVariables()
+```swift
+let features: [String: Feature] = client.allFeatures()
+let variables: [String: Variable] = client.allVariables()
 ```
 
 If the SDK has not finished initializing, these methods will return an empty object.
@@ -96,68 +84,75 @@ If the SDK has not finished initializing, these methods will return an empty obj
 To identify a different user, or the same user passed into the initialize method with more attributes, 
 build a DVCUser object and pass it into `identifyUser`:
 
-```kotlin
-var user = DVCUser.builder()
-                .withUserId("test_user")
-                .withEmail("test_user@devcycle.com")
-                .withCustomData(mapOf("custom_key" to "value"))
-                .build()
-dvcClient.identifyUser(user)
+```swift
+let user = try DVCUser.builder()
+                    .userId("my-user1")
+                    .email("my-email@email.com")
+                    .appBuild(1005)
+                    .appVersion("1.1.1")
+                    .country("CA")
+                    .name("My Name")
+                    .language("EN")
+                    .customData([
+                        "customkey": "customValue"
+                    ])
+                    .privateCustomData([
+                        "customkey2": "customValue2"
+                    ])
+                    .build()
+client.identifyUser(user)
 ```
 
 To wait on Variables that will be returned from the identify call, you can pass in a DVCCallback:
 
-```kotlin
-dvcClient.identifyUser(user, object: DVCCallback<Map<String, Variable<Any>>> {
-    override fun onSuccess(result: Map<String, Variable<Any>>) {
+```swift
+try client.identifyUser(user) { error, variables in
+    if (error != nil) {
+        // error identifying user
+    } else {
+        // use variables 
     }
-
-    override fun onError(t: Throwable) {
-    }
-})
+}
 ```
 
-If `onError` is called the user's configuration will not be updated and previous user's data will persist.
+If `error` exists the called the user's configuration will not be updated and previous user's data will persist.
 
 ## Reset User
 
 To reset the user into an anonymous user, `resetUser` will reset to the anonymous user created before 
 or will create one with an anonymous `user_id`.
 
-```kotlin
-dvcClient.resetUser()
+```swift
+client.resetUser()
 ```
 
 To wait on the Features of the anonymous user, you can pass in a DVCCallback:
 
-```kotlin
-dvcClient.resetUser(object : DVCCallback<Map<String, Variable<Any>>> {
-    override fun onSuccess(result: Map<String, Variable<Any>>) {
-    }
-
-    override fun onError(t: Throwable) {
-    }
-})
+```swift
+try client.resetUser { error, variables in
+    // anonymous user
+}
 ```
 
-If `onError` is called the user's configuration will not be updated and previous user's data will persist.
+If `error` exists is called the user's configuration will not be updated and previous user's data will persist.
 
 ## Tracking Events
 
 To track events, pass in an object with at least a `type` key:
 
-```kotlin
-var event = DVCEvent.builder()
-                .withType("custom_event_type")
-                .withTarget("custom_event_target")
-                .withValue(BigDecimal(10.0))
-                .withMetaData(mapOf("custom_key" to "value"))
-                .build()
-dvcClient.track(event)
+```swift
+let event = try DVCEvent.builder()
+                        .type("my_event")
+                        .target("my_target")
+                        .value(3)
+                        .metaData([ "key": "value" ])
+                        .clientDate(Date())
+                        .build()
+client.track(event)
 ```
 
 The SDK will flush events every 10s or `flushEventsMS` specified in the options. To manually flush events, call:
 
-```kotlin
-dvcClient.flushEvents()
+```swift
+client.flushEvents()
 ```
