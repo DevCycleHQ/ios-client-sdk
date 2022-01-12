@@ -58,7 +58,13 @@ class ViewController: UIViewController {
     
     @IBAction func track(_ sender: Any) {
         guard let client = self.client else { return }
-        let event = try? DVCEvent.builder().type("my_event").clientDate(Date()).build()
+        let event = try? DVCEvent.builder()
+                                 .type("my_event")
+                                 .target("my_target")
+                                 .value(3)
+                                 .metaData([ "key": "value" ])
+                                 .clientDate(Date())
+                                 .build()
         if let event = event {
             client.track(event)
         }
