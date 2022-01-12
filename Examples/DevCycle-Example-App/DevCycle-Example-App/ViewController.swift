@@ -49,6 +49,8 @@ class ViewController: UIViewController {
                 let variable = client.variable(key: "default-faeture-from-phong-tap-google-auth", defaultValue: false)
                 if (variable.value) {
                     print("Feature on!")
+                } else {
+                    print("Feature off!")
                 }
             }
         }
