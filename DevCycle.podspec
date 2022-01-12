@@ -4,11 +4,11 @@ Pod::Spec.new do |spec|
   spec.summary      = "The iOS SDK for Devcycle!"
 
   spec.description  = <<-DESC
-    The iOS SDK for Devcycle!
+    The iOS Client SDK for DevCycle.
                    DESC
 
   spec.homepage     = "https://devcycle.com/"
-  spec.license      = "MIT"
+  spec.license = { :type => "MIT", :file => "LICENSE.txt" }
 
   spec.ios.deployment_target     = "12.0"
   spec.source = { :git => 'https://github.com/DevCycleHQ/ios-client-sdk.git', :tag => "#{spec.version}" }
