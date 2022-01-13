@@ -137,6 +137,8 @@ class DevCycleService: DevCycleServiceProtocol {
                     completion?((nil, nil, APIError.NoResponse))
                     return
                 }
+                // Guard below checks if statusCode exists or not in the response body.
+                // Only API Errors (http status codes of 4xx/5xx) have the statusCode in the response body, successful API Requests (http status codes of 2xx/3xx) calls will not.
                 guard responseDataJson["statusCode"] == nil else {
                     var errorResponse: String
                     if (responseDataJson["message"] is [String]) {
