@@ -126,6 +126,7 @@ public class DVCClient {
         guard let currentUser = self.user, let userId = currentUser.userId, let incomingUserId = user.userId else {
             throw ClientError.InvalidUser
         }
+        self.flushEvents()
         var updateUser: DVCUser = currentUser
         if (userId == incomingUserId) {
             updateUser.update(with: user)
@@ -151,6 +152,7 @@ public class DVCClient {
     
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
         self.cache = cacheService.load()
+        self.flushEvents()
         var anonUser: DVCUser
         if let cachedAnonUser = self.cache?.anonUser {
             anonUser = cachedAnonUser
