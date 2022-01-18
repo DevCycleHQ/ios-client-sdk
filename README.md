@@ -1,5 +1,9 @@
 # DevCycle iOS Client SDK
 
+[![CocoaPods compatible](https://img.shields.io/cocoapods/v/DevCycle.svg)](https://cocoapods.org/pods/DevCycle)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
+
 The DevCycle iOS Client SDK. This SDK uses our Client SDK APIs to perform all user segmentation 
 and bucketing for the SDK, providing fast response times using our globally distributed edge workers 
 all around the world.
@@ -10,10 +14,20 @@ This version of the DevCycle iOS Client SDK supports a minimum of iOS 12.
 
 ## Installation
 
+### CocoaPods
+
 The SDK can be installed into your iOS project by adding the following to your cocoapod spec:
 
 ```swift
-    pod 'DevCycle'
+pod 'DevCycle'
+```
+
+### Carthage
+
+Include the following in your `Cartfile`: 
+
+```swift
+github "DevCycleHQ/ios-client-sdk"
 ```
 
 ## Usage
