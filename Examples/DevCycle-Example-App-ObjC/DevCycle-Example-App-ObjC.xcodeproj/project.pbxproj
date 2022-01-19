@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F722D192798693300A4BB52 /* DevCycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F722D162798692300A4BB52 /* DevCycle.framework */; };
 		52A486D0278626E700DABA34 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486CF278626E700DABA34 /* AppDelegate.m */; };
 		52A486D3278626E700DABA34 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486D2278626E700DABA34 /* SceneDelegate.m */; };
 		52A486D6278626E700DABA34 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486D5278626E700DABA34 /* ViewController.m */; };
@@ -14,21 +15,41 @@
 		52A486DB278626EC00DABA34 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52A486DA278626EC00DABA34 /* Assets.xcassets */; };
 		52A486DE278626EC00DABA34 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52A486DC278626EC00DABA34 /* LaunchScreen.storyboard */; };
 		52A486E1278626EC00DABA34 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486E0278626EC00DABA34 /* main.m */; };
-		52A486F22786275800DABA34 /* DevCycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A486EE2786275200DABA34 /* DevCycle.framework */; };
 		52A486F6278627A400DABA34 /* DevCycleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486F5278627A400DABA34 /* DevCycleManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		52A486ED2786275200DABA34 /* PBXContainerItemProxy */ = {
+		0F722CF92798688800A4BB52 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 52A486E82786275200DABA34 /* DevCycle-iOS.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 5268DB4D27501CFC00D17A40;
 			remoteInfo = DevCycle;
 		};
-		52A486EF2786275200DABA34 /* PBXContainerItemProxy */ = {
+		0F722CFB2798688800A4BB52 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 52A486E82786275200DABA34 /* DevCycle-iOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5268DB5627501CFC00D17A40;
+			remoteInfo = DevCycleTests;
+		};
+		0F722D112798692300A4BB52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0F722D0E2798692300A4BB52 /* DevCycle-iOS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5268DB4C27501CFC00D17A40;
+			remoteInfo = DevCycle;
+		};
+		0F722D152798692300A4BB52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0F722D0E2798692300A4BB52 /* DevCycle-iOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5268DB4D27501CFC00D17A40;
+			remoteInfo = DevCycle;
+		};
+		0F722D172798692300A4BB52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0F722D0E2798692300A4BB52 /* DevCycle-iOS.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 5268DB5627501CFC00D17A40;
 			remoteInfo = DevCycleTests;
@@ -36,6 +57,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0F722D0E2798692300A4BB52 /* DevCycle-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "DevCycle-iOS.xcodeproj"; path = "/Users/jonathannorris/git/ios-client-sdk/DevCycle-iOS.xcodeproj"; sourceTree = "<absolute>"; };
 		52A486CB278626E700DABA34 /* DevCycle-Example-App-ObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DevCycle-Example-App-ObjC.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		52A486CE278626E700DABA34 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		52A486CF278626E700DABA34 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -48,7 +70,7 @@
 		52A486DD278626EC00DABA34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		52A486DF278626EC00DABA34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		52A486E0278626EC00DABA34 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		52A486E82786275200DABA34 /* DevCycle-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "DevCycle-iOS.xcodeproj"; path = "../../../DevCycle-iOS.xcodeproj"; sourceTree = "<group>"; };
+		52A486E82786275200DABA34 /* DevCycle-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "DevCycle-iOS.xcodeproj"; path = "../../DevCycle-iOS.xcodeproj"; sourceTree = "<group>"; };
 		52A486F4278627A400DABA34 /* DevCycleManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DevCycleManager.h; sourceTree = "<group>"; };
 		52A486F5278627A400DABA34 /* DevCycleManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DevCycleManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,13 +80,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52A486F22786275800DABA34 /* DevCycle.framework in Frameworks */,
+				0F722D192798693300A4BB52 /* DevCycle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0F722CF52798688800A4BB52 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0F722CFA2798688800A4BB52 /* DevCycle.framework */,
+				0F722CFC2798688800A4BB52 /* DevCycleTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0F722D0F2798692300A4BB52 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0F722D162798692300A4BB52 /* DevCycle.framework */,
+				0F722D182798692300A4BB52 /* DevCycleTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		52A486C2278626E700DABA34 = {
 			isa = PBXGroup;
 			children = (
@@ -72,6 +112,7 @@
 				52A486CD278626E700DABA34 /* DevCycle-Example-App-ObjC */,
 				52A486CC278626E700DABA34 /* Products */,
 				52A486F12786275800DABA34 /* Frameworks */,
+				0F722D0E2798692300A4BB52 /* DevCycle-iOS.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -110,15 +151,6 @@
 			path = DevCycle;
 			sourceTree = "<group>";
 		};
-		52A486E92786275200DABA34 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				52A486EE2786275200DABA34 /* DevCycle.framework */,
-				52A486F02786275200DABA34 /* DevCycleTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		52A486F12786275800DABA34 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -149,6 +181,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				0F722D122798692300A4BB52 /* PBXTargetDependency */,
 			);
 			name = "DevCycle-Example-App-ObjC";
 			productName = "DevCycle-Example-App-ObjC";
@@ -182,8 +215,12 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 52A486E92786275200DABA34 /* Products */;
+					ProductGroup = 0F722CF52798688800A4BB52 /* Products */;
 					ProjectRef = 52A486E82786275200DABA34 /* DevCycle-iOS.xcodeproj */;
+				},
+				{
+					ProductGroup = 0F722D0F2798692300A4BB52 /* Products */;
+					ProjectRef = 0F722D0E2798692300A4BB52 /* DevCycle-iOS.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -194,18 +231,32 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		52A486EE2786275200DABA34 /* DevCycle.framework */ = {
+		0F722CFA2798688800A4BB52 /* DevCycle.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = DevCycle.framework;
-			remoteRef = 52A486ED2786275200DABA34 /* PBXContainerItemProxy */;
+			remoteRef = 0F722CF92798688800A4BB52 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		52A486F02786275200DABA34 /* DevCycleTests.xctest */ = {
+		0F722CFC2798688800A4BB52 /* DevCycleTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = DevCycleTests.xctest;
-			remoteRef = 52A486EF2786275200DABA34 /* PBXContainerItemProxy */;
+			remoteRef = 0F722CFB2798688800A4BB52 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0F722D162798692300A4BB52 /* DevCycle.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DevCycle.framework;
+			remoteRef = 0F722D152798692300A4BB52 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0F722D182798692300A4BB52 /* DevCycleTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DevCycleTests.xctest;
+			remoteRef = 0F722D172798692300A4BB52 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -237,6 +288,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0F722D122798692300A4BB52 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DevCycle;
+			targetProxy = 0F722D112798692300A4BB52 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		52A486D7278626E700DABA34 /* Main.storyboard */ = {
