@@ -21,7 +21,7 @@
     
     DVCClient *client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
         builder.user = user;
-    } onInitialized:nil];
+    } onInitialized: nil];
     XCTAssertNil(client);
     XCTAssertNotNil(err);
 }
@@ -30,7 +30,7 @@
     NSError *err = nil;
     DVCClient *client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
         builder.environmentKey = @"my_env_key";
-    } onInitialized:nil];
+    } onInitialized: nil];
     XCTAssertNil(client);
     XCTAssertNotNil(err);
 }
@@ -43,7 +43,7 @@
     DVCClient *client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
         builder.environmentKey = @"my_env_key";
         builder.user = user;
-    } onInitialized:nil];
+    } onInitialized: nil];
     XCTAssertNil(err);
     XCTAssertNotNil(client);
 }
@@ -60,7 +60,6 @@
         builder.user = user;
     } onInitialized:nil];
     DVCVariable *variable = [client variableWithKey:@"my-key" defaultValue:@"default-value" error:&err];
-    XCTAssertNil(err);
     XCTAssertNotNil(variable);
     XCTAssertNil(variable.type);
     XCTAssertNil(variable.evalReason);

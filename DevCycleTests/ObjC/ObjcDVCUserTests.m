@@ -52,7 +52,7 @@
     XCTAssertNil(user.country);
     XCTAssertNil(user.appVersion);
     XCTAssertNil(user.customData);
-    XCTAssertNil(user.publicCustomData);
+    XCTAssertNil(user.privateCustomData);
 }
 
 - (void)testNonUserIdPropertiesAreNotNil {
