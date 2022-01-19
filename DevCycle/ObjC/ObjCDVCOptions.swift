@@ -7,6 +7,13 @@
 
 import Foundation
 
+@objc(DVCOptionsBuilder)
+public class ObjCOptionsBuilder: NSObject {
+    @objc public var flushEventsIntervalMs: NSNumber?
+    @objc public var disableEventLogging: NSNumber?
+    @objc public var logLevel: NSNumber?
+}
+
 @objc(LogLevel)
 public class ObjCLogLevel: NSObject {
     @objc public static let debug = NSNumber(0)
@@ -17,6 +24,14 @@ public class ObjCLogLevel: NSObject {
 @objc(DVCOptions)
 public class ObjCDVCOptions: NSObject {
     var options: DVCOptions?
+    
+    @objc(build:block:)
+    public static func build(_ block: ((ObjCOptionsBuilder) -> Void)) throws -> ObjCDVCOptions {
+        let builder = ObjCOptionsBuilder()
+        block(builder)
+        let options = ObjCDVCOptions(builder: builder)
+        return options
+    }
     
     init(builder: ObjCOptionsBuilder) {
         var optionsBuilder = DVCOptions.builder()
@@ -46,19 +61,5 @@ public class ObjCDVCOptions: NSObject {
         }
         let options = optionsBuilder.build()
         self.options = options
-    }
-    
-    @objc(DVCOptionsBuilder)
-    public class ObjCOptionsBuilder: NSObject {
-        @objc public var flushEventsIntervalMs: NSNumber?
-        @objc public var disableEventLogging: NSNumber?
-        @objc public var logLevel: NSNumber?
-    }
-    
-    @objc(build:block:) public static func build(_ block: ((ObjCOptionsBuilder) -> Void)) throws -> ObjCDVCOptions {
-        let builder = ObjCOptionsBuilder()
-        block(builder)
-        let options = ObjCDVCOptions(builder: builder)
-        return options
     }
 }
