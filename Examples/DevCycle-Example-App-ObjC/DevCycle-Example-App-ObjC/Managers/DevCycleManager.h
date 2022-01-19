@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (id)sharedManager;
 - (void)initialize:(DVCUser *)user;
+- (void)initializeUserBuilder:(DVCUserBuilder *)userBuilder;
 
 @end
 

@@ -17,11 +17,18 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Builder
     NSError *err = nil;
     DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder *builder) {
-        builder.isAnonymous = @YES;
+        builder.userId = @"test_user";
     }];
     [[DevCycleManager sharedManager] initialize:user];
+//    [[DevCycleManager sharedManager].client variableWithKey:@"key" defaultValue:@"default" error:&err];
+    
+    // Init
+    DVCUserBuilder *userBuilder = [DVCUserBuilder initializeWithUserId:@"test_user"];
+    [[DevCycleManager sharedManager] initializeUserBuilder:userBuilder];
+    
     return YES;
 }
 
