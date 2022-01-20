@@ -152,7 +152,7 @@ public class ObjCDVCClient: NSObject {
     
     func variable<T>(key: String, defaultValue: T) -> ObjCDVCVariable {
         guard let client = self.client else {
-            return ObjCDVCVariable(dvcVariable:
+            return ObjCDVCVariable(
                 DVCVariable<T>(
                     key: key,
                     type: String(describing: T.self),
@@ -163,36 +163,7 @@ public class ObjCDVCClient: NSObject {
             )
         }
 
-        return ObjCDVCVariable(dvcVariable: client.variable(key: key, defaultValue: defaultValue))
-        
-//        var variable: ObjCDVCVariable
-//        if let variableFromConfig = self.client?.config?.userConfig?.variables[key] {
-//            variable = try ObjCDVCVariable(
-//                key: key,
-//                type: variableFromConfig.type,
-//                evalReason: variableFromConfig.evalReason,
-//                value: variableFromConfig.value,
-//                defaultValue: defaultValue
-//            )
-//        } else {
-//            variable = try ObjCDVCVariable(
-//                key: key,
-//                type: nil,
-//                evalReason: nil,
-//                value: nil,
-//                defaultValue: defaultValue
-//            )
-//        }
-//
-//        client?.configCompletionHandlers.append({ error in
-//            if let variableFromApi = self.client?.config?.userConfig?.variables[key] {
-//                try? variable.update(from: variableFromApi)
-//            }
-//        })
-//
-//        self.client?.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
-//
-//        return variable
+        return ObjCDVCVariable(client.variable(key: key, defaultValue: defaultValue))
     }
     
     @objc public func allFeatures() -> [String: ObjCFeature]? {

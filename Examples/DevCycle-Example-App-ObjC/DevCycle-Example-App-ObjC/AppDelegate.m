@@ -31,12 +31,24 @@
     DVCClient *client = [[DevCycleManager sharedManager] initializeUserBuilder:userBuilder];
     
 
-    DVCVariable *stringVar = [client stringVariableWithKey:@"string_key" defaultValue:@"default"];
-    DVCVariable *numVar = [client numberVariableWithKey:@"num_key" defaultValue:@610];
-    DVCVariable *boolVar = [client boolVariableWithKey:@"bool_key" defaultValue:true];
-    DVCVariable *jsonVar = [client jsonVariableWithKey:@"json_key" defaultValue:@{@"key": @"value"}];
+    DVCVariable *stringVar = [[client stringVariableWithKey:@"string_key" defaultValue:@"default"]
+                              onUpdateWithHandler:^(id _Nonnull value) {
+        NSLog(@"string_key value updated: %@", value);
+    }];
+    DVCVariable *numVar = [[client numberVariableWithKey:@"num_key" defaultValue:@610]
+                           onUpdateWithHandler:^(id _Nonnull value) {
+        NSLog(@"num_key value updated: %@", value);
+    }];
+    DVCVariable *boolVar = [[client boolVariableWithKey:@"bool_key" defaultValue:true]
+                            onUpdateWithHandler:^(id _Nonnull value) {
+        NSLog(@"bool_key value updated: %@", value);
+    }];
+    DVCVariable *jsonVar = [[client jsonVariableWithKey:@"json_key" defaultValue:@{@"key": @"value"}]
+                            onUpdateWithHandler:^(id _Nonnull value) {
+        NSLog(@"json_key value updated: %@", value);
+    }];
     
-    NSLog(@"DVC Var Values\nstring: %@\n num: %@\n bool: %@\njson: %@", stringVar, numVar, boolVar, jsonVar); 
+    NSLog(@"DVC Var Values\nstring: %@\n num: %@\n bool: %@\njson: %@", stringVar, numVar, boolVar, jsonVar);
     
     return YES;
 }
