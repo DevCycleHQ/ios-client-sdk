@@ -18,16 +18,25 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Builder
-    NSError *err = nil;
-    DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder *builder) {
-        builder.userId = @"test_user";
-    }];
-    [[DevCycleManager sharedManager] initialize:user];
+//    NSError *err = nil;
+//    DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder *builder) {
+//        builder.userId = @"test_user";
+//    }];
+//    [[DevCycleManager sharedManager] initialize:user];
 //    [[DevCycleManager sharedManager].client variableWithKey:@"key" defaultValue:@"default" error:&err];
     
     // Init
     DVCUserBuilder *userBuilder = [DVCUserBuilder initializeWithUserId:@"test_user"];
-    [[DevCycleManager sharedManager] initializeUserBuilder:userBuilder];
+    userBuilder.customData = @{@"key": @"value"};
+    DVCClient *client = [[DevCycleManager sharedManager] initializeUserBuilder:userBuilder];
+    
+
+    DVCVariable *stringVar = [client stringVariableWithKey:@"string_key" defaultValue:@"default"];
+    DVCVariable *numVar = [client numberVariableWithKey:@"num_key" defaultValue:@610];
+    DVCVariable *boolVar = [client boolVariableWithKey:@"bool_key" defaultValue:true];
+    DVCVariable *jsonVar = [client jsonVariableWithKey:@"json_key" defaultValue:@{@"key": @"value"}];
+    
+    NSLog(@"DVC Var Values\nstring: %@\n num: %@\n bool: %@\njson: %@", stringVar, numVar, boolVar, jsonVar); 
     
     return YES;
 }

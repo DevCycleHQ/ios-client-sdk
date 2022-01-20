@@ -134,35 +134,65 @@ public class ObjCDVCClient: NSObject {
         }
     }
     
-    @objc public func variable(key: String, defaultValue: Any) throws -> ObjCDVCVariable {
-        var variable: ObjCDVCVariable
-        if let variableFromConfig = self.client?.config?.userConfig?.variables[key] {
-            variable = try ObjCDVCVariable(
-                key: key,
-                type: variableFromConfig.type,
-                evalReason: variableFromConfig.evalReason,
-                value: variableFromConfig.value,
-                defaultValue: defaultValue
-            )
-        } else {
-            variable = try ObjCDVCVariable(
-                key: key,
-                type: nil,
-                evalReason: nil,
-                value: nil,
-                defaultValue: defaultValue
+    @objc public func stringVariable(key: String, defaultValue: String) -> ObjCDVCVariable {
+        return variable(key: key, defaultValue: defaultValue)
+    }
+    
+    @objc public func numberVariable(key: String, defaultValue: NSNumber) -> ObjCDVCVariable {
+        return variable(key: key, defaultValue: defaultValue)
+    }
+    
+    @objc public func boolVariable(key: String, defaultValue: Bool) -> ObjCDVCVariable {
+        return variable(key: key, defaultValue: defaultValue)
+    }
+    
+    @objc public func jsonVariable(key: String, defaultValue: NSObject) -> ObjCDVCVariable {
+        return variable(key: key, defaultValue: defaultValue)
+    }
+    
+    func variable<T>(key: String, defaultValue: T) -> ObjCDVCVariable {
+        guard let client = self.client else {
+            return ObjCDVCVariable(dvcVariable:
+                DVCVariable<T>(
+                    key: key,
+                    type: String(describing: T.self),
+                    value: nil,
+                    defaultValue: defaultValue,
+                    evalReason: nil
+                )
             )
         }
+
+        return ObjCDVCVariable(dvcVariable: client.variable(key: key, defaultValue: defaultValue))
         
-        client?.configCompletionHandlers.append({ error in
-            if let variableFromApi = self.client?.config?.userConfig?.variables[key] {
-                try? variable.update(from: variableFromApi)
-            }
-        })
-        
-        self.client?.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
-        
-        return variable
+//        var variable: ObjCDVCVariable
+//        if let variableFromConfig = self.client?.config?.userConfig?.variables[key] {
+//            variable = try ObjCDVCVariable(
+//                key: key,
+//                type: variableFromConfig.type,
+//                evalReason: variableFromConfig.evalReason,
+//                value: variableFromConfig.value,
+//                defaultValue: defaultValue
+//            )
+//        } else {
+//            variable = try ObjCDVCVariable(
+//                key: key,
+//                type: nil,
+//                evalReason: nil,
+//                value: nil,
+//                defaultValue: defaultValue
+//            )
+//        }
+//
+//        client?.configCompletionHandlers.append({ error in
+//            if let variableFromApi = self.client?.config?.userConfig?.variables[key] {
+//                try? variable.update(from: variableFromApi)
+//            }
+//        })
+//
+//        self.client?.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+//
+//        return variable
     }
     
     @objc public func allFeatures() -> [String: ObjCFeature]? {
