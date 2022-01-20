@@ -106,7 +106,13 @@ public class DVCClient {
            let variableFromApi = config.variables[key] {
             variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue)
         } else {
-            variable = DVCVariable(key: key, type: String(describing: T.self), value: nil, defaultValue: defaultValue, evalReason: nil)
+            variable = DVCVariable(
+                key: key,
+                type: String(describing: T.self),
+                value: nil,
+                defaultValue: defaultValue,
+                evalReason: nil
+            )
         }
         
         if (!self.initialized) {
@@ -185,26 +191,37 @@ public class DVCClient {
 
     public func flushEvents() {
         var eventsToFlushQueue: [DVCEvent] = self.eventQueue
-        eventsToFlushQueue.append(contentsOf: self.aggregateEventQueue.variableDefaulted.map { (_: String, defaultedEvent: DVCEvent) -> DVCEvent in
-            defaultedEvent
-        })
-        eventsToFlushQueue.append(contentsOf: self.aggregateEventQueue.variableEvaluated.map { (_: String, evaluatedEvent: DVCEvent) -> DVCEvent in
-            evaluatedEvent
-        })
+        eventsToFlushQueue.append(
+            contentsOf: self.aggregateEventQueue.variableDefaulted.map { (_: String, defaultedEvent: DVCEvent) -> DVCEvent in
+                defaultedEvent
+            }
+        )
+        eventsToFlushQueue.append(
+            contentsOf: self.aggregateEventQueue.variableEvaluated.map { (_: String, evaluatedEvent: DVCEvent) -> DVCEvent in
+                evaluatedEvent
+            }
+        )
         if (!eventsToFlushQueue.isEmpty) {
-            self.service?.publishEvents(events: eventsToFlushQueue, user: self.user!, completion: { [weak self] data, response, error in
-                if let error = error {
-                    Log.error("Error: \(error)", tags: ["events", "flush"])
-                    return
+            self.service?.publishEvents(
+                events: eventsToFlushQueue,
+                user: self.user!,
+                completion: { [weak self] data, response, error in
+                    if let error = error {
+                        Log.error("Error: \(error)", tags: ["events", "flush"])
+                        return
+                    }
+                    Log.info("Submitted: \(String(describing: eventsToFlushQueue.count)) events", tags: ["events", "flush"])
+                    self?.resetQueues()
                 }
-                Log.info("Submitted: \(String(describing: eventsToFlushQueue.count)) events", tags: ["events", "flush"])
-                self?.resetQueues()
-            })
+            )
         }
     }
     
     func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool) {
-        self.aggregateEventQueue.track(variableKey: variableKey, eventType: variableIsDefaulted ? DVCEventTypes.VariableDefaulted : DVCEventTypes.VariableEvaluated)
+        self.aggregateEventQueue.track(
+            variableKey: variableKey,
+            eventType: variableIsDefaulted ? DVCEventTypes.VariableDefaulted : DVCEventTypes.VariableEvaluated
+        )
     }
     
     public class ClientBuilder {
