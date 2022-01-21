@@ -2,7 +2,6 @@
 //  DVCConfig.swift
 //  DevCycle
 //
-//  Created by Jason Salaber on 2021-11-30.
 //
 
 import Foundation

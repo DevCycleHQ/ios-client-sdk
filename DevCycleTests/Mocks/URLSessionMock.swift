@@ -2,7 +2,6 @@
 //  URLSessionMock.swift
 //  DevCycleTests
 //
-//  Created by Jason Salaber on 2021-12-23.
 //  Copyright © 2021 Taplytics. All rights reserved.
 //
 

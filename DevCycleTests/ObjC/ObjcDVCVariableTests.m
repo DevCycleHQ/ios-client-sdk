@@ -2,7 +2,6 @@
 //  ObjcDVCVariableTests.m
 //  DevCycleTests
 //
-//  Created by Jason Salaber on 2021-12-22.
 //  Copyright © 2021 Taplytics. All rights reserved.
 //
 

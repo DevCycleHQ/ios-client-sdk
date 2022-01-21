@@ -146,8 +146,13 @@ class DevCycleService: DevCycleServiceProtocol {
                     } else {
                         errorResponse = String(describing: responseDataJson["message"])
                     }
-
-                    Log.error("Error: \(errorResponse)", tags: ["api", String(describing: responseDataJson["statusCode"])])
+                    
+                    var tags = ["api"]
+                    if let statusCode = responseDataJson["statusCode"] as? String {
+                        tags.append(statusCode)
+                    }
+                    
+                    Log.error("Error: \(errorResponse)", tags: tags)
                     completion?((nil, nil, errorResponse as? Error))
                     return
                 }
