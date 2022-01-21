@@ -2,7 +2,6 @@
 //  UserConfigTests.swift
 //  DevCycleTests
 //
-//  Created by Jason Salaber on 2021-12-14.
 //
 
 import XCTest
