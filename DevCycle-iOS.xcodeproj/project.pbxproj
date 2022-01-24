@@ -19,7 +19,6 @@
 		5264A78E2768E94600FEDB43 /* test_config.json in Resources */ = {isa = PBXBuildFile; fileRef = 5264A78D2768E94500FEDB43 /* test_config.json */; };
 		5264A7902768E9F400FEDB43 /* UserConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A78F2768E9F400FEDB43 /* UserConfigTests.swift */; };
 		5264A7BD2769381600FEDB43 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A7BC2769381500FEDB43 /* Cache.swift */; };
-		5268DB5127501CFC00D17A40 /* DevCycle.docc in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB5027501CFC00D17A40 /* DevCycle.docc */; };
 		5268DB5727501CFC00D17A40 /* DevCycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5268DB4D27501CFC00D17A40 /* DevCycle.framework */; };
 		5268DB5D27501CFC00D17A40 /* DevCycle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5268DB4F27501CFC00D17A40 /* DevCycle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5268DB6627501D6000D17A40 /* DVCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6427501D6000D17A40 /* DVCClient.swift */; };
@@ -33,6 +32,7 @@
 		52A486762784A3E600DABA34 /* ObjCDVCOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A486752784A3E600DABA34 /* ObjCDVCOptions.swift */; };
 		52A487032788C0FF00DABA34 /* ObjCUserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A487022788C0FF00DABA34 /* ObjCUserConfig.swift */; };
 		52A48707278C9BE200DABA34 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A48706278C9BE200DABA34 /* Log.swift */; };
+		52A96990279F3AAA00D3A602 /* PlatformDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9698F279F3AAA00D3A602 /* PlatformDetails.swift */; };
 		52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693E927567E2600B52375 /* DevCycleService.swift */; };
 		52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693EC2756816A00B52375 /* DVCConfig.swift */; };
 		52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693F52758032500B52375 /* DevCycleServiceTests.swift */; };
@@ -66,7 +66,6 @@
 		5264A7BC2769381500FEDB43 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		5268DB4D27501CFC00D17A40 /* DevCycle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DevCycle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5268DB4F27501CFC00D17A40 /* DevCycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DevCycle.h; sourceTree = "<group>"; };
-		5268DB5027501CFC00D17A40 /* DevCycle.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = DevCycle.docc; sourceTree = "<group>"; };
 		5268DB5627501CFC00D17A40 /* DevCycleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DevCycleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5268DB6427501D6000D17A40 /* DVCClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DVCClient.swift; sourceTree = "<group>"; };
 		5268DB6527501D6000D17A40 /* DVCUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DVCUser.swift; sourceTree = "<group>"; };
@@ -79,6 +78,7 @@
 		52A486752784A3E600DABA34 /* ObjCDVCOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDVCOptions.swift; sourceTree = "<group>"; };
 		52A487022788C0FF00DABA34 /* ObjCUserConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCUserConfig.swift; sourceTree = "<group>"; };
 		52A48706278C9BE200DABA34 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		52A9698F279F3AAA00D3A602 /* PlatformDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformDetails.swift; sourceTree = "<group>"; };
 		52E693E927567E2600B52375 /* DevCycleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleService.swift; sourceTree = "<group>"; };
 		52E693EC2756816A00B52375 /* DVCConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCConfig.swift; sourceTree = "<group>"; };
 		52E693F52758032500B52375 /* DevCycleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleServiceTests.swift; sourceTree = "<group>"; };
@@ -156,7 +156,6 @@
 				5268DB6527501D6000D17A40 /* DVCUser.swift */,
 				524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */,
 				5268DB4F27501CFC00D17A40 /* DevCycle.h */,
-				5268DB5027501CFC00D17A40 /* DevCycle.docc */,
 				52A48706278C9BE200DABA34 /* Log.swift */,
 			);
 			path = DevCycle;
@@ -212,6 +211,7 @@
 				5264A78A2763F6D800FEDB43 /* UserConfig.swift */,
 				D9341C11276967DE00BC753F /* DVCEvent.swift */,
 				5264A7BC2769381500FEDB43 /* Cache.swift */,
+				52A9698F279F3AAA00D3A602 /* PlatformDetails.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -330,6 +330,7 @@
 			files = (
 				5264A78B2763F6D800FEDB43 /* UserConfig.swift in Sources */,
 				5264A781275EB7DC00FEDB43 /* ObjCDVCUser.swift in Sources */,
+				52A96990279F3AAA00D3A602 /* PlatformDetails.swift in Sources */,
 				52A48707278C9BE200DABA34 /* Log.swift in Sources */,
 				D9341C14276A3C8A00BC753F /* ObjCDVCEvent.swift in Sources */,
 				5264A77B275E9A7E00FEDB43 /* ObjCDVCClient.swift in Sources */,
@@ -345,7 +346,6 @@
 				524F4E60276BDDBD00CB9069 /* DVCVariable.swift in Sources */,
 				5276C9F0275E682B00B9A324 /* DVCOptions.swift in Sources */,
 				524D58242770F78B00D7CC56 /* ObjCDVCVariable.swift in Sources */,
-				5268DB5127501CFC00D17A40 /* DevCycle.docc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
