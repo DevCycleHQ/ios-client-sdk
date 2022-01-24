@@ -5,7 +5,10 @@
 //
 
 import Foundation
+
+#if os(iOS)
 import UIKit
+#endif
 
 enum UserError: Error {
     case MissingUserId
@@ -33,13 +36,14 @@ public class DVCUser: Codable {
     public let sdkVersion: String
     
     init() {
+        let platform = PlatformDetails()
         self.lastSeenDate = Date()
         self.createdDate = Date()
-        self.platform = UIDevice.current.systemName
-        self.platformVersion = UIDevice.current.systemVersion
-        self.deviceModel = UIDevice.current.model
-        self.sdkType = "client"
-        self.sdkVersion = DevCycleVersion
+        self.platform = platform.systemName
+        self.platformVersion = platform.systemVersion
+        self.deviceModel = platform.deviceModel
+        self.sdkType = platform.sdkType
+        self.sdkVersion = platform.sdkVersion
     }
     
     enum CodingKeys: String, CodingKey {
