@@ -31,7 +31,6 @@
         user.userId = @"my-user";
         user.name = @"My Name";
         user.language = @"EN-CA";
-        user.appVersion = @"1.0.0";
         user.country = @"CA";
         user.email = @"my@email.com";
         
