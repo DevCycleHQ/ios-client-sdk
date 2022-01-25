@@ -7,6 +7,12 @@
 #import "DevCycleManager.h"
 @import DevCycle;
 
+@interface DevCycleManager()
+
+@property (atomic) DVCClient * _Nullable client;
+
+@end
+
 @implementation DevCycleManager
 
 static NSString *const DEVELOPMENT_KEY = @"mobile-16e8e500-80d2-4bb5-9d4f-8219381a90da";
@@ -27,31 +33,22 @@ static NSString *const DEVELOPMENT_KEY = @"mobile-16e8e500-80d2-4bb5-9d4f-821938
   return self;
 }
 
-- (void)initialize:(DVCUser *)user {
-    NSError *err = nil;
-    DVCOptions *options = [DVCOptions build:&err block:^(DVCOptionsBuilder *builder) {
-        builder.logLevel = LogLevel.debug;
-    }];
-    self.client = [DVCClient build:&err block:^(DVCClientBuilder *builder) {
-        builder.user = user;
-        builder.environmentKey = DEVELOPMENT_KEY;
-        builder.options = options;
-    } onInitialized:nil];
-}
-
-- (DVCClient*)initializeUserBuilder:(DVCUserBuilder *)userBuilder {
+- (DVCClient*)initialize:(DVCUser *)user onInitialized:(void (^_Nullable)(NSError*))onInitialized {
     NSError *err = nil;
     
-    DVCOptionsBuilder *optionsBuilder = [DVCOptionsBuilder init];
-    optionsBuilder.logLevel = LogLevel.debug;
+    DVCOptions *options = [[DVCOptions alloc] init];
+    options.logLevel = LogLevel.debug;
     
     self.client = [DVCClient initialize:DEVELOPMENT_KEY
-                                   user:userBuilder
-                                options:optionsBuilder
-                                    err:&err];
+                                   user:user
+                                options:options
+                                    err:&err
+                          onInitialized:onInitialized];
+    if (err) {
+        NSLog(@"Error Starting DevCycle: %@", err);
+    }
     
     return self.client;
 }
-
 
 @end
