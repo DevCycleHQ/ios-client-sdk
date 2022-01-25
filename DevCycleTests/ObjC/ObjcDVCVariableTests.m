@@ -15,11 +15,9 @@
 @implementation ObjcDVCVariableTests
 
 - (void)testVariableGetsCreatedWithDefault {
-    NSError *err = nil;
     DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
-    DVCClient *client = [DVCClient initialize:@"key" user:user err:&err];
+    DVCClient *client = [DVCClient initialize:@"key" user:user];
     DVCVariable *variable = [client stringVariableWithKey:@"my-key" defaultValue:@"my-default"];
-    XCTAssertNil(err);
     XCTAssertNotNil(variable);
     XCTAssertEqual(variable.value, @"my-default");
     XCTAssertEqual(variable.defaultValue, @"my-default");
