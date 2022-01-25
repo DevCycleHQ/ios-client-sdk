@@ -27,8 +27,6 @@ class ViewController: UIViewController {
             let user = try? DVCUser.builder()
                               .userId("my-user1")
                               .email("my-email@email.com")
-                              .appBuild(1005)
-                              .appVersion("1.1.1")
                               .country("CA")
                               .name("Ash Ketchum")
                               .language("EN")

@@ -60,16 +60,6 @@ public class UserBuilder {
         return self
     }
     
-    public func appVersion(_ appVersion: String) -> UserBuilder {
-        self.user.appVersion = appVersion
-        return self
-    }
-    
-    public func appBuild(_ appBuild: Int) -> UserBuilder {
-        self.user.appBuild = appBuild
-        return self
-    }
-    
     public func customData(_ customData: [String: Any]) -> UserBuilder {
         self.customData = customData
         return self
@@ -132,6 +122,10 @@ public class DVCUser: Codable {
         self.deviceModel = platform.deviceModel
         self.sdkType = platform.sdkType
         self.sdkVersion = platform.sdkVersion
+        self.appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        if let appBuildStr = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+            self.appBuild = Int(appBuildStr)
+        }
     }
     
     enum CodingKeys: String, CodingKey {
