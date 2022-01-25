@@ -51,12 +51,10 @@ public class ObjCUser: NSObject {
             userBuilder = userBuilder.appVersion(appVersion)
         }
         if let customData = self.customData {
-            let dvcCustomData = try CustomData.customDataFromDic(customData)
-            userBuilder = userBuilder.customData(dvcCustomData)
+            userBuilder = userBuilder.customData(customData)
         }
         if let privateCustomData = self.privateCustomData {
-            let dvcCustomData = try CustomData.customDataFromDic(privateCustomData)
-            userBuilder = userBuilder.privateCustomData(dvcCustomData)
+            userBuilder = userBuilder.privateCustomData(privateCustomData)
         }
         
         do {

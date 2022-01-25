@@ -20,6 +20,8 @@ enum UserError: Error {
 
 public class UserBuilder {
     var user: DVCUser
+    var customData: [String: Any]?
+    var privateCustomData: [String: Any]?
     
     init() {
         self.user = DVCUser()
@@ -68,13 +70,13 @@ public class UserBuilder {
         return self
     }
     
-    public func customData(_ customData: CustomData) -> UserBuilder {
-        self.user.customData = customData
+    public func customData(_ customData: [String: Any]) -> UserBuilder {
+        self.customData = customData
         return self
     }
     
-    public func privateCustomData(_ privateCustomData: CustomData) -> UserBuilder {
-        self.user.privateCustomData = privateCustomData
+    public func privateCustomData(_ privateCustomData: [String: Any]) -> UserBuilder {
+        self.privateCustomData = privateCustomData
         return self
     }
     
@@ -85,20 +87,18 @@ public class UserBuilder {
             throw UserError.MissingUserIdAndIsAnonymousFalse
         }
         
-        if let customData = self.user.customData {
-            guard let _ = try? JSONEncoder().encode(customData) else {
-                throw UserError.InvalidCustomDataJSON
-            }
+        if let customData = self.customData {
+            self.user.customData = try CustomData.customDataFromDic(customData)
         }
         
-        if let privateCustomData = self.user.privateCustomData {
-            guard let _ = try? JSONEncoder().encode(privateCustomData) else {
-                throw UserError.InvalidPrivateCustomDataJSON
-            }
+        if let privateCustomData = self.privateCustomData {
+            self.user.privateCustomData = try CustomData.customDataFromDic(privateCustomData)
         }
         
         let result = self.user
         self.user = DVCUser()
+        self.customData = nil
+        self.privateCustomData = nil
         return result
     }
 }

@@ -58,7 +58,7 @@ public class ObjCDVCClient: NSObject {
         options: ObjCOptions?,
         onInitialized: ((Error?) -> Void)?
     ) throws {
-        if (environmentKey == nil) {
+        if (environmentKey == nil || environmentKey == "") {
             Log.error("Environment key missing", tags: ["build", "objc"])
             throw ObjCClientErrors.MissingEnvironmentKey
         } else if (user == nil) {

@@ -14,21 +14,16 @@
 
 @implementation ObjcDVCVariableTests
 
-- (void)testVariableGetsCreated {
+- (void)testVariableGetsCreatedWithDefault {
     NSError *err = nil;
-    DVCVariable *variable = [[DVCVariable alloc] initWithKey:@"my-key" type:@"String" evalReason:nil value:@"my-value" defaultValue:@"my-default" error:&err];
+    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DVCClient *client = [DVCClient initialize:@"key" user:user err:&err];
+    DVCVariable *variable = [client stringVariableWithKey:@"my-key" defaultValue:@"my-default"];
     XCTAssertNil(err);
     XCTAssertNotNil(variable);
-    XCTAssertEqual(variable.value, @"my-value");
+    XCTAssertEqual(variable.value, @"my-default");
     XCTAssertEqual(variable.defaultValue, @"my-default");
     XCTAssertNil(variable.evalReason);
-}
-
-- (void)testVariableThrowsErrorIfValueTypeDoesntMatchDefault {
-    NSError *err = nil;
-    DVCVariable *variable = [[DVCVariable alloc] initWithKey:@"my-key" type:@"String" evalReason:nil value:@5 defaultValue:@"my-default" error:&err];
-    XCTAssertNotNil(err);
-    XCTAssertNil(variable);
 }
 
 @end
