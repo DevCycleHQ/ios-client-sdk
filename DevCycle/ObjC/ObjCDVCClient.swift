@@ -10,12 +10,12 @@ import Foundation
 public class ObjCDVCClient: NSObject {
     var client: DVCClient?
     
-    @objc(initialize:user:err:)
+    @objc(initialize:user:)
     public static func initialize(
         environmentKey: String,
         user: ObjCUser
-    ) throws -> ObjCDVCClient {
-        return try ObjCDVCClient(
+    ) -> ObjCDVCClient {
+        return ObjCDVCClient(
             environmentKey: environmentKey,
             user: user,
             options: nil,
@@ -23,13 +23,13 @@ public class ObjCDVCClient: NSObject {
         )
     }
         
-    @objc(initialize:user:options:err:)
+    @objc(initialize:user:options:)
     public static func initialize(
         environmentKey: String,
         user: ObjCUser,
         options: ObjCOptions?
-    ) throws -> ObjCDVCClient {
-        return try ObjCDVCClient(
+    ) -> ObjCDVCClient {
+        return ObjCDVCClient(
             environmentKey: environmentKey,
             user: user,
             options: options,
@@ -37,14 +37,14 @@ public class ObjCDVCClient: NSObject {
         )
     }
         
-    @objc(initialize:user:options:err:onInitialized:)
+    @objc(initialize:user:options:onInitialized:)
     public static func initialize(
         environmentKey: String,
         user: ObjCUser,
         options: ObjCOptions?,
         onInitialized: ((Error?) -> Void)?
-    ) throws -> ObjCDVCClient {
-        return try ObjCDVCClient(
+    ) -> ObjCDVCClient {
+        return ObjCDVCClient(
             environmentKey: environmentKey,
             user: user,
             options: options,
@@ -57,50 +57,66 @@ public class ObjCDVCClient: NSObject {
         user: ObjCUser,
         options: ObjCOptions?,
         onInitialized: ((Error?) -> Void)?
-    ) throws {
-        if (environmentKey == nil || environmentKey == "") {
-            Log.error("Environment key missing", tags: ["build", "objc"])
-            throw ObjCClientErrors.MissingEnvironmentKey
-        } else if (user == nil) {
-            Log.error("User missing", tags: ["build", "objc"])
-            throw ObjCClientErrors.MissingUser
+    ) {
+        do {
+            if (environmentKey == nil || environmentKey == "") {
+                Log.error("Environment key missing", tags: ["build", "objc"])
+                throw ObjCClientErrors.MissingEnvironmentKey
+            } else if (user == nil) {
+                Log.error("User missing", tags: ["build", "objc"])
+                throw ObjCClientErrors.MissingUser
+            }
+            
+            let dvcUser = try user.buildDVCUser()
+            
+            var clientBuilder = DVCClient.builder()
+                .environmentKey(environmentKey)
+                .user(dvcUser)
+            
+            if let dvcOptions = options {
+                clientBuilder = clientBuilder.options(dvcOptions.buildDVCOptions())
+            }
+            
+            guard let client = try? clientBuilder.build(onInitialized: onInitialized)
+            else {
+                Log.error("Error creating client", tags: ["build", "objc"])
+                throw ObjCClientErrors.InvalidClient
+            }
+            self.client = client
+        } catch {
+            if let onInitializedCallback = onInitialized {
+                onInitializedCallback(error)
+            } else {
+                Log.error("Error initializing DVCClient: \(error)")
+            }
         }
-        
-        let dvcUser = try user.buildDVCUser()
-        
-        var clientBuilder = DVCClient.builder()
-            .environmentKey(environmentKey)
-            .user(dvcUser)
-        
-        if let dvcOptions = options {
-            clientBuilder = clientBuilder.options(dvcOptions.buildDVCOptions())
-        }
-        
-        guard let client = try? clientBuilder.build(onInitialized: onInitialized)
-        else {
-            Log.error("Error creating client", tags: ["build", "objc"])
-            throw ObjCClientErrors.InvalidClient
-        }
-        self.client = client
     }
     
     
-    @objc(identifyUser:err:callback:)
-    public func identify(user: ObjCUser, callback: ((Error?, [String: ObjCVariable]?) -> Void)?) throws {
-        guard let client = self.client else { return }
-        guard user.userId != nil else {
-            callback?(NSError(), nil)
-            return
-        }
-        let dvcUser = try user.buildDVCUser()
+    @objc(identifyUser:callback:)
+    public func identify(user: ObjCUser, callback: ((Error?, [String: ObjCVariable]?) -> Void)?) {
+        do {
+            guard let client = self.client else { return }
+            guard user.userId != nil else {
+                callback?(NSError(), nil)
+                return
+            }
+            let dvcUser = try user.buildDVCUser()
 
-        let createdUser = DVCUser()
-        createdUser.update(with: dvcUser)
-        
-        try? client.identifyUser(user: createdUser, callback: { error, variables in
-            guard let callback = callback else { return }
-            callback(error, self.variableToObjCVariable(variables))
-        })
+            let createdUser = DVCUser()
+            createdUser.update(with: dvcUser)
+            
+            try? client.identifyUser(user: createdUser, callback: { error, variables in
+                guard let callback = callback else { return }
+                callback(error, self.variableToObjCVariable(variables))
+            })
+        } catch {
+            if let idCallback = callback {
+                idCallback(error, nil)
+            } else {
+                Log.error("Error calling DVCClient identifyUser:callback: \(error)")
+            }
+        }
     }
     
     @objc(resetUser:)
@@ -154,15 +170,11 @@ public class ObjCDVCClient: NSObject {
         return variableToObjCVariable(client.allVariables())
     }
     
-    @objc public func track(_ event: ObjCDVCEvent) {
-        let dvcEvent: DVCEvent = DVCEvent(
-            type: event.type,
-            target: event.target ?? nil,
-            clientDate: event.clientDate as Date? ?? Date(),
-            value: (event.value as! Int),
-            metaData: (event.metaData as! [String: Any])
-        )
-        self.client?.track(dvcEvent)
+    @objc(track:err:)
+    public func track(_ event: ObjCDVCEvent) throws {
+        guard let client = self.client else { return }
+        let dvcEvent = try event.buildDVCEvent()
+        client.track(dvcEvent)
     }
     
     @objc public func flushEvents() {
