@@ -31,6 +31,26 @@ Include the following in your `Cartfile`:
 github "DevCycleHQ/ios-client-sdk"
 ```
 
+### Swift Package Manager
+
+To use the library with Swift Package Manager, include it as a dependency in your `Package.swift` file like so:
+
+```
+...
+    dependencies: [
+        .package(url: "https://github.com/DevCycleHQ/ios-client-sdk.git", .upToNextMinor("1.0.0")),
+    ],
+    targets: [
+        .target(
+            name: "YOUR_TARGET",
+            dependencies: ["DevCycle"]
+        )
+    ],
+...
+```
+
+You can also add it through Xcode, i.e. `File > Swift Packages > Add Package Dependency`, then enter the repository clone URL.
+
 ## Usage
 
 ### Initializing the SDK

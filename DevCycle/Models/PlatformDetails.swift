@@ -19,5 +19,5 @@ struct PlatformDetails {
     #endif
     
     var sdkType = "client"
-    var sdkVersion = "1.0.0"
+    var sdkVersion = "1.1.0"
 }
