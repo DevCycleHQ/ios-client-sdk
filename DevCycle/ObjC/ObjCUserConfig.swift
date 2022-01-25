@@ -14,23 +14,11 @@ public class ObjCFeature: NSObject {
     private(set) var key: String
     private(set) var type: String
     
-    @objc init(id: String,
-                  variation: String,
-                  key: String,
-                  type: String) {
-        self._id = id
-        self._variation = variation
-        self.key = key
-        self.type = type
-    }
-    
-    static func create(from feature: Feature) -> ObjCFeature {
-        return ObjCFeature(
-            id: feature._id,
-            variation: feature._variation,
-            key: feature.key,
-            type: feature.type
-        )
+    init(_ feature: Feature) {
+        self._id = feature._id
+        self._variation = feature._variation
+        self.key = feature.key
+        self.type = feature.type
     }
     
     override public var description: String {
@@ -47,26 +35,12 @@ public class ObjCVariable: NSObject {
     private(set) var value: Any
     private(set) var evalReason: String?
     
-    @objc init(id: String,
-                  key: String,
-                  type: String,
-                  value: Any,
-                  evalReason: String?) {
-        self._id = id
-        self.key = key
-        self.type = type
-        self.value = value
-        self.evalReason = evalReason
-    }
-    
-    static func create(from variable: Variable) -> ObjCVariable {
-        return ObjCVariable(
-            id: variable._id,
-            key: variable.key,
-            type: variable.type,
-            value: variable.value,
-            evalReason: variable.evalReason
-        )
+    init(_ variable: Variable) {
+        self._id = variable._id
+        self.key = variable.key
+        self.type = variable.type
+        self.value = variable.value
+        self.evalReason = variable.evalReason
     }
     
     override public var description: String {

@@ -6,35 +6,16 @@
 
 import Foundation
 
-@objc(DVCClientBuilder)
-public class ObjCClientBuilder: NSObject {
-    @objc public var environmentKey: String?
-    @objc public var user: ObjCDVCUser?
-    @objc public var options: ObjCDVCOptions?
-}
-
 @objc(DVCClient)
 public class ObjCDVCClient: NSObject {
     var client: DVCClient?
-    @objc public var eventQueue: [ObjCDVCEvent] = []
-    
-    @objc(build:block:onInitialized:)
-    public static func build(
-        block: ((ObjCClientBuilder) -> Void),
-        onInitialized: ((Error?) -> Void)?
-    ) throws -> ObjCDVCClient {
-        let builder = ObjCClientBuilder()
-        block(builder)
-        let client = try ObjCDVCClient(builder: builder, onInitialized: onInitialized)
-        return client
-    }
     
     @objc(initialize:user:err:)
     public static func initialize(
         environmentKey: String,
-        user: ObjCUserBuilder
+        user: ObjCUser
     ) throws -> ObjCDVCClient {
-        try self.initialize(
+        return try ObjCDVCClient(
             environmentKey: environmentKey,
             user: user,
             options: nil,
@@ -45,10 +26,10 @@ public class ObjCDVCClient: NSObject {
     @objc(initialize:user:options:err:)
     public static func initialize(
         environmentKey: String,
-        user: ObjCUserBuilder,
-        options: ObjCOptionsBuilder?
+        user: ObjCUser,
+        options: ObjCOptions?
     ) throws -> ObjCDVCClient {
-        try self.initialize(
+        return try ObjCDVCClient(
             environmentKey: environmentKey,
             user: user,
             options: options,
@@ -59,45 +40,40 @@ public class ObjCDVCClient: NSObject {
     @objc(initialize:user:options:err:onInitialized:)
     public static func initialize(
         environmentKey: String,
-        user: ObjCUserBuilder,
-        options: ObjCOptionsBuilder?,
+        user: ObjCUser,
+        options: ObjCOptions?,
         onInitialized: ((Error?) -> Void)?
     ) throws -> ObjCDVCClient {
-        let dvcUser = try ObjCDVCUser(builder: user)
-        let dvcOptions = options != nil ? ObjCDVCOptions(builder: options!) : nil
-        
-        let builder = ObjCClientBuilder()
-        builder.environmentKey = environmentKey
-        builder.user = dvcUser
-        builder.options = dvcOptions
-        let client = try ObjCDVCClient(builder: builder, onInitialized: onInitialized)
-        return client
+        return try ObjCDVCClient(
+            environmentKey: environmentKey,
+            user: user,
+            options: options,
+            onInitialized: onInitialized
+        )
     }
     
-    init(builder: ObjCClientBuilder, onInitialized: ((Error?) -> Void)?) throws {
-        guard let environmentKey = builder.environmentKey,
-              let objcUser = builder.user,
-              let user = objcUser.user
-        else {
-            if (builder.environmentKey == nil) {
-                Log.error("Environment key missing", tags: ["build", "objc"])
-                throw ObjCClientErrors.MissingEnvironmentKey
-            } else if (builder.user == nil) {
-                Log.error("User missing", tags: ["build", "objc"])
-                throw ObjCClientErrors.MissingUser
-            } else if (builder.user != nil && builder.user?.user == nil) {
-                Log.error("User is invalid", tags: ["build", "objc"])
-                throw ObjCClientErrors.InvalidUser
-            }
-            return
+    init(
+        environmentKey: String,
+        user: ObjCUser,
+        options: ObjCOptions?,
+        onInitialized: ((Error?) -> Void)?
+    ) throws {
+        if (environmentKey == nil) {
+            Log.error("Environment key missing", tags: ["build", "objc"])
+            throw ObjCClientErrors.MissingEnvironmentKey
+        } else if (user == nil) {
+            Log.error("User missing", tags: ["build", "objc"])
+            throw ObjCClientErrors.MissingUser
         }
+        
+        let dvcUser = try user.buildDVCUser()
         
         var clientBuilder = DVCClient.builder()
             .environmentKey(environmentKey)
-            .user(user)
+            .user(dvcUser)
         
-        if let options = builder.options?.options {
-            clientBuilder = clientBuilder.options(options)
+        if let dvcOptions = options {
+            clientBuilder = clientBuilder.options(dvcOptions.buildDVCOptions())
         }
         
         guard let client = try? clientBuilder.build(onInitialized: onInitialized)
@@ -109,19 +85,21 @@ public class ObjCDVCClient: NSObject {
     }
     
     
-    @objc(identifyUser:user:)
-    public func identify(user: ObjCDVCUser, callback: ((Error?, [String: ObjCVariable]?) -> Void)?) {
+    @objc(identifyUser:err:callback:)
+    public func identify(user: ObjCUser, callback: ((Error?, [String: ObjCVariable]?) -> Void)?) throws {
         guard let client = self.client else { return }
         guard user.userId != nil else {
             callback?(NSError(), nil)
             return
         }
+        let dvcUser = try user.buildDVCUser()
+
         let createdUser = DVCUser()
-        createdUser.update(with: user)
+        createdUser.update(with: dvcUser)
         
         try? client.identifyUser(user: createdUser, callback: { error, variables in
             guard let callback = callback else { return }
-            callback(error, self.variableToObjCVariable(variables: variables))
+            callback(error, self.variableToObjCVariable(variables))
         })
     }
     
@@ -130,7 +108,7 @@ public class ObjCDVCClient: NSObject {
         guard let client = self.client else { return }
         try? client.resetUser { error, variables in
             guard let callback = callback else { return }
-            callback(error, self.variableToObjCVariable(variables: variables))
+            callback(error, self.variableToObjCVariable(variables))
         }
     }
     
@@ -168,12 +146,12 @@ public class ObjCDVCClient: NSObject {
     
     @objc public func allFeatures() -> [String: ObjCFeature]? {
         guard let client = self.client else { return [:] }
-        return featureToObjCFeature(features: client.allFeatures())
+        return featureToObjCFeature(client.allFeatures())
     }
     
     @objc public func allVariables() -> [String: ObjCVariable]? {
         guard let client = self.client else { return [:] }
-        return variableToObjCVariable(variables: client.allVariables())
+        return variableToObjCVariable(client.allVariables())
     }
     
     @objc public func track(_ event: ObjCDVCEvent) {
@@ -193,21 +171,21 @@ public class ObjCDVCClient: NSObject {
 }
 
 extension ObjCDVCClient {
-    func featureToObjCFeature(features: [String: Feature]?) -> [String: ObjCFeature] {
+    func featureToObjCFeature(_ features: [String: Feature]?) -> [String: ObjCFeature] {
         var objcFeatures: [String: ObjCFeature] = [:]
         if let features = features {
             for (key, value) in features {
-                objcFeatures[key] = ObjCFeature.create(from: value)
+                objcFeatures[key] = ObjCFeature(value)
             }
         }
         return objcFeatures
     }
     
-    func variableToObjCVariable(variables: [String: Variable]?) -> [String: ObjCVariable] {
+    func variableToObjCVariable(_ variables: [String: Variable]?) -> [String: ObjCVariable] {
         var objcVariables: [String: ObjCVariable] = [:]
         if let variables = variables {
             for (key, value) in variables {
-                objcVariables[key] = ObjCVariable.create(from: value)
+                objcVariables[key] = ObjCVariable(value)
             }
         }
         return objcVariables

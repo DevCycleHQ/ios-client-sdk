@@ -11,11 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DevCycleManager : NSObject
 
-@property DVCClient * _Nullable client;
+@property (atomic, readonly) DVCClient * _Nullable client;
 
 + (id)sharedManager;
-- (void)initialize:(DVCUser *)user;
-- (DVCClient*)initializeUserBuilder:(DVCUserBuilder *)userBuilder;
+- (DVCClient*)initialize:(DVCUser *)user onInitialized:(void (^_Nullable)(NSError*))onInitialized;
 
 @end
 

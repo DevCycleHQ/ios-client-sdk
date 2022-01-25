@@ -7,13 +7,6 @@
 
 import Foundation
 
-@objc(DVCOptionsBuilder)
-public class ObjCOptionsBuilder: NSObject {
-    @objc public var flushEventsIntervalMs: NSNumber?
-    @objc public var disableEventLogging: NSNumber?
-    @objc public var logLevel: NSNumber?
-}
-
 @objc(LogLevel)
 public class ObjCLogLevel: NSObject {
     @objc public static let debug = NSNumber(0)
@@ -22,29 +15,23 @@ public class ObjCLogLevel: NSObject {
 }
 
 @objc(DVCOptions)
-public class ObjCDVCOptions: NSObject {
-    var options: DVCOptions?
+public class ObjCOptions: NSObject {
+    @objc public var flushEventsIntervalMs: NSNumber?
+    @objc public var disableEventLogging: NSNumber?
+    @objc public var logLevel: NSNumber?
     
-    @objc(build:block:)
-    public static func build(_ block: ((ObjCOptionsBuilder) -> Void)) throws -> ObjCDVCOptions {
-        let builder = ObjCOptionsBuilder()
-        block(builder)
-        let options = ObjCDVCOptions(builder: builder)
-        return options
-    }
-    
-    init(builder: ObjCOptionsBuilder) {
+    func buildDVCOptions() -> DVCOptions {
         var optionsBuilder = DVCOptions.builder()
-        if let flushEventsIntervalMs = builder.flushEventsIntervalMs,
+        if let flushEventsIntervalMs = self.flushEventsIntervalMs,
            let interval = flushEventsIntervalMs as? Int {
             optionsBuilder = optionsBuilder.flushEventsIntervalMs(interval)
         }
         
-        if let disableEventLogging = builder.disableEventLogging,
+        if let disableEventLogging = self.disableEventLogging,
            let disable = disableEventLogging as? Bool {
             optionsBuilder = optionsBuilder.disableEventLogging(disable)
         }
-        if let logLevel = builder.logLevel,
+        if let logLevel = self.logLevel,
            let level = logLevel as? Int {
             var setLogLevel = LogLevel.error
             switch level {
@@ -59,7 +46,7 @@ public class ObjCDVCOptions: NSObject {
             }
             optionsBuilder = optionsBuilder.logLevel(setLogLevel)
         }
-        let options = optionsBuilder.build()
-        self.options = options
+        return optionsBuilder.build()
     }
 }
+
