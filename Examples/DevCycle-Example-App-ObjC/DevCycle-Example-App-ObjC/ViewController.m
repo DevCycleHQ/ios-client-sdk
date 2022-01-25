@@ -19,7 +19,6 @@
 @implementation ViewController
 
 - (IBAction)loginButtonPressed:(id)sender {
-    NSError *err = nil;
     __weak typeof(self) weakSelf = self;
     if (self.loggedIn) {
         [self.client resetUser:^(NSError *error, NSDictionary<NSString *,id> *variables) {
@@ -28,7 +27,6 @@
             weakSelf.loggedIn = NO;
         }];
     } else {
-        // TODO:
         DVCUser *user = [DVCUser initializeWithUserId:@"my-user"];
         user.userId = @"my-user";
         user.name = @"My Name";
@@ -37,7 +35,10 @@
         user.country = @"CA";
         user.email = @"my@email.com";
         
-        [self.client identifyUser:user err:&err callback:^(NSError *error, NSDictionary<NSString *,id> *variables) {
+        [self.client identifyUser:user callback:^(NSError *error, NSDictionary<NSString *,id> *variables) {
+            if (error) {
+                return NSLog(@"Error calling DVCClient identifyUser:callback: %@", error);
+            }
             NSLog(@"Identified User!");
             NSLog(@"%@", variables);
             weakSelf.loggedIn = YES;
@@ -47,11 +48,11 @@
 
 - (IBAction)track:(id)sender {
     NSError *err = nil;
-    DVCEvent *event = [DVCEvent build:&err block:^(DVCEventBuilder *builder) {
-        builder.type = @"my-event";
-        builder.clientDate = [NSDate date];
-    }];
-    [self.client track:event];
+    DVCEvent *event = [DVCEvent initializeWithType:@"my-event"];
+    [self.client track:event err:&err];
+    if (err) {
+        NSLog(@"Error calling DVCClient track:err: %@", err);
+    }
 }
 
 
