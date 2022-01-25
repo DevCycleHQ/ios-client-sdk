@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F2DD75A279EFA6B00540C9D /* CustomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2DD759279EFA6B00540C9D /* CustomData.swift */; };
 		524D58242770F78B00D7CC56 /* ObjCDVCVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524D58232770F78B00D7CC56 /* ObjCDVCVariable.swift */; };
 		524F4E60276BDDBD00CB9069 /* DVCVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */; };
 		524F4E62276D20A600CB9069 /* DVCVariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524F4E61276D20A500CB9069 /* DVCVariableTests.swift */; };
@@ -51,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0F2DD759279EFA6B00540C9D /* CustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomData.swift; sourceTree = "<group>"; };
 		524D58232770F78B00D7CC56 /* ObjCDVCVariable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjCDVCVariable.swift; sourceTree = "<group>"; };
 		524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCVariable.swift; sourceTree = "<group>"; };
 		524F4E61276D20A500CB9069 /* DVCVariableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCVariableTests.swift; sourceTree = "<group>"; };
@@ -212,6 +214,7 @@
 				D9341C11276967DE00BC753F /* DVCEvent.swift */,
 				5264A7BC2769381500FEDB43 /* Cache.swift */,
 				52A9698F279F3AAA00D3A602 /* PlatformDetails.swift */,
+				0F2DD759279EFA6B00540C9D /* CustomData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -329,6 +332,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5264A78B2763F6D800FEDB43 /* UserConfig.swift in Sources */,
+				0F2DD75A279EFA6B00540C9D /* CustomData.swift in Sources */,
 				5264A781275EB7DC00FEDB43 /* ObjCDVCUser.swift in Sources */,
 				52A96990279F3AAA00D3A602 /* PlatformDetails.swift in Sources */,
 				52A48707278C9BE200DABA34 /* Log.swift in Sources */,

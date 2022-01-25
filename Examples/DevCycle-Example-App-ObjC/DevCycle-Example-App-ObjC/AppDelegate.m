@@ -17,38 +17,43 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Builder
-//    NSError *err = nil;
-//    DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder *builder) {
-//        builder.userId = @"test_user";
-//    }];
-//    [[DevCycleManager sharedManager] initialize:user];
-//    [[DevCycleManager sharedManager].client variableWithKey:@"key" defaultValue:@"default" error:&err];
+    DVCUser *user = [DVCUser initializeWithUserId:@"test_user"];
+    user.customData = @{
+        @"key": @"value",
+        @"num": @610.610,
+        @"bool": @YES
+    };
     
-    // Init
-    DVCUserBuilder *userBuilder = [DVCUserBuilder initializeWithUserId:@"test_user"];
-    userBuilder.customData = @{@"key": @"value"};
-    DVCClient *client = [[DevCycleManager sharedManager] initializeUserBuilder:userBuilder];
-    
-
-    DVCVariable *stringVar = [[client stringVariableWithKey:@"string_key" defaultValue:@"default"]
-                              onUpdateWithHandler:^(id _Nonnull value) {
-        NSLog(@"string_key value updated: %@", value);
+    [[DevCycleManager sharedManager] initialize:user onInitialized:^(NSError * _Nonnull err) {
+        DVCClient *client = [[DevCycleManager sharedManager] client];
+        if (err || client == nil) {
+            return NSLog(@"Error starting DevCycle: %@", err.description);
+        }
+        
+        DVCVariable *stringVar = [[client stringVariableWithKey:@"string_key" defaultValue:@"default"]
+                                  onUpdateWithHandler:^(id _Nonnull value) {
+            NSLog(@"string_key value updated: %@", value);
+        }];
+        DVCVariable *numVar = [[client numberVariableWithKey:@"num_key" defaultValue:@610]
+                               onUpdateWithHandler:^(id _Nonnull value) {
+            NSLog(@"num_key value updated: %@", value);
+        }];
+        DVCVariable *boolVar = [[client boolVariableWithKey:@"bool_key" defaultValue:true]
+                                onUpdateWithHandler:^(id _Nonnull value) {
+            NSLog(@"bool_key value updated: %@", value);
+        }];
+        DVCVariable *jsonVar = [[client jsonVariableWithKey:@"json_key" defaultValue:@{@"key": @"value"}]
+                                onUpdateWithHandler:^(id _Nonnull value) {
+            NSLog(@"json_key value updated: %@", value);
+        }];
+        
+        NSLog(@"DVC Var Values\n string: %@\n num: %@\n bool: %@\n json: %@", stringVar.value, numVar.value, boolVar.value, jsonVar.value);
+        
+        NSDictionary *allFeatures = [client allFeatures];
+        NSLog(@"DVC All Features: %@", allFeatures);
+        NSDictionary *allVariables = [client allVariables];
+        NSLog(@"DVC All Variables: %@", allVariables);
     }];
-    DVCVariable *numVar = [[client numberVariableWithKey:@"num_key" defaultValue:@610]
-                           onUpdateWithHandler:^(id _Nonnull value) {
-        NSLog(@"num_key value updated: %@", value);
-    }];
-    DVCVariable *boolVar = [[client boolVariableWithKey:@"bool_key" defaultValue:true]
-                            onUpdateWithHandler:^(id _Nonnull value) {
-        NSLog(@"bool_key value updated: %@", value);
-    }];
-    DVCVariable *jsonVar = [[client jsonVariableWithKey:@"json_key" defaultValue:@{@"key": @"value"}]
-                            onUpdateWithHandler:^(id _Nonnull value) {
-        NSLog(@"json_key value updated: %@", value);
-    }];
-    
-    NSLog(@"DVC Var Values\nstring: %@\n num: %@\n bool: %@\njson: %@", stringVar, numVar, boolVar, jsonVar);
     
     return YES;
 }

@@ -28,15 +28,16 @@
             weakSelf.loggedIn = NO;
         }];
     } else {
-        DVCUser *user = [DVCUser build:&err block:^(DVCUserBuilder * builder) {
-            builder.userId = @"my-user";
-            builder.name = @"My Name";
-            builder.language = @"EN-CA";
-            builder.appVersion = @"1.0.0";
-            builder.country = @"CA";
-            builder.email = @"my@email.com";
-        }];
-        [self.client identifyUser:user user:^(NSError *error, NSDictionary<NSString *,id> *variables) {
+        // TODO:
+        DVCUser *user = [DVCUser initializeWithUserId:@"my-user"];
+        user.userId = @"my-user";
+        user.name = @"My Name";
+        user.language = @"EN-CA";
+        user.appVersion = @"1.0.0";
+        user.country = @"CA";
+        user.email = @"my@email.com";
+        
+        [self.client identifyUser:user err:&err callback:^(NSError *error, NSDictionary<NSString *,id> *variables) {
             NSLog(@"Identified User!");
             NSLog(@"%@", variables);
             weakSelf.loggedIn = YES;

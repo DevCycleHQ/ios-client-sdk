@@ -14,8 +14,27 @@ typealias ConfigCompletionHandler = (Config) -> Void
 
 typealias PublishEventsCompletionHandler = (DataResponse) -> Void
 
-private enum APIError: Error {
+enum APIError: Error {
     case NoResponse
+    case StatusResponse(status: Int, message: String)
+    
+    public var debugDescription: String {
+        switch self {
+        case .StatusResponse(status: let status, message: let message):
+            return "API Error Status: \(status), message: \(message)"
+        case .NoResponse:
+            return "No API Response"
+        }
+    }
+    
+    public var debugTags: [String] {
+        switch self {
+        case .StatusResponse(status: let status, message: _):
+            return ["api", String(describing: status)]
+        case .NoResponse:
+            return ["api"]
+        }
+    }
 }
 
 struct NetworkingConstants {
@@ -116,7 +135,9 @@ class DevCycleService: DevCycleServiceProtocol {
         eventsRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         eventsRequest.addValue("application/json", forHTTPHeaderField: "Accept")
         eventsRequest.addValue(config.environmentKey, forHTTPHeaderField: "Authorization")
-        eventsRequest.httpBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
+        let jsonBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
+        Log.debug("Post Events Payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
+        eventsRequest.httpBody = jsonBody
         
         self.makeRequest(request: eventsRequest) { data, response, error in
             if error != nil || data == nil {
@@ -140,6 +161,7 @@ class DevCycleService: DevCycleServiceProtocol {
                 // Guard below checks if statusCode exists or not in the response body.
                 // Only API Errors (http status codes of 4xx/5xx) have the statusCode in the response body, successful API Requests (http status codes of 2xx/3xx) calls will not.
                 guard responseDataJson["statusCode"] == nil else {
+                    let status = responseDataJson["statusCode"] as! Int
                     var errorResponse: String
                     if (responseDataJson["message"] is [String]) {
                         errorResponse = (responseDataJson["message"] as! [String]).joined(separator: ", ")
@@ -147,13 +169,9 @@ class DevCycleService: DevCycleServiceProtocol {
                         errorResponse = String(describing: responseDataJson["message"])
                     }
                     
-                    var tags = ["api"]
-                    if let statusCode = responseDataJson["statusCode"] as? String {
-                        tags.append(statusCode)
-                    }
-                    
-                    Log.error("Error: \(errorResponse)", tags: tags)
-                    completion?((nil, nil, errorResponse as? Error))
+                    let error = APIError.StatusResponse(status: status, message: errorResponse)
+                    Log.error(error.debugDescription, tags: error.debugTags)
+                    completion?((nil, nil, error))
                     return
                 }
                 completion?((data, response, error))
