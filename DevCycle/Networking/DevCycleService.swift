@@ -153,7 +153,9 @@ class DevCycleService: DevCycleServiceProtocol {
         }
         self.session.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
-                guard let responseDataJson = try? JSONSerialization.jsonObject(with: data!, options: .fragmentsAllowed) as? [String:Any] else {
+                guard let responseData = data,
+                      let responseDataJson = try? JSONSerialization.jsonObject(with: responseData, options: .fragmentsAllowed) as? [String:Any]
+                else {
                     Log.error("Unable to parse API Response", tags: ["api"])
                     completion?((nil, nil, APIError.NoResponse))
                     return
