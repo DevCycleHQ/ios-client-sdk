@@ -14,7 +14,6 @@ public class ObjCUser: NSObject {
     @objc public var name: String?
     @objc public var language: String?
     @objc public var country: String?
-    @objc public var appVersion: String?
     @objc public var customData: [String: Any]?
     @objc public var privateCustomData: [String: Any]?
     
@@ -46,9 +45,6 @@ public class ObjCUser: NSObject {
         }
         if let country = self.country {
             userBuilder = userBuilder.country(country)
-        }
-        if let appVersion = self.appVersion {
-            userBuilder = userBuilder.appVersion(appVersion)
         }
         if let customData = self.customData {
             userBuilder = userBuilder.customData(customData)
