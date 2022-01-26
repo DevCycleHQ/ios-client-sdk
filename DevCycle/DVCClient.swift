@@ -16,6 +16,7 @@ enum ClientError: Error {
 
 public typealias ClientInitializedHandler = (Error?) -> Void
 public typealias IdentifyCompletedHandler = (Error?, [String: Variable]?) -> Void
+public typealias FlushCompletedHandler = (Error?) -> Void
 
 public class DVCClient {
     var environmentKey: String?
@@ -24,7 +25,7 @@ public class DVCClient {
     var options: DVCOptions?
     var configCompletionHandlers: [ClientInitializedHandler] = []
     var initialized: Bool = false
-    var eventQueue: [DVCEvent] = []
+    var eventQueue: EventQueue = EventQueue()
     
     private let defaultFlushInterval: Int = 10000
     private let msToSecond: Int = 1000
@@ -32,7 +33,6 @@ public class DVCClient {
     private var service: DevCycleServiceProtocol?
     private var cacheService: CacheServiceProtocol = CacheService()
     private var cache: Cache?
-    private var aggregateEventQueue: DVCAggregateEvents = DVCAggregateEvents()
     
     /**
         Method to initialize the Client object after building
@@ -123,7 +123,7 @@ public class DVCClient {
             }
         }
         
-        self.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+        self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
         
         return variable
     }
@@ -186,42 +186,24 @@ public class DVCClient {
     }
 
     public func track(_ event: DVCEvent) {
-        self.eventQueue.append(event)
+        self.eventQueue.add(event)
     }
 
-    public func flushEvents() {
-        var eventsToFlushQueue: [DVCEvent] = self.eventQueue
-        eventsToFlushQueue.append(
-            contentsOf: self.aggregateEventQueue.variableDefaulted.map { (_: String, defaultedEvent: DVCEvent) -> DVCEvent in
-                defaultedEvent
-            }
-        )
-        eventsToFlushQueue.append(
-            contentsOf: self.aggregateEventQueue.variableEvaluated.map { (_: String, evaluatedEvent: DVCEvent) -> DVCEvent in
-                evaluatedEvent
-            }
-        )
-        if (!eventsToFlushQueue.isEmpty) {
-            self.service?.publishEvents(
-                events: eventsToFlushQueue,
-                user: self.user!,
-                completion: { [weak self] data, response, error in
-                    if let error = error {
-                        Log.error("Error: \(error)", tags: ["events", "flush"])
-                        return
-                    }
-                    Log.info("Submitted: \(String(describing: eventsToFlushQueue.count)) events", tags: ["events", "flush"])
-                    self?.resetQueues()
-                }
-            )
+    public func flushEvents(callback: FlushCompletedHandler? = nil) {
+        guard let user = self.user else {
+            Log.error("Flushing events failed, user not defined")
+            return
         }
-    }
-    
-    func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool) {
-        self.aggregateEventQueue.track(
-            variableKey: variableKey,
-            eventType: variableIsDefaulted ? DVCEventTypes.VariableDefaulted : DVCEventTypes.VariableEvaluated
-        )
+        let eventsToFlush = self.eventQueue.flush()
+        self.service?.publishEvents(events: eventsToFlush, user: user, completion: { data, response, error in
+            if let error = error {
+                Log.error("Error: \(error)", tags: ["events", "flush"])
+                self.eventQueue.add(eventsToFlush)
+                return
+            }
+            Log.info("Submitted: \(String(describing: eventsToFlush.count)) events", tags: ["events", "flush"])
+            callback?(error)
+        })
     }
     
     public class ClientBuilder {
@@ -265,10 +247,5 @@ public class DVCClient {
     
     public static func builder() -> ClientBuilder {
         return ClientBuilder()
-    }
-    
-    private func resetQueues() {
-        self.eventQueue = []
-        self.aggregateEventQueue = DVCAggregateEvents()
     }
 }
