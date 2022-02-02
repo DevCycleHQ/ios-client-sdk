@@ -193,7 +193,19 @@ public class DVCClient {
             Log.error("Service not setup correctly")
             return
         }
-        self.eventQueue.flush(service: service, user: user, callback: callback)
+        self.eventQueue.flush(service: service, user: user) { error in
+            callback?(error)
+            if (!self.eventQueue.isEmpty()) {
+                self.scheduleFlush()
+            }
+        }
+    }
+    
+    func scheduleFlush() {
+        let delay = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            self.flushEvents(callback: nil)
+        }
     }
     
     public class ClientBuilder {
