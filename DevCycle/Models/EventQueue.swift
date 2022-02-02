@@ -23,7 +23,7 @@ class EventQueue {
         }
     }
     
-    func add(_ events: [DVCEvent]) {
+    func queue(_ events: [DVCEvent]) {
         eventDispatchQueue.async {
             self.events.append(contentsOf: events)
         }
@@ -57,7 +57,7 @@ class EventQueue {
             
             if let error = error {
                 Log.error("Error: \(error)", tags: ["events", "flush"])
-                self.add(eventsToFlush)
+                self.queue(eventsToFlush)
             } else {
                 Log.info("Submitted: \(String(describing: eventsToFlush.count)) events", tags: ["events", "flush"])
             }
