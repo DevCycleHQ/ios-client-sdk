@@ -28,7 +28,6 @@ public class DVCClient {
     var eventQueue: EventQueue = EventQueue()
     
     private let defaultFlushInterval: Int = 10000
-    private let msToSecond: Int = 1000
     
     private var service: DevCycleServiceProtocol?
     private var cacheService: CacheServiceProtocol = CacheService()
@@ -82,10 +81,6 @@ public class DVCClient {
             self.initialized = true
             self.configCompletionHandlers = []
         })
-
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(((options?.flushEventsIntervalMs ?? self.defaultFlushInterval)/self.msToSecond)), repeats: true) { timer in
-            self.flushEvents()
-        }
     }
     
     func setEnvironmentKey(_ environmentKey: String) {
@@ -186,7 +181,7 @@ public class DVCClient {
     }
 
     public func track(_ event: DVCEvent) {
-        self.eventQueue.add(event)
+        self.eventQueue.queue(event)
     }
 
     public func flushEvents(callback: FlushCompletedHandler? = nil) {
@@ -194,16 +189,11 @@ public class DVCClient {
             Log.error("Flushing events failed, user not defined")
             return
         }
-        let eventsToFlush = self.eventQueue.flush()
-        self.service?.publishEvents(events: eventsToFlush, user: user, completion: { data, response, error in
-            if let error = error {
-                Log.error("Error: \(error)", tags: ["events", "flush"])
-                self.eventQueue.add(eventsToFlush)
-                return
-            }
-            Log.info("Submitted: \(String(describing: eventsToFlush.count)) events", tags: ["events", "flush"])
-            callback?(error)
-        })
+        guard let service = self.service else {
+            Log.error("Service not setup correctly")
+            return
+        }
+        self.eventQueue.flush(service: service, user: user, callback: callback)
     }
     
     public class ClientBuilder {
