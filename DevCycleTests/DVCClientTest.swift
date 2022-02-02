@@ -49,23 +49,38 @@ class DVCClientTest: XCTestCase {
     }
     
     func testTrackWithValidDVCEventNoOptionals() {
+        let expectation = XCTestExpectation(description: "EventQueue has one event")
         let client = DVCClient()
         let event: DVCEvent = try! DVCEvent.builder().type("test").build()
         
         client.track(event)
-        XCTAssertTrue(client.eventQueue.events.count == 1)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertTrue(client.eventQueue.events.count == 1)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 1.0)
     }
     
     func testTrackWithValidDVCEventWithAllParamsDefined() {
+        let expectation = XCTestExpectation(description: "EventQueue has one fully defined event")
         let client = DVCClient()
         let metaData: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
         let event: DVCEvent = try! DVCEvent.builder().type("test").target("test").clientDate(Date()).value(1).metaData(metaData).build()
         
         client.track(event)
-        XCTAssertTrue(client.eventQueue.events.count == 1)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertTrue(client.eventQueue.events.count == 1)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 1.0)
     }
     
     func testFlushEventsWithOneEventInQueue() {
+        let expectation = XCTestExpectation(description: "EventQueue publishes an event")
         let user = getTestUser()
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
         let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
@@ -74,9 +89,13 @@ class DVCClientTest: XCTestCase {
         let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
         
         client.track(event)
-        XCTAssertTrue(client.eventQueue.events.count == 1)
         client.flushEvents()
-        XCTAssertTrue(service.publishCallCount == 1)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertTrue(service.publishCallCount == 1)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 1.0)
     }
 }
 

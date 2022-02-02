@@ -51,10 +51,6 @@ class EventQueue {
         Log.debug("Flushing events: \(eventsToFlush.count)")
         service.publishEvents(events: eventsToFlush, user: user, completion: { data, response, error in
             
-            self.eventDispatchQueue.async {
-                self.flushing = false
-            }
-            
             if let error = error {
                 Log.error("Error: \(error)", tags: ["events", "flush"])
                 self.queue(eventsToFlush)
@@ -62,8 +58,18 @@ class EventQueue {
                 Log.info("Submitted: \(String(describing: eventsToFlush.count)) events", tags: ["events", "flush"])
             }
             
+            self.eventDispatchQueue.async {
+                self.flushing = false
+            }
+            
             callback?(error)
         })
+    }
+    
+    func isEmpty() -> Bool {
+        eventDispatchQueue.sync {
+            return self.events.isEmpty
+        }
     }
     
     func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool) {
