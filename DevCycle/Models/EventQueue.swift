@@ -7,26 +7,38 @@
 
 import Foundation
 
+enum EventQueueErrors: Error {
+    case FlushingInProgress
+}
+
 class EventQueue {
-    var queue = DispatchQueue(label: "com.devcycle.EventQueue")
+    var eventDispatchQueue = DispatchQueue(label: "com.devcycle.EventQueue")
     var events: [DVCEvent] = []
     var aggregateEventQueue: DVCAggregateEvents = DVCAggregateEvents()
+    var flushing: Bool = false
     
-    func add(_ event: DVCEvent) {
-        queue.sync {
-            events.append(event)
+    func queue(_ event: DVCEvent) {
+        eventDispatchQueue.async {
+            self.events.append(event)
         }
     }
     
     func add(_ events: [DVCEvent]) {
-        queue.sync {
+        eventDispatchQueue.async {
             self.events.append(contentsOf: events)
         }
     }
     
-    func flush() -> [DVCEvent] {
+    func flush(service: DevCycleServiceProtocol, user: DVCUser, callback: FlushCompletedHandler? = nil) {
+        if (self.flushing) {
+            Log.warn("Flushing already in progress, cancelling flush")
+            callback?(EventQueueErrors.FlushingInProgress)
+            return
+        }
+        
         var eventsToFlush: [DVCEvent] = []
-        queue.sync {
+        eventDispatchQueue.sync {
+            self.flushing = true
             eventsToFlush = self.events
             eventsToFlush.append(contentsOf: self.aggregateEventQueue.variableDefaulted.map { (_: String, defaultedEvent: DVCEvent) -> DVCEvent in
                 defaultedEvent
@@ -36,11 +48,26 @@ class EventQueue {
             })
             self.clear()
         }
-        return eventsToFlush
+        Log.debug("Flushing events: \(eventsToFlush.count)")
+        service.publishEvents(events: eventsToFlush, user: user, completion: { data, response, error in
+            
+            self.eventDispatchQueue.async {
+                self.flushing = false
+            }
+            
+            if let error = error {
+                Log.error("Error: \(error)", tags: ["events", "flush"])
+                self.add(eventsToFlush)
+            } else {
+                Log.info("Submitted: \(String(describing: eventsToFlush.count)) events", tags: ["events", "flush"])
+            }
+            
+            callback?(error)
+        })
     }
     
     func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool) {
-        queue.sync {
+        eventDispatchQueue.async {
             self.aggregateEventQueue.track(
                 variableKey: variableKey,
                 eventType: variableIsDefaulted ? DVCEventTypes.VariableDefaulted : DVCEventTypes.VariableEvaluated
@@ -49,9 +76,7 @@ class EventQueue {
     }
     
     func clear() {
-        queue.sync {
-            self.events = []
-            self.aggregateEventQueue = DVCAggregateEvents()
-        }
+        self.events = []
+        self.aggregateEventQueue = DVCAggregateEvents()
     }
 }

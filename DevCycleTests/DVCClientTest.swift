@@ -78,27 +78,6 @@ class DVCClientTest: XCTestCase {
         client.flushEvents()
         XCTAssertTrue(service.publishCallCount == 1)
     }
-    
-    func testPeriodicFlushEventsWithSomeEventsInQueue() {
-        let user = getTestUser()
-        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(500).build()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
-        let service = MockService() // will assert if publishEvents was called
-        client.setup(service: service)
-        let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
-        
-        client.track(event)
-        client.track(event)
-        client.track(event)
-        XCTAssertTrue(client.eventQueue.count == 3)
-        let expec = expectation(description: "Timer expectation") // create an expectation
-        service.publishEvents(events: client.eventQueue, user: user, completion: { data, response, error in
-            expec.fulfill()
-        })
-        // wait for fulfilling every expectation (in this case only one), timeout must be greater than the timer interval
-        wait(for: [expec], timeout: 1.0)
-        XCTAssertTrue(service.publishCallCount == 1)
-    }
 }
 
 extension DVCClientTest {
