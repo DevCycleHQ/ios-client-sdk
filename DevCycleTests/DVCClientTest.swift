@@ -53,7 +53,7 @@ class DVCClientTest: XCTestCase {
         let event: DVCEvent = try! DVCEvent.builder().type("test").build()
         
         client.track(event)
-        XCTAssertTrue(client.eventQueue.count == 1)
+        XCTAssertTrue(client.eventQueue.events.count == 1)
     }
     
     func testTrackWithValidDVCEventWithAllParamsDefined() {
@@ -62,7 +62,7 @@ class DVCClientTest: XCTestCase {
         let event: DVCEvent = try! DVCEvent.builder().type("test").target("test").clientDate(Date()).value(1).metaData(metaData).build()
         
         client.track(event)
-        XCTAssertTrue(client.eventQueue.count == 1)
+        XCTAssertTrue(client.eventQueue.events.count == 1)
     }
     
     func testFlushEventsWithOneEventInQueue() {
@@ -74,7 +74,7 @@ class DVCClientTest: XCTestCase {
         let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
         
         client.track(event)
-        XCTAssertTrue(client.eventQueue.count == 1)
+        XCTAssertTrue(client.eventQueue.events.count == 1)
         client.flushEvents()
         XCTAssertTrue(service.publishCallCount == 1)
     }
