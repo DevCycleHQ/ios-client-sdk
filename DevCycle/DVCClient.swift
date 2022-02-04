@@ -196,15 +196,11 @@ public class DVCClient {
         self.eventQueue.flush(service: service, user: user) { error in
             callback?(error)
             if (!self.eventQueue.isEmpty()) {
-                self.scheduleFlush()
+                let delay = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    self.flushEvents(callback: nil)
+                }
             }
-        }
-    }
-    
-    func scheduleFlush() {
-        let delay = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            self.flushEvents(callback: nil)
         }
     }
     
