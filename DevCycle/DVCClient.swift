@@ -190,7 +190,7 @@ public class DVCClient {
             return
         }
         guard let service = self.service else {
-            Log.error("Service not setup correctly")
+            Log.error("Client not set up correctly")
             return
         }
         self.eventQueue.flush(service: service, user: user) { error in

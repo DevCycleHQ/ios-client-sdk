@@ -40,12 +40,7 @@ class EventQueue {
         eventDispatchQueue.sync {
             self.flushing = true
             eventsToFlush = self.events
-            eventsToFlush.append(contentsOf: self.aggregateEventQueue.variableDefaulted.map { (_: String, defaultedEvent: DVCEvent) -> DVCEvent in
-                defaultedEvent
-            })
-            eventsToFlush.append(contentsOf: self.aggregateEventQueue.variableEvaluated.map { (_: String, evaluatedEvent: DVCEvent) -> DVCEvent in
-                evaluatedEvent
-            })
+            eventsToFlush.append(contentsOf: aggregateEventQueue.getAllAggregateEvents())
             self.clear()
         }
         Log.debug("Flushing events: \(eventsToFlush.count)")

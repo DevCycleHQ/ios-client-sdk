@@ -100,4 +100,15 @@ struct DVCAggregateEvents {
             }
         }
     }
+    
+    func getAllAggregateEvents() -> [DVCEvent] {
+        var allAggregateEvents: [DVCEvent] = []
+        allAggregateEvents.append(contentsOf: self.variableDefaulted.map { (_: String, defaultedEvent: DVCEvent) -> DVCEvent in
+            defaultedEvent
+        })
+        allAggregateEvents.append(contentsOf: self.variableEvaluated.map { (_: String, evaluatedEvent: DVCEvent) -> DVCEvent in
+            evaluatedEvent
+        })
+        return allAggregateEvents
+    }
 }
