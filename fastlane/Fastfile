@@ -21,7 +21,8 @@ platform :ios do
     run_tests(
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
-      scheme: "DevCycle"
+      scheme: "DevCycle",
+      result_bundle: true
     )
   end
 end

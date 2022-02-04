@@ -64,11 +64,6 @@ class ViewController: UIViewController {
                                  .clientDate(Date())
                                  .build()
         client.track(event)
-        client.flushEvents { error in
-            if (error != nil) {
-                print("Error")
-            }
-        }
     }
     
     @IBAction func logAllFeatures(_ sender: Any) {
