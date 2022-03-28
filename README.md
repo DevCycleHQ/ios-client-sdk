@@ -88,6 +88,41 @@ self.dvcClient = [DVCClient initialize:@"<DEVCYCLE_MOBILE_ENVIRONMENT_KEY>"
 }];
 ```
 
+### Notifying when DevCycle features are available
+
+In the initialize call there is an optional `onInitialized` parameter you can use to determine when your features have been loaded:
+
+#### Swift
+
+```swift
+self.dvcClient = try? DVCClient.builder()
+        .environmentKey("<DEVCYCLE_MOBILE_ENVIRONMENT_KEY>")
+        .user(user)
+        .options(options)
+        .build(onInitialized: { error in
+            if (error != nil) {
+                // there was an error with building the client
+            } else {
+                // initialized successfully
+            }
+        })
+```
+
+#### Objective-C
+
+```objc
+self.dvcClient = [DVCClient initialize:@"<DEVCYCLE_MOBILE_ENVIRONMENT_KEY>"
+                               user:user
+                            options:nil
+                      onInitialized:^(NSError * _Nullable error) {
+    if (error) {
+        NSLog(@"DevCycle failed to initialize: %@", error);
+    } else {
+        // initialized successfully
+    }
+}];
+```
+
 ## Using Variable Values
 
 To get values from your Features, the `variable()` method is used to fetch variable values using 
