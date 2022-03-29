@@ -55,18 +55,30 @@ You can also add it through Xcode, i.e. `File > Swift Packages > Add Package Dep
 
 ### Initializing the SDK
 
+We recommend initializing the SDK once in `didFinishLaunchingWithOptions` of your `AppDelegate` to receive features for as soon as possible, and to pass around the client instance around in your app.
+
 #### Swift
 Using the builder pattern we can initialize the DevCycle SDK by providing the DVCUser and DevCycle mobile environment key:
 
 ```swift
-let user = try DVCUser.builder()
-                    .userId("my-user1")
-                    .build()
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    
+    ...
 
-guard let dvcClient = try DVCClient.builder()
-        .environmentKey("<DEVCYCLE_MOBILE_ENVIRONMENT_KEY>")
-        .user(user)
-        .build(onInitialized: nil)
+    let user = try DVCUser.builder()
+                        .userId("my-user1")
+                        .build()
+
+    guard let dvcClient = try DVCClient.builder()
+            .environmentKey("<DEVCYCLE_MOBILE_ENVIRONMENT_KEY>")
+            .user(user)
+            .build(onInitialized: nil)
+    self.dvcClient = dvcClient
+    
+    ...
+
+    return true
+}
 ```
 
 The user object needs either a `user_id`, or `isAnonymous` set to `true` for an anonymous user. 
@@ -75,17 +87,25 @@ The user object needs either a `user_id`, or `isAnonymous` set to `true` for an 
 For Objective-C we use a standard callback pattern to initialize the DevCycle SDK by providing the DVCUser and DevCycle mobile environment key:
 
 ```objc
-DVCUser *user = [DVCUser initializeWithUserId:@"my-user1"];
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    ...
 
+    DVCUser *user = [DVCUser initializeWithUserId:@"my-user1"];
 
-self.dvcClient = [DVCClient initialize:@"<DEVCYCLE_MOBILE_ENVIRONMENT_KEY>"
-                               user:user
+    self.dvcClient = [DVCClient initialize:@"<DEVCYCLE_MOBILE_ENVIRONMENT_KEY>"
+                                user:user
                             options:nil
-                      onInitialized:^(NSError * _Nullable error) {
-    if (error) {
-        NSLog(@"DevCycle failed to initialize: %@", error);
-    }
-}];
+                        onInitialized:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"DevCycle failed to initialize: %@", error);
+        }
+    }];
+
+    ...
+
+    return YES;
+}
 ```
 
 ### Notifying when DevCycle features are available
