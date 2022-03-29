@@ -52,6 +52,10 @@ public class DVCVariable<T> {
         self.type = variable.type
         self.evalReason = variable.evalReason
         self.isDefaulted = false
+        
+        if let handler = self.handler {
+            handler(self.value)
+        }
     }
     
     public func onUpdate(handler: @escaping VariableValueHandler<T>) -> DVCVariable {
