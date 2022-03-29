@@ -45,6 +45,11 @@ public class DVCVariable<T> {
     
     func update(from variable: Variable) {
         if let value = variable.value as? T {
+            if let handler = self.handler,
+               !isEqual(self.value, variable.value)
+            {
+                handler(value)
+            }
             self.value = value
         } else {
             Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
@@ -52,10 +57,6 @@ public class DVCVariable<T> {
         self.type = variable.type
         self.evalReason = variable.evalReason
         self.isDefaulted = false
-        
-        if let handler = self.handler {
-            handler(self.value)
-        }
     }
     
     public func onUpdate(handler: @escaping VariableValueHandler<T>) -> DVCVariable {
@@ -63,3 +64,4 @@ public class DVCVariable<T> {
         return self
     }
 }
+

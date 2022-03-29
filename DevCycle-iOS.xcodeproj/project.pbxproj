@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0F2DD75A279EFA6B00540C9D /* CustomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2DD759279EFA6B00540C9D /* CustomData.swift */; };
+		52404CEA27F3A9FB00290A31 /* isEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52404CE927F3A9FB00290A31 /* isEqual.swift */; };
 		524D58242770F78B00D7CC56 /* ObjCDVCVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524D58232770F78B00D7CC56 /* ObjCDVCVariable.swift */; };
 		524F4E60276BDDBD00CB9069 /* DVCVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */; };
 		524F4E62276D20A600CB9069 /* DVCVariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524F4E61276D20A500CB9069 /* DVCVariableTests.swift */; };
@@ -55,6 +56,7 @@
 
 /* Begin PBXFileReference section */
 		0F2DD759279EFA6B00540C9D /* CustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomData.swift; sourceTree = "<group>"; };
+		52404CE927F3A9FB00290A31 /* isEqual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isEqual.swift; sourceTree = "<group>"; };
 		524D58232770F78B00D7CC56 /* ObjCDVCVariable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjCDVCVariable.swift; sourceTree = "<group>"; };
 		524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCVariable.swift; sourceTree = "<group>"; };
 		524F4E61276D20A500CB9069 /* DVCVariableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCVariableTests.swift; sourceTree = "<group>"; };
@@ -111,6 +113,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		52404CE827F3A9CE00290A31 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				52A48706278C9BE200DABA34 /* Log.swift */,
+				52404CE927F3A9FB00290A31 /* isEqual.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		5264A779275E994B00FEDB43 /* ObjC */ = {
 			isa = PBXGroup;
 			children = (
@@ -155,6 +166,7 @@
 		5268DB4E27501CFC00D17A40 /* DevCycle */ = {
 			isa = PBXGroup;
 			children = (
+				52404CE827F3A9CE00290A31 /* Utils */,
 				5264A779275E994B00FEDB43 /* ObjC */,
 				52E693EB2756815C00B52375 /* Models */,
 				52E693E827557B5700B52375 /* Networking */,
@@ -162,7 +174,6 @@
 				5268DB6527501D6000D17A40 /* DVCUser.swift */,
 				524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */,
 				5268DB4F27501CFC00D17A40 /* DevCycle.h */,
-				52A48706278C9BE200DABA34 /* Log.swift */,
 			);
 			path = DevCycle;
 			sourceTree = "<group>";
@@ -346,6 +357,7 @@
 				5264A77B275E9A7E00FEDB43 /* ObjCDVCClient.swift in Sources */,
 				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
 				5264A7BD2769381600FEDB43 /* Cache.swift in Sources */,
+				52404CEA27F3A9FB00290A31 /* isEqual.swift in Sources */,
 				52A486762784A3E600DABA34 /* ObjCDVCOptions.swift in Sources */,
 				52A96A0F27A0A7CF00D3A602 /* EventQueue.swift in Sources */,
 				52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */,
