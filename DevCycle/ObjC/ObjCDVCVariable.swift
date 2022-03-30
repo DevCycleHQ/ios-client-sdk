@@ -31,10 +31,10 @@ public class ObjCDVCVariable: NSObject {
         self.defaultValue = dvcVariable.defaultValue
         super.init()
         
-        let _ = dvcVariable.onUpdate { [weak self] _ in
+        let _ = dvcVariable.onUpdate { [weak self] value in
             if let weakSelf = self {
                 weakSelf.setValues(dvcVariable: dvcVariable)
-                weakSelf.handler?(weakSelf)
+                weakSelf.handler?(value)
             }
         }
     }

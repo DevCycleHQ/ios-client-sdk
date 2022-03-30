@@ -38,7 +38,7 @@
                                onUpdateWithHandler:^(id _Nonnull value) {
             NSLog(@"num_key value updated: %@", value);
         }];
-        DVCVariable *boolVar = [[client boolVariableWithKey:@"bool_key" defaultValue:true]
+        DVCVariable *boolVar = [[client boolVariableWithKey:@"bool_key" defaultValue:NO]
                                 onUpdateWithHandler:^(id _Nonnull value) {
             NSLog(@"bool_key value updated: %@", value);
         }];

@@ -37,7 +37,7 @@ static NSString *const DEVELOPMENT_KEY = @"mobile-16e8e500-80d2-4bb5-9d4f-821938
     NSError *err = nil;
     
     DVCOptions *options = [[DVCOptions alloc] init];
-//    options.logLevel = LogLevel.debug;
+    options.logLevel = LogLevel.debug;
     
     self.client = [DVCClient initialize:DEVELOPMENT_KEY
                                    user:user
