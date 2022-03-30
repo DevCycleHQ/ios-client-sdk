@@ -185,6 +185,18 @@ if (boolVariable.value == true) {
 }
 ```
 
+The `Variable` object also contains the following params: 
+    - `key`: the key indentifier for the Variable
+    - `type`: the type of the Variable, one of: `String` / `Boolean` / `Number` / `JSON`
+    - `value`: the Variable's value
+    - `defaultValue`: the Variable's default value
+    - `isDefaulted`: if the Variable is using the `defaultValue`
+    - `evalReason`: evaluation reason for why the variable was bucketed into its value
+
+If the value is not ready, it will return the default value passed in the creation of the variable.
+
+## Variable Updates
+
 To listen for updates on the variable's `value`, for example when the user's `userId` is changed or `resetUser()` is called, an `onUpdate()` handler can be used:
 
 #### Swift
@@ -202,16 +214,6 @@ DVCVariable *boolVar = [[self.dvcClient boolVariableWithKey:@"bool_key" defaultV
     // Variable value updated
 }];
 ```
-
-The `Variable` object also contains the following params: 
-    - `key`: the key indentifier for the Variable
-    - `type`: the type of the Variable, one of: `String` / `Boolean` / `Number` / `JSON`
-    - `value`: the Variable's value
-    - `defaultValue`: the Variable's default value
-    - `isDefaulted`: if the Variable is using the `defaultValue`
-    - `evalReason`: evaluation reason for why the variable was bucketed into its value
-
-If the value is not ready, it will return the default value passed in the creation of the variable.
 
 ## Grabbing All Features / Variables
 
