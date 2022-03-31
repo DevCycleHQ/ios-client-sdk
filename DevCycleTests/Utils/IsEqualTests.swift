@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import DevCycle
+@testable import DevCycle
 
 class IsEqualTests: XCTestCase {
 
