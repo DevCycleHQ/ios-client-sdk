@@ -7,7 +7,7 @@
 
 import Foundation
 
-public func isEqual<T>(_ lhs: T, _ rhs: T) -> Bool {
+internal func isEqual<T>(_ lhs: T, _ rhs: T) -> Bool {
     if let lhs = lhs as? [String: Any], let rhs = rhs as? [String: Any] {
         return NSDictionary(dictionary: lhs).isEqual(to: rhs)
     } else if let lhs = lhs as? Double, let rhs = rhs as? Double {
@@ -20,6 +20,8 @@ public func isEqual<T>(_ lhs: T, _ rhs: T) -> Bool {
         return lhs == rhs
     } else if let lhs = lhs as? Bool, let rhs = rhs as? Bool {
         return lhs == rhs
+    } else {
+        Log.error("Unrecognized type, lhs: \(type(of: lhs)), rhs: \(type(of: rhs))")
     }
     return false
 }
