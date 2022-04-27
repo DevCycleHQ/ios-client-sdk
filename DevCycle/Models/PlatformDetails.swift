@@ -18,6 +18,6 @@ struct PlatformDetails {
     var systemName: String { UIDevice.current.systemName }
     #endif
     
-    var sdkType = "client"
+    var sdkType = "mobile"
     var sdkVersion = "1.2.1"
 }

@@ -28,6 +28,7 @@ public class DVCClient {
     var eventQueue: EventQueue = EventQueue()
     
     private let defaultFlushInterval: Int = 10000
+    private var flushEventsInterval: Double = 10.0
     
     private var service: DevCycleServiceProtocol?
     private var cacheService: CacheServiceProtocol = CacheService()
@@ -44,6 +45,7 @@ public class DVCClient {
         
         if let options = self.options {
             Log.level = options.logLevel
+            self.flushEventsInterval = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
         } else {
             Log.level = .error
         }
@@ -81,6 +83,13 @@ public class DVCClient {
             self.initialized = true
             self.configCompletionHandlers = []
         })
+        
+        Timer.scheduledTimer(
+            withTimeInterval: TimeInterval(self.flushEventsInterval),
+            repeats: true
+        ) {
+            timer in self.flushEvents()
+        }
     }
     
     func setEnvironmentKey(_ environmentKey: String) {
@@ -185,20 +194,21 @@ public class DVCClient {
     }
 
     public func flushEvents(callback: FlushCompletedHandler? = nil) {
-        guard let user = self.user else {
-            Log.error("Flushing events failed, user not defined")
-            return
-        }
-        guard let service = self.service else {
-            Log.error("Client not set up correctly")
-            return
-        }
-        self.eventQueue.flush(service: service, user: user) { error in
-            callback?(error)
-            if (!self.eventQueue.isEmpty()) {
-                let delay = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                    self.flushEvents(callback: nil)
+        if (!self.eventQueue.isEmpty()) {
+            guard let user = self.user else {
+                Log.error("Flushing events failed, user not defined")
+                return
+            }
+            guard let service = self.service else {
+                Log.error("Client not set up correctly")
+                return
+            }
+            self.eventQueue.flush(service: service, user: user) { error in
+                callback?(error)
+                if (!self.eventQueue.isEmpty()) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + self.flushEventsInterval) {
+                        self.flushEvents(callback: nil)
+                    }
                 }
             }
         }
