@@ -15,7 +15,7 @@ class DVCUserTest: XCTestCase {
         XCTAssertNotNil(user.lastSeenDate)
         XCTAssertNotNil(user.platformVersion)
         XCTAssertNotNil(user.deviceModel == "iPhone")
-        XCTAssert(user.sdkType == "client")
+        XCTAssert(user.sdkType == "mobile")
         XCTAssertNotNil(user.sdkVersion)
     }
 
