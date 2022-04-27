@@ -195,6 +195,10 @@ class QueryItemBuilder {
             items.append(URLQueryItem(name: name, value: String(data: map, encoding: String.Encoding.utf8)))
         } else if let date = property as? Date {
             items.append(URLQueryItem(name: name, value: "\(Int(date.timeIntervalSince1970))"))
+        } else if let stringValue = property as? String {
+            if (!stringValue.isEmpty) {
+                items.append(URLQueryItem(name: name, value: stringValue))
+            }
         } else {
             items.append(URLQueryItem(name: name, value: "\(property)"))
         }

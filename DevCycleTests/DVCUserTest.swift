@@ -47,6 +47,7 @@ class DVCUserTest: XCTestCase {
         XCTAssert(urlString!.contains("user_id=my_user"))
         XCTAssert(urlString!.contains("isAnonymous=false"))
         XCTAssertFalse(urlString!.contains("country"))
+        XCTAssertFalse(urlString!.contains("email"))
     }
     
     func testToStringOuputsDatesAndMapCorrectly() {
@@ -68,6 +69,7 @@ extension DVCUserTest {
     func getTestUser() -> DVCUser {
         return try! DVCUser.builder()
             .userId("my_user")
+            .email("")
             .isAnonymous(false)
             .customData(["custom": "key"])
             .build()
