@@ -63,7 +63,7 @@ class EventQueue {
     
     func isEmpty() -> Bool {
         eventDispatchQueue.sync {
-            return self.events.isEmpty
+            return self.events.isEmpty && self.aggregateEventQueue.variableDefaulted.isEmpty && self.aggregateEventQueue.variableEvaluated.isEmpty
         }
     }
     
