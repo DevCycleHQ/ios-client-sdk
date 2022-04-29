@@ -44,11 +44,11 @@ class ViewController: UIViewController {
                 print("Logged in as User: \(String(describing: user?.userId))!")
                 print("Variables: \(String(describing: variables))")
                 
-                let variable = client.variable(key: "default-faeture-from-phong-tap-google-auth", defaultValue: false)
-                if (variable.value) {
-                    print("Feature on!")
+                let variable = client.variable(key: "num_key", defaultValue: 0)
+                if (variable.value == 1) {
+                    print("Num_key is 1!")
                 } else {
-                    print("Feature off!")
+                    print("Num_key is 0!")
                 }
             }
         }
