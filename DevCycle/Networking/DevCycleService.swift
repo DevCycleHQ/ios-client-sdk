@@ -236,6 +236,10 @@ class DevCycleService: DevCycleServiceProtocol {
             if (event.target != nil) { eventToPost["target"] = event.target }
             if (event.value != nil) { eventToPost["value"] = event.value }
             if (event.metaData != nil) { eventToPost["metaData"] = event.metaData }
+            if (event.type != "variableDefaulted" && event.type != "variableEvaluated") {
+                eventToPost["customType"] = event.type
+                eventToPost["type"] = "customEvent"
+            }
             
             eventsJSON.append(eventToPost)
         }
