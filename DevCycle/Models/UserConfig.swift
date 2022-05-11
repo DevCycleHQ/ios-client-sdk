@@ -12,20 +12,21 @@ enum UserConfigError: Error {
 }
 
 public struct UserConfig {
-    var environment: KeyedProperty
+    var project: Project
+    var environment: Environment
     var featureVariationMap: [String: String]
     var features: [String: Feature]
     var variables: [String: Variable]
-    var project: KeyedProperty
     
     init(from dictionary: [String:Any]) throws {
-        guard let environment = dictionary["environment"] as? [String: String] else { throw UserConfigError.MissingInConfig("environment") }
-        guard let project = dictionary["project"] as? [String: String] else { throw UserConfigError.MissingInConfig("project") }
+        guard let environment = dictionary["environment"] as? [String: Any] else { throw UserConfigError.MissingInConfig("environment") }
+        guard let project = dictionary["project"] as? [String: Any] else { throw UserConfigError.MissingInConfig("project") }
         guard let featureVariationMap = dictionary["featureVariationMap"] as? [String: String] else { throw UserConfigError.MissingInConfig("featureVariationMap") }
         guard var featureMap = dictionary["features"] as? [String: Any] else { throw UserConfigError.MissingInConfig("features") }
         guard var variablesMap = dictionary["variables"] as? [String: Any] else { throw UserConfigError.MissingInConfig("variables") }
-        self.environment = try KeyedProperty(from: environment, name: "environment")
-        self.project = try KeyedProperty(from: project, name: "project")
+        
+        self.project = try Project(from: project)
+        self.environment = try Environment(from: environment)
         self.featureVariationMap = featureVariationMap
         
         let featureKeys = Array(featureMap.keys)
@@ -52,15 +53,27 @@ public struct UserConfig {
     }
 }
 
-public struct KeyedProperty {
-    var key: String
+public struct Project {
     var _id: String
+    var key: String
     
-    init (from dictionary: [String: String], name: String) throws {
-        guard let key = dictionary["key"] else { throw UserConfigError.MissingProperty("key in \(name)") }
-        guard let id = dictionary["_id"] else { throw UserConfigError.MissingProperty("_id in \(name)") }
-        self.key = key
+    init (from dictionary: [String: Any]) throws {
+        guard let key = dictionary["key"] as? String else { throw UserConfigError.MissingProperty("key in Project") }
+        guard let id = dictionary["_id"] as? String else { throw UserConfigError.MissingProperty("_id in Project") }
         self._id = id
+        self.key = key
+    }
+}
+
+public struct Environment {
+    var _id: String
+    var key: String
+    
+    init (from dictionary: [String: Any]) throws {
+        guard let key = dictionary["key"] as? String else { throw UserConfigError.MissingProperty("key in Environment") }
+        guard let id = dictionary["_id"] as? String else { throw UserConfigError.MissingProperty("_id in Environment") }
+        self._id = id
+        self.key = key
     }
 }
 
