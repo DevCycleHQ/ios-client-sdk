@@ -15,6 +15,8 @@ This version of the DevCycle iOS Client SDK supports a minimum of iOS 12.
 
 ## Installation
 
+** Note **: Versions `1.3.2` and below are deprecated due to changes to the `UserConfig` model that support new properties from the retrieved config.
+
 ### CocoaPods
 
 The SDK can be installed into your iOS project by adding the following to your cocoapod spec:
