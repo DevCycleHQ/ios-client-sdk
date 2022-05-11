@@ -19,5 +19,5 @@ struct PlatformDetails {
     #endif
     
     var sdkType = "mobile"
-    var sdkVersion = "1.3.2"
+    var sdkVersion = "1.3.3"
 }
