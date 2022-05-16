@@ -148,9 +148,11 @@ class DevCycleService: DevCycleServiceProtocol {
     }
     
     func makeRequest(request: URLRequest, completion: CompletionHandler?) {
+        let startTime = CFAbsoluteTimeGetCurrent()
         if let urlString = request.url?.absoluteString {
-            Log.debug("Making request: " + urlString, tags:["request"])
+            Log.debug("Making request: \(urlString)", tags:["request"])
         }
+        
         self.session.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 guard let responseData = data,
@@ -160,6 +162,7 @@ class DevCycleService: DevCycleServiceProtocol {
                     completion?((nil, nil, APIError.NoResponse))
                     return
                 }
+                
                 // Guard below checks if statusCode exists or not in the response body.
                 // Only API Errors (http status codes of 4xx/5xx) have the statusCode in the response body, successful API Requests (http status codes of 2xx/3xx) calls will not.
                 guard responseDataJson["statusCode"] == nil else {
@@ -175,6 +178,11 @@ class DevCycleService: DevCycleServiceProtocol {
                     Log.error(error.debugDescription, tags: error.debugTags)
                     completion?((nil, nil, error))
                     return
+                }
+                
+                if let urlString = response?.url?.absoluteString {
+                    let responseTime = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
+                    Log.debug("Request url: \(urlString), response time: \(responseTime) ms", tags:["request"])
                 }
                 completion?((data, response, error))
             }
