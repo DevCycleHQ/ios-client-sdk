@@ -1,0 +1,16 @@
+PODS:
+  - DevCycle (1.3.3)
+
+DEPENDENCIES:
+  - DevCycle
+
+SPEC REPOS:
+  trunk:
+    - DevCycle
+
+SPEC CHECKSUMS:
+  DevCycle: 176625e1196a4974d928661f20587b4a94de60d6
+
+PODFILE CHECKSUM: 2d05f500bd60701d1b7d72d86ad9b4ae1acc3d2f
+
+COCOAPODS: 1.11.3

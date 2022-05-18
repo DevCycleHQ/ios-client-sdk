@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		52404CFA27F4EC6D00290A31 /* DevCycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52404CF727F4EC4000290A31 /* DevCycle.framework */; };
 		52A486D0278626E700DABA34 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486CF278626E700DABA34 /* AppDelegate.m */; };
 		52A486D3278626E700DABA34 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486D2278626E700DABA34 /* SceneDelegate.m */; };
 		52A486D6278626E700DABA34 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486D5278626E700DABA34 /* ViewController.m */; };
@@ -16,27 +15,10 @@
 		52A486DE278626EC00DABA34 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52A486DC278626EC00DABA34 /* LaunchScreen.storyboard */; };
 		52A486E1278626EC00DABA34 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486E0278626EC00DABA34 /* main.m */; };
 		52A486F6278627A400DABA34 /* DevCycleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A486F5278627A400DABA34 /* DevCycleManager.m */; };
+		E9004648DD8873F44150C488 /* Pods_DevCycle_Example_App_ObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D4F33A6149AE0F41A7DA6EB /* Pods_DevCycle_Example_App_ObjC.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		52404CF627F4EC4000290A31 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 52404CF127F4EC4000290A31 /* DevCycle-iOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5268DB4D27501CFC00D17A40;
-			remoteInfo = DevCycle;
-		};
-		52404CF827F4EC4000290A31 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 52404CF127F4EC4000290A31 /* DevCycle-iOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5268DB5627501CFC00D17A40;
-			remoteInfo = DevCycleTests;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		52404CF127F4EC4000290A31 /* DevCycle-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "DevCycle-iOS.xcodeproj"; path = "../../DevCycle-iOS.xcodeproj"; sourceTree = "<group>"; };
 		52A486CB278626E700DABA34 /* DevCycle-Example-App-ObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DevCycle-Example-App-ObjC.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		52A486CE278626E700DABA34 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		52A486CF278626E700DABA34 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -51,6 +33,9 @@
 		52A486E0278626EC00DABA34 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		52A486F4278627A400DABA34 /* DevCycleManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DevCycleManager.h; sourceTree = "<group>"; };
 		52A486F5278627A400DABA34 /* DevCycleManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DevCycleManager.m; sourceTree = "<group>"; };
+		69B9046F777B136269BDF0FE /* Pods-DevCycle-Example-App-ObjC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevCycle-Example-App-ObjC.release.xcconfig"; path = "Target Support Files/Pods-DevCycle-Example-App-ObjC/Pods-DevCycle-Example-App-ObjC.release.xcconfig"; sourceTree = "<group>"; };
+		9D4F33A6149AE0F41A7DA6EB /* Pods_DevCycle_Example_App_ObjC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DevCycle_Example_App_ObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E403D3D0E1146EA3B7C15DC3 /* Pods-DevCycle-Example-App-ObjC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevCycle-Example-App-ObjC.debug.xcconfig"; path = "Target Support Files/Pods-DevCycle-Example-App-ObjC/Pods-DevCycle-Example-App-ObjC.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,28 +43,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52404CFA27F4EC6D00290A31 /* DevCycle.framework in Frameworks */,
+				E9004648DD8873F44150C488 /* Pods_DevCycle_Example_App_ObjC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		52404CF227F4EC4000290A31 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				52404CF727F4EC4000290A31 /* DevCycle.framework */,
-				52404CF927F4EC4000290A31 /* DevCycleTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		52A486C2278626E700DABA34 = {
 			isa = PBXGroup;
 			children = (
 				52A486CD278626E700DABA34 /* DevCycle-Example-App-ObjC */,
 				52A486CC278626E700DABA34 /* Products */,
 				52A486F12786275800DABA34 /* Frameworks */,
+				60F1CC52F9DD7675983D9A12 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -113,7 +90,7 @@
 		52A486F12786275800DABA34 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				52404CF127F4EC4000290A31 /* DevCycle-iOS.xcodeproj */,
+				9D4F33A6149AE0F41A7DA6EB /* Pods_DevCycle_Example_App_ObjC.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -127,6 +104,16 @@
 			path = Managers;
 			sourceTree = "<group>";
 		};
+		60F1CC52F9DD7675983D9A12 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E403D3D0E1146EA3B7C15DC3 /* Pods-DevCycle-Example-App-ObjC.debug.xcconfig */,
+				69B9046F777B136269BDF0FE /* Pods-DevCycle-Example-App-ObjC.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -134,9 +121,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 52A486E4278626EC00DABA34 /* Build configuration list for PBXNativeTarget "DevCycle-Example-App-ObjC" */;
 			buildPhases = (
+				9CF39194D65489E448F02A61 /* [CP] Check Pods Manifest.lock */,
 				52A486C7278626E700DABA34 /* Sources */,
 				52A486C8278626E700DABA34 /* Frameworks */,
 				52A486C9278626E700DABA34 /* Resources */,
+				6515F072FE72C07269566068 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -172,35 +161,12 @@
 			mainGroup = 52A486C2278626E700DABA34;
 			productRefGroup = 52A486CC278626E700DABA34 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 52404CF227F4EC4000290A31 /* Products */;
-					ProjectRef = 52404CF127F4EC4000290A31 /* DevCycle-iOS.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				52A486CA278626E700DABA34 /* DevCycle-Example-App-ObjC */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		52404CF727F4EC4000290A31 /* DevCycle.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = DevCycle.framework;
-			remoteRef = 52404CF627F4EC4000290A31 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		52404CF927F4EC4000290A31 /* DevCycleTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = DevCycleTests.xctest;
-			remoteRef = 52404CF827F4EC4000290A31 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		52A486C9278626E700DABA34 /* Resources */ = {
@@ -214,6 +180,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6515F072FE72C07269566068 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DevCycle-Example-App-ObjC/Pods-DevCycle-Example-App-ObjC-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DevCycle-Example-App-ObjC/Pods-DevCycle-Example-App-ObjC-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DevCycle-Example-App-ObjC/Pods-DevCycle-Example-App-ObjC-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9CF39194D65489E448F02A61 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DevCycle-Example-App-ObjC-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		52A486C7278626E700DABA34 /* Sources */ = {
@@ -364,6 +372,7 @@
 		};
 		52A486E5278626EC00DABA34 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E403D3D0E1146EA3B7C15DC3 /* Pods-DevCycle-Example-App-ObjC.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -391,6 +400,7 @@
 		};
 		52A486E6278626EC00DABA34 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 69B9046F777B136269BDF0FE /* Pods-DevCycle-Example-App-ObjC.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
