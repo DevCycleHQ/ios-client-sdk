@@ -1,0 +1,6 @@
+framework module DevCycle {
+  umbrella header "DevCycle-umbrella.h"
+
+  export *
+  module * { export * }
+}

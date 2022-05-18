@@ -1,0 +1,6 @@
+framework module Pods_DevCycle_Example_App {
+  umbrella header "Pods-DevCycle-Example-App-umbrella.h"
+
+  export *
+  module * { export * }
+}
