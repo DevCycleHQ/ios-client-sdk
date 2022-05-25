@@ -173,7 +173,7 @@ public class DVCUser: Codable {
         }
         if let privateCustomData = self.privateCustomData,
            let privateCustomDataJSON = try? JSONEncoder().encode(privateCustomData) {
-            _ = builder.formatToQueryItem(name: "customData", value: privateCustomDataJSON)
+            _ = builder.formatToQueryItem(name: "privateCustomData", value: privateCustomDataJSON)
         }
         
         return builder.build()
