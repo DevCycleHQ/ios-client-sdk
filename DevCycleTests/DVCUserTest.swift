@@ -61,6 +61,7 @@ class DVCUserTest: XCTestCase {
             }
         }
         XCTAssert(urlString!.contains("customData=%7B%22custom%22:%22key%22%7D"))
+        XCTAssert(urlString!.contains("privateCustomData=%7B%22custom2%22:%22key2%22%7D"))
     }
 }
 
@@ -70,6 +71,7 @@ extension DVCUserTest {
             .userId("my_user")
             .isAnonymous(false)
             .customData(["custom": "key"])
+            .privateCustomData(["custom2": "key2"])
             .build()
     }
 }
