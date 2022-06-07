@@ -45,10 +45,16 @@ class ViewController: UIViewController {
                 print("Variables: \(String(describing: variables))")
                 
                 let variable = client.variable(key: "num_key", defaultValue: 0)
+                let variable2 = client.variable(key: "num_key_defaulted", defaultValue: 0)
                 if (variable.value == 1) {
                     print("Num_key is 1!")
                 } else {
                     print("Num_key is 0!")
+                }
+                if (variable2.value == 1) {
+                    print("Evaluated num_key_defaulted")
+                } else {
+                    print("Defaulted num_key_defaulted")
                 }
             }
         }
