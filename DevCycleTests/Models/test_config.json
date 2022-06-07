@@ -12,7 +12,9 @@
             "_id": "id3",
             "key": "new-feature",
             "type": "release",
-            "_variation": "id4"
+            "_variation": "id4",
+            "variationKey": "id4-key",
+            "variationName": "id4 name"
         }
     },
     "featureVariationMap": {

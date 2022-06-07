@@ -82,16 +82,22 @@ public struct Feature {
     var _variation: String
     var key: String
     var type: String
+    var variationKey: String
+    var variationName: String
     
     init (from dictionary: [String: String]) throws {
         guard let id = dictionary["_id"] else { throw UserConfigError.MissingProperty("_id in Feature object") }
         guard let variation = dictionary["_variation"] else { throw UserConfigError.MissingProperty("_variation in Feature object") }
         guard let key = dictionary["key"] else { throw UserConfigError.MissingProperty("key in Feature object") }
         guard let type = dictionary["type"] else { throw UserConfigError.MissingProperty("type in Feature object") }
+        guard let variationKey = dictionary["variationKey"] else { throw UserConfigError.MissingProperty("variationKey in Feature object") }
+        guard let variationName = dictionary["variationName"] else { throw UserConfigError.MissingProperty("variationName in Feature object") }
         self._id = id
         self._variation = variation
         self.key = key
         self.type = type
+        self.variationKey = variationKey
+        self.variationName = variationName
     }
 }
 
