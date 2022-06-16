@@ -25,6 +25,13 @@ class DVCUserTest: XCTestCase {
         XCTAssertNil(user)
     }
     
+    func testBuilderReturnsNilIfNoUserIdAndIsAnonymousIsFalse() {
+        let user = try? DVCUser.builder()
+                    .isAnonymous(false)
+                    .build()
+        XCTAssertNil(user)
+    }
+    
     func testBuilderReturnsUserIfUserIdSet() {
         let user = try! DVCUser.builder().userId("my_user").build()
         XCTAssertNotNil(user)

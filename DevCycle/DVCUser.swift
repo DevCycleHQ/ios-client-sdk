@@ -36,7 +36,9 @@ public class UserBuilder {
     public func isAnonymous(_ isAnonymous: Bool) -> UserBuilder {
         if (self.user.isAnonymous != nil) { return self }
         self.user.isAnonymous = isAnonymous
-        self.user.userId = UUID().uuidString
+        if (isAnonymous) {
+            self.user.userId = UUID().uuidString
+        }
         return self
     }
     
