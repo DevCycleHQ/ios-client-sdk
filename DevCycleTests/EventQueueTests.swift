@@ -41,7 +41,7 @@ class EventQueueTests: XCTestCase {
 }
 
 class MockService: DevCycleServiceProtocol {
-    func getConfig(user: DVCUser, completion: @escaping ConfigCompletionHandler) {}
+    func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {}
     
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
         
@@ -49,5 +49,7 @@ class MockService: DevCycleServiceProtocol {
             completion((nil, nil, nil))
         }
     }
+    
+    func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {}
     
 }

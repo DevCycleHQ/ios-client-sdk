@@ -103,7 +103,7 @@ extension DVCClientTest {
     class MockService: DevCycleServiceProtocol {
         public var publishCallCount: Int = 0
         
-        func getConfig(user: DVCUser, completion: @escaping ConfigCompletionHandler) {
+        func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {
             XCTAssert(true)
         }
 
@@ -111,6 +111,10 @@ extension DVCClientTest {
             self.publishCallCount += 1
             XCTAssert(true)
             completion((data: nil, urlResponse: nil, error: nil))
+        }
+        
+        func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {
+            XCTAssert(true)
         }
     }
     

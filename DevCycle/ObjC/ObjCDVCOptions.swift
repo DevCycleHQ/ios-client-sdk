@@ -19,6 +19,7 @@ public class ObjCOptions: NSObject {
     @objc public var flushEventsIntervalMs: NSNumber?
     @objc public var disableEventLogging: NSNumber?
     @objc public var logLevel: NSNumber?
+    @objc public var enableEdgeDB: NSNumber?
     
     func buildDVCOptions() -> DVCOptions {
         var optionsBuilder = DVCOptions.builder()
@@ -31,6 +32,12 @@ public class ObjCOptions: NSObject {
            let disable = disableEventLogging as? Bool {
             optionsBuilder = optionsBuilder.disableEventLogging(disable)
         }
+        
+        if let enableEdgeDB = self.enableEdgeDB,
+           let enable = enableEdgeDB as? Bool {
+            optionsBuilder = optionsBuilder.enableEdgeDB(enable)
+        }
+        
         if let logLevel = self.logLevel,
            let level = logLevel as? Int {
             var setLogLevel = LogLevel.error
