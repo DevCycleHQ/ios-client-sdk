@@ -9,10 +9,18 @@ import XCTest
 
 class DevCycleServiceTests: XCTestCase {
     func testCreateConfigURLRequest() throws {
-        let url = getService().createConfigRequest(user: getTestUser()).url?.absoluteString
+        let url = getService().createConfigRequest(user: getTestUser(), enableEdgeDB: false).url?.absoluteString
         XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/mobileSDKConfig"))
         XCTAssert(url!.contains("envKey=my_env_key"))
         XCTAssert(url!.contains("user_id=my_user"))
+    }
+    
+    func testCreateConfigURLRequestWithEdgeDB() throws {
+        let url = getService().createConfigRequest(user: getTestUser(), enableEdgeDB: true).url?.absoluteString
+        XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/mobileSDKConfig"))
+        XCTAssert(url!.contains("envKey=my_env_key"))
+        XCTAssert(url!.contains("user_id=my_user"))
+        XCTAssert(url!.contains("enableEdgeDB=true"))
     }
     
     func testCreateEventURLRequest() throws {
@@ -53,7 +61,7 @@ class DevCycleServiceTests: XCTestCase {
         let exp = expectation(description: "Saves user to cache")
         
         let user = try! DVCUser.builder().userId("dummy_user").build()
-        service.getConfig(user: user) { config in
+        service.getConfig(user: user, enableEdgeDB: false) { config in
             XCTAssert((service.cacheService as! MockCacheService).saveUserCalled)
             exp.fulfill()
         }

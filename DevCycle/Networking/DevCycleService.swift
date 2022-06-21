@@ -14,6 +14,8 @@ typealias ConfigCompletionHandler = (Config) -> Void
 
 typealias PublishEventsCompletionHandler = (DataResponse) -> Void
 
+typealias SaveEntityCompletionHandler = (DataResponse) -> Void
+
 enum APIError: Error {
     case NoResponse
     case StatusResponse(status: Int, message: String)
@@ -49,12 +51,14 @@ struct NetworkingConstants {
     struct UrlPaths {
         static let config = "/mobileSDKConfig"
         static let events = "/events"
+        static let edgeDB = "/edgedb"
     }
 }
 
 protocol DevCycleServiceProtocol {
-    func getConfig(user:DVCUser, completion: @escaping ConfigCompletionHandler)
+    func getConfig(user:DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler)
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler)
+    func saveEntity(user:DVCUser, completion: @escaping SaveEntityCompletionHandler)
 }
 
 class DevCycleService: DevCycleServiceProtocol {
@@ -76,7 +80,7 @@ class DevCycleService: DevCycleServiceProtocol {
         self.cacheService = cacheService
     }
     
-    func getConfig(user: DVCUser, completion: @escaping ConfigCompletionHandler) {
+    func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {
         if (configRequestInFlight) {
             if (user.userId == self.currentUser?.userId) {
                 self.pendingCurrentUserCallbacks.append(completion)
@@ -87,7 +91,7 @@ class DevCycleService: DevCycleServiceProtocol {
         } else {
             self.configRequestInFlight = true
             self.currentUser = user
-            let configRequest = createConfigRequest(user: user)
+            let configRequest = createConfigRequest(user: user, enableEdgeDB: enableEdgeDB)
             self.makeRequest(request: configRequest) { [weak self] response in
                 guard let self = self else { return }
 
@@ -147,6 +151,42 @@ class DevCycleService: DevCycleServiceProtocol {
         }
     }
     
+    func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {
+        var saveEntityRequest = createSaveEntityRequest()
+        
+        guard let userIsAnonymous = user.isAnonymous, !userIsAnonymous else {
+            Log.error("Cannot save user data for an anonymous user!")
+            return
+        }
+        
+        let userEncoder = JSONEncoder()
+        
+        guard let userData = try? userEncoder.encode(user) else {
+            return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
+        }
+        
+        guard let userBody = try? JSONSerialization.jsonObject(with: userData, options: .fragmentsAllowed) else {
+            return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
+        }
+        
+        let jsonBody = try? JSONSerialization.data(withJSONObject: userBody, options: .prettyPrinted)
+        
+        saveEntityRequest.httpMethod = "PATCH"
+        saveEntityRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        saveEntityRequest.addValue("application/json", forHTTPHeaderField: "Accept")
+        saveEntityRequest.addValue(config.environmentKey, forHTTPHeaderField: "Authorization")
+        Log.info("Save entity payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
+        
+        saveEntityRequest.httpBody = jsonBody
+        
+        self.makeRequest(request: saveEntityRequest) { data, response, error in
+            if error != nil || data == nil {
+                return completion((data, response, error))
+            }
+            return completion((data, response, nil))
+        }
+    }
+
     func makeRequest(request: URLRequest, completion: CompletionHandler?) {
         let startTime = CFAbsoluteTimeGetCurrent()
         if let urlString = request.url?.absoluteString {
@@ -189,8 +229,10 @@ class DevCycleService: DevCycleServiceProtocol {
         }.resume()
     }
     
-    func createConfigRequest(user: DVCUser) -> URLRequest {
-        let userQueryItems: [URLQueryItem] = user.toQueryItems()
+    func createConfigRequest(user: DVCUser, enableEdgeDB: Bool) -> URLRequest {
+        var userQueryItems: [URLQueryItem] = user.toQueryItems()
+        let queryItem = URLQueryItem(name: "enableEdgeDB", value: String(enableEdgeDB))
+        userQueryItems.append(queryItem)
         let urlComponents: URLComponents = createRequestUrl(type: "config", userQueryItems)
         let url = urlComponents.url!
         return URLRequest(url: url)
@@ -198,6 +240,12 @@ class DevCycleService: DevCycleServiceProtocol {
     
     func createEventsRequest() -> URLRequest {
         let urlComponents: URLComponents = createRequestUrl(type: "event")
+        let url = urlComponents.url!
+        return URLRequest(url: url)
+    }
+    
+    func createSaveEntityRequest() -> URLRequest {
+        let urlComponents: URLComponents = createRequestUrl(type: "edgeDB")
         let url = urlComponents.url!
         return URLRequest(url: url)
     }
@@ -211,6 +259,13 @@ class DevCycleService: DevCycleServiceProtocol {
             url = NetworkingConstants.eventsUrl + NetworkingConstants.hostUrl
             url.append("\(NetworkingConstants.Version.v1)")
             url.append("\(NetworkingConstants.UrlPaths.events)")
+        case "edgeDB":
+            url = NetworkingConstants.sdkUrl + NetworkingConstants.hostUrl
+            url.append("\(NetworkingConstants.Version.v1)")
+            url.append("\(NetworkingConstants.UrlPaths.edgeDB)")
+            if let userId = config.user.userId {
+                url.append("/\(userId)")
+            }
         default:
             url = NetworkingConstants.sdkUrl + NetworkingConstants.hostUrl
             url.append("\(NetworkingConstants.Version.v1)")
@@ -265,7 +320,7 @@ class DevCycleService: DevCycleServiceProtocol {
             self.newUser = nil
             self.pendingCurrentUserCallbacks = self.pendingNewUserCallbacks
             self.pendingNewUserCallbacks = []
-            self.getConfig(user: user, completion: {_ in })
+            self.getConfig(user: user, enableEdgeDB: false, completion: {_ in })
         }
     }
 }
