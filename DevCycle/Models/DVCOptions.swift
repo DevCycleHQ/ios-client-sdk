@@ -10,6 +10,7 @@ public class DVCOptions {
     var flushEventsIntervalMs: Int?
     var disableEventLogging: Bool?
     var logLevel: LogLevel = .error
+    var enableEdgeDB: Bool = false
     
     public class OptionsBuilder {
         var options: DVCOptions
@@ -30,6 +31,11 @@ public class DVCOptions {
         
         public func logLevel(_ level: LogLevel) -> OptionsBuilder {
             self.options.logLevel = level
+            return self
+        }
+        
+        public func enableEdgeDB(_ enable: Bool) -> OptionsBuilder {
+            self.options.enableEdgeDB = enable
             return self
         }
         
