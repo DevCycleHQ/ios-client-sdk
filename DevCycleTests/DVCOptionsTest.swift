@@ -23,7 +23,7 @@ class DVCOptionsTest: XCTestCase {
         XCTAssertNotNil(options)
         XCTAssert(options.flushEventsIntervalMs == 1000)
         XCTAssertFalse(options.disableEventLogging!)
-        XCTAssertTrue(options.enableEdgeDB)
+        XCTAssert(options.enableEdgeDB)
     }
     
     func testBuilderReturnsOptionsAndSomeAreNil() {
