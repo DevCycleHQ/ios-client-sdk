@@ -29,6 +29,12 @@ class DevCycleServiceTests: XCTestCase {
         XCTAssertFalse(url!.contains("user_id=my_user"))
     }
     
+    func testCreateSaveEntityRequest() throws {
+        let url = getService().createSaveEntityRequest().url?.absoluteString
+        XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/edgedb"))
+        XCTAssert(url!.contains("my_user"))
+    }
+    
     func testProcessConfigReturnsNilIfMissingProperties() throws {
         let service = getService()
         let data = "{\"config\":\"key\"}".data(using: .utf8)
