@@ -160,6 +160,7 @@ class DevCycleService: DevCycleServiceProtocol {
         }
         
         let userEncoder = JSONEncoder()
+        userEncoder.dateEncodingStrategy = .iso8601
         
         guard let userData = try? userEncoder.encode(user) else {
             return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
