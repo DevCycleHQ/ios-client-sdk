@@ -77,11 +77,11 @@ public class DVCClient {
                 }
                 self.config?.userConfig = config
                 
-                if (self.checkIfEdgeDBEnabled(config: (self.config?.userConfig)!, enableEdgeDB: self.enableEdgeDB)) {
+                if (self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB)) {
                     if (!(user.isAnonymous ?? false)) {
                         self.service?.saveEntity(user: user, completion: { data, response, error in
                             if error != nil {
-                                Log.error("Error saving user entity")
+                                Log.error("Error saving user entity for \(user). Error: \(String(describing: error))")
                             } else {
                                 Log.info("Saved user entity")
                             }
