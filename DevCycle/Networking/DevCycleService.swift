@@ -181,10 +181,7 @@ class DevCycleService: DevCycleServiceProtocol {
         saveEntityRequest.httpBody = jsonBody
         
         self.makeRequest(request: saveEntityRequest) { data, response, error in
-            if error != nil || data == nil {
-                return completion((data, response, error))
-            }
-            return completion((data, response, nil))
+            return completion((data, response, error))
         }
     }
 
