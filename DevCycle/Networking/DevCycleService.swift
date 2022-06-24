@@ -170,15 +170,18 @@ class DevCycleService: DevCycleServiceProtocol {
             return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
         }
         
-        let jsonBody = try? JSONSerialization.data(withJSONObject: userBody, options: .prettyPrinted)
-        
         saveEntityRequest.httpMethod = "PATCH"
         saveEntityRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         saveEntityRequest.addValue("application/json", forHTTPHeaderField: "Accept")
         saveEntityRequest.addValue(config.environmentKey, forHTTPHeaderField: "Authorization")
-        Log.info("Save entity payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
-        
-        saveEntityRequest.httpBody = jsonBody
+        if let jsonBody = try? JSONSerialization.data(withJSONObject: userBody, options: .prettyPrinted) {
+           // build the save entity request with this data object
+            Log.info("Save entity payload: \(String(data: jsonBody, encoding: .utf8) ?? "")")
+            saveEntityRequest.httpBody = jsonBody
+        } else {
+            Log.error("Invalid user data")
+            return completion((nil, nil, ClientError.InvalidUser))
+        }
         
         self.makeRequest(request: saveEntityRequest) { data, response, error in
             return completion((data, response, error))
