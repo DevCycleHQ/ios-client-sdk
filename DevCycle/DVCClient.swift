@@ -178,6 +178,7 @@ public class DVCClient {
                 }
                 self.config?.userConfig = config
             }
+            self.user = user
             self.cacheService.save(user: user, anonymous: user.isAnonymous ?? false)
             callback?(error, config?.variables)
         })
@@ -199,6 +200,7 @@ public class DVCClient {
                 if let config = config { Log.debug("Config: \(config)", tags: ["reset"]) }
                 self.config?.userConfig = config
             }
+            self.user = anonUser
             self.cacheService.save(user: anonUser, anonymous: true)
             callback?(error, config?.variables)
         })
