@@ -121,13 +121,13 @@ class DevCycleService: DevCycleServiceProtocol {
         var eventsRequest = createEventsRequest()
         let userEncoder = JSONEncoder()
         userEncoder.dateEncodingStrategy = .iso8601
-        guard let userId = user.userId, let userData = try? userEncoder.encode(user), let featureVariationMap = self.config.userConfig?.featureVariationMap else {
-            return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
+        guard let userId = user.userId, let userData = try? userEncoder.encode(user) else {
+            return completion((nil, nil, ClientError.MissingUser))
         }
-
-        let eventPayload = self.generateEventPayload(events, userId, featureVariationMap)
+        
+        let eventPayload = self.generateEventPayload(events, userId, self.config.userConfig?.featureVariationMap)
         guard let userBody = try? JSONSerialization.jsonObject(with: userData, options: .fragmentsAllowed) else {
-            return completion((nil, nil, ClientError.MissingUserOrFeatureVariationsMap))
+            return completion((nil, nil, ClientError.InvalidUser))
         }
         
         let requestBody: [String: Any] = [
@@ -280,7 +280,7 @@ class DevCycleService: DevCycleServiceProtocol {
         return urlComponents
     }
     
-    private func generateEventPayload(_ events: [DVCEvent], _ userId: String, _ featureVariables: [String:String]) -> [[String:Any]] {
+    private func generateEventPayload(_ events: [DVCEvent], _ userId: String, _ featureVariables: [String:String]?) -> [[String:Any]] {
         var eventsJSON: [[String:Any]] = []
         let formatter = ISO8601DateFormatter()
         
@@ -294,7 +294,7 @@ class DevCycleService: DevCycleServiceProtocol {
                 "type": event.type!,
                 "clientDate": formatter.string(from: eventDate),
                 "user_id": userId,
-                "featureVars": featureVariables
+                "featureVars": featureVariables ?? [:]
             ]
 
             if (event.target != nil) { eventToPost["target"] = event.target }
