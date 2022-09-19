@@ -12,6 +12,7 @@ enum ClientError: Error {
     case InvalidEnvironmentKey
     case InvalidUser
     case MissingUserOrFeatureVariationsMap
+    case MissingUser
 }
 
 public typealias ClientInitializedHandler = (Error?) -> Void
