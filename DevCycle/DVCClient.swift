@@ -12,6 +12,7 @@ enum ClientError: Error {
     case InvalidEnvironmentKey
     case InvalidUser
     case MissingUserOrFeatureVariationsMap
+    case MissingUser
 }
 
 public typealias ClientInitializedHandler = (Error?) -> Void
@@ -29,6 +30,7 @@ public class DVCClient {
     
     private let defaultFlushInterval: Int = 10000
     private var flushEventsInterval: Double = 10.0
+    private var enableEdgeDB: Bool = false
     
     private var service: DevCycleServiceProtocol?
     private var cacheService: CacheServiceProtocol = CacheService()
@@ -46,6 +48,7 @@ public class DVCClient {
         if let options = self.options {
             Log.level = options.logLevel
             self.flushEventsInterval = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
+            self.enableEdgeDB = options.enableEdgeDB
         } else {
             Log.level = .error
         }
@@ -64,7 +67,7 @@ public class DVCClient {
             return
         }
         self.service = service
-        self.service?.getConfig(user: user, completion: { [weak self] config, error in
+        self.service?.getConfig(user: user, enableEdgeDB: self.enableEdgeDB, completion: { [weak self] config, error in
             guard let self = self else { return }
             if let error = error {
                 Log.error("Error getting config: \(error)", tags: ["setup"])
@@ -74,6 +77,18 @@ public class DVCClient {
                     Log.debug("Config: \(config)", tags: ["setup"])
                 }
                 self.config?.userConfig = config
+                
+                if (self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB)) {
+                    if (!(user.isAnonymous ?? false)) {
+                        self.service?.saveEntity(user: user, completion: { data, response, error in
+                            if error != nil {
+                                Log.error("Error saving user entity for \(user). Error: \(String(describing: error))")
+                            } else {
+                                Log.info("Saved user entity")
+                            }
+                        })
+                    }
+                }
             }
             
             for handler in self.configCompletionHandlers {
@@ -89,6 +104,15 @@ public class DVCClient {
             repeats: true
         ) {
             timer in self.flushEvents()
+        }
+    }
+    
+    func checkIfEdgeDBEnabled(config: UserConfig, enableEdgeDB: Bool) -> Bool {
+        if (config.project.settings.edgeDB.enabled) {
+            return !(!enableEdgeDB)
+        } else {
+            Log.debug("EdgeDB is not enabled for this project. Only using local user data.")
+            return false
         }
     }
     
@@ -144,7 +168,7 @@ public class DVCClient {
             updateUser = user
         }
         
-        self.service?.getConfig(user: updateUser, completion: { [weak self] config, error in
+        self.service?.getConfig(user: updateUser, enableEdgeDB: self.enableEdgeDB,  completion: { [weak self] config, error in
             guard let self = self else { return }
             if let error = error {
                 Log.error("Error getting config: \(error)", tags: ["identify"])
@@ -155,6 +179,7 @@ public class DVCClient {
                 }
                 self.config?.userConfig = config
             }
+            self.user = user
             self.cacheService.save(user: user, anonymous: user.isAnonymous ?? false)
             callback?(error, config?.variables)
         })
@@ -170,12 +195,13 @@ public class DVCClient {
             anonUser = try DVCUser.builder().isAnonymous(true).build()
         }
         
-        self.service?.getConfig(user: anonUser, completion: { [weak self] config, error in
+        self.service?.getConfig(user: anonUser, enableEdgeDB: self.enableEdgeDB, completion: { [weak self] config, error in
             guard let self = self else { return }
             if (error == nil) {
                 if let config = config { Log.debug("Config: \(config)", tags: ["reset"]) }
                 self.config?.userConfig = config
             }
+            self.user = anonUser
             self.cacheService.save(user: anonUser, anonymous: true)
             callback?(error, config?.variables)
         })

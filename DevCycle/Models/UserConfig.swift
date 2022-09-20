@@ -56,12 +56,35 @@ public struct UserConfig {
 public struct Project {
     var _id: String
     var key: String
+    var settings: Settings
     
     init (from dictionary: [String: Any]) throws {
         guard let key = dictionary["key"] as? String else { throw UserConfigError.MissingProperty("key in Project") }
         guard let id = dictionary["_id"] as? String else { throw UserConfigError.MissingProperty("_id in Project") }
+        let settings = dictionary["settings"] as? [String:Any]
         self._id = id
         self.key = key
+        self.settings = Settings(from: settings ?? ["edgeDB": ["enabled": false]])
+    }
+}
+
+struct Settings {
+    var edgeDB: EdgeDB
+    
+    init(from dictionary: [String: Any]) {
+        let edgeDB = dictionary["edgeDB"] as? [String: Any]
+        
+        self.edgeDB = EdgeDB(from: edgeDB ?? ["enabled": false])
+    }
+}
+
+struct EdgeDB {
+    var enabled: Bool
+    
+    init(from dictionary: [String: Any]) {
+        let enabled = dictionary["enabled"] as? Bool
+
+        self.enabled = enabled ?? false
     }
 }
 
@@ -82,16 +105,22 @@ public struct Feature {
     var _variation: String
     var key: String
     var type: String
+    var variationKey: String
+    var variationName: String
     
     init (from dictionary: [String: String]) throws {
         guard let id = dictionary["_id"] else { throw UserConfigError.MissingProperty("_id in Feature object") }
         guard let variation = dictionary["_variation"] else { throw UserConfigError.MissingProperty("_variation in Feature object") }
         guard let key = dictionary["key"] else { throw UserConfigError.MissingProperty("key in Feature object") }
         guard let type = dictionary["type"] else { throw UserConfigError.MissingProperty("type in Feature object") }
+        guard let variationKey = dictionary["variationKey"] else { throw UserConfigError.MissingProperty("variationKey in Feature object") }
+        guard let variationName = dictionary["variationName"] else { throw UserConfigError.MissingProperty("variationName in Feature object") }
         self._id = id
         self._variation = variation
         self.key = key
         self.type = type
+        self.variationKey = variationKey
+        self.variationName = variationName
     }
 }
 

@@ -18,10 +18,12 @@ class DVCOptionsTest: XCTestCase {
         let options = DVCOptions.builder()
                 .disableEventLogging(false)
                 .flushEventsIntervalMs(1000)
+                .enableEdgeDB(true)
                 .build()
         XCTAssertNotNil(options)
         XCTAssert(options.flushEventsIntervalMs == 1000)
         XCTAssertFalse(options.disableEventLogging!)
+        XCTAssert(options.enableEdgeDB)
     }
     
     func testBuilderReturnsOptionsAndSomeAreNil() {
@@ -31,5 +33,6 @@ class DVCOptionsTest: XCTestCase {
         XCTAssertNotNil(options)
         XCTAssertNil(options.flushEventsIntervalMs)
         XCTAssertFalse(options.disableEventLogging!)
+        XCTAssertFalse(options.enableEdgeDB)
     }
 }
