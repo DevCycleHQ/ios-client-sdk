@@ -97,6 +97,22 @@ class DVCClientTest: XCTestCase {
         
         wait(for: [expectation], timeout: 1.0)
     }
+    
+    func testVariableReturnsDefaultForUnsupportedVariableKeys() {
+        let user = getTestUser()
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").build(onInitialized: nil)
+        let variable = client.variable(key: "UNSUPPORTED\\key%$", defaultValue: true)
+        XCTAssertEqual(client.configCompletionHandlers.count, 0)
+        XCTAssertTrue(variable.value)
+    }
+    
+    func testVariableFunctionWorksIfVariableKeyHasSupportedCharacters() {
+        let user = getTestUser()
+        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").build(onInitialized: nil)
+        let variable = client.variable(key: "supported-keys_here", defaultValue: true)
+        XCTAssertEqual(client.configCompletionHandlers.count, 1)
+    }
+
 }
 
 extension DVCClientTest {
