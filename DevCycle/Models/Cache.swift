@@ -8,20 +8,18 @@ import Foundation
 
 protocol CacheServiceProtocol {
     func load() -> Cache
-    func save(user: DVCUser, anonymous: Bool)
+    func save(user: DVCUser)
     func save(config: Data)
 }
 
 struct Cache {
     var config: UserConfig?
     var user: DVCUser?
-    var anonUser: DVCUser?
 }
 
 class CacheService: CacheServiceProtocol {
     struct CacheKeys {
         static let user = "user"
-        static let anonUser = "anon-user"
         static let config = "config"
     }
     
@@ -29,7 +27,6 @@ class CacheService: CacheServiceProtocol {
         let defaults = UserDefaults.standard
         var userConfig: UserConfig?
         var dvcUser: DVCUser?
-        var anonUser: DVCUser?
         if let data = defaults.object(forKey: CacheKeys.config) as? Data,
            let dictionary = try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String:Any],
            let config = try? UserConfig(from: dictionary)
@@ -39,11 +36,8 @@ class CacheService: CacheServiceProtocol {
         if let data = defaults.object(forKey: CacheKeys.user) as? Data {
             dvcUser = try? JSONDecoder().decode(DVCUser.self, from: data)
         }
-        if let data = defaults.object(forKey: CacheKeys.anonUser) as? Data {
-            anonUser = try? JSONDecoder().decode(DVCUser.self, from: data)
-        }
         
-        return Cache(config: userConfig, user: dvcUser, anonUser: anonUser)
+        return Cache(config: userConfig, user: dvcUser)
     }
     
     func save(config: Data) {
@@ -51,13 +45,10 @@ class CacheService: CacheServiceProtocol {
         defaults.set(config, forKey: CacheKeys.config)
     }
     
-    func save(user: DVCUser, anonymous: Bool) {
+    func save(user: DVCUser) {
         let defaults = UserDefaults.standard
         if let data = try? JSONEncoder().encode(user) {
             defaults.set(data, forKey: CacheKeys.user)
-            if (anonymous) {
-                defaults.set(data, forKey: CacheKeys.anonUser)
-            }
         }
     }
 }

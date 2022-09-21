@@ -180,7 +180,7 @@ public class DVCClient {
                 self.config?.userConfig = config
             }
             self.user = user
-            self.cacheService.save(user: user, anonymous: user.isAnonymous ?? false)
+            self.cacheService.save(user: user)
             callback?(error, config?.variables)
         })
     }
@@ -188,12 +188,7 @@ public class DVCClient {
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
         self.cache = cacheService.load()
         self.flushEvents()
-        var anonUser: DVCUser
-        if let cachedAnonUser = self.cache?.anonUser {
-            anonUser = cachedAnonUser
-        } else {
-            anonUser = try DVCUser.builder().isAnonymous(true).build()
-        }
+        let anonUser = try DVCUser.builder().isAnonymous(true).build()
         
         self.service?.getConfig(user: anonUser, enableEdgeDB: self.enableEdgeDB, completion: { [weak self] config, error in
             guard let self = self else { return }
@@ -202,7 +197,7 @@ public class DVCClient {
                 self.config?.userConfig = config
             }
             self.user = anonUser
-            self.cacheService.save(user: anonUser, anonymous: true)
+            self.cacheService.save(user: anonUser)
             callback?(error, config?.variables)
         })
     }

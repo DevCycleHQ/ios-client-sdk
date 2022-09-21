@@ -19,7 +19,8 @@ class ViewController: UIViewController {
         if (self.loggedIn) {
             try? client.resetUser { [weak self] error, variables in
                 guard let self = self else { return }
-                self.loginButton.setTitle("Log out", for: .normal)
+                self.loggedIn = false
+                self.loginButton.setTitle("Log In", for: .normal)
                 print("Reset User!")
                 print("Variables: \(String(describing: variables))")
             }
