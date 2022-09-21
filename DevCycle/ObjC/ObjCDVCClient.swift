@@ -106,6 +106,8 @@ public class ObjCDVCClient: NSObject {
             let dvcUser = try user.buildDVCUser()
 
             let createdUser = DVCUser()
+            createdUser.userId = user.userId!
+            createdUser.isAnonymous = false
             createdUser.update(with: dvcUser)
             
             try? client.identifyUser(user: createdUser, callback: { error, variables in
