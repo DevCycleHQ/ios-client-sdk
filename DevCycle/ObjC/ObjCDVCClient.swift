@@ -65,6 +65,8 @@ public class ObjCDVCClient: NSObject {
             } else if (user == nil) {
                 Log.error("User missing", tags: ["build", "objc"])
                 throw ObjCClientErrors.MissingUser
+            } else if (user.userId?.isEmpty == true) {
+                throw ObjCClientErrors.InvalidUser
             }
             
             let dvcUser = try user.buildDVCUser()
