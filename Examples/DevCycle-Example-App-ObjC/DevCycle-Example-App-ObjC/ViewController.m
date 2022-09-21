@@ -25,12 +25,13 @@
             NSLog(@"Reset User!");
             NSLog(@"%@", variables);
             weakSelf.loggedIn = NO;
+            [weakSelf.loginButton setTitle:@"Log In" forState:UIControlStateNormal];
         }];
     } else {
         DVCUser *user = [DVCUser initializeWithUserId:@"my-user"];
         user.userId = @"my-user";
         user.name = @"My Name";
-        user.language = @"EN-CA";
+        user.language = @"en";
         user.country = @"CA";
         user.email = @"my@email.com";
         
@@ -41,6 +42,7 @@
             NSLog(@"Identified User!");
             NSLog(@"%@", variables);
             weakSelf.loggedIn = YES;
+            [weakSelf.loginButton setTitle:@"Log Out" forState:UIControlStateNormal];
         }];
     }
 }
