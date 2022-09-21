@@ -38,6 +38,32 @@ class EventQueueTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 3.0)
     }
+    
+    func testFlushRequeuesIfErrorRetryable() {
+        let eventQueue = EventQueue()
+        let expectation = XCTestExpectation(description: "Flush Requeues Retryable Event")
+        let event = try! DVCEvent.builder().type("event1").build()
+        let user = try! DVCUser.builder().userId("user1").build()
+        eventQueue.queue(event)
+        eventQueue.flush(service: MockWithErrorCodeService(errorCode: 500), user: user, callback: nil)
+        let result = XCTWaiter.wait(for: [expectation], timeout: 1.0)
+        if result == XCTWaiter.Result.timedOut {
+            XCTAssertEqual(eventQueue.events.count, 1)
+        }
+    }
+    
+    func testFlushDoesntRequeueIfErrorNotRetryable() {
+        let eventQueue = EventQueue()
+        let expectation = XCTestExpectation(description: "Subsequent flushes are cancelled")
+        let event = try! DVCEvent.builder().type("event1").build()
+        let user = try! DVCUser.builder().userId("user1").build()
+        eventQueue.queue(event)
+        eventQueue.flush(service: MockWithErrorCodeService(errorCode: 403), user: user, callback: nil)
+        let result = XCTWaiter.wait(for: [expectation], timeout: 1.0)
+        if result == XCTWaiter.Result.timedOut {
+            XCTAssertEqual(eventQueue.events.count, 0)
+        }
+    }
 }
 
 class MockService: DevCycleServiceProtocol {
@@ -52,4 +78,20 @@ class MockService: DevCycleServiceProtocol {
     
     func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {}
     
+}
+
+class MockWithErrorCodeService: DevCycleServiceProtocol {
+    var errorCode: Int
+    init(errorCode: Int) {
+        self.errorCode = errorCode
+    }
+    
+    func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {}
+    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
+        let error = NSError(domain: "api.devcycle.com", code: self.errorCode)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            completion((nil, nil, error))
+        }
+    }
+    func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {}
 }
