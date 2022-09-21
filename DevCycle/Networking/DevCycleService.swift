@@ -105,7 +105,7 @@ class DevCycleService: DevCycleServiceProtocol {
                     self.checkNewUserConfigs()
                     return
                 }
-                self.cacheService.save(user: user, anonymous: user.isAnonymous ?? false)
+                self.cacheService.save(user: user)
                 completion((config, response.error))
                 for currentUserCallback in self.pendingCurrentUserCallbacks {
                     currentUserCallback((config, response.error))
