@@ -158,5 +158,48 @@ class DVCVariableTests: XCTestCase {
         variable.update(from: variableFromApi)
         XCTAssertEqual(variable.value, 4)
     }
+    
+    func testOnUpdateGetsCalledIfValueChanges() throws {
+        let data = """
+        {
+            "_id": "variable_id",
+            "key": "my_key",
+            "type": "String",
+            "value": "my_value"
+        }
+        """.data(using: .utf8)!
+        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+        let variableFromApi = try Variable(from: variableDict)
+        let variable = DVCVariable(key: "my_key", type: "Number", value: nil, defaultValue: "new_value", evalReason: nil)
+        let exp = expectation(description: "On Update Called With New Value")
+        variable.onUpdate { value in
+            exp.fulfill()
+        }
+        variable.update(from: variableFromApi)
+        waitForExpectations(timeout: 1)
+    }
 
+    func testOnUpdateDoesntGetCalledIfValueTheSame() throws {
+        let data = """
+        {
+            "_id": "variable_id",
+            "key": "my_key",
+            "type": "String",
+            "value": "my_value"
+        }
+        """.data(using: .utf8)!
+        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+        let variableFromApi = try Variable(from: variableDict)
+        let variable = DVCVariable(key: "my_key", type: "Number", value: nil, defaultValue: "my_value", evalReason: nil)
+        var onUpdateCalled = false
+        let exp = expectation(description: "On Update Not Called")
+        variable.onUpdate { value in
+            onUpdateCalled = true
+        }
+        variable.update(from: variableFromApi)
+        let result = XCTWaiter.wait(for: [exp], timeout: 1.0)
+        if result == XCTWaiter.Result.timedOut {
+            XCTAssertFalse(onUpdateCalled)
+        }
+    }
 }
