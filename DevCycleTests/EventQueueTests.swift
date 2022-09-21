@@ -46,7 +46,7 @@ class EventQueueTests: XCTestCase {
         let user = try! DVCUser.builder().userId("user1").build()
         eventQueue.queue(event)
         eventQueue.flush(service: MockWithErrorCodeService(errorCode: 500), user: user, callback: nil)
-        let result = XCTWaiter.wait(for: [expectation], timeout: 1.0)
+        let result = XCTWaiter.wait(for: [expectation], timeout: 2.0)
         if result == XCTWaiter.Result.timedOut {
             XCTAssertEqual(eventQueue.events.count, 1)
         }
@@ -59,7 +59,7 @@ class EventQueueTests: XCTestCase {
         let user = try! DVCUser.builder().userId("user1").build()
         eventQueue.queue(event)
         eventQueue.flush(service: MockWithErrorCodeService(errorCode: 403), user: user, callback: nil)
-        let result = XCTWaiter.wait(for: [expectation], timeout: 1.0)
+        let result = XCTWaiter.wait(for: [expectation], timeout: 2.0)
         if result == XCTWaiter.Result.timedOut {
             XCTAssertEqual(eventQueue.events.count, 0)
         }
