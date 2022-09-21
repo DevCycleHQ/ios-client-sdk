@@ -46,10 +46,12 @@ class EventQueue {
         Log.debug("Flushing events: \(eventsToFlush.count)")
         service.publishEvents(events: eventsToFlush, user: user, completion: { data, response, error in
             if let error = error, !(400...499).contains((error as NSError).code) {
-                Log.error("Error: \(error)", tags: ["events", "flush"])
+                Log.error("Retryable Error: \(error)", tags: ["events", "flush"])
                 self.queue(eventsToFlush)
-            } else {
+            } else if let response = response as? HTTPURLResponse, (200...399).contains(response.statusCode) {
                 Log.info("Submitted: \(String(describing: eventsToFlush.count)) events", tags: ["events", "flush"])
+            } else {
+                Log.error("Something went wrong with sending events, dropping events: \(eventsToFlush)", tags: ["events", "flush"])
             }
             
             self.eventDispatchQueue.async {
