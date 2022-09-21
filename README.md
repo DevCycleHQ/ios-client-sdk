@@ -24,14 +24,17 @@ The SDK can be installed into your iOS project by adding the following to your c
 ```swift
 pod 'DevCycle'
 ```
+Then, run `pod install`.
 
 ### Carthage
 
-Include the following in your `Cartfile`: 
+Include the following in your `Cartfile` to integrate DevCycle as a dependency to your project: 
 
 ```swift
 github "DevCycleHQ/ios-client-sdk"
 ```
+
+Then, run `carthage update --use-xcframeworks`. Drag the built .xcframework bundles from Carthage/Build into the "Frameworks and Libraries" section of your application’s Xcode project.
 
 ### Swift Package Manager
 
