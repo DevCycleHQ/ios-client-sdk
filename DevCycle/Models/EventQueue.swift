@@ -45,8 +45,7 @@ class EventQueue {
         }
         Log.debug("Flushing events: \(eventsToFlush.count)")
         service.publishEvents(events: eventsToFlush, user: user, completion: { data, response, error in
-            
-            if let error = error {
+            if let error = error, !(400...499).contains((error as NSError).code) {
                 Log.error("Error: \(error)", tags: ["events", "flush"])
                 self.queue(eventsToFlush)
             } else {
