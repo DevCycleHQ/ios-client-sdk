@@ -11,7 +11,11 @@ enum UserConfigError: Error {
     case MissingProperty(String)
 }
 
-public struct UserConfig {
+enum CodingKeys: CodingKey {
+    case project, environment, featureVariationMap, features, variables
+}
+
+public struct UserConfig: Encodable {
     var project: Project
     var environment: Environment
     var featureVariationMap: [String: String]
@@ -50,6 +54,15 @@ public struct UserConfig {
         
         self.features = featureMap as! [String: Feature]
         self.variables = variablesMap as! [String: Variable]
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        // 3
+        try container.encode(project, forKey: .project)
+        try container.encode(id, forKey: .id)
+        // 4
+        try container.encode(favoriteToy.name, forKey: .gift)
     }
 }
 
