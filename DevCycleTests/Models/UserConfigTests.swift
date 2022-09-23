@@ -108,12 +108,3 @@ class UserConfigTests: XCTestCase {
         XCTAssertNotNil(nestedJson)
     }
 }
-
-extension UserConfigTests {
-    func getConfigData(name: String, withExtension: String = "json") -> Data {
-        let bundle = Bundle(for: type(of: self))
-        let fileUrl = bundle.url(forResource: name, withExtension: withExtension)
-        let data = try! Data(contentsOf: fileUrl!)
-        return data
-    }
-}

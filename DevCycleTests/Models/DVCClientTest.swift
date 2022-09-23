@@ -132,6 +132,10 @@ extension DVCClientTest {
         func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {
             XCTAssert(true)
         }
+        
+        func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {
+            XCTAssert(true)
+        }
     }
     
     func getTestUser() -> DVCUser {

@@ -191,6 +191,7 @@ public class DVCClient {
                 }
                 self.config?.userConfig = config
             }
+            // TODO: save config in cache
             self.user = user
             self.cacheService.save(user: user)
             callback?(error, config?.variables)
@@ -204,10 +205,16 @@ public class DVCClient {
         
         self.service?.getConfig(user: anonUser, enableEdgeDB: self.enableEdgeDB, completion: { [weak self] config, error in
             guard let self = self else { return }
-            if (error == nil) {
-                if let config = config { Log.debug("Config: \(config)", tags: ["reset"]) }
-                self.config?.userConfig = config
+            guard error == nil else {
+                callback?(error, nil)
+                return
             }
+    
+            // TODO: save config in cache
+            if let config = config {
+                Log.debug("Config: \(config)", tags: ["reset"])
+            }
+            self.config?.userConfig = config
             self.user = anonUser
             self.cacheService.save(user: anonUser)
             callback?(error, config?.variables)
