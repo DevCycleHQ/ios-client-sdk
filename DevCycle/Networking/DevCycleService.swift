@@ -59,6 +59,7 @@ protocol DevCycleServiceProtocol {
     func getConfig(user:DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler)
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler)
     func saveEntity(user:DVCUser, completion: @escaping SaveEntityCompletionHandler)
+    func makeRequest(request: URLRequest, completion: @escaping CompletionHandler)
 }
 
 class DevCycleService: DevCycleServiceProtocol {
@@ -66,55 +67,21 @@ class DevCycleService: DevCycleServiceProtocol {
     var config: DVCConfig
     
     var cacheService: CacheServiceProtocol
+    var requestConsolidator: RequestConsolidator!
 
     private var newUser: DVCUser?
-    private var currentUser: DVCUser?
-    private var configRequestInFlight: Bool = false
-    private var pendingNewUserCallbacks: [ConfigCompletionHandler] = []
-    private var pendingCurrentUserCallbacks: [ConfigCompletionHandler] = []
     
     init(config: DVCConfig, cacheService: CacheServiceProtocol) {
         let sessionConfig = URLSessionConfiguration.default
         self.session = URLSession(configuration: sessionConfig)
         self.config = config
         self.cacheService = cacheService
+        self.requestConsolidator = RequestConsolidator(service: self)
     }
     
     func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {
-        if (configRequestInFlight) {
-            if (user.userId == self.currentUser?.userId) {
-                self.pendingCurrentUserCallbacks.append(completion)
-            } else {
-                self.newUser = user
-                self.pendingNewUserCallbacks.append(completion)
-            }
-        } else {
-            self.configRequestInFlight = true
-            self.currentUser = user
-            let configRequest = createConfigRequest(user: user, enableEdgeDB: enableEdgeDB)
-            self.makeRequest(request: configRequest) { [weak self] response in
-                guard let self = self else { return }
-
-                guard let config = self.processConfig(response.data) else {
-                    completion((nil, response.error))
-                    for currentUserCallback in self.pendingCurrentUserCallbacks {
-                        currentUserCallback((nil, response.error))
-                    }
-                    self.pendingCurrentUserCallbacks = []
-                    self.configRequestInFlight = false
-                    self.checkNewUserConfigs()
-                    return
-                }
-                self.cacheService.save(user: user)
-                completion((config, response.error))
-                for currentUserCallback in self.pendingCurrentUserCallbacks {
-                    currentUserCallback((config, response.error))
-                }
-                self.pendingCurrentUserCallbacks = []
-                self.configRequestInFlight = false
-                self.checkNewUserConfigs()
-            }
-        }
+        let configRequest = createConfigRequest(user: user, enableEdgeDB: enableEdgeDB)
+        requestConsolidator.queue(request: configRequest, callback: completion)
     }
     
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
@@ -188,7 +155,7 @@ class DevCycleService: DevCycleServiceProtocol {
         }
     }
 
-    func makeRequest(request: URLRequest, completion: CompletionHandler?) {
+    func makeRequest(request: URLRequest, completion: @escaping CompletionHandler) {
         let startTime = CFAbsoluteTimeGetCurrent()
         if let urlString = request.url?.absoluteString {
             Log.debug("Making request: \(urlString)", tags:["request"])
@@ -200,7 +167,7 @@ class DevCycleService: DevCycleServiceProtocol {
                       let responseDataJson = try? JSONSerialization.jsonObject(with: responseData, options: .fragmentsAllowed) as? [String:Any]
                 else {
                     Log.error("Unable to parse API Response", tags: ["api"])
-                    completion?((nil, nil, APIError.NoResponse))
+                    completion((nil, nil, APIError.NoResponse))
                     return
                 }
                 
@@ -217,17 +184,21 @@ class DevCycleService: DevCycleServiceProtocol {
                     
                     let error = APIError.StatusResponse(status: status, message: errorResponse)
                     Log.error(error.debugDescription, tags: error.debugTags)
-                    completion?((nil, nil, error))
+                    completion((nil, nil, error))
                     return
                 }
                 
                 if let urlString = response?.url?.absoluteString {
                     let responseTime = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
-                    Log.debug("Request url: \(urlString), response time: \(responseTime) ms", tags:["request"])
+                    Log.debug("Request completed: \(urlString), response time: \(responseTime) ms", tags:["request"])
                 }
-                completion?((data, response, error))
+                completion((data, response, error))
             }
         }.resume()
+    }
+    
+    func makeAndProcessRequest() {
+        
     }
     
     func createConfigRequest(user: DVCUser, enableEdgeDB: Bool) -> URLRequest {
@@ -309,37 +280,5 @@ class DevCycleService: DevCycleServiceProtocol {
         }
 
         return eventsJSON
-    }
-    
-    private func checkNewUserConfigs() {
-        guard let user = self.newUser else {
-            return
-        }
-    
-        if (!self.pendingNewUserCallbacks.isEmpty) {
-            self.currentUser = user
-            self.newUser = nil
-            self.pendingCurrentUserCallbacks = self.pendingNewUserCallbacks
-            self.pendingNewUserCallbacks = []
-            self.getConfig(user: user, enableEdgeDB: false, completion: {_ in })
-        }
-    }
-}
-
-extension DevCycleService {
-    func processConfig(_ responseData: Data?) -> UserConfig? {
-        guard let data = responseData else {
-            Log.error("No response data from request", tags: ["service", "request"])
-            return nil
-        }
-        do {
-            let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
-            let userConfig = try UserConfig(from: dictionary)
-            cacheService.save(config: data)
-            return userConfig
-        } catch {
-            Log.error("Failed to decode config: \(error)", tags: ["service", "request"])
-        }
-        return nil
     }
 }

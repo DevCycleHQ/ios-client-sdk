@@ -10,6 +10,7 @@ protocol CacheServiceProtocol {
     func load() -> Cache
     func save(user: DVCUser)
     func save(config: Data)
+    func save(config: UserConfig)
 }
 
 struct Cache {
@@ -41,6 +42,11 @@ class CacheService: CacheServiceProtocol {
     }
     
     func save(config: Data) {
+        let defaults = UserDefaults.standard
+        defaults.set(config, forKey: CacheKeys.config)
+    }
+    
+    func save(config: UserConfig) {
         let defaults = UserDefaults.standard
         defaults.set(config, forKey: CacheKeys.config)
     }
