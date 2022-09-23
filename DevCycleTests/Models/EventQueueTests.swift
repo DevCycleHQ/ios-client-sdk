@@ -66,7 +66,7 @@ class EventQueueTests: XCTestCase {
     }
 }
 
-class MockService: DevCycleServiceProtocol {
+private class MockService: DevCycleServiceProtocol {
     func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {}
     
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
@@ -78,6 +78,7 @@ class MockService: DevCycleServiceProtocol {
     
     func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {}
     
+    func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {}
 }
 
 class MockWithErrorCodeService: DevCycleServiceProtocol {
@@ -94,4 +95,5 @@ class MockWithErrorCodeService: DevCycleServiceProtocol {
         }
     }
     func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {}
+    func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {}
 }
