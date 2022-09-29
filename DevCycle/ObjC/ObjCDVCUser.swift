@@ -17,10 +17,19 @@ public class ObjCUser: NSObject {
     @objc public var customData: [String: Any]?
     @objc public var privateCustomData: [String: Any]?
     
+    public override init() {
+        self.isAnonymous = true
+    }
+    
     @objc(initializeWithUserId:)
     public static func initialize(userId: String?) -> ObjCUser {
         let builder = ObjCUser()
-        builder.userId = userId
+        if (userId == nil) {
+            builder.isAnonymous = true
+        } else {
+            builder.userId = userId
+            builder.isAnonymous = false
+        }
         return builder
     }
     

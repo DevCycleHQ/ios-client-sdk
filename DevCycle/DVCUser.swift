@@ -74,7 +74,8 @@ public class UserBuilder {
     
     public func build() throws -> DVCUser {
         guard let _ = self.user.userId,
-              let _ = self.user.isAnonymous
+              let _ = self.user.isAnonymous,
+              self.user.userId != ""
         else {
             throw UserError.MissingUserIdAndIsAnonymousFalse
         }

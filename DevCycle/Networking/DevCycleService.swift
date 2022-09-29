@@ -197,10 +197,6 @@ class DevCycleService: DevCycleServiceProtocol {
         }.resume()
     }
     
-    func makeAndProcessRequest() {
-        
-    }
-    
     func createConfigRequest(user: DVCUser, enableEdgeDB: Bool) -> URLRequest {
         var userQueryItems: [URLQueryItem] = user.toQueryItems()
         let queryItem = URLQueryItem(name: "enableEdgeDB", value: String(enableEdgeDB))

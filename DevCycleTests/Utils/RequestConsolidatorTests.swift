@@ -19,7 +19,8 @@ class RequestConsolidatorTests: XCTestCase {
             XCTAssertEqual(response.config?.variables["testVar"]?.value as! String, "any_value")
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 2)
+        waitForExpectations(timeout: 2.0)
+        XCTAssertFalse(requestConsolidator.requestInFlight)
     }
     
     func testMultipleRequestFinishesWithLatestURLConfig() {
@@ -31,18 +32,26 @@ class RequestConsolidatorTests: XCTestCase {
         let expectation = expectation(description: "Multiple request completes")
         expectation.expectedFulfillmentCount = 3
         requestConsolidator.queue(request: request1) { response in
+            print("testVar variable 1: \(response.config?.variables["testVar"]?.value as! String)")
             XCTAssertEqual(response.config?.variables["testVar"]?.value as! String, "thirdPage")
+            print("Fulfill 1")
             expectation.fulfill()
         }
+        XCTAssertTrue(requestConsolidator.requestInFlight)
         requestConsolidator.queue(request: request2) { response in
+            print("testVar variable 2: \(response.config?.variables["testVar"]?.value as! String)")
             XCTAssertEqual(response.config?.variables["testVar"]?.value as! String, "thirdPage")
+            print("Fulfill 2")
             expectation.fulfill()
         }
         requestConsolidator.queue(request: request3) { response in
+            print("testVar variable 3: \(response.config?.variables["testVar"]?.value as! String)")
             XCTAssertEqual(response.config?.variables["testVar"]?.value as! String, "thirdPage")
+            print("Fulfill 3")
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 2)
+        waitForExpectations(timeout: 5.0)
+        XCTAssertFalse(requestConsolidator.requestInFlight)
     }
 }
 
