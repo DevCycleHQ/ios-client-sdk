@@ -36,7 +36,6 @@ class DevCycleServiceTests: XCTestCase {
     }
     
     func testProcessConfigReturnsNilIfMissingProperties() throws {
-        let service = getService()
         let data = "{\"config\":\"key\"}".data(using: .utf8)
         let config = processConfig(data)
         XCTAssertNil(config)
@@ -62,14 +61,6 @@ extension DevCycleServiceTests {
         
         func save(user: DVCUser) {
             self.saveUserCalled = true
-        }
-        
-        func save(config: Data) {
-            self.saveConfigCalled = true
-        }
-        
-        func save(config: UserConfig) {
-            self.saveConfigCalled = true
         }
     }
 

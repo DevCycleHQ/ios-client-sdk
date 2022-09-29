@@ -116,7 +116,7 @@ class DVCClientTest: XCTestCase {
 }
 
 extension DVCClientTest {
-    class MockService: DevCycleServiceProtocol {
+    private class MockService: DevCycleServiceProtocol {
         public var publishCallCount: Int = 0
         
         func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {
