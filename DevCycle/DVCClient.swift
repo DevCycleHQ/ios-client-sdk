@@ -72,9 +72,11 @@ public class DVCClient {
             if let error = error {
                 Log.error("Error getting config: \(error)", tags: ["setup"])
                 self.cache = self.cacheService.load()
+                self.config?.userConfig = self.cache?.config
             } else {
                 if let config = config {
                     Log.debug("Config: \(config)", tags: ["setup"])
+                    self.cacheService.save(config: config)
                 }
                 self.config?.userConfig = config
                 
@@ -188,10 +190,10 @@ public class DVCClient {
             } else {
                 if let config = config {
                     Log.debug("Config: \(config)", tags: ["identify"])
+                    self.cacheService.save(config: config)
                 }
                 self.config?.userConfig = config
             }
-            // TODO: save config in cache
             self.user = user
             self.cacheService.save(user: user)
             callback?(error, config?.variables)

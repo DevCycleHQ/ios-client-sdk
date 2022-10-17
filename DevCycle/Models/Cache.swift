@@ -9,6 +9,7 @@ import Foundation
 protocol CacheServiceProtocol {
     func load() -> Cache
     func save(user: DVCUser)
+    func save(config: UserConfig)
 }
 
 struct Cache {
@@ -43,6 +44,13 @@ class CacheService: CacheServiceProtocol {
         let defaults = UserDefaults.standard
         if let data = try? JSONEncoder().encode(user) {
             defaults.set(data, forKey: CacheKeys.user)
+        }
+    }
+    
+    func save(config: UserConfig) {
+        let defaults = UserDefaults.standard
+        if let data = try? JSONEncoder().encode(config) {
+            defaults.set(data, forKey: CacheKeys.config)
         }
     }
 }
