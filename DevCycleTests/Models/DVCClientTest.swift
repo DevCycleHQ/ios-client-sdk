@@ -104,6 +104,37 @@ class DVCClientTest: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
     
+    func testCloseFlushesRemainingEvents() {
+        let expectation = XCTestExpectation(description: "Close flushes remaining events")
+        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
+        let service = MockService() // will assert if publishEvents was called
+        client.setup(service: service)
+        let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
+        
+        client.track(event)
+        client.close(callback: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                XCTAssertEqual(service.publishCallCount, 1)
+
+                XCTAssertEqual(service.eventPublishCount, 1)
+                
+                client.flushEvents(callback: { error in
+                    // test that later tracked events are ignored
+                    XCTAssertEqual(service.publishCallCount, 1)
+                    XCTAssertEqual(service.eventPublishCount, 1)
+                    expectation.fulfill()
+                })
+            }
+        })
+        // this one should be prevented
+        client.track(event)
+        // this variable evaluated event should be prevented as well
+        client.variable(key: "test-key", defaultValue: false)
+        
+        wait(for: [expectation], timeout: 6.0)
+    }
+    
     func testVariableReturnsDefaultForUnsupportedVariableKeys() {
         let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
         let variable = client.variable(key: "UNSUPPORTED\\key%$", defaultValue: true)
@@ -148,17 +179,22 @@ extension DVCClientTest {
         public var publishCallCount: Int = 0
         public var userForGetConfig: DVCUser?
         public var numberOfConfigCalls: Int = 0
+        public var eventPublishCount: Int = 0
 
         func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {
             self.userForGetConfig = user
             self.numberOfConfigCalls += 1
+
             XCTAssert(true)
         }
 
         func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
             self.publishCallCount += 1
+            self.eventPublishCount += events.count
             XCTAssert(true)
-            completion((data: nil, urlResponse: nil, error: nil))
+            Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false, block: { timer in
+                completion((data: nil, urlResponse: nil, error: nil))
+            })
         }
         
         func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {
