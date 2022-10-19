@@ -11,6 +11,9 @@ let package = Package(
             name: "DevCycle",
             targets: ["DevCycle"]),
     ],
+    dependencies: [
+       .package(url: "https://github.com/LaunchDarkly/swift-eventsource.git", .upToNextMajor(from: "3.0.0"))
+   ],
     targets: [
         .target(
             name: "DevCycle",

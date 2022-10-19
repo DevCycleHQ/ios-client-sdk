@@ -51,5 +51,9 @@
             "type": "Number",
             "value": 4
         }
+    },
+    "sse": {
+        "url": "https://example.com",
+        "inactivityDelay": 5
     }
 }

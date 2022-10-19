@@ -17,6 +17,7 @@ public struct UserConfig {
     var featureVariationMap: [String: String]
     var features: [String: Feature]
     var variables: [String: Variable]
+    var sse: SSE?
     
     init(from dictionary: [String:Any]) throws {
         guard let environment = dictionary["environment"] as? [String: Any] else { throw UserConfigError.MissingInConfig("environment") }
@@ -24,10 +25,16 @@ public struct UserConfig {
         guard let featureVariationMap = dictionary["featureVariationMap"] as? [String: String] else { throw UserConfigError.MissingInConfig("featureVariationMap") }
         guard var featureMap = dictionary["features"] as? [String: Any] else { throw UserConfigError.MissingInConfig("features") }
         guard var variablesMap = dictionary["variables"] as? [String: Any] else { throw UserConfigError.MissingInConfig("variables") }
+        var sse = dictionary["sse"] as? [String: Any]
+
         
         self.project = try Project(from: project)
         self.environment = try Environment(from: environment)
         self.featureVariationMap = featureVariationMap
+        
+        if let definedSSE = sse {
+            self.sse = try SSE(from: definedSSE)
+        }
         
         let featureKeys = Array(featureMap.keys)
         let variableKeys = Array(variablesMap.keys)
@@ -75,6 +82,16 @@ struct Settings {
         let edgeDB = dictionary["edgeDB"] as? [String: Any]
         
         self.edgeDB = EdgeDB(from: edgeDB ?? ["enabled": false])
+    }
+}
+
+struct SSE {
+    var url: String?
+    var inactivityDelay: Int?
+    
+    init (from dictionary: [String: Any]) throws {
+        self.url = dictionary["url"] as? String
+        self.inactivityDelay = dictionary["inactivityDelay"] as? Int
     }
 }
 
