@@ -8,7 +8,7 @@ import Foundation
 import DevCycle
 
 struct DevCycleKeys {
-    static var DEVELOPMENT = "mobile-16e8e500-80d2-4bb5-9d4f-8219381a90da"
+    static var DEVELOPMENT = "<YOUR TOKEN>"
 }
 
 class DevCycleManager {
