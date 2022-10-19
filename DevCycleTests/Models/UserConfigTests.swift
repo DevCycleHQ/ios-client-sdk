@@ -18,6 +18,7 @@ class UserConfigTests: XCTestCase {
         XCTAssertNotNil(config.variables)
         XCTAssertNotNil(config.featureVariationMap)
         XCTAssertNotNil(config.features)
+        XCTAssertNotNil(config.sse)
     }
     
     func testDoesntCreateConfigFromDataIfProjectOrEnvironmentMissing() throws {

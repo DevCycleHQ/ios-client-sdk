@@ -1,0 +1,23 @@
+PODS:
+  - DevCycle (1.4.0):
+    - LDSwiftEventSource (~> 3.0)
+  - LDSwiftEventSource (3.0.0)
+
+DEPENDENCIES:
+  - DevCycle (from `../../`)
+
+SPEC REPOS:
+  trunk:
+    - LDSwiftEventSource
+
+EXTERNAL SOURCES:
+  DevCycle:
+    :path: "../../"
+
+SPEC CHECKSUMS:
+  DevCycle: 25e86884aa2e7b3cc79655ad46d2de10d583d464
+  LDSwiftEventSource: 824ce51a4fa8e79498c9b67ae672bfa802bd7464
+
+PODFILE CHECKSUM: b2a39c4817832b360dfcfb452fa7e66031554f37
+
+COCOAPODS: 1.11.3

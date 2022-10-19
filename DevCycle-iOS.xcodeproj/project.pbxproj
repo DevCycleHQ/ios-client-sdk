@@ -47,6 +47,9 @@
 		52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693F52758032500B52375 /* DevCycleServiceTests.swift */; };
 		D9341C12276967DE00BC753F /* DVCEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C11276967DE00BC753F /* DVCEvent.swift */; };
 		D9341C14276A3C8A00BC753F /* ObjCDVCEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */; };
+		E66CF1C82901E9C7008734FD /* LDSwiftEventSource.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E66CF1C72901E9C7008734FD /* LDSwiftEventSource.xcframework */; };
+		E66CF1C92901E9C7008734FD /* LDSwiftEventSource.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E66CF1C72901E9C7008734FD /* LDSwiftEventSource.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E673EFC7290093C400C2C4BE /* SSEConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E673EFC6290093C400C2C4BE /* SSEConnection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +61,20 @@
 			remoteInfo = DevCycle;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E66CF1CA2901E9C7008734FD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E66CF1C92901E9C7008734FD /* LDSwiftEventSource.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0F2DD759279EFA6B00540C9D /* CustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomData.swift; sourceTree = "<group>"; };
@@ -102,6 +119,8 @@
 		52E693F52758032500B52375 /* DevCycleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleServiceTests.swift; sourceTree = "<group>"; };
 		D9341C11276967DE00BC753F /* DVCEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCEvent.swift; sourceTree = "<group>"; };
 		D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDVCEvent.swift; sourceTree = "<group>"; };
+		E66CF1C72901E9C7008734FD /* LDSwiftEventSource.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = LDSwiftEventSource.xcframework; path = Carthage/Build/LDSwiftEventSource.xcframework; sourceTree = "<group>"; };
+		E673EFC6290093C400C2C4BE /* SSEConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEConnection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E66CF1C82901E9C7008734FD /* LDSwiftEventSource.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,6 +206,7 @@
 				5268DB4E27501CFC00D17A40 /* DevCycle */,
 				5268DB5A27501CFC00D17A40 /* DevCycleTests */,
 				5268DB2F27501C8600D17A40 /* Products */,
+				E66CF1C62901E9C7008734FD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -209,6 +230,7 @@
 				5268DB6527501D6000D17A40 /* DVCUser.swift */,
 				524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */,
 				5268DB4F27501CFC00D17A40 /* DevCycle.h */,
+				E673EFC6290093C400C2C4BE /* SSEConnection.swift */,
 			);
 			path = DevCycle;
 			sourceTree = "<group>";
@@ -267,6 +289,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		E66CF1C62901E9C7008734FD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E66CF1C72901E9C7008734FD /* LDSwiftEventSource.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -289,6 +319,7 @@
 				5268DB4927501CFC00D17A40 /* Sources */,
 				5268DB4A27501CFC00D17A40 /* Frameworks */,
 				5268DB4B27501CFC00D17A40 /* Resources */,
+				E66CF1CA2901E9C7008734FD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -380,6 +411,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5264A78B2763F6D800FEDB43 /* UserConfig.swift in Sources */,
+				E673EFC7290093C400C2C4BE /* SSEConnection.swift in Sources */,
 				0F2DD75A279EFA6B00540C9D /* CustomData.swift in Sources */,
 				5264A781275EB7DC00FEDB43 /* ObjCDVCUser.swift in Sources */,
 				52A96990279F3AAA00D3A602 /* PlatformDetails.swift in Sources */,

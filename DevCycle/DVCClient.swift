@@ -36,6 +36,7 @@ public class DVCClient {
     private var service: DevCycleServiceProtocol?
     private var cacheService: CacheServiceProtocol = CacheService()
     private var cache: Cache?
+    private var sseConnection: SSEConnection?
     
     /**
         Method to initialize the Client object after building
@@ -98,6 +99,17 @@ public class DVCClient {
                             }
                         })
                     }
+                }
+            }
+            
+            if let sseURL = self.config?.userConfig?.sse?.url {
+                if let parsedUrl = URL(string: sseURL) {
+                    self.sseConnection = SSEConnection(url: parsedUrl, eventHandler: { (message: String ) -> Void in
+                        Log.debug("Received message " + message)
+                        // TODO implement message handling
+                    })
+                } else {
+                    Log.error("Invalid URL received for realtime connection, skipping.")
                 }
             }
             
