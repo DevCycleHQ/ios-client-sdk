@@ -18,6 +18,7 @@ enum ClientError: Error {
 public typealias ClientInitializedHandler = (Error?) -> Void
 public typealias IdentifyCompletedHandler = (Error?, [String: Variable]?) -> Void
 public typealias FlushCompletedHandler = (Error?) -> Void
+public typealias CloseCompletedHandler = () -> Void
 
 public class DVCClient {
     var environmentKey: String?
@@ -37,6 +38,8 @@ public class DVCClient {
     private var cacheService: CacheServiceProtocol = CacheService()
     private var cache: Cache?
     private var sseConnection: SSEConnection?
+    private var flushTimer: Timer?
+    private var closed: Bool = false
     
     /**
         Method to initialize the Client object after building
@@ -121,7 +124,7 @@ public class DVCClient {
             self.configCompletionHandlers = []
         })
         
-        Timer.scheduledTimer(
+        self.flushTimer = Timer.scheduledTimer(
             withTimeInterval: TimeInterval(self.flushEventsInterval),
             repeats: true
         ) {
@@ -198,7 +201,9 @@ public class DVCClient {
             }
         }
         
-        self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+        if (!self.closed) {
+            self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+        }
         
         return variable
     }
@@ -269,10 +274,19 @@ public class DVCClient {
     }
 
     public func track(_ event: DVCEvent) {
+        if (self.closed) {
+            Log.error("DVCClient is closed, cannot log new events.")
+            return
+        }
         self.eventQueue.queue(event)
     }
-
-    public func flushEvents(callback: FlushCompletedHandler? = nil) {
+    
+    
+    public func flushEvents() {
+        self.flushEvents(callback: nil)
+    }
+    
+    internal func flushEvents(callback: FlushCompletedHandler? = nil) {
         if (!self.eventQueue.isEmpty()) {
             guard let user = self.user else {
                 Log.error("Flushing events failed, user not defined")
@@ -284,13 +298,24 @@ public class DVCClient {
             }
             self.eventQueue.flush(service: service, user: user) { error in
                 callback?(error)
-                if (!self.eventQueue.isEmpty()) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + self.flushEventsInterval) {
-                        self.flushEvents(callback: nil)
-                    }
-                }
             }
+        } else {
+            callback?(nil)
         }
+    }
+    
+    public func close(callback: CloseCompletedHandler?) {
+        if (self.closed) {
+            Log.error("DVC Client is already closed.")
+            return
+        }
+        Log.info("Closing DVC client and flushing remaining events.")
+        self.closed = true
+        self.flushTimer?.invalidate()
+        self.flushEvents(callback: { error in
+            callback?()
+        })
+        self.sseConnection?.close()
     }
     
     public class ClientBuilder {

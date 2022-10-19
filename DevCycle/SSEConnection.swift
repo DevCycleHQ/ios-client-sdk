@@ -23,6 +23,10 @@ class SSEConnection {
         ))
         self.connection.start()
     }
+    
+    public func close() {
+        self.connection.stop()
+    }
 }
 
 class Handler: EventHandler {
