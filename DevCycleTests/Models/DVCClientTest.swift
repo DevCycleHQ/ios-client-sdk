@@ -113,13 +113,41 @@ class DVCClientTest: XCTestCase {
         XCTAssertEqual(client.configCompletionHandlers.count, 1)
     }
 
+    func testRefetchConfigUsesTheCorrectUser() {
+        let service = MockService()
+        let user1 = try! DVCUser.builder().userId("user1").build()
+        let client = try! DVCClient.builder().user(user1).environmentKey("my_env_key").build(onInitialized: nil)
+        client.setup(service: service)
+        client.initialized = true
+
+        XCTAssertEqual(client.lastIdentifiedUser?.userId, user1.userId)
+        client.refetchConfig()
+        XCTAssertEqual(service.numberOfConfigCalls, 2)
+
+        let user2 = try! DVCUser.builder().userId("user2").build()
+        try! client.identifyUser(user: user2)
+        XCTAssertEqual(client.lastIdentifiedUser?.userId, user2.userId)
+        client.refetchConfig()
+        XCTAssertEqual(service.numberOfConfigCalls, 4)
+
+        let user3 = try! DVCUser.builder().userId("user3").build()
+        try! client.identifyUser(user: user3)
+        XCTAssertEqual(client.lastIdentifiedUser?.userId, user3.userId)
+        client.refetchConfig()
+        XCTAssertEqual(service.numberOfConfigCalls, 6)
+    }
+
 }
 
 extension DVCClientTest {
     private class MockService: DevCycleServiceProtocol {
         public var publishCallCount: Int = 0
-        
+        public var userForGetConfig: DVCUser?
+        public var numberOfConfigCalls: Int = 0
+
         func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {
+            self.userForGetConfig = user
+            self.numberOfConfigCalls += 1
             XCTAssert(true)
         }
 
