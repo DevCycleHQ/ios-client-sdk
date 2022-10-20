@@ -22,6 +22,7 @@ public typealias FlushCompletedHandler = (Error?) -> Void
 public class DVCClient {
     var environmentKey: String?
     var user: DVCUser?
+    var lastIdentifiedUser: DVCUser?
     var config: DVCConfig?
     var options: DVCOptions?
     var configCompletionHandlers: [ClientInitializedHandler] = []
@@ -45,6 +46,8 @@ public class DVCClient {
             return
         }
         
+        self.lastIdentifiedUser = user
+
         if let options = self.options {
             Log.level = options.logLevel
             self.flushEventsInterval = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
@@ -128,6 +131,19 @@ public class DVCClient {
         self.options = options
     }
     
+    func refetchConfig() {
+        if let lastIdentifiedUser = self.lastIdentifiedUser, self.initialized {
+            self.service?.getConfig(user: lastIdentifiedUser, enableEdgeDB: self.enableEdgeDB, completion: { [weak self] config, error in
+                guard let self = self else { return }
+                if let error = error {
+                    Log.error("Error getting config: \(error)", tags: ["refetchConfig"])
+                } else {
+                    self.config?.userConfig = config
+                }
+            })
+        }
+    }
+
     public func variable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
         var variable: DVCVariable<T>
         let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
@@ -180,6 +196,8 @@ public class DVCClient {
             updateUser = user
         }
         
+        self.lastIdentifiedUser = user
+
         self.service?.getConfig(user: updateUser, enableEdgeDB: self.enableEdgeDB,  completion: { [weak self] config, error in
             guard let self = self else { return }
             if let error = error {
@@ -203,6 +221,8 @@ public class DVCClient {
         self.flushEvents()
         let anonUser = try DVCUser.builder().isAnonymous(true).build()
         
+        self.lastIdentifiedUser = anonUser
+
         self.service?.getConfig(user: anonUser, enableEdgeDB: self.enableEdgeDB, completion: { [weak self] config, error in
             guard let self = self else { return }
             guard error == nil else {
