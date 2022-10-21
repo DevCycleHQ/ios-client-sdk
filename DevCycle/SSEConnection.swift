@@ -12,20 +12,43 @@ import LDSwiftEventSource
 public typealias MessageHandler = (String) -> Void
 
 class SSEConnection {
-    private var connection: EventSource
+    private var connection: EventSource?
+    private var url: URL
+    private var handler: MessageHandler
+    
+    var connected: Bool
     
     init(url: URL, eventHandler: @escaping MessageHandler) {
+        self.url = url
+        self.handler = eventHandler
+        self.connected = false
+        self.openConnection()
+    }
+    
+    public func openConnection() {
         Log.debug("Establishing realtime streaming connection.")
-        let handler = Handler(handler: eventHandler)
+        let handler = Handler(handler: self.handler)
         self.connection = EventSource(config: EventSource.Config(
             handler: handler,
             url: url
         ))
-        self.connection.start()
+        self.connection?.start()
+        self.connected = true
     }
     
     public func close() {
-        self.connection.stop()
+        self.connection?.stop()
+        self.connected = false
+    }
+    
+    public func reopen() {
+        Log.debug("Re-establishing realtime streaming connection")
+        self.close()
+        self.openConnection()
+    }
+    
+    public func isConnected() -> Bool {
+        return self.connected
     }
 }
 
