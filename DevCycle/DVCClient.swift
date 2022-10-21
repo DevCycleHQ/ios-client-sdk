@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum ClientError: Error {
     case NotImplemented
@@ -56,6 +57,9 @@ public class DVCClient {
         self.config = DVCConfig(environmentKey: environmentKey, user: user)
         let service = DevCycleService(config: self.config!, cacheService: self.cacheService)
         self.setup(service: service, callback: callback)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
     /**
@@ -297,5 +301,14 @@ public class DVCClient {
     
     public static func builder() -> ClientBuilder {
         return ClientBuilder()
+    }
+    
+    @objc func appMovedToForeground() {
+        // app was foregrounded, check if SSE is connected
+        // if not, reconnect the SSE
+    }
+    
+    @objc func appMovedToBackground() {
+        // app was backgrounded, disconnect SSE
     }
 }
