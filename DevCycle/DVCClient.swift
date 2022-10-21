@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum ClientError: Error {
     case NotImplemented
@@ -40,6 +41,7 @@ public class DVCClient {
     private var sseConnection: SSEConnection?
     private var flushTimer: Timer?
     private var closed: Bool = false
+    private var inactivityWorkItem: DispatchWorkItem?
     
     /**
         Method to initialize the Client object after building
@@ -70,6 +72,9 @@ public class DVCClient {
         self.lastIdentifiedUser = self.user
         
         self.setup(service: service, callback: callback)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
     /**
@@ -382,5 +387,23 @@ public class DVCClient {
     
     public static func builder() -> ClientBuilder {
         return ClientBuilder()
+    }
+    
+    @objc func appMovedToForeground() {
+        inactivityWorkItem?.cancel()
+        if let connected = self.sseConnection?.connected, !connected {
+            // refetch config
+            self.refetchConfig(sse: false, lastModified: nil)
+            self.sseConnection?.reopen()
+        }
+    }
+    
+    @objc func appMovedToBackground() {
+        let delay = (self.config?.userConfig?.sse?.inactivityDelay ?? 120000) / 1000 / 60
+        let work = DispatchWorkItem(block: {
+            self.sseConnection?.close()
+        })
+        self.inactivityWorkItem = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay), execute: work)
     }
 }
