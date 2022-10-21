@@ -7,23 +7,30 @@
 import XCTest
 @testable import DevCycle
 
+
 class DVCClientTest: XCTestCase {
-    func testBuilderReturnsNilIfNoEnvKey() {
-        let user = try! DVCUser.builder()
+    private var service: MockService!
+    private var user: DVCUser!
+    private var builder: DVCClient.ClientBuilder!
+    
+    override func setUp() {
+        self.service = MockService()
+        self.user = try! DVCUser.builder()
                     .userId("my_user")
                     .build()
-        XCTAssertNil(try? DVCClient.builder().user(user).build(onInitialized: nil))
+        self.builder = DVCClient.builder().service(service)
+    }
+    
+    func testBuilderReturnsNilIfNoEnvKey() {
+        XCTAssertNil(try? self.builder.user(self.user).build(onInitialized: nil))
     }
     
     func testBuilderReturnsNilIfNoUser() {
-        XCTAssertNil(try? DVCClient.builder().environmentKey("my_env_key").build(onInitialized: nil))
+        XCTAssertNil(try? self.builder.environmentKey("my_env_key").build(onInitialized: nil))
     }
     
     func testBuilderReturnsClient() {
-        let user = try! DVCUser.builder()
-                    .userId("my_user")
-                    .build()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
         XCTAssertNotNil(client)
         XCTAssertNotNil(client.user)
         XCTAssertNotNil(client.environmentKey)
@@ -34,14 +41,13 @@ class DVCClientTest: XCTestCase {
         let client = DVCClient()
         let service = MockService() // will assert if getConfig was called
         client.setEnvironmentKey("")
-        client.setUser(getTestUser())
+        client.setUser(self.user)
         client.setup(service: service)
     }
     
     func testBuilderReturnsClientWithOptions() {
-        let user = getTestUser()
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(100).build()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
         XCTAssertNotNil(client)
         XCTAssertNotNil(client.options)
         XCTAssertNotNil(client.user)
@@ -81,11 +87,11 @@ class DVCClientTest: XCTestCase {
     
     func testFlushEventsWithOneEventInQueue() {
         let expectation = XCTestExpectation(description: "EventQueue publishes an event")
-        let user = getTestUser()
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
         let service = MockService() // will assert if publishEvents was called
-        client.setup(service: service)
+
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").options(options).service(service).build(onInitialized: nil)
+        
         let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
         
         client.track(event)
@@ -99,16 +105,14 @@ class DVCClientTest: XCTestCase {
     }
     
     func testVariableReturnsDefaultForUnsupportedVariableKeys() {
-        let user = getTestUser()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
         let variable = client.variable(key: "UNSUPPORTED\\key%$", defaultValue: true)
         XCTAssertEqual(client.configCompletionHandlers.count, 0)
         XCTAssertTrue(variable.value)
     }
     
     func testVariableFunctionWorksIfVariableKeyHasSupportedCharacters() {
-        let user = getTestUser()
-        let client = try! DVCClient.builder().user(user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
         let variable = client.variable(key: "supported-keys_here", defaultValue: true)
         XCTAssertEqual(client.configCompletionHandlers.count, 1)
     }
@@ -164,11 +168,5 @@ extension DVCClientTest {
         func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {
             XCTAssert(true)
         }
-    }
-    
-    func getTestUser() -> DVCUser {
-        return try! DVCUser.builder()
-            .userId("my_user")
-            .build()
     }
 }

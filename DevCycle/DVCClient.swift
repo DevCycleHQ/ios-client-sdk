@@ -46,8 +46,15 @@ public class DVCClient {
             return
         }
         
-        self.lastIdentifiedUser = user
+        self.config = DVCConfig(environmentKey: environmentKey, user: user)
+        
+        let service = DevCycleService(config: self.config!, cacheService: self.cacheService)
 
+        self.initialize(service: service, callback: callback)
+    }
+    
+    internal func initialize(service: DevCycleServiceProtocol, callback: ClientInitializedHandler?) {
+    
         if let options = self.options {
             Log.level = options.logLevel
             self.flushEventsInterval = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
@@ -56,8 +63,8 @@ public class DVCClient {
             Log.level = .error
         }
         
-        self.config = DVCConfig(environmentKey: environmentKey, user: user)
-        let service = DevCycleService(config: self.config!, cacheService: self.cacheService)
+        self.lastIdentifiedUser = self.user
+        
         self.setup(service: service, callback: callback)
     }
     
@@ -276,7 +283,8 @@ public class DVCClient {
     
     public class ClientBuilder {
         private var client: DVCClient
-        
+        private var service: DevCycleServiceProtocol?
+
         init() {
             self.client = DVCClient()
         }
@@ -296,6 +304,11 @@ public class DVCClient {
             return self
         }
         
+        internal func service(_ service: DevCycleServiceProtocol) -> ClientBuilder {
+            self.service = service
+            return self
+        }
+        
         public func build(onInitialized: ClientInitializedHandler?) throws -> DVCClient {
             guard self.client.environmentKey != nil else {
                 Log.error("Missing Environment Key", tags: ["build"])
@@ -307,7 +320,11 @@ public class DVCClient {
             }
             
             let result = self.client
-            result.initialize(callback: onInitialized)
+            if let service = service {
+                result.initialize(service: service, callback: onInitialized)
+            } else {
+                result.initialize(callback: onInitialized)
+            }
             self.client = DVCClient()
             return result
         }
