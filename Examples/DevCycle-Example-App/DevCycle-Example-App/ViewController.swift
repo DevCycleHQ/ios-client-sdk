@@ -13,14 +13,14 @@ class ViewController: UIViewController {
     
     var loggedIn: Bool = false
     var client: DVCClient?
+    var loginCta: DVCVariable<String>?
     
     @IBAction func loginButtonPressed(_ sender: Any) {
         guard let client = self.client else { return }
         if (self.loggedIn) {
             try? client.resetUser { [weak self] error, variables in
                 guard let self = self else { return }
-                self.loggedIn = false
-                self.loginButton.setTitle("Log In", for: .normal)
+                self.setLoginTitle(false)
                 print("Reset User!")
                 print("Variables: \(String(describing: variables))")
             }
@@ -40,8 +40,7 @@ class ViewController: UIViewController {
                               .build()
             try? client.identifyUser(user: user!) { [weak self] error, variables in
                 guard let self = self else { return }
-                self.loggedIn = true
-                self.loginButton.setTitle("Log out", for: .normal)
+                self.setLoginTitle(true)
                 print("Logged in as User: \(String(describing: user?.userId))!")
                 print("Variables: \(String(describing: variables))")
                 
@@ -83,8 +82,19 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.client = DevCycleManager.shared.client
+        self.loginCta = client?.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
+            self.setLoginTitle(self.loggedIn)
+        })
+        self.setLoginTitle(false)
     }
 
-
+    func setLoginTitle(_ bool: Bool) {
+        guard let loginCta = self.loginCta else {
+            return
+        }
+        self.loggedIn = bool
+        self.loginButton.setTitle("\(loginCta.value) \(self.loggedIn ? "out" : "in")", for: .normal)
+    }
+    
 }
 
