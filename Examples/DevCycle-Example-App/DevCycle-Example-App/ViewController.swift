@@ -9,18 +9,20 @@ import DevCycle
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var titleHeader: UILabel!
     @IBOutlet weak var loginButton: UIButton!
     
     var loggedIn: Bool = false
     var client: DVCClient?
-    var loginCta: DVCVariable<String>?
+    var titleHeaderVar: DVCVariable<String>?
+    var loginCtaVar: DVCVariable<String>?
     
     @IBAction func loginButtonPressed(_ sender: Any) {
         guard let client = self.client else { return }
         if (self.loggedIn) {
             try? client.resetUser { [weak self] error, variables in
                 guard let self = self else { return }
-                self.setLoginTitle(false)
+                self.setLoginButtonTitle(false)
                 print("Reset User!")
                 print("Variables: \(String(describing: variables))")
             }
@@ -40,7 +42,7 @@ class ViewController: UIViewController {
                               .build()
             try? client.identifyUser(user: user!) { [weak self] error, variables in
                 guard let self = self else { return }
-                self.setLoginTitle(true)
+                self.setLoginButtonTitle(true)
                 print("Logged in as User: \(String(describing: user?.userId))!")
                 print("Variables: \(String(describing: variables))")
                 
@@ -82,14 +84,25 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         self.client = DevCycleManager.shared.client
-        self.loginCta = client?.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
-            self.setLoginTitle(self.loggedIn)
+        self.loginCtaVar = client?.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
+            self.setLoginButtonTitle(self.loggedIn)
         })
-        self.setLoginTitle(false)
+        self.titleHeaderVar = client?.variable(key: "title-header-copy", defaultValue: "DevCycle Example App").onUpdate(handler: { value in
+            self.setTitleHeader()
+        })
+        self.setTitleHeader()
+        self.setLoginButtonTitle(false)
+    }
+    
+    func setTitleHeader() {
+        guard let titleHeaderVar = self.titleHeaderVar else {
+            return
+        }
+        self.titleHeader.text = titleHeaderVar.value
     }
 
-    func setLoginTitle(_ bool: Bool) {
-        guard let loginCta = self.loginCta else {
+    func setLoginButtonTitle(_ bool: Bool) {
+        guard let loginCta = self.loginCtaVar else {
             return
         }
         self.loggedIn = bool
