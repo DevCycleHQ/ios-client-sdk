@@ -193,14 +193,6 @@ public class DVCClient {
             )
         }
         
-        if (!self.initialized) {
-            self.configCompletionHandlers.append { error in
-                if let variableFromApi = self.config?.userConfig?.variables[key] {
-                    variable.update(from: variableFromApi)
-                }
-            }
-        }
-        
         if (!self.closed) {
             self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
         }
