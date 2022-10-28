@@ -11,6 +11,7 @@
 		52133B2028DDFB260007691D /* RequestConsolidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */; };
 		52133B2228DE00BC0007691D /* ProcessConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2128DE00BC0007691D /* ProcessConfig.swift */; };
 		52133B2428DE0FEB0007691D /* GetTestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2328DE0FEB0007691D /* GetTestConfig.swift */; };
+		5226DF06290C588900630745 /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5226DF05290C588900630745 /* NotificationNames.swift */; };
 		52404CEA27F3A9FB00290A31 /* isEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52404CE927F3A9FB00290A31 /* isEqual.swift */; };
 		52404CED27F4A92100290A31 /* IsEqualTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52404CEC27F4A92100290A31 /* IsEqualTests.swift */; };
 		524D58242770F78B00D7CC56 /* ObjCDVCVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524D58232770F78B00D7CC56 /* ObjCDVCVariable.swift */; };
@@ -81,6 +82,7 @@
 		52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestConsolidatorTests.swift; sourceTree = "<group>"; };
 		52133B2128DE00BC0007691D /* ProcessConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessConfig.swift; sourceTree = "<group>"; };
 		52133B2328DE0FEB0007691D /* GetTestConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTestConfig.swift; sourceTree = "<group>"; };
+		5226DF05290C588900630745 /* NotificationNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
 		52404CE927F3A9FB00290A31 /* isEqual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isEqual.swift; sourceTree = "<group>"; };
 		52404CEC27F4A92100290A31 /* IsEqualTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsEqualTests.swift; sourceTree = "<group>"; };
 		524D58232770F78B00D7CC56 /* ObjCDVCVariable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjCDVCVariable.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				52404CE927F3A9FB00290A31 /* isEqual.swift */,
 				529CE32228DCBEC2009AB137 /* RequestConsolidator.swift */,
 				52133B2128DE00BC0007691D /* ProcessConfig.swift */,
+				5226DF05290C588900630745 /* NotificationNames.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -417,6 +420,7 @@
 				52A96990279F3AAA00D3A602 /* PlatformDetails.swift in Sources */,
 				52A48707278C9BE200DABA34 /* Log.swift in Sources */,
 				D9341C14276A3C8A00BC753F /* ObjCDVCEvent.swift in Sources */,
+				5226DF06290C588900630745 /* NotificationNames.swift in Sources */,
 				5264A77B275E9A7E00FEDB43 /* ObjCDVCClient.swift in Sources */,
 				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
 				5264A7BD2769381600FEDB43 /* Cache.swift in Sources */,
