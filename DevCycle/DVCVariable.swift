@@ -26,6 +26,7 @@ public class DVCVariable<T> {
         self.defaultValue = defaultValue
         self.isDefaulted = value == nil
         self.evalReason = evalReason
+        addNotificationObserver()
     }
     
     init(from variable: Variable, defaultValue: T) {
@@ -41,6 +42,7 @@ public class DVCVariable<T> {
         self.type = variable.type
         self.isDefaulted = false
         self.evalReason = variable.evalReason
+        addNotificationObserver()
     }
     
     func update(from variable: Variable) {
@@ -59,6 +61,29 @@ public class DVCVariable<T> {
         } else {
             Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
         }
+    }
+    
+    @objc func propertyChange(notification: Notification) {
+        guard let userConfig = notification.userInfo?["new-user-config"] as? UserConfig else {
+            return
+        }
+        if let variableFromApi = userConfig.variables[key] {
+            self.update(from: variableFromApi)
+        } else if (!isEqual(self.value, self.defaultValue)) {
+            self.resetToDefault()
+            self.handler?(value)
+        } else if (!self.isDefaulted) {
+            self.isDefaulted = true
+        }
+    }
+    
+    private func resetToDefault() {
+        self.value = self.defaultValue
+        self.isDefaulted = true
+    }
+    
+    private func addNotificationObserver() {
+        NotificationCenter.default.addObserver(self, selector: #selector(propertyChange(notification:)), name: Notification.Name(NotificationNames.NewUserConfig), object: nil)
     }
     
     public func onUpdate(handler: @escaping VariableValueHandler<T>) -> DVCVariable {
