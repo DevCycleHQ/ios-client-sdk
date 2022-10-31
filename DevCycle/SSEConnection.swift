@@ -56,3 +56,29 @@ class Handler: EventHandler {
         Log.error("Streaming connection had an error: " + error.localizedDescription)
     }
 }
+
+public struct SSEMessage {
+    enum SSEMessageError: Error, Equatable {
+        case initError(String)
+    }
+    struct Data {
+        var etag: String?
+        var lastModified: Int?
+        var type: String?
+    }
+
+    var data: Data
+
+    init(from dictionary: [String: Any]) throws {
+        guard let data = dictionary["data"] as? String else {
+            throw SSEMessageError.initError("No data field in SSE JSON")
+        }
+        guard let dataDictionary = try? JSONSerialization.jsonObject(with: (data.data(using: .utf8))!, options: .fragmentsAllowed) as? [String: Any] else {
+            throw SSEMessageError.initError("Failed to parse data field in SSE message")
+        }
+        let etag = dataDictionary["etag"] as? String
+        let type = dataDictionary["type"] as? String
+        let lastModified = dataDictionary["lastModified"] as? Int
+        self.data = Data(etag: etag, lastModified: lastModified, type: type)
+    }
+}

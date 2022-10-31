@@ -18,6 +18,7 @@ public struct UserConfig {
     var features: [String: Feature]
     var variables: [String: Variable]
     var sse: SSE?
+    var etag: String?
     
     init(from dictionary: [String:Any]) throws {
         guard let environment = dictionary["environment"] as? [String: Any] else { throw UserConfigError.MissingInConfig("environment") }
@@ -25,7 +26,8 @@ public struct UserConfig {
         guard let featureVariationMap = dictionary["featureVariationMap"] as? [String: String] else { throw UserConfigError.MissingInConfig("featureVariationMap") }
         guard var featureMap = dictionary["features"] as? [String: Any] else { throw UserConfigError.MissingInConfig("features") }
         guard var variablesMap = dictionary["variables"] as? [String: Any] else { throw UserConfigError.MissingInConfig("variables") }
-        var sse = dictionary["sse"] as? [String: Any]
+        let sse = dictionary["sse"] as? [String: Any]
+        let etag = dictionary["etag"] as? String
 
         
         self.project = try Project(from: project)
@@ -35,7 +37,11 @@ public struct UserConfig {
         if let definedSSE = sse {
             self.sse = try SSE(from: definedSSE)
         }
-        
+
+        if let etag = etag {
+            self.etag = etag
+        }
+
         let featureKeys = Array(featureMap.keys)
         let variableKeys = Array(variablesMap.keys)
         
