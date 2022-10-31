@@ -81,7 +81,7 @@ public class DVCClient {
             return
         }
         self.service = service
-        self.service?.getConfig(user: user, enableEdgeDB: self.enableEdgeDB, completion: { [weak self] config, error in
+        self.service?.getConfig(user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
             guard let self = self else { return }
             if let error = error {
                 Log.error("Error getting config: \(error)", tags: ["setup"])
@@ -104,18 +104,9 @@ public class DVCClient {
                     }
                 }
             }
-            
-            if let sseURL = self.config?.userConfig?.sse?.url {
-                if let parsedUrl = URL(string: sseURL) {
-                    self.sseConnection = SSEConnection(url: parsedUrl, eventHandler: { (message: String ) -> Void in
-                        Log.debug("Received message " + message)
-                        // TODO implement message handling
-                    })
-                } else {
-                    Log.error("Invalid URL received for realtime connection, skipping.")
-                }
-            }
-            
+
+            self.setupSSEConnection()
+
             for handler in self.configCompletionHandlers {
                 handler(error)
             }
@@ -153,9 +144,10 @@ public class DVCClient {
         self.options = options
     }
     
-    func refetchConfig() {
+    func refetchConfig(sse: Bool, lastModified: Int?) {
         if let lastIdentifiedUser = self.lastIdentifiedUser, self.initialized {
-            self.service?.getConfig(user: lastIdentifiedUser, enableEdgeDB: self.enableEdgeDB, completion: { [weak self] config, error in
+            let extraParams = RequestParams(sse: sse, lastModified: lastModified)
+            self.service?.getConfig(user: lastIdentifiedUser, enableEdgeDB: self.enableEdgeDB, extraParams: extraParams, completion: { [weak self] config, error in
                 guard let self = self else { return }
                 if let error = error {
                     Log.error("Error getting config: \(error)", tags: ["refetchConfig"])
@@ -164,6 +156,35 @@ public class DVCClient {
                 }
             })
         }
+    }
+
+    private func setupSSEConnection() {
+        guard let sseURL = self.config?.userConfig?.sse?.url else {
+            Log.error("No SSE URL in config")
+            return
+        }
+        guard let parsedURL = URL(string: sseURL) else {
+            Log.error("Failed to parse SSE URL in config")
+            return
+        }
+        self.sseConnection = SSEConnection(url: parsedURL, eventHandler: { [weak self] (message: String ) -> Void in
+            Log.debug("Received message " + message)
+            guard let messageData = message.data(using: .utf8) else {
+                Log.error("Failed to parse SSE message")
+                return
+            }
+            do {
+                let messageDictionary = try JSONSerialization.jsonObject(with: messageData, options: .fragmentsAllowed) as! [String:Any]
+                let sseMessage = try SSEMessage(from: messageDictionary)
+                if (sseMessage.data.type == nil || sseMessage.data.type == "refetchConfig") {
+                    if (self?.config?.userConfig?.etag == nil || sseMessage.data.etag != self?.config?.userConfig?.etag) {
+                        self?.refetchConfig(sse: true, lastModified: sseMessage.data.lastModified)
+                    }
+                }
+            } catch {
+                Log.error("Failed to parse SSE message: \(error)")
+            }
+        })
     }
 
     public func variable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
@@ -214,7 +235,7 @@ public class DVCClient {
         
         self.lastIdentifiedUser = user
 
-        self.service?.getConfig(user: updateUser, enableEdgeDB: self.enableEdgeDB,  completion: { [weak self] config, error in
+        self.service?.getConfig(user: updateUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
             guard let self = self else { return }
             if let error = error {
                 Log.error("Error getting config: \(error)", tags: ["identify"])
@@ -239,7 +260,7 @@ public class DVCClient {
         
         self.lastIdentifiedUser = anonUser
 
-        self.service?.getConfig(user: anonUser, enableEdgeDB: self.enableEdgeDB, completion: { [weak self] config, error in
+        self.service?.getConfig(user: anonUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
             guard let self = self else { return }
             guard error == nil else {
                 callback?(error, nil)

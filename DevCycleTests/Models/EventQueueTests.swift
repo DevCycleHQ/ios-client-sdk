@@ -67,7 +67,7 @@ class EventQueueTests: XCTestCase {
 }
 
 private class MockService: DevCycleServiceProtocol {
-    func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {}
+    func getConfig(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
     
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
         
@@ -87,7 +87,7 @@ class MockWithErrorCodeService: DevCycleServiceProtocol {
         self.errorCode = errorCode
     }
     
-    func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {}
+    func getConfig(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
         let error = NSError(domain: "api.devcycle.com", code: self.errorCode)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

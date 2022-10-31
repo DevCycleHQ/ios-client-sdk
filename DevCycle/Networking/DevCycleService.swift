@@ -55,8 +55,13 @@ struct NetworkingConstants {
     }
 }
 
+struct RequestParams {
+    var sse: Bool
+    var lastModified: Int?
+}
+
 protocol DevCycleServiceProtocol {
-    func getConfig(user:DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler)
+    func getConfig(user:DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler)
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler)
     func saveEntity(user:DVCUser, completion: @escaping SaveEntityCompletionHandler)
     func makeRequest(request: URLRequest, completion: @escaping CompletionHandler)
@@ -79,8 +84,8 @@ class DevCycleService: DevCycleServiceProtocol {
         self.requestConsolidator = RequestConsolidator(service: self)
     }
     
-    func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {
-        let configRequest = createConfigRequest(user: user, enableEdgeDB: enableEdgeDB)
+    func getConfig(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {
+        let configRequest = createConfigRequest(user: user, enableEdgeDB: enableEdgeDB, extraParams: extraParams)
         requestConsolidator.queue(request: configRequest, callback: completion)
     }
     
@@ -197,15 +202,23 @@ class DevCycleService: DevCycleServiceProtocol {
         }.resume()
     }
     
-    func createConfigRequest(user: DVCUser, enableEdgeDB: Bool) -> URLRequest {
+    func createConfigRequest(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams? = nil) -> URLRequest {
         var userQueryItems: [URLQueryItem] = user.toQueryItems()
         let queryItem = URLQueryItem(name: "enableEdgeDB", value: String(enableEdgeDB))
         userQueryItems.append(queryItem)
+        if let extraParams = extraParams {
+            if (extraParams.sse) {
+                userQueryItems.append(URLQueryItem(name: "sse", value: "1"))
+            }
+            if let lastModified = extraParams.lastModified {
+                userQueryItems.append(URLQueryItem(name: "sseLastModified", value: String(lastModified)))
+            }
+        }
         let urlComponents: URLComponents = createRequestUrl(type: "config", userQueryItems)
         let url = urlComponents.url!
         return URLRequest(url: url)
     }
-    
+
     func createEventsRequest() -> URLRequest {
         let urlComponents: URLComponents = createRequestUrl(type: "event")
         let url = urlComponents.url!

@@ -57,7 +57,7 @@ class RequestConsolidatorTests: XCTestCase {
 
 extension RequestConsolidatorTests {
     class MockService: DevCycleServiceProtocol {
-        func getConfig(user: DVCUser, enableEdgeDB: Bool, completion: @escaping ConfigCompletionHandler) {
+        func getConfig(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {
             XCTAssert(true)
         }
 
