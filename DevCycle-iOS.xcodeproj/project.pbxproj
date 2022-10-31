@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B721685290B21CD004D0AB7 /* SSEMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B721684290B21CD004D0AB7 /* SSEMessage.swift */; };
 		0F2DD75A279EFA6B00540C9D /* CustomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2DD759279EFA6B00540C9D /* CustomData.swift */; };
 		52133B2028DDFB260007691D /* RequestConsolidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */; };
 		52133B2228DE00BC0007691D /* ProcessConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2128DE00BC0007691D /* ProcessConfig.swift */; };
@@ -78,6 +79,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0B721684290B21CD004D0AB7 /* SSEMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEMessage.swift; sourceTree = "<group>"; };
 		0F2DD759279EFA6B00540C9D /* CustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomData.swift; sourceTree = "<group>"; };
 		52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestConsolidatorTests.swift; sourceTree = "<group>"; };
 		52133B2128DE00BC0007691D /* ProcessConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessConfig.swift; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 				52A1139E27AB235C000B8285 /* EventQueueTests.swift */,
 				5264A78F2768E9F400FEDB43 /* UserConfigTests.swift */,
 				5264A78D2768E94500FEDB43 /* test_config.json */,
+				0B721684290B21CD004D0AB7 /* SSEMessage.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -449,6 +452,7 @@
 				52133B2028DDFB260007691D /* RequestConsolidatorTests.swift in Sources */,
 				5276C9F2275E6E0D00B9A324 /* DVCOptionsTest.swift in Sources */,
 				5264A7902768E9F400FEDB43 /* UserConfigTests.swift in Sources */,
+				0B721685290B21CD004D0AB7 /* SSEMessage.swift in Sources */,
 				52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */,
 				52404CED27F4A92100290A31 /* IsEqualTests.swift in Sources */,
 				5268DB6B275020F800D17A40 /* DVCClientTest.swift in Sources */,
