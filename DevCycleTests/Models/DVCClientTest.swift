@@ -5,6 +5,8 @@
 //
 
 import XCTest
+import UIKit
+
 @testable import DevCycle
 
 
@@ -170,7 +172,63 @@ class DVCClientTest: XCTestCase {
         client.refetchConfig(sse: true, lastModified: 789)
         XCTAssertEqual(service.numberOfConfigCalls, 6)
     }
+    
+    func testSseCloseGetsCalledWhenBackgrounded() {
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        client.initialized = true
+        
+        let mockSSEConnection = MockSSEConnection()
+        client.sseConnection = mockSSEConnection
+        client.inactivityDelayMS = 0
+        NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
+        
+        let expectation = XCTestExpectation(description: "close gets called when backgrounded")
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            XCTAssert(mockSSEConnection.closeCalled)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 2.0)
+    }
 
+    func testSseReopenGetsCalledWhenForegrounded() {
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+
+        client.initialized = true
+        
+        let mockSSEConnection = MockSSEConnection()
+        mockSSEConnection.connected = false
+        client.sseConnection = mockSSEConnection
+        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        
+        let expectation = XCTestExpectation(description: "reopen gets called when foregrounded")
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            XCTAssert(mockSSEConnection.reopenCalled)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 2.0)
+    }
+    
+    func testSseReopenDoesntGetCalledWhenForegroundedBeforeInactivityDelay() {
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        client.initialized = true
+        
+        let mockSSEConnection = MockSSEConnection()
+        mockSSEConnection.connected = true
+        client.sseConnection = mockSSEConnection
+        client.inactivityDelayMS = 120000
+        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        
+        let expectation = XCTestExpectation(description: "reopen doesn't called when foregrounded")
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            XCTAssertFalse(mockSSEConnection.reopenCalled)
+            XCTAssertFalse(mockSSEConnection.closeCalled)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 2.0)
+    }
 }
 
 extension DVCClientTest {
@@ -202,6 +260,28 @@ extension DVCClientTest {
         
         func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {
             XCTAssert(true)
+        }
+    }
+    
+    private class MockSSEConnection: SSEConnectionProtocol {
+        var connected: Bool
+        var reopenCalled: Bool
+        var closeCalled: Bool
+        
+        init() {
+            self.connected = false
+            self.reopenCalled = false
+            self.closeCalled = false
+        }
+        
+        func openConnection() {}
+        
+        func close() {
+            self.closeCalled = true
+        }
+        
+        func reopen() {
+            self.reopenCalled = true
         }
     }
 }
