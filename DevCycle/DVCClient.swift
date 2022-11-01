@@ -34,11 +34,12 @@ public class DVCClient {
     private let defaultFlushInterval: Int = 10000
     private var flushEventsInterval: Double = 10.0
     private var enableEdgeDB: Bool = false
+    var inactivityDelayMS: Double = 120000
     
     private var service: DevCycleServiceProtocol?
     private var cacheService: CacheServiceProtocol = CacheService()
     private var cache: Cache?
-    private var sseConnection: SSEConnection?
+    var sseConnection: SSEConnectionProtocol?
     private var flushTimer: Timer?
     private var closed: Bool = false
     private var inactivityWorkItem: DispatchWorkItem?
@@ -171,6 +172,9 @@ public class DVCClient {
         guard let parsedURL = URL(string: sseURL) else {
             Log.error("Failed to parse SSE URL in config")
             return
+        }
+        if let inactivityDelay = self.config?.userConfig?.sse?.inactivityDelay {
+            self.inactivityDelayMS = Double(inactivityDelay)
         }
         self.sseConnection = SSEConnection(url: parsedURL, eventHandler: { [weak self] (message: String ) -> Void in
             Log.debug("Received message " + message)
@@ -392,14 +396,13 @@ public class DVCClient {
     @objc func appMovedToForeground() {
         inactivityWorkItem?.cancel()
         if let connected = self.sseConnection?.connected, !connected {
-            // refetch config
             self.refetchConfig(sse: false, lastModified: nil)
             self.sseConnection?.reopen()
         }
     }
     
     @objc func appMovedToBackground() {
-        let delay = (self.config?.userConfig?.sse?.inactivityDelay ?? 120000) / 1000 / 60
+        let delay = self.inactivityDelayMS / 1000 / 60
         let work = DispatchWorkItem(block: {
             self.sseConnection?.close()
         })
