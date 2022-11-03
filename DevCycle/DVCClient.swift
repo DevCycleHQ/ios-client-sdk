@@ -43,6 +43,7 @@ public class DVCClient {
     private var flushTimer: Timer?
     private var closed: Bool = false
     private var inactivityWorkItem: DispatchWorkItem?
+    private var variableInstanceDictonary = [String: NSMapTable<AnyObject, AnyObject>]()
     
     /**
         Method to initialize the Client object after building
@@ -197,7 +198,6 @@ public class DVCClient {
     }
 
     public func variable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
-        var variable: DVCVariable<T>
         let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
         if (regex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) != nil) {
             Log.error("The variable key \(key) is invalid. It must contain only lowercase letters, numbers, hyphens and underscores. The default value will always be returned for this call.")
@@ -209,18 +209,28 @@ public class DVCClient {
                 evalReason: nil
             )
         }
-        
-        if let config = self.config?.userConfig,
-           let variableFromApi = config.variables[key] {
-            variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue)
+
+        var variable: DVCVariable<T>
+        if (self.variableInstanceDictonary[key] == nil) {
+            self.variableInstanceDictonary[key] = NSMapTable<AnyObject, AnyObject>(valueOptions: .weakMemory)
+        }
+
+        if let variableFromDictonary = self.variableInstanceDictonary[key]?.object(forKey: defaultValue as AnyObject) as? DVCVariable<T> {
+            variable = variableFromDictonary
         } else {
-            variable = DVCVariable(
-                key: key,
-                type: String(describing: T.self),
-                value: nil,
-                defaultValue: defaultValue,
-                evalReason: nil
-            )
+            if let config = self.config?.userConfig,
+               let variableFromApi = config.variables[key] {
+                variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue)
+            } else {
+                variable = DVCVariable(
+                    key: key,
+                    type: String(describing: T.self),
+                    value: nil,
+                    defaultValue: defaultValue,
+                    evalReason: nil
+                )
+            }
+            self.variableInstanceDictonary[key]?.setObject(variable, forKey: defaultValue as AnyObject)
         }
         
         if (!self.closed) {

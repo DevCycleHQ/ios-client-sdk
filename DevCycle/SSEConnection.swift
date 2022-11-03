@@ -107,7 +107,10 @@ public struct SSEMessage {
         guard let data = dictionary["data"] as? String else {
             throw SSEMessageError.initError("No data field in SSE JSON")
         }
-        guard let dataDictionary = try? JSONSerialization.jsonObject(with: (data.data(using: .utf8))!, options: .fragmentsAllowed) as? [String: Any] else {
+        guard let data = data.data(using: .utf8) else {
+            throw SSEMessageError.initError("Failed to generate an NSData object from SSE data field")
+        }
+        guard let dataDictionary = try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: Any] else {
             throw SSEMessageError.initError("Failed to parse data field in SSE message")
         }
         let etag = dataDictionary["etag"] as? String
