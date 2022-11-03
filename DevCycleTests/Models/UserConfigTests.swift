@@ -70,8 +70,8 @@ class UserConfigTests: XCTestCase {
         let data = getConfigData(name: "test_config")
         let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
         let config = try UserConfig(from: dictionary)
-        let variable = config.variables["boolVar"]
-        XCTAssert(variable?.key == "boolVar")
+        let variable = config.variables["bool-var"]
+        XCTAssert(variable?.key == "bool-var")
         XCTAssert(variable?.type == "Boolean")
         XCTAssert((variable?.value as! Bool))
     }
@@ -80,8 +80,8 @@ class UserConfigTests: XCTestCase {
         let data = getConfigData(name: "test_config")
         let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
         let config = try UserConfig(from: dictionary)
-        let variable = config.variables["stringVar"]
-        XCTAssert(variable?.key == "stringVar")
+        let variable = config.variables["string-var"]
+        XCTAssert(variable?.key == "string-var")
         XCTAssert(variable?.type == "String")
         XCTAssert((variable?.value as! String) == "string1")
     }
@@ -90,8 +90,8 @@ class UserConfigTests: XCTestCase {
         let data = getConfigData(name: "test_config")
         let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
         let config = try UserConfig(from: dictionary)
-        let variable = config.variables["numVar"]
-        XCTAssert(variable?.key == "numVar")
+        let variable = config.variables["num-var"]
+        XCTAssert(variable?.key == "num-var")
         XCTAssert(variable?.type == "Number")
         XCTAssert((variable?.value as! Double) == 4)
     }
@@ -100,10 +100,10 @@ class UserConfigTests: XCTestCase {
         let data = getConfigData(name: "test_config")
         let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
         let config = try UserConfig(from: dictionary)
-        let variable = config.variables["jsonVar"]
+        let variable = config.variables["json-var"]
         let json = (variable?.value as! [String: Any])
         let nestedJson = json["key2"]
-        XCTAssert(variable?.key == "jsonVar")
+        XCTAssert(variable?.key == "json-var")
         XCTAssert(variable?.type == "JSON")
         XCTAssertNotNil(json)
         XCTAssertNotNil(nestedJson)
