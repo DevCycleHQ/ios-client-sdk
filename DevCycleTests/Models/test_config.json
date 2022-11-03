@@ -22,15 +22,15 @@
     },
     "knownVariableKeys": [],
     "variables": {
-        "boolVar": {
+        "bool-var": {
             "_id": "id5",
-            "key": "boolVar",
+            "key": "bool-var",
             "type": "Boolean",
             "value": true
         },
-        "jsonVar": {
+        "json-var": {
             "_id": "id6",
-            "key": "jsonVar",
+            "key": "json-var",
             "type": "JSON",
             "value": {
                 "key1": "value1",
@@ -39,15 +39,15 @@
                 }
             }
         },
-        "stringVar": {
+        "string-var": {
             "_id": "id7",
-            "key": "stringVar",
+            "key": "string-var",
             "type": "String",
             "value": "string1"
         },
-        "numVar": {
+        "num-var": {
             "_id": "id8",
-            "key": "numVar",
+            "key": "num-var",
             "type": "Number",
             "value": 4
         }

@@ -141,6 +141,7 @@ class DVCVariableTests: XCTestCase {
         let variableFromApi = try Variable(from: variableDict)
         let variable = DVCVariable(from: variableFromApi, defaultValue: 4)
         XCTAssertEqual(variable.value, 4)
+        XCTAssertTrue(variable.isDefaulted)
     }
     
     func testDefaultValueIfValueFromUpdateDoesntMatchDefaultValue() throws {

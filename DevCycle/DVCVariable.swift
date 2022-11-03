@@ -30,17 +30,19 @@ public class DVCVariable<T> {
     }
     
     init(from variable: Variable, defaultValue: T) {
+        var defaulted = false
         if let value = variable.value as? T {
             self.value = value
         } else {
             Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
             self.value = defaultValue
+            defaulted = true
         }
         
         self.key = variable.key
         self.defaultValue = defaultValue
         self.type = variable.type
-        self.isDefaulted = false
+        self.isDefaulted = defaulted
         self.evalReason = variable.evalReason
         addNotificationObserver()
     }

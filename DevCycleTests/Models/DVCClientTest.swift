@@ -14,6 +14,7 @@ class DVCClientTest: XCTestCase {
     private var service: MockService!
     private var user: DVCUser!
     private var builder: DVCClient.ClientBuilder!
+    private var userConfig: UserConfig!
     
     override func setUp() {
         self.service = MockService()
@@ -21,6 +22,10 @@ class DVCClientTest: XCTestCase {
                     .userId("my_user")
                     .build()
         self.builder = DVCClient.builder().service(service)
+
+        let data = getConfigData(name: "test_config")
+        let dictionary = try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        self.userConfig = try! UserConfig(from: dictionary)
     }
     
     func testBuilderReturnsNilIfNoEnvKey() {
@@ -147,6 +152,68 @@ class DVCClientTest: XCTestCase {
         let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
         let variable = client.variable(key: "supported-keys_here", defaultValue: true)
         XCTAssertTrue(variable.value)
+    }
+
+    func testVariableMethodReturnsDefaultedVariableWhenKeyIsNotInConfig() {
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        client.config?.userConfig = self.userConfig
+        client.initialize(callback: nil)
+
+        let variable = client.variable(key: "some_non_existent_variable", defaultValue: false)
+        XCTAssertFalse(variable.value)
+        XCTAssertTrue(variable.isDefaulted)
+        XCTAssertFalse(variable.defaultValue)
+    }
+
+    func testVariableMethodReturnsCorrectVariableForKey() {
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        client.initialize(callback: nil)
+        client.config?.userConfig = self.userConfig
+
+        let boolVar = client.variable(key: "bool-var", defaultValue: false)
+        XCTAssertTrue(boolVar.value)
+
+        let numVar = client.variable(key: "num-var", defaultValue: 0)
+        XCTAssertEqual(numVar.value, 4)
+
+        let stringVar = client.variable(key: "string-var", defaultValue: "default-string")
+        XCTAssertEqual(stringVar.value, "string1")
+
+        let defaultDict: NSDictionary = ["some_key": "some_value"]
+        let jsonVar = client.variable(key: "json-var", defaultValue: defaultDict)
+        XCTAssertEqual(jsonVar.value["key1"] as! String, "value1")
+        XCTAssertEqual((jsonVar.value["key2"] as! NSDictionary)["nestedKey1"] as! String, "nestedValue1")
+    }
+
+    func testVariableMethodReturnSameInstanceOfVariable() {
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        client.initialize(callback: nil)
+        client.config?.userConfig = self.userConfig
+
+        let boolVar = client.variable(key: "bool-var", defaultValue: false)
+        XCTAssert(client.variable(key: "bool-var", defaultValue: false) === boolVar)
+
+        let numVar = client.variable(key: "num-var", defaultValue: 0)
+        XCTAssert(client.variable(key: "num-var", defaultValue: 0) === numVar)
+
+        let stringVar = client.variable(key: "string-var", defaultValue: "default-string")
+        XCTAssert(client.variable(key: "string-var", defaultValue: "default-string") === stringVar)
+
+        let defaultDict: NSDictionary = ["some_key": "some_value"]
+        let jsonVar = client.variable(key: "json-var", defaultValue: defaultDict)
+        XCTAssert(client.variable(key: "json-var", defaultValue: defaultDict) === jsonVar)
+    }
+
+    func testVariableMethodReturnsDifferentVariableForANewDefaultValue() {
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        client.initialize(callback: nil)
+        client.config?.userConfig = self.userConfig
+
+        var stringVar = client.variable(key: "string-var", defaultValue: "default value")
+        XCTAssert(client.variable(key: "string-var", defaultValue: "default value") === stringVar)
+
+        stringVar = client.variable(key: "string-var", defaultValue: "new default value")
+        XCTAssert(client.variable(key: "string-var", defaultValue: "new default value") === stringVar)
     }
 
     func testRefetchConfigUsesTheCorrectUser() {
