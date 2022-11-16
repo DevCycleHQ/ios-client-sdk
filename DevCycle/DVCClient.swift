@@ -268,6 +268,7 @@ public class DVCClient {
             // TODO: save config in cache
             self.user = user
             self.cacheService.save(user: user)
+            self.cacheService.clearAnonUserId()
             callback?(error, config?.variables)
         })
     }
