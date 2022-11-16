@@ -10,7 +10,7 @@ protocol CacheServiceProtocol {
     func load() -> Cache
     func save(user: DVCUser)
     func setAnonUserId(anonUserId: String)
-    func getAnonUserId() -> String
+    func getAnonUserId() -> String?
     func clearAnonUserId()
 }
 
@@ -56,9 +56,8 @@ class CacheService: CacheServiceProtocol {
         self.setString(key: CacheKeys.anonUserId, value: anonUserId)
     }
     
-    func getAnonUserId() -> String {
-        let anonUserId: String = self.getString(key: CacheKeys.anonUserId) ?? ""
-        return anonUserId
+    func getAnonUserId() -> String? {
+        return self.getString(key: CacheKeys.anonUserId)
     }
     
     func clearAnonUserId() {

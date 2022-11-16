@@ -65,8 +65,8 @@ extension DevCycleServiceTests {
         func setAnonUserId(anonUserId: String) {
             // TODO: update implementation for tests
         }
-        func getAnonUserId() -> String {
-            return "TODO: Implement for tests"
+        func getAnonUserId() -> String? {
+            return nil
         }
         func clearAnonUserId() {
             // TODO: update implementation for tests
