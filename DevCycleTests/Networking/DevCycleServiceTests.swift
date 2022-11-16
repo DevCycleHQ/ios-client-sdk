@@ -62,6 +62,15 @@ extension DevCycleServiceTests {
         func save(user: DVCUser) {
             self.saveUserCalled = true
         }
+        func setAnonUserId(anonUserId: String) {
+            // TODO: update implementation for tests
+        }
+        func getAnonUserId() -> String {
+            return "TODO: Implement for tests"
+        }
+        func clearAnonUserId() {
+            // TODO: update implementation for tests
+        }
     }
 
     func getService() -> DevCycleService {

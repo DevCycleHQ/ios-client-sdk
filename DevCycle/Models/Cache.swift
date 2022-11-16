@@ -9,21 +9,27 @@ import Foundation
 protocol CacheServiceProtocol {
     func load() -> Cache
     func save(user: DVCUser)
+    func setAnonUserId(anonUserId: String)
+    func getAnonUserId() -> String
+    func clearAnonUserId()
 }
 
 struct Cache {
     var config: UserConfig?
     var user: DVCUser?
+    var anonUserId: String?
 }
 
 class CacheService: CacheServiceProtocol {
     struct CacheKeys {
         static let user = "user"
         static let config = "config"
+        static let anonUserId = "ANON_USER_ID"
     }
     
+    private let defaults: UserDefaults = UserDefaults.standard
+    
     func load() -> Cache {
-        let defaults = UserDefaults.standard
         var userConfig: UserConfig?
         var dvcUser: DVCUser?
         if let data = defaults.object(forKey: CacheKeys.config) as? Data,
@@ -35,14 +41,39 @@ class CacheService: CacheServiceProtocol {
         if let data = defaults.object(forKey: CacheKeys.user) as? Data {
             dvcUser = try? JSONDecoder().decode(DVCUser.self, from: data)
         }
-        
-        return Cache(config: userConfig, user: dvcUser)
+        let anonUserId = self.getAnonUserId()
+
+        return Cache(config: userConfig, user: dvcUser, anonUserId: anonUserId)
     }
     
     func save(user: DVCUser) {
-        let defaults = UserDefaults.standard
         if let data = try? JSONEncoder().encode(user) {
             defaults.set(data, forKey: CacheKeys.user)
         }
+    }
+    
+    func setAnonUserId(anonUserId: String) {
+        self.setString(key: CacheKeys.anonUserId, value: anonUserId)
+    }
+    
+    func getAnonUserId() -> String {
+        let anonUserId: String = self.getString(key: CacheKeys.anonUserId) ?? ""
+        return anonUserId
+    }
+    
+    func clearAnonUserId() {
+        self.remove(key: CacheKeys.anonUserId)
+    }
+    
+    private func setString(key: String, value: String) {
+        defaults.set(value, forKey: key)
+    }
+    
+    private func getString(key: String) -> String? {
+        return defaults.string(forKey: key)
+    }
+    
+    private func remove(key: String) {
+        defaults.removeObject(forKey: key)
     }
 }
