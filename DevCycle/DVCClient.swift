@@ -62,7 +62,6 @@ public class DVCClient {
     }
     
     internal func initialize(service: DevCycleServiceProtocol, callback: ClientInitializedHandler?) {
-    
         if let options = self.options {
             Log.level = options.logLevel
             self.flushEventsInterval = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
