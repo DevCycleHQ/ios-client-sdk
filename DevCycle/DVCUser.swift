@@ -19,6 +19,8 @@ enum UserError: Error {
 }
 
 public class UserBuilder {
+    private let cacheService: CacheServiceProtocol = CacheService()
+    
     var user: DVCUser
     var customData: [String: Any]?
     var privateCustomData: [String: Any]?
@@ -37,7 +39,13 @@ public class UserBuilder {
         if (self.user.isAnonymous != nil) { return self }
         self.user.isAnonymous = isAnonymous
         if (isAnonymous) {
-            self.user.userId = UUID().uuidString
+            if let cachedAnonUserId = self.cacheService.getAnonUserId() {
+                self.user.userId = cachedAnonUserId
+            } else {
+                let generatedAnonId = UUID().uuidString
+                self.user.userId = generatedAnonId
+                self.cacheService.setAnonUserId(anonUserId: generatedAnonId)
+            }
         }
         return self
     }
