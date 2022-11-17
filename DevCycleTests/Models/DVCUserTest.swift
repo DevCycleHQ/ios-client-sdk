@@ -70,6 +70,18 @@ class DVCUserTest: XCTestCase {
         XCTAssert(urlString!.contains("customData=%7B%22custom%22:%22key%22%7D"))
         XCTAssert(urlString!.contains("privateCustomData=%7B%22custom2%22:%22key2%22%7D"))
     }
+    
+    func testAnonymousUserIdCaching() {
+        let anonUser = try! DVCUser.builder().isAnonymous(true).build()
+        XCTAssertNotNil(anonUser)
+        XCTAssert(anonUser.isAnonymous!)
+        XCTAssert(UUID(uuidString: anonUser.userId!) != nil)
+        
+        let anonUser2 = try! DVCUser.builder().isAnonymous(true).build()
+        XCTAssertNotNil(anonUser2)
+        XCTAssert(anonUser2.isAnonymous!)
+        XCTAssertEqual(anonUser2.userId, anonUser.userId)
+    }
 }
 
 extension DVCUserTest {
