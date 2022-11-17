@@ -267,7 +267,9 @@ public class DVCClient {
             // TODO: save config in cache
             self.user = user
             self.cacheService.save(user: user)
-            self.cacheService.clearAnonUserId()
+            if let isAnonymousUser = user.isAnonymous, !isAnonymousUser {
+                self.cacheService.clearAnonUserId()
+            }
             callback?(error, config?.variables)
         })
     }
@@ -275,6 +277,7 @@ public class DVCClient {
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
         self.cache = cacheService.load()
         self.flushEvents()
+        self.cacheService.clearAnonUserId()
         let anonUser = try DVCUser.builder().isAnonymous(true).build()
         
         self.lastIdentifiedUser = anonUser
