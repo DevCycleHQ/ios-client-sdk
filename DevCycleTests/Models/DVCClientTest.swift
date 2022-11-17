@@ -296,6 +296,44 @@ class DVCClientTest: XCTestCase {
         }
         wait(for: [expectation], timeout: 2.0)
     }
+    
+    func testIdentifyUserClearsCachedAnonymousUserId() {
+        // Build Anon User, generates a new UUID
+        let anonUser1 = try! DVCUser.builder().isAnonymous(true).build()
+        XCTAssertNotNil(anonUser1)
+        
+        // Call Identify with a NOT anonymous User, this should erase the Cached UUID of anonUser1
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        client.config?.userConfig = self.userConfig
+        client.initialize(callback: nil)
+        
+        try! client.identifyUser(user: self.user, callback: { [weak self] error, variables in
+            // Wait for successful identifyUser callback, then build a new anonymous User, which SHOULD generate a new UUID
+            let anonUser2 = try! DVCUser.builder().isAnonymous(true).build()
+            XCTAssertNotNil(anonUser2)
+            XCTAssertNotEqual(anonUser2.userId, anonUser1.userId)
+        })
+        
+        // Since the cached Anonymous User Id is only cleared on successful identify call,
+        // the anonUser3.userId should be the same as anonUser1.userId
+        let anonUser3 = try! DVCUser.builder().isAnonymous(true).build()
+        XCTAssertNotNil(anonUser3)
+        XCTAssertEqual(anonUser3.userId, anonUser1.userId)
+    }
+    
+    func testResetUserGeneratesANewAnonymousUserId() {
+        let anonUser1 = try! DVCUser.builder().isAnonymous(true).build()
+        XCTAssertNotNil(anonUser1)
+        
+        let client = try! self.builder.user(anonUser1).environmentKey("my_env_key").build(onInitialized: nil)
+        client.initialize(callback: nil)
+        client.config?.userConfig = self.userConfig
+        
+        try! client.resetUser()
+        
+        // client.lastIdentifiedUser is updated to be the anonymous user when `resetUser` is called
+        XCTAssertNotEqual(anonUser1.userId, client.lastIdentifiedUser?.userId)
+    }
 }
 
 extension DVCClientTest {
