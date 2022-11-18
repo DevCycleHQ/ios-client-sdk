@@ -24,7 +24,7 @@ class CacheService: CacheServiceProtocol {
     struct CacheKeys {
         static let user = "user"
         static let config = "config"
-        static let anonUserId = "ANON_USER_ID"
+        static let anonUserId = "ANONYMOUS_USER_ID"
     }
     
     private let defaults: UserDefaults = UserDefaults.standard
