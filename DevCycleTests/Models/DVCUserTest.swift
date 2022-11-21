@@ -50,6 +50,16 @@ class DVCUserTest: XCTestCase {
         XCTAssert(UUID(uuidString: user.userId!) != nil)
     }
     
+    func testBuilderReturnsNilIfUserIdIsEmptyString() {
+        let user = try? DVCUser.builder().userId("").build()
+        XCTAssertNil(user)
+    }
+    
+    func testBuilderReturnsNilIfUserIdOnlyContainsWhitespaces() {
+        let user = try? DVCUser.builder().userId(" ").build()
+        XCTAssertNil(user)
+    }
+    
     func testToStringOnlyOutputsNonNilProperties() {
         var components = URLComponents(string: "test.com")
         components?.queryItems = getTestUser().toQueryItems()
