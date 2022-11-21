@@ -277,6 +277,8 @@ public class DVCClient {
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
         self.cache = cacheService.load()
         self.flushEvents()
+        
+        let cachedAnonUserId = self.cacheService.getAnonUserId()
         self.cacheService.clearAnonUserId()
         let anonUser = try DVCUser.builder().isAnonymous(true).build()
         
@@ -285,6 +287,9 @@ public class DVCClient {
         self.service?.getConfig(user: anonUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
             guard let self = self else { return }
             guard error == nil else {
+                if let previousAnonUserId = cachedAnonUserId {
+                    self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
+                }
                 callback?(error, nil)
                 return
             }
