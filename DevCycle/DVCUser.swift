@@ -81,12 +81,22 @@ public class UserBuilder {
     }
     
     public func build() throws -> DVCUser {
-        guard let _ = self.user.userId,
-              let _ = self.user.isAnonymous,
-              self.user.userId != ""
+        guard self.user.userId?.trimmingCharacters(in: .whitespacesAndNewlines) != ""
         else {
-            throw UserError.MissingUserIdAndIsAnonymousFalse
+            throw UserError.InvalidUser
         }
+        
+        if self.user.userId == nil {
+            if let cachedAnonUserId = self.cacheService.getAnonUserId() {
+                self.user.userId = cachedAnonUserId
+            } else {
+                let generatedAnonId = UUID().uuidString
+                self.user.userId = generatedAnonId
+                self.cacheService.setAnonUserId(anonUserId: generatedAnonId)
+            }
+            self.user.isAnonymous = true
+        }
+
         
         if let customData = self.customData {
             self.user.customData = try CustomData.customDataFromDic(customData)
