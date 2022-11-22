@@ -98,6 +98,8 @@ public class DVCClient {
                 }
                 self.config?.userConfig = config
                 
+                self.handleCachedAnonUserId(user: user)
+
                 if (self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB)) {
                     if (!(user.isAnonymous ?? false)) {
                         self.service?.saveEntity(user: user, completion: { data, response, error in
@@ -161,6 +163,12 @@ public class DVCClient {
                     self.config?.userConfig = config
                 }
             })
+        }
+    }
+
+    private func handleCachedAnonUserId(user: DVCUser) {
+        if let isAnonymousUser = user.isAnonymous, !isAnonymousUser {
+            self.cacheService.clearAnonUserId()
         }
     }
 
@@ -267,9 +275,7 @@ public class DVCClient {
             // TODO: save config in cache
             self.user = user
             self.cacheService.save(user: user)
-            if let isAnonymousUser = user.isAnonymous, !isAnonymousUser {
-                self.cacheService.clearAnonUserId()
-            }
+            self.handleCachedAnonUserId(user: user)
             callback?(error, config?.variables)
         })
     }
