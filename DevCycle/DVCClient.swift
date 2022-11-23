@@ -169,6 +169,8 @@ public class DVCClient {
     private func handleCachedAnonUserId(user: DVCUser) {
         if let isAnonymousUser = user.isAnonymous, !isAnonymousUser {
             self.cacheService.clearAnonUserId()
+        } else if let userId = user.userId {
+            self.cacheService.setAnonUserId(anonUserId: userId)
         }
     }
 
