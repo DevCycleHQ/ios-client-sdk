@@ -309,6 +309,7 @@ public class DVCClient {
             self.config?.userConfig = config
             self.user = anonUser
             self.cacheService.save(user: anonUser)
+            self.handleCachedAnonUserId(user: anonUser)
             callback?(error, config?.variables)
         })
     }

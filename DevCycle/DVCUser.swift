@@ -44,7 +44,6 @@ public class UserBuilder {
             } else {
                 let generatedAnonId = UUID().uuidString
                 self.user.userId = generatedAnonId
-                self.cacheService.setAnonUserId(anonUserId: generatedAnonId)
             }
         }
         return self
@@ -92,7 +91,6 @@ public class UserBuilder {
             } else {
                 let generatedAnonId = UUID().uuidString
                 self.user.userId = generatedAnonId
-                self.cacheService.setAnonUserId(anonUserId: generatedAnonId)
             }
             self.user.isAnonymous = true
         }
