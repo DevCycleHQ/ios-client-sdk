@@ -86,15 +86,20 @@ class DVCUserTest: XCTestCase {
     }
     
     func testAnonymousUserIdCaching() {
+        let cacheService = CacheService()
+        cacheService.setAnonUserId(anonUserId: "123")
+        
         let anonUser = try! DVCUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser)
         XCTAssert(anonUser.isAnonymous!)
-        XCTAssert(UUID(uuidString: anonUser.userId!) != nil)
+        XCTAssertEqual(anonUser.userId, "123")
         
         let anonUser2 = try! DVCUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser2)
         XCTAssert(anonUser2.isAnonymous!)
-        XCTAssertEqual(anonUser2.userId, anonUser.userId)
+        XCTAssertEqual(anonUser2.userId, "123")
+        
+        cacheService.clearAnonUserId()
     }
 }
 

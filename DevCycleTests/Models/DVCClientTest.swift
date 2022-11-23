@@ -303,7 +303,13 @@ class DVCClientTest: XCTestCase {
         XCTAssertNotNil(anonUser1)
         
         // Call Identify with a NOT anonymous User, this should erase the Cached UUID of anonUser1
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: { [weak self] error in
+            // Since the cached Anonymous User Id is only cleared on successful identify call,
+            // the anonUser3.userId should be the same as anonUser1.userId
+            let anonUser3 = try! DVCUser.builder().isAnonymous(true).build()
+            XCTAssertNotNil(anonUser3)
+            XCTAssertEqual(anonUser3.userId, anonUser1.userId)
+        })
         client.config?.userConfig = self.userConfig
         client.initialize(callback: nil)
         
@@ -313,12 +319,6 @@ class DVCClientTest: XCTestCase {
             XCTAssertNotNil(anonUser2)
             XCTAssertNotEqual(anonUser2.userId, anonUser1.userId)
         })
-        
-        // Since the cached Anonymous User Id is only cleared on successful identify call,
-        // the anonUser3.userId should be the same as anonUser1.userId
-        let anonUser3 = try! DVCUser.builder().isAnonymous(true).build()
-        XCTAssertNotNil(anonUser3)
-        XCTAssertEqual(anonUser3.userId, anonUser1.userId)
     }
     
     func testResetUserGeneratesANewAnonymousUserId() {
