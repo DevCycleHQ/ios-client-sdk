@@ -11,6 +11,8 @@ public class DVCOptions {
     var disableEventLogging: Bool?
     var logLevel: LogLevel = .error
     var enableEdgeDB: Bool = false
+    var disableConfigCache: Bool = false
+    var configCacheTTL: Int = 604800000
     
     public class OptionsBuilder {
         var options: DVCOptions
@@ -36,6 +38,16 @@ public class DVCOptions {
         
         public func enableEdgeDB(_ enable: Bool) -> OptionsBuilder {
             self.options.enableEdgeDB = enable
+            return self
+        }
+        
+        public func disableConfigCache(_ disable: Bool) -> OptionsBuilder {
+            self.options.disableConfigCache = disable
+            return self
+        }
+        
+        public func configCacheTTL(_ ttl: Int = 604800000) -> OptionsBuilder {
+            self.options.configCacheTTL = ttl
             return self
         }
         
