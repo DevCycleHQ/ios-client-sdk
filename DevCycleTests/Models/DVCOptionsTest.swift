@@ -19,11 +19,15 @@ class DVCOptionsTest: XCTestCase {
                 .disableEventLogging(false)
                 .flushEventsIntervalMs(1000)
                 .enableEdgeDB(true)
+                .configCacheTTL(172800000)
+                .disableConfigCache(true)
                 .build()
         XCTAssertNotNil(options)
         XCTAssert(options.flushEventsIntervalMs == 1000)
         XCTAssertFalse(options.disableEventLogging!)
         XCTAssert(options.enableEdgeDB)
+        XCTAssert(options.configCacheTTL == 172800000)
+        XCTAssert(options.disableConfigCache)
     }
     
     func testBuilderReturnsOptionsAndSomeAreNil() {
