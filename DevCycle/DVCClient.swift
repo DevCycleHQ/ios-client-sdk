@@ -44,6 +44,7 @@ public class DVCClient {
     private var closed: Bool = false
     private var inactivityWorkItem: DispatchWorkItem?
     private var variableInstanceDictonary = [String: NSMapTable<AnyObject, AnyObject>]()
+    private var isConfigCached: Bool = false
     
     /**
         Method to initialize the Client object after building
