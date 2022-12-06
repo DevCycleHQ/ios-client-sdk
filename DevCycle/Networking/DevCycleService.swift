@@ -81,12 +81,12 @@ class DevCycleService: DevCycleServiceProtocol {
         self.session = URLSession(configuration: sessionConfig)
         self.config = config
         self.cacheService = cacheService
-        self.requestConsolidator = RequestConsolidator(service: self)
+        self.requestConsolidator = RequestConsolidator(service: self, cacheService: cacheService)
     }
     
     func getConfig(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {
         let configRequest = createConfigRequest(user: user, enableEdgeDB: enableEdgeDB, extraParams: extraParams)
-        requestConsolidator.queue(request: configRequest, callback: completion)
+        requestConsolidator.queue(request: configRequest, user: user, callback: completion)
     }
     
     func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
