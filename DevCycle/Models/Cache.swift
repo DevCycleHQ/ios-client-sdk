@@ -12,11 +12,7 @@ protocol CacheServiceProtocol {
     func setAnonUserId(anonUserId: String)
     func getAnonUserId() -> String?
     func clearAnonUserId()
-    func setConfigUserId(user:DVCUser, userId: String?)
-    func getConfigUserId(user: DVCUser) -> String?
-    func setConfigFetchDate(user:DVCUser, fetchDate: Int)
-    func getConfigFetchDate(user: DVCUser) -> Int?
-    func saveConfig(user: DVCUser, configToSave: Data?)
+    func saveConfig(user: DVCUser, fetchDate: Int, configToSave: Data?)
     func getConfig(user: DVCUser) -> UserConfig?
 }
 
@@ -72,35 +68,17 @@ class CacheService: CacheServiceProtocol {
         self.remove(key: CacheKeys.anonUserId)
     }
     
-    func setConfigUserId(user:DVCUser, userId: String?) {
-        let key = getKeyPrefix(user: user)
-        if let data = userId {
+    func saveConfig(user: DVCUser, fetchDate: Int, configToSave: Data?) {
+        let key = getConfigKeyPrefix(user: user)
+        defaults.set(configToSave, forKey: key)
+        if let data = user.userId {
             self.setString(key: "\(key).USER_ID", value: data)
         }
-    }
-    
-    func getConfigUserId(user: DVCUser) -> String? {
-        let key = getKeyPrefix(user: user)
-        return self.getString(key: "\(key).USER_ID")
-    }
-    
-    func setConfigFetchDate(user:DVCUser, fetchDate: Int) {
-        let key = getKeyPrefix(user: user)
         self.setInt(key: "\(key).FETCH_DATE", value: fetchDate)
     }
     
-    func getConfigFetchDate(user: DVCUser) -> Int? {
-        let key = getKeyPrefix(user: user)
-        return self.getInt(key: "\(key).FETCH_DATE")
-    }
-    
-    func saveConfig(user: DVCUser, configToSave: Data?) {
-        let key = getKeyPrefix(user: user)
-        defaults.set(configToSave, forKey: key)
-    }
-    
     func getConfig(user: DVCUser) -> UserConfig? {
-        let key = getKeyPrefix(user: user)
+        let key = getConfigKeyPrefix(user: user)
         var config: UserConfig?
         
         if let data = defaults.object(forKey: key) as? Data,
@@ -130,7 +108,17 @@ class CacheService: CacheServiceProtocol {
         defaults.removeObject(forKey: key)
     }
     
-    private func getKeyPrefix(user: DVCUser) -> String {
+    private func getConfigUserId(user: DVCUser) -> String? {
+        let key = getConfigKeyPrefix(user: user)
+        return self.getString(key: "\(key).USER_ID")
+    }
+    
+    private func getConfigFetchDate(user: DVCUser) -> Int? {
+        let key = getConfigKeyPrefix(user: user)
+        return self.getInt(key: "\(key).FETCH_DATE")
+    }
+    
+    private func getConfigKeyPrefix(user: DVCUser) -> String {
         return (user.isAnonymous ?? false) ? CacheKeys.anonymousConfigKey : CacheKeys.identifiedConfigKey
     }
 }
