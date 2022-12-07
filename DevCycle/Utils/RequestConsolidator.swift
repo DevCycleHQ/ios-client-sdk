@@ -39,10 +39,7 @@ class RequestConsolidator {
                     return
                 }
                 
-                self.cacheService.saveConfig(user: user, configToSave: response.data)
-                self.cacheService.setConfigUserId(user: user, userId: user.userId)
-                self.cacheService.setConfigFetchDate(user: user, fetchDate: Int(Date().timeIntervalSince1970))
-
+                self.cacheService.saveConfig(user: user, fetchDate: Int(Date().timeIntervalSince1970), configToSave: response.data)
                 callback((config, response.error))
                 self.requestInFlight = false
             } else {
@@ -72,10 +69,7 @@ class RequestConsolidator {
                     return
                 }
                 
-                self.cacheService.saveConfig(user: user, configToSave: response.data)
-                self.cacheService.setConfigUserId(user: user, userId: user.userId)
-                self.cacheService.setConfigFetchDate(user: user, fetchDate: Int(Date().timeIntervalSince1970))
-
+                self.cacheService.saveConfig(user: user, fetchDate: Int(Date().timeIntervalSince1970), configToSave: response.data)
                 requestCallback.callback((config, response.error))
             }
             self.requestCallbacks = []
