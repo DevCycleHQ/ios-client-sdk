@@ -12,10 +12,12 @@ class RequestConsolidatorTests: XCTestCase {
 
     func testOneRequestFinishes() {
         let mockService = MockService()
-        let requestConsolidator = RequestConsolidator(service: mockService)
+        let mockCacheService = DevCycleServiceTests.MockCacheService()
+        let requestConsolidator = RequestConsolidator(service: mockService, cacheService: mockCacheService)
         let request = URLRequest(url: URL(string: "https://dummy.com")!)
         let expectation = expectation(description: "One request completes")
-        requestConsolidator.queue(request: request) { response in
+        let user = try! DVCUser.builder().userId("test_user").build()
+        requestConsolidator.queue(request: request, user: user) { response in
             XCTAssertEqual(response.config?.variables["testVar"]?.value as! String, "any_value")
             expectation.fulfill()
         }
@@ -25,26 +27,28 @@ class RequestConsolidatorTests: XCTestCase {
     
     func testMultipleRequestFinishesWithLatestURLConfig() {
         let mockService = MockService()
-        let requestConsolidator = RequestConsolidator(service: mockService)
+        let mockCacheService = DevCycleServiceTests.MockCacheService()
+        let requestConsolidator = RequestConsolidator(service: mockService, cacheService: mockCacheService)
         let request1 = URLRequest(url: URL(string: "https://dummy.com/firstPage")!)
         let request2 = URLRequest(url: URL(string: "https://dummy.com/secondPage")!)
         let request3 = URLRequest(url: URL(string: "https://dummy.com/thirdPage")!)
+        let user = try! DVCUser.builder().userId("test_user").build()
         let expectation = expectation(description: "Multiple request completes")
         expectation.expectedFulfillmentCount = 3
-        requestConsolidator.queue(request: request1) { response in
+        requestConsolidator.queue(request: request1, user: user) { response in
             print("testVar variable 1: \(response.config?.variables["testVar"]?.value as! String)")
             XCTAssertEqual(response.config?.variables["testVar"]?.value as! String, "thirdPage")
             print("Fulfill 1")
             expectation.fulfill()
         }
         XCTAssertTrue(requestConsolidator.requestInFlight)
-        requestConsolidator.queue(request: request2) { response in
+        requestConsolidator.queue(request: request2, user: user) { response in
             print("testVar variable 2: \(response.config?.variables["testVar"]?.value as! String)")
             XCTAssertEqual(response.config?.variables["testVar"]?.value as! String, "thirdPage")
             print("Fulfill 2")
             expectation.fulfill()
         }
-        requestConsolidator.queue(request: request3) { response in
+        requestConsolidator.queue(request: request3, user: user) { response in
             print("testVar variable 3: \(response.config?.variables["testVar"]?.value as! String)")
             XCTAssertEqual(response.config?.variables["testVar"]?.value as! String, "thirdPage")
             print("Fulfill 3")
