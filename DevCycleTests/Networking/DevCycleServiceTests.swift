@@ -71,6 +71,30 @@ extension DevCycleServiceTests {
         func clearAnonUserId() {
             // TODO: update implementation for tests
         }
+        
+        func setConfigUserId(user:DVCUser, userId: String?) {
+            // TODO: update implementation for tests
+        }
+        
+        func getConfigUserId(user: DVCUser) -> String? {
+            return nil
+        }
+        
+        func setConfigFetchDate(user:DVCUser, fetchDate: Int) {
+            // TODO: update implementation for tests
+        }
+        
+        func getConfigFetchDate(user: DVCUser) -> Int? {
+            return nil
+        }
+        
+        func saveConfig(user: DVCUser, configToSave: Data?) {
+            self.saveConfigCalled = true
+        }
+        
+        func getConfig(user: DVCUser) -> UserConfig? {
+            return nil
+        }
     }
 
     func getService() -> DevCycleService {
