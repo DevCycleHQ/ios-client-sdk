@@ -98,44 +98,44 @@ public class DVCClient {
             self.config?.userConfig = cachedConfig
             self.isConfigCached = true
             Log.debug("Loaded config from cache")
-        } else {
-            self.service?.getConfig(user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
-                guard let self = self else { return }
-                if let error = error {
-                    Log.error("Error getting config: \(error)", tags: ["setup"])
-                    self.cache = self.cacheService.load()
-                } else {
-                    if let config = config {
-                        Log.debug("Config: \(config)", tags: ["setup"])
-                    }
-                    self.config?.userConfig = config
-                    self.isConfigCached = false
-                    
-                    self.handleCachedAnonUserId(user: user)
-
-                    if (self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB)) {
-                        if (!(user.isAnonymous ?? false)) {
-                            self.service?.saveEntity(user: user, completion: { data, response, error in
-                                if error != nil {
-                                    Log.error("Error saving user entity for \(user). Error: \(String(describing: error))")
-                                } else {
-                                    Log.info("Saved user entity")
-                                }
-                            })
-                        }
-                    }
-                }
-
-                self.setupSSEConnection()
-
-                for handler in self.configCompletionHandlers {
-                    handler(error)
-                }
-                callback?(error)
-                self.initialized = true
-                self.configCompletionHandlers = []
-            })
         }
+        
+        self.service?.getConfig(user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
+            guard let self = self else { return }
+            if let error = error {
+                Log.error("Error getting config: \(error)", tags: ["setup"])
+                self.cache = self.cacheService.load()
+            } else {
+                if let config = config {
+                    Log.debug("Config: \(config)", tags: ["setup"])
+                }
+                self.config?.userConfig = config
+                self.isConfigCached = false
+                
+                self.handleCachedAnonUserId(user: user)
+
+                if (self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB)) {
+                    if (!(user.isAnonymous ?? false)) {
+                        self.service?.saveEntity(user: user, completion: { data, response, error in
+                            if error != nil {
+                                Log.error("Error saving user entity for \(user). Error: \(String(describing: error))")
+                            } else {
+                                Log.info("Saved user entity")
+                            }
+                        })
+                    }
+                }
+            }
+
+            self.setupSSEConnection()
+
+            for handler in self.configCompletionHandlers {
+                handler(error)
+            }
+            callback?(error)
+            self.initialized = true
+            self.configCompletionHandlers = []
+        })
         
         self.flushTimer = Timer.scheduledTimer(
             withTimeInterval: TimeInterval(self.flushEventsInterval),
@@ -175,6 +175,7 @@ public class DVCClient {
                     Log.error("Error getting config: \(error)", tags: ["refetchConfig"])
                 } else {
                     self.config?.userConfig = config
+                    self.isConfigCached = false
                 }
             })
         }
@@ -287,8 +288,8 @@ public class DVCClient {
                     Log.debug("Config: \(config)", tags: ["identify"])
                 }
                 self.config?.userConfig = config
+                self.isConfigCached = false
             }
-            // TODO: save config in cache
             self.user = user
             self.cacheService.save(user: user)
             self.handleCachedAnonUserId(user: user)
@@ -316,11 +317,11 @@ public class DVCClient {
                 return
             }
     
-            // TODO: save config in cache
             if let config = config {
                 Log.debug("Config: \(config)", tags: ["reset"])
             }
             self.config?.userConfig = config
+            self.isConfigCached = false
             self.user = anonUser
             self.cacheService.save(user: anonUser)
             self.handleCachedAnonUserId(user: anonUser)
