@@ -13,7 +13,7 @@ protocol CacheServiceProtocol {
     func getAnonUserId() -> String?
     func clearAnonUserId()
     func saveConfig(user: DVCUser, fetchDate: Int, configToSave: Data?)
-    func getConfig(user: DVCUser) -> UserConfig?
+    func getConfig(user: DVCUser, ttlMs: Int) -> UserConfig?
 }
 
 struct Cache {
@@ -77,14 +77,31 @@ class CacheService: CacheServiceProtocol {
         self.setInt(key: "\(key).FETCH_DATE", value: fetchDate)
     }
     
-    func getConfig(user: DVCUser) -> UserConfig? {
+    func getConfig(user: DVCUser, ttlMs: Int) -> UserConfig? {
         let key = getConfigKeyPrefix(user: user)
         var config: UserConfig?
         
+        let savedUserId = self.getString(key: "\(key).USER_ID")
+        let savedFetchDate = self.getInt(key: "\(key).FETCH_DATE")
+        
+        if let userId = user.userId, userId != savedUserId {
+            Log.debug("Skipping cached config: user ID does not match")
+            return nil
+        }
+        
+        let oldestValidDateMs = Int(Date().timeIntervalSince1970) - ttlMs
+        if let savedFetchDate = savedFetchDate, savedFetchDate < oldestValidDateMs {
+            Log.debug("Skipping cached config: last fetched date is too old")
+            return nil
+        }
+                
         if let data = defaults.object(forKey: key) as? Data,
            let dictionary = try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String:Any] {
             config = try? UserConfig(from: dictionary)
+        } else {
+            Log.debug("Skipping cached config: no config found")
         }
+        
         return config
     }
     
@@ -106,16 +123,6 @@ class CacheService: CacheServiceProtocol {
     
     private func remove(key: String) {
         defaults.removeObject(forKey: key)
-    }
-    
-    private func getConfigUserId(user: DVCUser) -> String? {
-        let key = getConfigKeyPrefix(user: user)
-        return self.getString(key: "\(key).USER_ID")
-    }
-    
-    private func getConfigFetchDate(user: DVCUser) -> Int? {
-        let key = getConfigKeyPrefix(user: user)
-        return self.getInt(key: "\(key).FETCH_DATE")
     }
     
     private func getConfigKeyPrefix(user: DVCUser) -> String {
