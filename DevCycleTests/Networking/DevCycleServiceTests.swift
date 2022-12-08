@@ -76,7 +76,7 @@ extension DevCycleServiceTests {
             self.saveConfigCalled = true
         }
         
-        func getConfig(user: DVCUser) -> UserConfig? {
+        func getConfig(user: DVCUser, ttlMs: Int) -> UserConfig? {
             return nil
         }
     }

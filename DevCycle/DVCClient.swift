@@ -88,41 +88,54 @@ public class DVCClient {
             return
         }
         self.service = service
-        self.service?.getConfig(user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
-            guard let self = self else { return }
-            if let error = error {
-                Log.error("Error getting config: \(error)", tags: ["setup"])
-                self.cache = self.cacheService.load()
-            } else {
-                if let config = config {
-                    Log.debug("Config: \(config)", tags: ["setup"])
-                }
-                self.config?.userConfig = config
-                
-                self.handleCachedAnonUserId(user: user)
+        
+        var cachedConfig: UserConfig?
+        if let configCacheTTL = options?.configCacheTTL, let disableConfigCache = options?.disableConfigCache, !disableConfigCache {
+            cachedConfig = cacheService.getConfig(user: user, ttlMs: configCacheTTL)
+        }
+        
+        if cachedConfig != nil {
+            self.config?.userConfig = cachedConfig
+            self.isConfigCached = true
+            Log.debug("Loaded config from cache")
+        } else {
+            self.service?.getConfig(user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
+                guard let self = self else { return }
+                if let error = error {
+                    Log.error("Error getting config: \(error)", tags: ["setup"])
+                    self.cache = self.cacheService.load()
+                } else {
+                    if let config = config {
+                        Log.debug("Config: \(config)", tags: ["setup"])
+                    }
+                    self.config?.userConfig = config
+                    self.isConfigCached = false
+                    
+                    self.handleCachedAnonUserId(user: user)
 
-                if (self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB)) {
-                    if (!(user.isAnonymous ?? false)) {
-                        self.service?.saveEntity(user: user, completion: { data, response, error in
-                            if error != nil {
-                                Log.error("Error saving user entity for \(user). Error: \(String(describing: error))")
-                            } else {
-                                Log.info("Saved user entity")
-                            }
-                        })
+                    if (self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB)) {
+                        if (!(user.isAnonymous ?? false)) {
+                            self.service?.saveEntity(user: user, completion: { data, response, error in
+                                if error != nil {
+                                    Log.error("Error saving user entity for \(user). Error: \(String(describing: error))")
+                                } else {
+                                    Log.info("Saved user entity")
+                                }
+                            })
+                        }
                     }
                 }
-            }
 
-            self.setupSSEConnection()
+                self.setupSSEConnection()
 
-            for handler in self.configCompletionHandlers {
-                handler(error)
-            }
-            callback?(error)
-            self.initialized = true
-            self.configCompletionHandlers = []
-        })
+                for handler in self.configCompletionHandlers {
+                    handler(error)
+                }
+                callback?(error)
+                self.initialized = true
+                self.configCompletionHandlers = []
+            })
+        }
         
         self.flushTimer = Timer.scheduledTimer(
             withTimeInterval: TimeInterval(self.flushEventsInterval),
