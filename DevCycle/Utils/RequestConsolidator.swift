@@ -40,8 +40,8 @@ class RequestConsolidator {
                 }
                 
                 self.cacheService.saveConfig(user: user, fetchDate: Int(Date().timeIntervalSince1970), configToSave: response.data)
-                callback((config, response.error))
                 self.requestInFlight = false
+                callback((config, response.error))
             } else {
                 self.requestCallbacks.insert(
                     RequestWithCallback(
