@@ -12,13 +12,13 @@ let package = Package(
             targets: ["DevCycle"]),
     ],
     dependencies: [
-       .package(url: "https://github.com/LaunchDarkly/swift-eventsource.git", .upToNextMajor(from: "3.0.0"))
+       .package(name: "LDSwiftEventSource", url: "https://github.com/LaunchDarkly/swift-eventsource.git", .upToNextMajor(from: "3.0.0"))
    ],
     targets: [
         .target(
             name: "DevCycle",
             dependencies: [
-                "LDSwiftEventSource"
+                .product(name: "LDSwiftEventSource", package: "LDSwiftEventSource")
             ],
             path: "DevCycle"
         ),
