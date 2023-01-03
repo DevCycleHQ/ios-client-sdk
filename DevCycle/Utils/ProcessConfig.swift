@@ -5,6 +5,8 @@
 //  Copyright © 2022 Taplytics. All rights reserved.
 //
 
+import Foundation
+
 internal func processConfig(_ responseData: Data?) -> UserConfig? {
     guard let data = responseData else {
         Log.error("No response data from request", tags: ["service", "request"])
