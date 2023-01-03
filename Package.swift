@@ -17,10 +17,10 @@ let package = Package(
     targets: [
         .target(
             name: "DevCycle",
-            path: "DevCycle",
             dependencies: [
                 "LDSwiftEventSource"
-            ]
+            ],
+            path: "DevCycle"
         ),
         .testTarget(
             name: "DevCycleTests",
