@@ -130,6 +130,7 @@ public struct Feature {
     var type: String
     var variationKey: String
     var variationName: String
+    var evalReason: String?
     
     init (from dictionary: [String: String]) throws {
         guard let id = dictionary["_id"] else { throw UserConfigError.MissingProperty("_id in Feature object") }
@@ -144,6 +145,7 @@ public struct Feature {
         self.type = type
         self.variationKey = variationKey
         self.variationName = variationName
+        self.evalReason = dictionary["evalReason"]
     }
 }
 
