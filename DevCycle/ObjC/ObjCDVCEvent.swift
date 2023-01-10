@@ -49,7 +49,7 @@ public class ObjCDVCEvent: NSObject {
             eventBuilder = eventBuilder.clientDate(eventDate as Date)
         }
         if let eventValue = self.value {
-            eventBuilder = eventBuilder.value(eventValue as! Int)
+            eventBuilder = eventBuilder.value(eventValue as! Double)
         }
         if let eventMetaData = self.metaData {
             eventBuilder = eventBuilder.metaData(eventMetaData as! [String : Any])
