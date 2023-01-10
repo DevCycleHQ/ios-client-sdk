@@ -14,10 +14,10 @@ public class DVCEvent {
     var type: String?
     var target: String?
     var clientDate: Date?
-    var value: Int?
+    var value: Double?
     var metaData: [String: Any]?
     
-    init (type: String?, target: String?, clientDate: Date?, value: Int?, metaData: [String: Any]?) {
+    init (type: String?, target: String?, clientDate: Date?, value: Double?, metaData: [String: Any]?) {
         self.type =  type
         self.target = target
         self.clientDate = clientDate
@@ -47,7 +47,7 @@ public class DVCEvent {
             return self
         }
         
-        public func value(_ value: Int) -> EventBuilder {
+        public func value(_ value: Double) -> EventBuilder {
             self.event.value = value
             return self
         }

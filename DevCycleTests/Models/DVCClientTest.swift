@@ -92,6 +92,22 @@ class DVCClientTest: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
     
+    func testTrackWithValidDVCEventWithAllParamsDefinedAndDoubleValue() {
+        let expectation = XCTestExpectation(description: "EventQueue has one fully defined event")
+        let client = DVCClient()
+        let metaData: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
+        let event: DVCEvent = try! DVCEvent.builder().type("test").target("test").clientDate(Date()).value(364.25).metaData(metaData).build()
+        
+        client.track(event)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertTrue(client.eventQueue.events.count == 1)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 1.0)
+    }
+    
     func testFlushEventsWithOneEventInQueue() {
         let expectation = XCTestExpectation(description: "EventQueue publishes an event")
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
