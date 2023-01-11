@@ -127,6 +127,31 @@ class DVCClientTest: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
     
+    func testFlushEventsWithOneEventInQueueAndCallback() {
+        let expectation = XCTestExpectation(description: "EventQueue publishes an event")
+        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
+        let service = MockService() // will assert if publishEvents was called
+
+        let client = try! self.builder.user(self.user).environmentKey("my_env_key").options(options).service(service).build(onInitialized: nil)
+        
+        let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
+        
+        client.track(event)
+        client.flushEvents(callback: { error in
+            XCTAssertNil(error)
+            // test that later tracked events are ignored
+            XCTAssertEqual(service.publishCallCount, 1)
+            XCTAssertEqual(service.eventPublishCount, 1)
+            expectation.fulfill()
+        })
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertTrue(service.publishCallCount == 1)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 1.0)
+    }
+    
     func testCloseFlushesRemainingEvents() {
         let expectation = XCTestExpectation(description: "Close flushes remaining events")
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
