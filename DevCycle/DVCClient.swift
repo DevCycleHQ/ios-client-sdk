@@ -343,11 +343,11 @@ public class DVCClient {
     }
     
     
-    public func flushEvents() {
-        self.flushEvents(callback: nil)
+    public func flushEvents(callback: FlushCompletedHandler?) {
+        self.flushEvents(callback)
     }
     
-    internal func flushEvents(callback: FlushCompletedHandler? = nil) {
+    internal func flushEvents(_ callback: FlushCompletedHandler? = nil) {
         if (!self.eventQueue.isEmpty()) {
             guard let user = self.user else {
                 Log.error("Flushing events failed, user not defined")
