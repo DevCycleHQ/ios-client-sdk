@@ -214,7 +214,9 @@ class DevCycleService: DevCycleServiceProtocol {
                 userQueryItems.append(URLQueryItem(name: "sseLastModified", value: String(lastModified)))
             }
         }
-        let urlComponents: URLComponents = createRequestUrl(type: "config", userQueryItems)
+        var urlComponents: URLComponents = createRequestUrl(type: "config", userQueryItems)
+        urlComponents.percentEncodedQuery = urlComponents.percentEncodedQuery?
+            .replacingOccurrences(of: "+", with: "%2B")
         let url = urlComponents.url!
         return URLRequest(url: url)
     }
