@@ -292,7 +292,7 @@ class DVCClientTest: XCTestCase {
         client.inactivityDelayMS = 0
         #if canImport(UIKit)
             NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
-        #elseif canImport(NSApplication)
+        #elseif canImport(AppKit)
             NotificationCenter.default.post(name: NSApplication.willResignActiveNotification, object: nil)
         #endif
         
@@ -315,7 +315,7 @@ class DVCClientTest: XCTestCase {
         client.sseConnection = mockSSEConnection
         #if canImport(UIKit)
             NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
-        #elseif canImport(NSApplication)
+        #elseif canImport(AppKit)
             NotificationCenter.default.post(name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
         
@@ -338,7 +338,7 @@ class DVCClientTest: XCTestCase {
         client.inactivityDelayMS = 120000
         #if canImport(UIKit)
             NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
-        #elseif canImport(NSApplication)
+        #elseif canImport(AppKit)
             NotificationCenter.default.post(name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
         

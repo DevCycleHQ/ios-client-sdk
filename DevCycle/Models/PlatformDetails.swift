@@ -21,7 +21,7 @@ struct PlatformDetails {
     #elseif canImport(IOKit)
     var deviceModel = getMacOSModelIdentifier()
     var systemVersion = getMacOSVersion()
-    var systemName = "macos"
+    var systemName = "macOS"
     #endif
     
     var sdkType = "mobile"
