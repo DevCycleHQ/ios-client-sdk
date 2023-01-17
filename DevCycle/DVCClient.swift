@@ -6,9 +6,8 @@
 
 import Foundation
 
-#if os(iOS) || os(watchOS)
+#if canImport(UIKit)
 import UIKit
-#elseif os(OSX)
 #endif
 
 enum ClientError: Error {
@@ -79,10 +78,10 @@ public class DVCClient {
         
         self.setup(service: service, callback: callback)
         
-        #if os(iOS) || os(watchOS)
+        #if canImport(UIKit)
             NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-        #elseif os(OSX)
+        #elseif canImport(NSApplication)
             NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: NSApplication.willResignActiveNotification, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
