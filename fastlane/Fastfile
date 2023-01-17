@@ -21,7 +21,7 @@ platform :ios do
     run_tests(
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
-      scheme: "DevCycleTests",
+      scheme: "DevCycle",
       result_bundle: true
     )
   end
@@ -31,10 +31,10 @@ platform :mac do
   desc "run mac DevCycle tests"
   lane :tests do
     run_tests(
-      device: "Any Mac",
+      skip_detect_devices: true,
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
-      scheme: "DevCycleTests",
+      scheme: "DevCycle",
       result_bundle: true
     )
   end
