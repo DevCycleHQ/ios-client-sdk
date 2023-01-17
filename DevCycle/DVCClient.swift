@@ -5,7 +5,11 @@
 //
 
 import Foundation
+
+#if os(iOS) || os(watchOS)
 import UIKit
+#elseif os(OSX)
+#endif
 
 enum ClientError: Error {
     case NotImplemented
@@ -75,8 +79,12 @@ public class DVCClient {
         
         self.setup(service: service, callback: callback)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        #if os(iOS) || os(watchOS)
+            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        #elseif os(OSX)
+            // TODO: figure out how to duplicate appMovedToBackground and appMovedToForeground in macos
+        #endif
     }
     
     /**

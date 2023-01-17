@@ -37,7 +37,7 @@
 
 /* Begin PBXFileReference section */
 		52404CF127F4EC4000290A31 /* DevCycle-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "DevCycle-iOS.xcodeproj"; path = "../../DevCycle-iOS.xcodeproj"; sourceTree = "<group>"; };
-		52A486CB278626E700DABA34 /* DevCycle-Example-App-ObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DevCycle-Example-App-ObjC.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		52A486CB278626E700DABA34 /* DevCycle-iOS-Example-App-ObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DevCycle-iOS-Example-App-ObjC.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		52A486CE278626E700DABA34 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		52A486CF278626E700DABA34 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		52A486D1278626E700DABA34 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
@@ -77,7 +77,7 @@
 		52A486C2278626E700DABA34 = {
 			isa = PBXGroup;
 			children = (
-				52A486CD278626E700DABA34 /* DevCycle-Example-App-ObjC */,
+				52A486CD278626E700DABA34 /* DevCycle-iOS-Example-App-ObjC */,
 				52A486CC278626E700DABA34 /* Products */,
 				52A486F12786275800DABA34 /* Frameworks */,
 			);
@@ -86,12 +86,12 @@
 		52A486CC278626E700DABA34 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				52A486CB278626E700DABA34 /* DevCycle-Example-App-ObjC.app */,
+				52A486CB278626E700DABA34 /* DevCycle-iOS-Example-App-ObjC.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		52A486CD278626E700DABA34 /* DevCycle-Example-App-ObjC */ = {
+		52A486CD278626E700DABA34 /* DevCycle-iOS-Example-App-ObjC */ = {
 			isa = PBXGroup;
 			children = (
 				52A486F32786276000DABA34 /* Managers */,
@@ -107,7 +107,7 @@
 				52A486DF278626EC00DABA34 /* Info.plist */,
 				52A486E0278626EC00DABA34 /* main.m */,
 			);
-			path = "DevCycle-Example-App-ObjC";
+			path = "DevCycle-iOS-Example-App-ObjC";
 			sourceTree = "<group>";
 		};
 		52A486F12786275800DABA34 /* Frameworks */ = {
@@ -130,9 +130,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		52A486CA278626E700DABA34 /* DevCycle-Example-App-ObjC */ = {
+		52A486CA278626E700DABA34 /* DevCycle-iOS-Example-App-ObjC */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 52A486E4278626EC00DABA34 /* Build configuration list for PBXNativeTarget "DevCycle-Example-App-ObjC" */;
+			buildConfigurationList = 52A486E4278626EC00DABA34 /* Build configuration list for PBXNativeTarget "DevCycle-iOS-Example-App-ObjC" */;
 			buildPhases = (
 				52A486C7278626E700DABA34 /* Sources */,
 				52A486C8278626E700DABA34 /* Frameworks */,
@@ -142,9 +142,9 @@
 			);
 			dependencies = (
 			);
-			name = "DevCycle-Example-App-ObjC";
+			name = "DevCycle-iOS-Example-App-ObjC";
 			productName = "DevCycle-Example-App-ObjC";
-			productReference = 52A486CB278626E700DABA34 /* DevCycle-Example-App-ObjC.app */;
+			productReference = 52A486CB278626E700DABA34 /* DevCycle-iOS-Example-App-ObjC.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -161,7 +161,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 52A486C6278626E700DABA34 /* Build configuration list for PBXProject "DevCycle-Example-App-ObjC" */;
+			buildConfigurationList = 52A486C6278626E700DABA34 /* Build configuration list for PBXProject "DevCycle-iOS-Example-App-ObjC" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -180,7 +180,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				52A486CA278626E700DABA34 /* DevCycle-Example-App-ObjC */,
+				52A486CA278626E700DABA34 /* DevCycle-iOS-Example-App-ObjC */,
 			);
 		};
 /* End PBXProject section */
@@ -382,7 +382,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.devcycle.DevCycle-Example-App-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.devcycle.DevCycle-iOS-Example-App-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -409,7 +409,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.devcycle.DevCycle-Example-App-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.devcycle.DevCycle-iOS-Example-App-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -419,7 +419,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		52A486C6278626E700DABA34 /* Build configuration list for PBXProject "DevCycle-Example-App-ObjC" */ = {
+		52A486C6278626E700DABA34 /* Build configuration list for PBXProject "DevCycle-iOS-Example-App-ObjC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				52A486E2278626EC00DABA34 /* Debug */,
@@ -428,7 +428,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		52A486E4278626EC00DABA34 /* Build configuration list for PBXNativeTarget "DevCycle-Example-App-ObjC" */ = {
+		52A486E4278626EC00DABA34 /* Build configuration list for PBXNativeTarget "DevCycle-iOS-Example-App-ObjC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				52A486E5278626EC00DABA34 /* Debug */,

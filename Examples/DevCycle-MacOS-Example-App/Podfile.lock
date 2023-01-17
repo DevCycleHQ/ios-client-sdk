@@ -1,5 +1,5 @@
 PODS:
-  - DevCycle (1.5.0):
+  - DevCycle (1.7.2):
     - LDSwiftEventSource (~> 3.0)
   - LDSwiftEventSource (3.0.0)
 
@@ -15,9 +15,9 @@ EXTERNAL SOURCES:
     :path: "../../"
 
 SPEC CHECKSUMS:
-  DevCycle: 7dff11fe54311e320e02cefd6ec3cdcac0b0d6ee
+  DevCycle: 3dfc417c00e7b8fe364d7162058ac2fec56693a0
   LDSwiftEventSource: 824ce51a4fa8e79498c9b67ae672bfa802bd7464
 
-PODFILE CHECKSUM: b2a39c4817832b360dfcfb452fa7e66031554f37
+PODFILE CHECKSUM: 6807d28a05a7e8afb159d5585d2af23fed86c07c
 
 COCOAPODS: 1.11.3
