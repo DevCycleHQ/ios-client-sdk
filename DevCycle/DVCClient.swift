@@ -83,7 +83,8 @@ public class DVCClient {
             NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         #elseif os(OSX)
-            // TODO: figure out how to duplicate appMovedToBackground and appMovedToForeground in macos
+            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: NSApplication.willResignActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
     }
     

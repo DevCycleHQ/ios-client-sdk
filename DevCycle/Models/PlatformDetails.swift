@@ -19,10 +19,8 @@ struct PlatformDetails {
     var systemVersion: String { UIDevice.current.systemVersion }
     var systemName: String { UIDevice.current.systemName }
     #elseif os(OSX)
-    
-    // TODO: figure out how to get this from macos: https://stackoverflow.com/questions/20070333/obtain-model-identifier-string-on-os-x
-    var deviceModel = getModelIdentifier()
-    var systemVersion: String { ProcessInfo.processInfo.operatingSystemVersionString }
+    var deviceModel = getMacOSModelIdentifier()
+    var systemVersion = getMacOSVersion()
     var systemName = "macos"
     #endif
     
@@ -30,7 +28,12 @@ struct PlatformDetails {
     var sdkVersion = "1.7.2"
 }
 
-func getModelIdentifier() -> String? {
+func getMacOSVersion() -> String {
+    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+    return "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
+}
+
+func getMacOSModelIdentifier() -> String {
     let service = IOServiceGetMatchingService(kIOMasterPortDefault,
                                               IOServiceMatching("IOPlatformExpertDevice"))
     var modelIdentifier: String?
@@ -39,5 +42,9 @@ func getModelIdentifier() -> String? {
     }
 
     IOObjectRelease(service)
-    return modelIdentifier
+    if let modelId = modelIdentifier {
+        return modelId
+    } else {
+        return "unknown macos"
+    }
 }
