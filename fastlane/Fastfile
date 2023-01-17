@@ -32,7 +32,7 @@ platform :mac do
   lane :tests do
     run_tests(
       skip_detect_devices: true,
-      destination: "platform=macOS"
+      destination: "platform=macOS",
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
       scheme: "DevCycle",
