@@ -31,6 +31,7 @@ platform :mac do
   desc "run mac DevCycle tests"
   lane :tests do
     run_tests(
+      device: "Any Mac",
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
       scheme: "DevCycle",
