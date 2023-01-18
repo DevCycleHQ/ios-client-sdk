@@ -34,7 +34,7 @@ platform :mac do
       skip_detect_devices: true,
       device: "macos",
       destination: "platform=macOS,arch=x86_64",
-      xcargs: "-destination 'arch=x86_64'",
+      xcargs: "-destination 'arch=x86_64' -allowProvisioningUpdates",
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
       scheme: "DevCycle",
