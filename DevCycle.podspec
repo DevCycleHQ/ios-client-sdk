@@ -10,6 +10,7 @@ Pod::Spec.new do |spec|
   spec.homepage     = "https://devcycle.com/"
   spec.license = { :type => "MIT", :file => "LICENSE.txt" }
 
+  spec.macos.deployment_target   = "10.13"
   spec.ios.deployment_target     = "12.0"
   spec.source = { :git => 'https://github.com/DevCycleHQ/ios-client-sdk.git', :tag => "#{spec.version}" }
 

@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "DevCycle",
     platforms: [
-        .iOS(.v12)
+        .iOS(.v12),
+        .macOS(.v10_13)
     ],
     products: [
         .library(
@@ -12,7 +13,11 @@ let package = Package(
             targets: ["DevCycle"]),
     ],
     dependencies: [
-       .package(name: "LDSwiftEventSource", url: "https://github.com/LaunchDarkly/swift-eventsource.git", .upToNextMajor(from: "3.0.0"))
+       .package(
+            name: "LDSwiftEventSource",
+            url: "https://github.com/LaunchDarkly/swift-eventsource.git",
+            .upToNextMajor(from: "3.0.0")
+       )
    ],
     targets: [
         .target(

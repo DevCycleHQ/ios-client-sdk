@@ -5,7 +5,9 @@
 //
 
 import XCTest
+#if canImport(UIKit)
 import UIKit
+#endif
 
 @testable import DevCycle
 
@@ -288,7 +290,11 @@ class DVCClientTest: XCTestCase {
         let mockSSEConnection = MockSSEConnection()
         client.sseConnection = mockSSEConnection
         client.inactivityDelayMS = 0
-        NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
+        #if canImport(UIKit)
+            NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
+        #elseif canImport(AppKit)
+            NotificationCenter.default.post(name: NSApplication.willResignActiveNotification, object: nil)
+        #endif
         
         let expectation = XCTestExpectation(description: "close gets called when backgrounded")
         
@@ -307,7 +313,11 @@ class DVCClientTest: XCTestCase {
         let mockSSEConnection = MockSSEConnection()
         mockSSEConnection.connected = false
         client.sseConnection = mockSSEConnection
-        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        #if canImport(UIKit)
+            NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        #elseif canImport(AppKit)
+            NotificationCenter.default.post(name: NSApplication.willBecomeActiveNotification, object: nil)
+        #endif
         
         let expectation = XCTestExpectation(description: "reopen gets called when foregrounded")
         
@@ -326,7 +336,11 @@ class DVCClientTest: XCTestCase {
         mockSSEConnection.connected = true
         client.sseConnection = mockSSEConnection
         client.inactivityDelayMS = 120000
-        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        #if canImport(UIKit)
+            NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        #elseif canImport(AppKit)
+            NotificationCenter.default.post(name: NSApplication.willBecomeActiveNotification, object: nil)
+        #endif
         
         let expectation = XCTestExpectation(description: "reopen doesn't called when foregrounded")
         
