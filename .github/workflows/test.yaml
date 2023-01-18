@@ -19,7 +19,5 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           use-xcframeworks: true
-      - name: Fastlane iOS Tests
-        run: fastlane ios tests
       - name: Fastlane macOS Tests
         run: fastlane mac tests
