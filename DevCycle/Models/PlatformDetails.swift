@@ -25,7 +25,7 @@ struct PlatformDetails {
     #endif
     
     var sdkType = "mobile"
-    var sdkVersion = "1.7.2"
+    var sdkVersion = "1.8.0"
 }
 
 #if canImport(IOKit)
