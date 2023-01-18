@@ -5,6 +5,7 @@ let package = Package(
     name: "DevCycle",
     platforms: [
         .iOS(.v12),
+        .tvOS(.v12),
         .macOS(.v10_13)
     ],
     products: [
