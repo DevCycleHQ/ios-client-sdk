@@ -31,12 +31,12 @@ platform :mac do
   desc "run mac DevCycle tests"
   lane :tests do
     # Build For Testing
-    # run_tests(
-    #    derived_data_path: "~/Library/Developer/Xcode/DerivedData",
-    #    build_for_testing: true,
-    #    scheme: "DevCycleOSX"
-    # )
-    gym(scheme: "DevCycle")
+    run_tests(
+       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
+       build_for_testing: true,
+       scheme: "DevCycle"
+    )
+    # gym(scheme: "DevCycle")
     # run tests using derived data from prev. build
     # run_tests(
     #    derived_data_path: "my_folder",
