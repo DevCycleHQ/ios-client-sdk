@@ -15,17 +15,17 @@
 
 # default_platform(:ios)
 
-platform :ios do
-  desc "run iOS DevCycle tests"
-  lane :tests do
-    run_tests(
-      derived_data_path: "~/Library/Developer/Xcode/DerivedData",
-      buildlog_path: "./fastlane/fastlane-buildlog",
-      scheme: "DevCycle",
-      result_bundle: true
-    )
-  end
-end
+# platform :ios do
+#   desc "run iOS DevCycle tests"
+#   lane :tests do
+#     run_tests(
+#       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
+#       buildlog_path: "./fastlane/fastlane-buildlog",
+#       scheme: "DevCycle",
+#       result_bundle: true
+#     )
+#   end
+# end
 
 platform :mac do
   desc "run mac DevCycle tests"
@@ -36,12 +36,6 @@ platform :mac do
        build_for_testing: true,
        scheme: "DevCycle"
     )
-    # gym(scheme: "DevCycle")
-    # run tests using derived data from prev. build
-    # run_tests(
-    #    derived_data_path: "my_folder",
-    #    test_without_building: true
-    # )
     run_tests(
       test_without_building: true,
       skip_detect_devices: true,
