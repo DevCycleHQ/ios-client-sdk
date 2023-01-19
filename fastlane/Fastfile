@@ -15,33 +15,10 @@
 
 # default_platform(:ios)
 
-# platform :ios do
-#   desc "run iOS DevCycle tests"
-#   lane :tests do
-#     run_tests(
-#       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
-#       buildlog_path: "./fastlane/fastlane-buildlog",
-#       scheme: "DevCycle",
-#       result_bundle: true
-#     )
-#   end
-# end
-
-platform :mac do
-  desc "run mac DevCycle tests"
+platform :ios do
+  desc "run iOS DevCycle tests"
   lane :tests do
-    # Build For Testing
     run_tests(
-       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
-       build_for_testing: true,
-       scheme: "DevCycle"
-    )
-    run_tests(
-      test_without_building: true,
-      skip_detect_devices: true,
-      device: "macos",
-      destination: "platform=macOS,arch=x86_64",
-      xcargs: "-destination 'arch=x86_64'",
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
       scheme: "DevCycle",
@@ -50,3 +27,13 @@ platform :mac do
   end
 end
 
+platform :mac do
+  desc "run mac DevCycle tests"
+  lane :tests do
+    scan(
+      scheme: "DevCycle",
+      workspace: "DevCycle-iOS.xcworkspace",
+      destination: "platform=macOS"
+      )
+  end
+end
