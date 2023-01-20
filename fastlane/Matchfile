@@ -4,7 +4,7 @@ storage_mode("git")
 
 platform("macos")
 
-git_basic_authorization($GIT_BASIC_AUTHORIZATION)
+git_basic_authorization(GIT_BASIC_AUTHORIZATION)
 
 type("development") # The default type, can be: appstore, adhoc, enterprise or development
 
