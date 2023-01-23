@@ -1,8 +1,6 @@
 name: Build and Test macOS
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -28,7 +26,6 @@ jobs:
         env:
           DEVELOPER_APP_ID: '${{ secrets.DEVELOPER_APP_ID }}'
           MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
-          GIT_BASIC_AUTHORIZATION: '${{ secrets.GIT_BASIC_AUTHORIZATION }}'
           TEMP_KEYCHAIN_PASSWORD: '${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
           TEMP_KEYCHAIN_USER: '${{ secrets.TEMP_KEYCHAIN_USER }}'
           APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'

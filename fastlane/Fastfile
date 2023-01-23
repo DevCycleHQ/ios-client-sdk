@@ -21,9 +21,6 @@ APPLE_ISSUER_ID = ENV["APPLE_ISSUER_ID"]
 APPLE_KEY_ID = ENV["APPLE_KEY_ID"]
 APPLE_KEY_CONTENT = ENV["APPLE_KEY_CONTENT"]
 
-GIT_BASIC_AUTHORIZATION = ENV["GIT_BASIC_AUTHORIZATION"]
-
-
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -76,7 +73,6 @@ platform :mac do
     match(
       type: 'appstore',
       app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
-      git_basic_authorization: Base64.strict_encode64(GIT_BASIC_AUTHORIZATION),
       readonly: true,
       keychain_name: keychain_name,
       keychain_password: keychain_password,
