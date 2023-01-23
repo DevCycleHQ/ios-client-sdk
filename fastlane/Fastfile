@@ -86,7 +86,7 @@ platform :mac do
     scan(
       scheme: "DevCycle",
       workspace: "DevCycle-iOS.xcworkspace",
-      destination: "platform=macOS"
+      destination: "platform=macOS,OS=11.0"
       )
 
     delete_temp_keychain(keychain_name)
