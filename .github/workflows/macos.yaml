@@ -1,0 +1,33 @@
+name: Build and Test macOS
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-12
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v2
+      - name: "Select Latest Xcode"
+        uses: devbotsxyz/xcode-select@main
+      - name: "Set SSH key"
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: "Carthage Cached Bootstrap"
+        uses: DevCycleHQ/carthage-bootstrap@xcframeworks2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          use-xcframeworks: true
+      - name: Fastlane macOS Tests
+        run: fastlane mac tests
+        env:
+          DEVELOPER_APP_ID: '${{ secrets.DEVELOPER_APP_ID }}'
+          MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
+          TEMP_KEYCHAIN_PASSWORD: '${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
+          TEMP_KEYCHAIN_USER: '${{ secrets.TEMP_KEYCHAIN_USER }}'
+          APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
+          APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
+          APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
