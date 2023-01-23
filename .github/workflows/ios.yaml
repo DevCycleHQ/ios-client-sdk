@@ -1,0 +1,23 @@
+name: Build and Test iOS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-12
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v2
+      - name: "Select Latest Xcode"
+        uses: devbotsxyz/xcode-select@main
+      - name: "Carthage Cached Bootstrap"
+        uses: DevCycleHQ/carthage-bootstrap@xcframeworks2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          use-xcframeworks: true
+      - name: Fastlane iOS Tests
+        run: fastlane ios tests

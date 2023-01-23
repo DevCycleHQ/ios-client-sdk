@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build and Test macOS
 
 on:
   push:
@@ -34,5 +34,3 @@ jobs:
           APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
           APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
           APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
-
-        
