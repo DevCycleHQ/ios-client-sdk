@@ -1,8 +1,6 @@
-name: Build and Test
+name: Build and Test iOS
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -21,5 +19,3 @@ jobs:
           use-xcframeworks: true
       - name: Fastlane iOS Tests
         run: fastlane ios tests
-      # - name: Fastlane macOS Tests
-      #   run: fastlane mac tests
