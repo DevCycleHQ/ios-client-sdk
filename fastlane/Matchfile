@@ -1,4 +1,4 @@
-git_url("git@github.com:DevCycleHQ/macOS-certificates.git")
+git_url("https://github.com/DevCycleHQ/macOS-certificates.git")
 
 storage_mode("git")
 
