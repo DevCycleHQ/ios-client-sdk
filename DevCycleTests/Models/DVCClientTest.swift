@@ -5,8 +5,10 @@
 //
 
 import XCTest
-#if canImport(UIKit)
+#if os(iOS) || os(tvOS)
 import UIKit
+#elseif os(watchOS)
+import WatchKit
 #endif
 
 @testable import DevCycle
@@ -290,9 +292,11 @@ class DVCClientTest: XCTestCase {
         let mockSSEConnection = MockSSEConnection()
         client.sseConnection = mockSSEConnection
         client.inactivityDelayMS = 0
-        #if canImport(UIKit)
+        #if os(iOS) || os(tvOS)
             NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
-        #elseif canImport(AppKit)
+        #elseif os(watchOS)
+            NotificationCenter.default.post(name: WKExtension.applicationWillResignActiveNotification, object: nil)
+        #elseif os(macOS)
             NotificationCenter.default.post(name: NSApplication.willResignActiveNotification, object: nil)
         #endif
         
@@ -313,9 +317,11 @@ class DVCClientTest: XCTestCase {
         let mockSSEConnection = MockSSEConnection()
         mockSSEConnection.connected = false
         client.sseConnection = mockSSEConnection
-        #if canImport(UIKit)
+        #if os(iOS) || os(tvOS)
             NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
-        #elseif canImport(AppKit)
+        #elseif os(watchOS)
+            NotificationCenter.default.post(name: WKExtension.applicationWillEnterForegroundNotification, object: nil)
+        #elseif os(macOS)
             NotificationCenter.default.post(name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
         
@@ -336,9 +342,11 @@ class DVCClientTest: XCTestCase {
         mockSSEConnection.connected = true
         client.sseConnection = mockSSEConnection
         client.inactivityDelayMS = 120000
-        #if canImport(UIKit)
+        #if os(iOS) || os(tvOS)
             NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
-        #elseif canImport(AppKit)
+        #elseif os(watchOS)
+            NotificationCenter.default.post(name: WKExtension.applicationWillEnterForegroundNotification, object: nil)
+        #elseif os(macOS)
             NotificationCenter.default.post(name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
         
