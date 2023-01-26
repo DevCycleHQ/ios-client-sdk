@@ -15,7 +15,7 @@ class DVCUserTest: XCTestCase {
             XCTAssertNotNil(user.platformVersion)
             XCTAssertNotNil(user.deviceModel == "AppleTV")
         #elseif os(iOS)
-            XCTAssert(user.platform == "iOS")
+            XCTAssert(user.platform == "iOS" || user.platform == "iPadOS")
             XCTAssertNotNil(user.platformVersion)
             XCTAssertNotNil(user.deviceModel == "iPhone")
         #elseif os(OSX)
