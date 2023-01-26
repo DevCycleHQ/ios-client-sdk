@@ -1,11 +1,7 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '12.0'
+platform :ios, '13.0'
 
-<<<<<<<< HEAD:Examples/DevCycle-iOS-Example-App-ObjC/Podfile
 target 'DevCycle-iOS-Example-App-ObjC' do
-========
-target 'DevCycle-iOS-Example-App-Swift' do
->>>>>>>> 814f9b8 (Cleanup Example apps, gitignore *.xcworkspace/, rename to DevCycle-iOS-Example-App-Swift):Examples/DevCycle-iOS-Example-App-Swift/Podfile
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
