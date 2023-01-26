@@ -17,6 +17,35 @@ class ViewController: UIViewController {
     var titleHeaderVar: DVCVariable<String>?
     var loginCtaVar: DVCVariable<String>?
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+        self.client = DevCycleManager.shared.client
+        self.loginCtaVar = client?.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
+            self.setLoginButtonTitle(self.loggedIn)
+        })
+        self.titleHeaderVar = client?.variable(key: "title-header-copy", defaultValue: "DevCycle iOS Example App").onUpdate(handler: { value in
+            self.setTitleHeader()
+        })
+        self.setTitleHeader()
+        self.setLoginButtonTitle(false)
+    }
+    
+    func setTitleHeader() {
+        guard let titleHeaderVar = self.titleHeaderVar else {
+            return
+        }
+        self.titleHeader.text = titleHeaderVar.value
+    }
+
+    func setLoginButtonTitle(_ bool: Bool) {
+        guard let loginCta = self.loginCtaVar else {
+            return
+        }
+        self.loggedIn = bool
+        self.loginButton.setTitle("\(loginCta.value) \(self.loggedIn ? "out" : "in")", for: .normal)
+    }
+    
     @IBAction func loginButtonPressed(_ sender: Any) {
         guard let client = self.client else { return }
         if (self.loggedIn) {
@@ -80,35 +109,5 @@ class ViewController: UIViewController {
         print("All Features: \(client.allFeatures())")
         print("All Variables: \(client.allVariables())")
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        self.client = DevCycleManager.shared.client
-        self.loginCtaVar = client?.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
-            self.setLoginButtonTitle(self.loggedIn)
-        })
-        self.titleHeaderVar = client?.variable(key: "title-header-copy", defaultValue: "DevCycle iOS Example App").onUpdate(handler: { value in
-            self.setTitleHeader()
-        })
-        self.setTitleHeader()
-        self.setLoginButtonTitle(false)
-    }
-    
-    func setTitleHeader() {
-        guard let titleHeaderVar = self.titleHeaderVar else {
-            return
-        }
-        self.titleHeader.text = titleHeaderVar.value
-    }
-
-    func setLoginButtonTitle(_ bool: Bool) {
-        guard let loginCta = self.loginCtaVar else {
-            return
-        }
-        self.loggedIn = bool
-        self.loginButton.setTitle("\(loginCta.value) \(self.loggedIn ? "out" : "in")", for: .normal)
-    }
-    
 }
 
