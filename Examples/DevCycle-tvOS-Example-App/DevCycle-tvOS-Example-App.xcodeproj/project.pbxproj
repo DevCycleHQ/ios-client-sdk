@@ -1,0 +1,425 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0FCFAAF52977932000FE8DCF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FCFAAF42977932000FE8DCF /* AppDelegate.swift */; };
+		0FCFAAF72977932000FE8DCF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FCFAAF62977932000FE8DCF /* ViewController.swift */; };
+		0FCFAAFA2977932000FE8DCF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0FCFAAF82977932000FE8DCF /* Main.storyboard */; };
+		0FCFAAFC2977932100FE8DCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0FCFAAFB2977932100FE8DCF /* Assets.xcassets */; };
+		0FCFAAFF2977932100FE8DCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0FCFAAFD2977932100FE8DCF /* LaunchScreen.storyboard */; };
+		0FCFAB06297793E700FE8DCF /* DevCycleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FCFAB05297793E700FE8DCF /* DevCycleManager.swift */; };
+		4DB4E5EEF7982A6A474AABE6 /* Pods_DevCycle_tvOS_Example_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DF60B22950A31A284ECA8F3 /* Pods_DevCycle_tvOS_Example_App.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		09C912467C2399644546D856 /* Pods-DevCycle-tvOS-Example-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevCycle-tvOS-Example-App.debug.xcconfig"; path = "Target Support Files/Pods-DevCycle-tvOS-Example-App/Pods-DevCycle-tvOS-Example-App.debug.xcconfig"; sourceTree = "<group>"; };
+		0FCFAAF12977932000FE8DCF /* DevCycle-tvOS-Example-App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DevCycle-tvOS-Example-App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FCFAAF42977932000FE8DCF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0FCFAAF62977932000FE8DCF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		0FCFAAF92977932000FE8DCF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0FCFAAFB2977932100FE8DCF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0FCFAAFE2977932100FE8DCF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		0FCFAB05297793E700FE8DCF /* DevCycleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevCycleManager.swift; sourceTree = "<group>"; };
+		30DAFE585B2426B760B967D0 /* Pods-DevCycle-tvOS-Example-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevCycle-tvOS-Example-App.release.xcconfig"; path = "Target Support Files/Pods-DevCycle-tvOS-Example-App/Pods-DevCycle-tvOS-Example-App.release.xcconfig"; sourceTree = "<group>"; };
+		3DF60B22950A31A284ECA8F3 /* Pods_DevCycle_tvOS_Example_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DevCycle_tvOS_Example_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0FCFAAEE2977932000FE8DCF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4DB4E5EEF7982A6A474AABE6 /* Pods_DevCycle_tvOS_Example_App.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0FCFAAE82977932000FE8DCF = {
+			isa = PBXGroup;
+			children = (
+				0FCFAAF32977932000FE8DCF /* DevCycle-tvOS-Example-App */,
+				0FCFAAF22977932000FE8DCF /* Products */,
+				D900449380F81541154B9CCC /* Pods */,
+				DE321659609C9B061361B087 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		0FCFAAF22977932000FE8DCF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0FCFAAF12977932000FE8DCF /* DevCycle-tvOS-Example-App.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0FCFAAF32977932000FE8DCF /* DevCycle-tvOS-Example-App */ = {
+			isa = PBXGroup;
+			children = (
+				0FCFAB05297793E700FE8DCF /* DevCycleManager.swift */,
+				0FCFAAF42977932000FE8DCF /* AppDelegate.swift */,
+				0FCFAAF62977932000FE8DCF /* ViewController.swift */,
+				0FCFAAF82977932000FE8DCF /* Main.storyboard */,
+				0FCFAAFB2977932100FE8DCF /* Assets.xcassets */,
+				0FCFAAFD2977932100FE8DCF /* LaunchScreen.storyboard */,
+			);
+			path = "DevCycle-tvOS-Example-App";
+			sourceTree = "<group>";
+		};
+		D900449380F81541154B9CCC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				09C912467C2399644546D856 /* Pods-DevCycle-tvOS-Example-App.debug.xcconfig */,
+				30DAFE585B2426B760B967D0 /* Pods-DevCycle-tvOS-Example-App.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		DE321659609C9B061361B087 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3DF60B22950A31A284ECA8F3 /* Pods_DevCycle_tvOS_Example_App.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0FCFAAF02977932000FE8DCF /* DevCycle-tvOS-Example-App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0FCFAB022977932100FE8DCF /* Build configuration list for PBXNativeTarget "DevCycle-tvOS-Example-App" */;
+			buildPhases = (
+				1DC9E036263927A11D00F72D /* [CP] Check Pods Manifest.lock */,
+				0FCFAAED2977932000FE8DCF /* Sources */,
+				0FCFAAEE2977932000FE8DCF /* Frameworks */,
+				0FCFAAEF2977932000FE8DCF /* Resources */,
+				4A97A8A826E53AAA9DE9262F /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DevCycle-tvOS-Example-App";
+			productName = "DevCycle-tvOS-Example-App";
+			productReference = 0FCFAAF12977932000FE8DCF /* DevCycle-tvOS-Example-App.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0FCFAAE92977932000FE8DCF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					0FCFAAF02977932000FE8DCF = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = 0FCFAAEC2977932000FE8DCF /* Build configuration list for PBXProject "DevCycle-tvOS-Example-App" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0FCFAAE82977932000FE8DCF;
+			productRefGroup = 0FCFAAF22977932000FE8DCF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0FCFAAF02977932000FE8DCF /* DevCycle-tvOS-Example-App */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0FCFAAEF2977932000FE8DCF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FCFAAFF2977932100FE8DCF /* LaunchScreen.storyboard in Resources */,
+				0FCFAAFC2977932100FE8DCF /* Assets.xcassets in Resources */,
+				0FCFAAFA2977932000FE8DCF /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1DC9E036263927A11D00F72D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DevCycle-tvOS-Example-App-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4A97A8A826E53AAA9DE9262F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DevCycle-tvOS-Example-App/Pods-DevCycle-tvOS-Example-App-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DevCycle-tvOS-Example-App/Pods-DevCycle-tvOS-Example-App-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DevCycle-tvOS-Example-App/Pods-DevCycle-tvOS-Example-App-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0FCFAAED2977932000FE8DCF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FCFAAF72977932000FE8DCF /* ViewController.swift in Sources */,
+				0FCFAB06297793E700FE8DCF /* DevCycleManager.swift in Sources */,
+				0FCFAAF52977932000FE8DCF /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		0FCFAAF82977932000FE8DCF /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0FCFAAF92977932000FE8DCF /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		0FCFAAFD2977932100FE8DCF /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0FCFAAFE2977932100FE8DCF /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		0FCFAB002977932100FE8DCF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TVOS_DEPLOYMENT_TARGET = 16.1;
+			};
+			name = Debug;
+		};
+		0FCFAB012977932100FE8DCF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = appletvos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TVOS_DEPLOYMENT_TARGET = 16.1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0FCFAB032977932100FE8DCF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09C912467C2399644546D856 /* Pods-DevCycle-tvOS-Example-App.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ASZYP8H6QE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.devcycle.DevCycle-tvOS-Example-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		0FCFAB042977932100FE8DCF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 30DAFE585B2426B760B967D0 /* Pods-DevCycle-tvOS-Example-App.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ASZYP8H6QE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.devcycle.DevCycle-tvOS-Example-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0FCFAAEC2977932000FE8DCF /* Build configuration list for PBXProject "DevCycle-tvOS-Example-App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0FCFAB002977932100FE8DCF /* Debug */,
+				0FCFAB012977932100FE8DCF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0FCFAB022977932100FE8DCF /* Build configuration list for PBXNativeTarget "DevCycle-tvOS-Example-App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0FCFAB032977932100FE8DCF /* Debug */,
+				0FCFAB042977932100FE8DCF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0FCFAAE92977932000FE8DCF /* Project object */;
+}

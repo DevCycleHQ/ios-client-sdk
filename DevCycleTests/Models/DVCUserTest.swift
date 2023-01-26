@@ -10,11 +10,15 @@ import XCTest
 class DVCUserTest: XCTestCase {
     func testCreateUser() {
         let user = DVCUser()
-        #if canImport(UIKit)
-            XCTAssert(user.platform == "iOS")
+        #if os(tvOS)
+            XCTAssert(user.platform == "tvOS")
+            XCTAssertNotNil(user.platformVersion)
+            XCTAssertNotNil(user.deviceModel == "AppleTV")
+        #elseif os(iOS)
+            XCTAssert(user.platform == "iOS" || user.platform == "iPadOS")
             XCTAssertNotNil(user.platformVersion)
             XCTAssertNotNil(user.deviceModel == "iPhone")
-        #elseif canImport(AppKit)
+        #elseif os(OSX)
             XCTAssert(user.platform == "macOS")
             XCTAssertNotNil(user.deviceModel == "Mac")
             XCTAssertNotNil(user.platformVersion)

@@ -5,13 +5,13 @@
 [![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-4BC51D.svg?style=flat)](https://swift.org/package-manager/)
 
 
-The DevCycle iOS / macOS Client SDK. This SDK uses our Client SDK APIs to perform all user segmentation 
+The DevCycle iOS / tvOS / macOS Client SDK. This SDK uses our Client SDK APIs to perform all user segmentation 
 and bucketing for the SDK, providing fast response times using our globally distributed edge workers 
 all around the world.
 
 ## Requirements
 
-This version of the DevCycle iOS / macOS Client SDK supports iOS 12+ / macOS 10.13+.
+This version of the DevCycle Client SDK supports iOS 12.0+ / tvOS 12.0+ / macOS 10.13+
 
 ## Installation
 
