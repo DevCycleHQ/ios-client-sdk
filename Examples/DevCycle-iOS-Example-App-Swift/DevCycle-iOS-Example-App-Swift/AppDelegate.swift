@@ -11,6 +11,7 @@ import DevCycle
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // TODO: Set SDK KEY in DevCycleManager.swift
         
         // create anonymous user
         let user = try? DVCUser.builder()

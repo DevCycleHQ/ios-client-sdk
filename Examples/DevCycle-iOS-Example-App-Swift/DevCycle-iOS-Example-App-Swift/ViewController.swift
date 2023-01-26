@@ -72,6 +72,7 @@ class ViewController: UIViewController {
                                  .clientDate(Date())
                                  .build()
         client.track(event)
+        print("Tracked event to DVC")
     }
     
     @IBAction func logAllFeatures(_ sender: Any) {
@@ -87,7 +88,7 @@ class ViewController: UIViewController {
         self.loginCtaVar = client?.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
             self.setLoginButtonTitle(self.loggedIn)
         })
-        self.titleHeaderVar = client?.variable(key: "title-header-copy", defaultValue: "DevCycle Example App").onUpdate(handler: { value in
+        self.titleHeaderVar = client?.variable(key: "title-header-copy", defaultValue: "DevCycle iOS Example App").onUpdate(handler: { value in
             self.setTitleHeader()
         })
         self.setTitleHeader()

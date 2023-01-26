@@ -17,6 +17,8 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // TODO: Set SDK Key in DevCycleManager.m
+    
     DVCUser *user = [DVCUser initializeWithUserId:@"test_user"];
     user.customData = @{
         @"key": @"value",
