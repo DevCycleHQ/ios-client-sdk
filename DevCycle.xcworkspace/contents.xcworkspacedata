@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:DevCycle-iOS.xcodeproj">
+      location = "group:/Users/jonathannorris/git/ios-client-sdk/DevCycle.xcodeproj">
    </FileRef>
 </Workspace>
