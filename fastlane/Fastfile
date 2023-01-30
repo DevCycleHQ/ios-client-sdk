@@ -50,6 +50,7 @@ platform :ios do
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
       scheme: "DevCycle",
+      workspace: "DevCycle.xcworkspace",
       result_bundle: true
     )
   end
@@ -62,6 +63,7 @@ platform :tvos do
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
       scheme: "DevCycle",
+      workspace: "DevCycle.xcworkspace",
       result_bundle: true
     )
   end
@@ -93,9 +95,9 @@ platform :mac do
 
     scan(
       scheme: "DevCycle",
-      workspace: "DevCycle-iOS.xcworkspace",
+      workspace: "DevCycle.xcworkspace",
       destination: "platform=macOS"
-      )
+    )
 
     delete_temp_keychain(keychain_name)
   end
