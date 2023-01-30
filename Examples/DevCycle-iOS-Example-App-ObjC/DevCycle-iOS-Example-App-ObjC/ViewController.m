@@ -53,6 +53,8 @@
     [self.client track:event err:&err];
     if (err) {
         NSLog(@"Error calling DVCClient track:err: %@", err);
+    } else {
+        NSLog(@"Tracked event to DVC");
     }
 }
 

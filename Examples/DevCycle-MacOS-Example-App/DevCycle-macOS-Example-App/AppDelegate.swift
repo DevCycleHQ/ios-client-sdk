@@ -8,8 +8,10 @@ import DevCycle
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
-
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // TODO: Set SDK Key in DevCycleManager.swift
+        
         // Insert code here to initialize your application
         // create anonymous user
         let user = try? DVCUser.builder()

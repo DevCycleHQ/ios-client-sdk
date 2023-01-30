@@ -1,16 +1,15 @@
 //
 //  ViewController.swift
-//  DevCycle-Example-App
-//
+//  DevCycle-MacOS-Example-App
 //
 
-import UIKit
+import Cocoa
 import DevCycle
 
-class ViewController: UIViewController {
+class ViewController: NSViewController {
 
-    @IBOutlet weak var titleHeader: UILabel!
-    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var titleHeader: NSTextField!
+    @IBOutlet weak var loginButton: NSButton!
     
     var loggedIn: Bool = false
     var client: DVCClient?
@@ -19,6 +18,15 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Wait for NSApplication.didFinishLaunching as default View Controller calls viewDidLoad() before applicationDidFinishLaunching on macOS
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didFinishLaunching),
+                                               name: NSApplication.didFinishLaunchingNotification,
+                                               object: nil)
+    }
+    
+    @objc func didFinishLaunching() {
         // Do any additional setup after loading the view.
         self.client = DevCycleManager.shared.client
         self.loginCtaVar = client?.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
@@ -35,7 +43,7 @@ class ViewController: UIViewController {
         guard let titleHeaderVar = self.titleHeaderVar else {
             return
         }
-        self.titleHeader.text = titleHeaderVar.value
+        self.titleHeader.stringValue = titleHeaderVar.value
     }
 
     func setLoginButtonTitle(_ bool: Bool) {
@@ -43,10 +51,12 @@ class ViewController: UIViewController {
             return
         }
         self.loggedIn = bool
-        self.loginButton.setTitle("\(loginCta.value) \(self.loggedIn ? "out" : "in")", for: .normal)
+        self.loginButton.title = "\(loginCta.value) \(self.loggedIn ? "out" : "in")"
     }
-    
+
     @IBAction func loginButtonPressed(_ sender: Any) {
+        print("Login Button")
+        
         guard let client = self.client else { return }
         if (self.loggedIn) {
             try? client.resetUser { [weak self] error, variables in
@@ -105,6 +115,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func logAllFeatures(_ sender: Any) {
+        print("logAllFeatures Button Pressed")
         guard let client = self.client else { return }
         print("All Features: \(client.allFeatures())")
         print("All Variables: \(client.allVariables())")

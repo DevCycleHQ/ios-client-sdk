@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -12,11 +11,11 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="DevCycle-MacOS-Example-App" id="1Xt-HY-uBw">
+                            <menuItem title="DevCycle-macOS-Example-App" id="1Xt-HY-uBw">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="DevCycle-MacOS-Example-App" systemMenu="apple" id="uQy-DD-JDr">
+                                <menu key="submenu" title="DevCycle-macOS-Example-App" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
-                                        <menuItem title="About DevCycle-MacOS-Example-App" id="5kV-Vb-QxS">
+                                        <menuItem title="About DevCycle-macOS-Example-App" id="5kV-Vb-QxS">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
@@ -30,7 +29,7 @@
                                             <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                                        <menuItem title="Hide DevCycle-MacOS-Example-App" keyEquivalent="h" id="Olw-nP-bQN">
+                                        <menuItem title="Hide DevCycle-macOS-Example-App" keyEquivalent="h" id="Olw-nP-bQN">
                                             <connections>
                                                 <action selector="hide:" target="Ady-hI-5gd" id="PnN-Uc-m68"/>
                                             </connections>
@@ -48,7 +47,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                                        <menuItem title="Quit DevCycle-MacOS-Example-App" keyEquivalent="q" id="4sb-4s-VLi">
+                                        <menuItem title="Quit DevCycle-macOS-Example-App" keyEquivalent="q" id="4sb-4s-VLi">
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
                                             </connections>
@@ -661,7 +660,7 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
-                                        <menuItem title="DevCycle-MacOS-Example-App Help" keyEquivalent="?" id="FKE-Sm-Kum">
+                                        <menuItem title="DevCycle-macOS-Example-App Help" keyEquivalent="?" id="FKE-Sm-Kum">
                                             <connections>
                                                 <action selector="showHelp:" target="Ady-hI-5gd" id="y7X-2Q-9no"/>
                                             </connections>
@@ -710,17 +709,61 @@
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tH4-uB-iqM">
-                                <rect key="frame" x="166" y="127" width="148" height="16"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="DevCycle MacOS Demo" id="P0V-xv-z9G">
-                                    <font key="font" usesAppearanceFont="YES"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tH4-uB-iqM">
+                                <rect key="frame" x="-2" y="202" width="484" height="24"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="DevCycle MacOS Demo" id="P0V-xv-z9G">
+                                    <font key="font" metaFont="systemBold" size="20"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iPY-2o-Rl8">
+                                <rect key="frame" x="204" y="121" width="72" height="32"/>
+                                <buttonCell key="cell" type="push" title="Log In" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5x1-it-Alh">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="loginButtonPressed:" target="XfG-lQ-9wD" id="dse-jg-MYa"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="x1i-b3-UB0">
+                                <rect key="frame" x="206" y="79" width="68" height="32"/>
+                                <buttonCell key="cell" type="push" title="Track" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wRF-PT-wHC">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="track:" target="XfG-lQ-9wD" id="oII-m7-G6W"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q8x-nl-C9Q">
+                                <rect key="frame" x="141" y="37" width="198" height="32"/>
+                                <buttonCell key="cell" type="push" title="Log All Features / Variables" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k6P-1l-xP8">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="logAllFeatures:" target="XfG-lQ-9wD" id="Ao9-cO-Owc"/>
+                                </connections>
+                            </button>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="tH4-uB-iqM" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="44" id="5DO-lU-ItJ"/>
+                            <constraint firstAttribute="bottom" secondItem="Q8x-nl-C9Q" secondAttribute="bottom" constant="44" id="Kwq-fJ-fd6"/>
+                            <constraint firstItem="Q8x-nl-C9Q" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="YT8-6J-kD9"/>
+                            <constraint firstItem="tH4-uB-iqM" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="f8o-uY-nKk"/>
+                            <constraint firstItem="x1i-b3-UB0" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="mB5-MI-Qba"/>
+                            <constraint firstItem="iPY-2o-Rl8" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="nN5-fC-rXA"/>
+                            <constraint firstAttribute="trailing" secondItem="tH4-uB-iqM" secondAttribute="trailing" id="uhk-Lg-Frq"/>
+                            <constraint firstItem="Q8x-nl-C9Q" firstAttribute="top" secondItem="x1i-b3-UB0" secondAttribute="bottom" constant="22" id="vrW-0a-OP4"/>
+                            <constraint firstItem="x1i-b3-UB0" firstAttribute="top" secondItem="iPY-2o-Rl8" secondAttribute="bottom" constant="22" id="zqQ-we-SN6"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="loginButton" destination="iPY-2o-Rl8" id="kvC-MK-H4j"/>
+                        <outlet property="titleHeader" destination="tH4-uB-iqM" id="8Xl-h4-hTA"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

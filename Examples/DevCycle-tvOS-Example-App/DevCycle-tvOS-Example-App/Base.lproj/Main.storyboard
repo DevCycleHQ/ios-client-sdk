@@ -19,17 +19,59 @@
                         <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="DevCycle tvOS Example App" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79Q-O8-1tJ">
-                                <rect key="frame" x="720" y="517" width="481" height="46"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DevCycle tvOS Example App" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79Q-O8-1tJ">
+                                <rect key="frame" x="80" y="210" width="1760" height="91"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8nY-CD-0jh">
+                                <rect key="frame" x="873.5" y="497" width="173" height="86"/>
+                                <inset key="contentEdgeInsets" minX="40" minY="20" maxX="40" maxY="20"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Login"/>
+                                <connections>
+                                    <action selector="loginButtonPressed:" destination="BYZ-38-t0r" eventType="primaryActionTriggered" id="4O3-bp-82D"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vOr-il-8wf">
+                                <rect key="frame" x="874" y="633" width="172" height="86"/>
+                                <inset key="contentEdgeInsets" minX="40" minY="20" maxX="40" maxY="20"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Track"/>
+                                <connections>
+                                    <action selector="track:" destination="BYZ-38-t0r" eventType="primaryActionTriggered" id="Lf9-XH-NE0"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yw8-qT-Dw1">
+                                <rect key="frame" x="695.5" y="769" width="529" height="86"/>
+                                <inset key="contentEdgeInsets" minX="40" minY="20" maxX="40" maxY="20"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Log All Features / Variables"/>
+                                <connections>
+                                    <action selector="logAllFeatures:" destination="BYZ-38-t0r" eventType="primaryActionTriggered" id="Fen-bD-lpJ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="wu6-TO-1qx"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Yw8-qT-Dw1" firstAttribute="top" secondItem="vOr-il-8wf" secondAttribute="bottom" constant="50" id="Egh-CL-fWd"/>
+                            <constraint firstItem="8nY-CD-0jh" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="H8i-Ma-7hX"/>
+                            <constraint firstItem="79Q-O8-1tJ" firstAttribute="top" secondItem="wu6-TO-1qx" secondAttribute="top" constant="150" id="Nj1-YN-Dcf"/>
+                            <constraint firstItem="vOr-il-8wf" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="NrB-jf-Sgb"/>
+                            <constraint firstItem="wu6-TO-1qx" firstAttribute="trailing" secondItem="79Q-O8-1tJ" secondAttribute="trailing" id="Sfa-z7-POD"/>
+                            <constraint firstItem="Yw8-qT-Dw1" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="atk-GM-YyK"/>
+                            <constraint firstItem="vOr-il-8wf" firstAttribute="top" secondItem="8nY-CD-0jh" secondAttribute="bottom" constant="50" id="gVu-pV-2fE"/>
+                            <constraint firstItem="79Q-O8-1tJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="mdR-Vu-Yy5"/>
+                            <constraint firstItem="8nY-CD-0jh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="oPZ-fU-8zm"/>
+                            <constraint firstItem="79Q-O8-1tJ" firstAttribute="leading" secondItem="wu6-TO-1qx" secondAttribute="leading" id="vSu-YL-npn"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="loginButton" destination="8nY-CD-0jh" id="5rs-31-Zc5"/>
+                        <outlet property="titleHeader" destination="79Q-O8-1tJ" id="go5-IL-Tpu"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
