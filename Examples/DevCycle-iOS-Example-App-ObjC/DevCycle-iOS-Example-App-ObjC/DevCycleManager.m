@@ -15,7 +15,7 @@
 
 @implementation DevCycleManager
 
-static NSString *const DEVELOPMENT_KEY = @"mobile-16e8e500-80d2-4bb5-9d4f-8219381a90da";
+static NSString *const DEVELOPMENT_KEY = @"<YOUR SDK KEY>";
 
 + (id)sharedManager {
     static DevCycleManager *sharedMyManager = nil;
