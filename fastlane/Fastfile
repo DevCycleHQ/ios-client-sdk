@@ -69,6 +69,18 @@ platform :tvos do
   end
 end
 
+platform :watchos do
+  desc "run watchOS DevCycle tests"
+  lane :tests do
+    run_tests(
+      derived_data_path: "~/Library/Developer/Xcode/DerivedData",
+      buildlog_path: "./fastlane/fastlane-buildlog",
+      scheme: "DevCycle",
+      result_bundle: true
+    )
+  end
+end
+
 platform :mac do
   desc "run mac DevCycle tests"
   lane :tests do
