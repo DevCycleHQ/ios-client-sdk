@@ -26,6 +26,19 @@ run iOS DevCycle tests
 ----
 
 
+## tvos
+
+### tvos tests
+
+```sh
+[bundle exec] fastlane tvos tests
+```
+
+run tvOS DevCycle tests
+
+----
+
+
 ## Mac
 
 ### mac tests
@@ -35,7 +48,6 @@ run iOS DevCycle tests
 ```
 
 run mac DevCycle tests
-
 
 ----
 

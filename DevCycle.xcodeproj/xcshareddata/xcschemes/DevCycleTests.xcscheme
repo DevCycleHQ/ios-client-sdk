@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1420"
-   version = "1.3">
+   version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
-      <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5268DB4C27501CFC00D17A40"
-               BuildableName = "DevCycle.framework"
-               BlueprintName = "DevCycle"
-               ReferencedContainer = "container:DevCycle-iOS.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
@@ -35,7 +19,7 @@
                BlueprintIdentifier = "5268DB5527501CFC00D17A40"
                BuildableName = "DevCycleTests.xctest"
                BlueprintName = "DevCycleTests"
-               ReferencedContainer = "container:DevCycle-iOS.xcodeproj">
+               ReferencedContainer = "container:DevCycle.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -45,11 +29,13 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
+      askForAppToLaunch = "Yes"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      launchAutomaticallySubstyle = "2">
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -57,15 +43,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5268DB4C27501CFC00D17A40"
-            BuildableName = "DevCycle.framework"
-            BlueprintName = "DevCycle"
-            ReferencedContainer = "container:DevCycle-iOS.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
