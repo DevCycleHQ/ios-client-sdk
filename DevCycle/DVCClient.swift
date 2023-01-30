@@ -6,9 +6,11 @@
 
 import Foundation
 
-#if canImport(UIKit)
+#if os(iOS) || os(tvOS)
 import UIKit
-#elseif canImport(AppKit)
+#elseif os(watchOS)
+import WatchKit
+#elseif os(macOS)
 import AppKit
 #endif
 
@@ -80,12 +82,33 @@ public class DVCClient {
         
         self.setup(service: service, callback: callback)
         
-        #if canImport(UIKit)
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        #if os(iOS) || os(tvOS)
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(appMovedToBackground),
+                                                   name: UIApplication.willResignActiveNotification,
+                                                   object: nil)
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(appMovedToForeground),
+                                                   name: UIApplication.willEnterForegroundNotification,
+                                                   object: nil)
+        #elseif os(watchOS)
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(appMovedToBackground),
+                                                   name: WKExtension.applicationWillResignActiveNotification,
+                                                   object: nil)
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(appMovedToForeground),
+                                                   name: WKExtension.applicationWillEnterForegroundNotification,
+                                                   object: nil)
         #elseif canImport(AppKit)
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: NSApplication.willResignActiveNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: NSApplication.willBecomeActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(appMovedToBackground),
+                                                   name: NSApplication.willResignActiveNotification,
+                                                   object: nil)
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(appMovedToForeground),
+                                                   name: NSApplication.willBecomeActiveNotification,
+                                                   object: nil)
         #endif
     }
     
