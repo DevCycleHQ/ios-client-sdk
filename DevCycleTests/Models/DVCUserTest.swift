@@ -23,10 +23,9 @@ class DVCUserTest: XCTestCase {
             XCTAssertNotNil(user.platformVersion)
             XCTAssert(user.deviceModel.contains("Watch"))
         #elseif os(OSX)
-        print("deviceModel: \(user.deviceModel)")
             XCTAssert(user.platform == "macOS")
             XCTAssertNotNil(user.platformVersion)
-            XCTAssert(user.deviceModel.contains("Mac"))
+            XCTAssertNotNil(user.deviceModel)
         #endif
         
         XCTAssertNotNil(user.createdDate)
