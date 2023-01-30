@@ -48,6 +48,14 @@ class DVCClientTest: XCTestCase {
         XCTAssertNil(client.options)
     }
     
+    func testBuilderReturnsClientUsingEnvironmentKey() {
+        let client = try! self.builder.user(self.user).environmentKey("my_sdk_key").build(onInitialized: nil)
+        XCTAssertNotNil(client)
+        XCTAssertNotNil(client.user)
+        XCTAssertNotNil(client.sdkKey)
+        XCTAssertNil(client.options)
+    }
+    
     func testSetupCallsGetConfig() {
         let client = DVCClient()
         let service = MockService() // will assert if getConfig was called

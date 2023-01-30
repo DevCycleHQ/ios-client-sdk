@@ -420,6 +420,12 @@ public class DVCClient {
             self.client = DVCClient()
         }
         
+        @available(*, deprecated)
+        public func environmentKey(_ key: String) -> ClientBuilder {
+            self.client.setSDKKey(key)
+            return self
+        }
+        
         public func sdkKey(_ key: String) -> ClientBuilder {
             self.client.setSDKKey(key)
             return self
