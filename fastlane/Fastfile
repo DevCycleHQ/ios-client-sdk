@@ -93,7 +93,7 @@ platform :mac do
 
     scan(
       scheme: "DevCycle",
-      workspace: "DevCycle-iOS.xcworkspace",
+      workspace: "DevCycle.xcworkspace",
       destination: "platform=macOS"
       )
 
