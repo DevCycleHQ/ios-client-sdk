@@ -8,7 +8,7 @@ import Foundation
 import DevCycle
 
 struct DevCycleKeys {
-    static var DEVELOPMENT = "<YOUR SDK TOKEN>"
+    static var DEVELOPMENT = "<YOUR SDK KEY>"
 }
 
 class DevCycleManager {
@@ -18,7 +18,7 @@ class DevCycleManager {
     
     func initialize(user: DVCUser) {
         let options = DVCOptions.builder()
-                                .logLevel(.debug)
+//                                .logLevel(.debug)
                                 .build()
         
         guard let client = try? DVCClient.builder()

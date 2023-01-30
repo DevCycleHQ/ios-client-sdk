@@ -7,7 +7,7 @@ import Foundation
 import DevCycle
 
 struct DevCycleKeys {
-    static var DEVELOPMENT = "<YOUR TOKEN>"
+    static var DEVELOPMENT = "<YOUR SDK KEY>"
 }
 
 class DevCycleManager {

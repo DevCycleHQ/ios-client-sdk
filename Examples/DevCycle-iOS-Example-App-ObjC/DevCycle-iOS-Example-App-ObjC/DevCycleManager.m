@@ -37,7 +37,7 @@ static NSString *const DEVELOPMENT_KEY = @"<YOUR SDK KEY>";
     NSError *err = nil;
     
     DVCOptions *options = [[DVCOptions alloc] init];
-    options.logLevel = LogLevel.debug;
+//    options.logLevel = LogLevel.debug;
     
     self.client = [DVCClient initialize:DEVELOPMENT_KEY
                                    user:user
