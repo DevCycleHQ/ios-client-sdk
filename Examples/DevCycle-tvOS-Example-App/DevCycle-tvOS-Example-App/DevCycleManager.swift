@@ -21,7 +21,7 @@ class DevCycleManager {
                                 .build()
         
         guard let client = try? DVCClient.builder()
-                .environmentKey(DevCycleKeys.DEVELOPMENT)
+                .sdkKey(DevCycleKeys.DEVELOPMENT)
                 .user(user)
                 .options(options)
                 .build(onInitialized: nil)

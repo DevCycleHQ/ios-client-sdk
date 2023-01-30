@@ -16,8 +16,8 @@ import AppKit
 
 enum ClientError: Error {
     case NotImplemented
-    case MissingEnvironmentKeyOrUser
-    case InvalidEnvironmentKey
+    case MissingSDKKeyOrUser
+    case InvalidSDKKey
     case InvalidUser
     case MissingUserOrFeatureVariationsMap
     case MissingUser
@@ -29,7 +29,7 @@ public typealias FlushCompletedHandler = (Error?) -> Void
 public typealias CloseCompletedHandler = () -> Void
 
 public class DVCClient {
-    var environmentKey: String?
+    var sdkKey: String?
     var user: DVCUser?
     var lastIdentifiedUser: DVCUser?
     var config: DVCConfig?
@@ -57,12 +57,12 @@ public class DVCClient {
         Method to initialize the Client object after building
      */
     func initialize(callback: ClientInitializedHandler?) {
-        guard let user = self.user, let environmentKey = self.environmentKey else {
-            callback?(ClientError.MissingEnvironmentKeyOrUser)
+        guard let user = self.user, let sdkKey = self.sdkKey else {
+            callback?(ClientError.MissingSDKKeyOrUser)
             return
         }
         
-        self.config = DVCConfig(environmentKey: environmentKey, user: user)
+        self.config = DVCConfig(sdkKey: sdkKey, user: user)
         
         let service = DevCycleService(config: self.config!, cacheService: self.cacheService)
 
@@ -117,7 +117,7 @@ public class DVCClient {
      */
     func setup(service: DevCycleServiceProtocol, callback: ClientInitializedHandler? = nil) {
         guard let user = self.user else {
-            callback?(ClientError.MissingEnvironmentKeyOrUser)
+            callback?(ClientError.MissingSDKKeyOrUser)
             return
         }
         self.service = service
@@ -187,8 +187,8 @@ public class DVCClient {
         }
     }
     
-    func setEnvironmentKey(_ environmentKey: String) {
-        self.environmentKey = environmentKey
+    func setSDKKey(_ sdkKey: String) {
+        self.sdkKey = sdkKey
     }
     
     func setUser(_ user: DVCUser) {
@@ -420,8 +420,14 @@ public class DVCClient {
             self.client = DVCClient()
         }
         
+        @available(*, deprecated)
         public func environmentKey(_ key: String) -> ClientBuilder {
-            self.client.setEnvironmentKey(key)
+            self.client.setSDKKey(key)
+            return self
+        }
+        
+        public func sdkKey(_ key: String) -> ClientBuilder {
+            self.client.setSDKKey(key)
             return self
         }
         
@@ -441,13 +447,13 @@ public class DVCClient {
         }
         
         public func build(onInitialized: ClientInitializedHandler?) throws -> DVCClient {
-            guard self.client.environmentKey != nil else {
-                Log.error("Missing Environment Key", tags: ["build"])
-                throw ClientError.MissingEnvironmentKeyOrUser
+            guard self.client.sdkKey != nil else {
+                Log.error("Missing SDK Key", tags: ["build"])
+                throw ClientError.MissingSDKKeyOrUser
             }
             guard self.client.user != nil else {
                 Log.error("Missing User", tags: ["build"])
-                throw ClientError.MissingEnvironmentKeyOrUser
+                throw ClientError.MissingSDKKeyOrUser
             }
             
             let result = self.client

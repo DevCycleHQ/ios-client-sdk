@@ -15,21 +15,21 @@
 
 - (void)testCreateUser {
     DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
-    DVCClient *client = [DVCClient initialize:@"my_env_key" user:user options:nil onInitialized:nil];
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(user);
     XCTAssertNotNil(client);
 }
 
 - (void)testAnonUser {
     DVCUser *user = [[DVCUser alloc] init];
-    DVCClient *client = [DVCClient initialize:@"my_env_key" user:user options:nil onInitialized:nil];
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(user);
     XCTAssertTrue(user.isAnonymous);
 }
 
 - (void)testNonUserIdPropertiesAreNil {
     DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
-    DVCClient *client = [DVCClient initialize:@"my_env_key" user:user options:nil onInitialized:nil];
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(user);
     XCTAssert([user.userId isEqual:@"my_user"]);
     XCTAssertFalse([user.isAnonymous boolValue]);
@@ -46,7 +46,7 @@
     user.email = @"email.com";
     user.name = @"Jason Smith";
     user.country = @"CAN";
-    DVCClient *client = [DVCClient initialize:@"my_env_key" user:user options:nil onInitialized:nil];
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(user);
     XCTAssert([user.userId isEqual:@"my_user"]);
     XCTAssertFalse([user.isAnonymous boolValue]);
