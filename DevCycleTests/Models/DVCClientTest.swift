@@ -32,37 +32,37 @@ class DVCClientTest: XCTestCase {
         self.userConfig = try! UserConfig(from: dictionary)
     }
     
-    func testBuilderReturnsNilIfNoEnvKey() {
+    func testBuilderReturnsNilIfNoSDKKey() {
         XCTAssertNil(try? self.builder.user(self.user).build(onInitialized: nil))
     }
     
     func testBuilderReturnsNilIfNoUser() {
-        XCTAssertNil(try? self.builder.environmentKey("my_env_key").build(onInitialized: nil))
+        XCTAssertNil(try? self.builder.sdkKey("my_sdk_key").build(onInitialized: nil))
     }
     
     func testBuilderReturnsClient() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         XCTAssertNotNil(client)
         XCTAssertNotNil(client.user)
-        XCTAssertNotNil(client.environmentKey)
+        XCTAssertNotNil(client.sdkKey)
         XCTAssertNil(client.options)
     }
     
     func testSetupCallsGetConfig() {
         let client = DVCClient()
         let service = MockService() // will assert if getConfig was called
-        client.setEnvironmentKey("")
+        client.setSDKKey("")
         client.setUser(self.user)
         client.setup(service: service)
     }
     
     func testBuilderReturnsClientWithOptions() {
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(100).build()
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).build(onInitialized: nil)
         XCTAssertNotNil(client)
         XCTAssertNotNil(client.options)
         XCTAssertNotNil(client.user)
-        XCTAssertNotNil(client.environmentKey)
+        XCTAssertNotNil(client.sdkKey)
     }
     
     func testTrackWithValidDVCEventNoOptionals() {
@@ -117,7 +117,7 @@ class DVCClientTest: XCTestCase {
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
         let service = MockService() // will assert if publishEvents was called
 
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").options(options).service(service).build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
         
         let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
         
@@ -136,7 +136,7 @@ class DVCClientTest: XCTestCase {
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
         let service = MockService() // will assert if publishEvents was called
 
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").options(options).service(service).build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
         
         let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
         
@@ -159,7 +159,7 @@ class DVCClientTest: XCTestCase {
     func testCloseFlushesRemainingEvents() {
         let expectation = XCTestExpectation(description: "Close flushes remaining events")
         let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").options(options).build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).build(onInitialized: nil)
         let service = MockService() // will assert if publishEvents was called
         client.setup(service: service)
         let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
@@ -188,19 +188,19 @@ class DVCClientTest: XCTestCase {
     }
     
     func testVariableReturnsDefaultForUnsupportedVariableKeys() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         let variable = client.variable(key: "UNSUPPORTED\\key%$", defaultValue: true)
         XCTAssertTrue(variable.value)
     }
     
     func testVariableFunctionWorksIfVariableKeyHasSupportedCharacters() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         let variable = client.variable(key: "supported-keys_here", defaultValue: true)
         XCTAssertTrue(variable.value)
     }
 
     func testVariableMethodReturnsDefaultedVariableWhenKeyIsNotInConfig() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.config?.userConfig = self.userConfig
         client.initialize(callback: nil)
 
@@ -211,7 +211,7 @@ class DVCClientTest: XCTestCase {
     }
 
     func testVariableMethodReturnsCorrectVariableForKey() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialize(callback: nil)
         client.config?.userConfig = self.userConfig
 
@@ -231,7 +231,7 @@ class DVCClientTest: XCTestCase {
     }
 
     func testVariableMethodReturnSameInstanceOfVariable() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialize(callback: nil)
         client.config?.userConfig = self.userConfig
 
@@ -250,7 +250,7 @@ class DVCClientTest: XCTestCase {
     }
 
     func testVariableMethodReturnsDifferentVariableForANewDefaultValue() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialize(callback: nil)
         client.config?.userConfig = self.userConfig
 
@@ -264,7 +264,7 @@ class DVCClientTest: XCTestCase {
     func testRefetchConfigUsesTheCorrectUser() {
         let service = MockService()
         let user1 = try! DVCUser.builder().userId("user1").build()
-        let client = try! DVCClient.builder().user(user1).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! DVCClient.builder().user(user1).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.setup(service: service)
         client.initialized = true
 
@@ -286,7 +286,7 @@ class DVCClientTest: XCTestCase {
     }
     
     func testSseCloseGetsCalledWhenBackgrounded() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialized = true
         
         let mockSSEConnection = MockSSEConnection()
@@ -310,7 +310,7 @@ class DVCClientTest: XCTestCase {
     }
 
     func testSseReopenGetsCalledWhenForegrounded() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
 
         client.initialized = true
         
@@ -335,7 +335,7 @@ class DVCClientTest: XCTestCase {
     }
     
     func testSseReopenDoesntGetCalledWhenForegroundedBeforeInactivityDelay() {
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialized = true
         
         let mockSSEConnection = MockSSEConnection()
@@ -366,7 +366,7 @@ class DVCClientTest: XCTestCase {
         XCTAssertNotNil(anonUser1)
         
         // Call Identify with a NOT anonymous User, this should erase the Cached UUID of anonUser1
-        let client = try! self.builder.user(self.user).environmentKey("my_env_key").build(onInitialized: { [weak self] error in
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: { [weak self] error in
             // Since the cached Anonymous User Id is only cleared on successful identify call,
             // the anonUser3.userId should be the same as anonUser1.userId
             let anonUser3 = try! DVCUser.builder().isAnonymous(true).build()
@@ -388,7 +388,7 @@ class DVCClientTest: XCTestCase {
         let anonUser1 = try! DVCUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser1)
         
-        let client = try! self.builder.user(anonUser1).environmentKey("my_env_key").build(onInitialized: nil)
+        let client = try! self.builder.user(anonUser1).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialize(callback: nil)
         client.config?.userConfig = self.userConfig
         

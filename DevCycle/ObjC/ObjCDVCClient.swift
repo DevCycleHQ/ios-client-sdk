@@ -12,11 +12,11 @@ public class ObjCDVCClient: NSObject {
     
     @objc(initialize:user:)
     public static func initialize(
-        environmentKey: String,
+        sdkKey: String,
         user: ObjCUser
     ) -> ObjCDVCClient {
         return ObjCDVCClient(
-            environmentKey: environmentKey,
+            sdkKey: sdkKey,
             user: user,
             options: nil,
             onInitialized: nil
@@ -25,12 +25,12 @@ public class ObjCDVCClient: NSObject {
         
     @objc(initialize:user:options:)
     public static func initialize(
-        environmentKey: String,
+        sdkKey: String,
         user: ObjCUser,
         options: ObjCOptions?
     ) -> ObjCDVCClient {
         return ObjCDVCClient(
-            environmentKey: environmentKey,
+            sdkKey: sdkKey,
             user: user,
             options: options,
             onInitialized: nil
@@ -39,13 +39,13 @@ public class ObjCDVCClient: NSObject {
         
     @objc(initialize:user:options:onInitialized:)
     public static func initialize(
-        environmentKey: String,
+        sdkKey: String,
         user: ObjCUser,
         options: ObjCOptions?,
         onInitialized: ((Error?) -> Void)?
     ) -> ObjCDVCClient {
         return ObjCDVCClient(
-            environmentKey: environmentKey,
+            sdkKey: sdkKey,
             user: user,
             options: options,
             onInitialized: onInitialized
@@ -53,15 +53,15 @@ public class ObjCDVCClient: NSObject {
     }
     
     init(
-        environmentKey: String,
+        sdkKey: String,
         user: ObjCUser,
         options: ObjCOptions?,
         onInitialized: ((Error?) -> Void)?
     ) {
         do {
-            if (environmentKey == nil || environmentKey == "") {
-                Log.error("Environment key missing", tags: ["build", "objc"])
-                throw ObjCClientErrors.MissingEnvironmentKey
+            if (sdkKey == nil || sdkKey == "") {
+                Log.error("SDK Key missing", tags: ["build", "objc"])
+                throw ObjCClientErrors.MissingSDKKey
             } else if (user == nil) {
                 Log.error("User missing", tags: ["build", "objc"])
                 throw ObjCClientErrors.MissingUser
@@ -72,7 +72,7 @@ public class ObjCDVCClient: NSObject {
             let dvcUser = try user.buildDVCUser()
             
             var clientBuilder = DVCClient.builder()
-                .environmentKey(environmentKey)
+                .sdkKey(sdkKey)
                 .user(dvcUser)
             
             if let dvcOptions = options {

@@ -7,7 +7,7 @@
 import Foundation
 
 enum ObjCClientErrors: Error {
-    case MissingEnvironmentKey
+    case MissingSDKKey
     case MissingUser
     case InvalidUser
     case InvalidClient

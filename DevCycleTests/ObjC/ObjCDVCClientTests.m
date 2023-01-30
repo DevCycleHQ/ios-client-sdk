@@ -13,8 +13,8 @@
 
 @implementation ObjcDVCClientTests
 
-- (void)testBuilderReturnsErrorIfNoEnvKey {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Builder returns error if no env key"];
+- (void)testBuilderReturnsErrorIfNoSDKKey {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Builder returns error if no sdk key"];
     DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
     DVCClient *client = [DVCClient initialize:nil user:user options:nil onInitialized:^(NSError * _Nullable err) {
         XCTAssertNil(client);
@@ -26,7 +26,7 @@
 
 - (void)testBuilderReturnsErrorIfNoUser {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Builder returns error if no user"];
-    DVCClient *client = [DVCClient initialize:@"my_env_key" user:nil options:nil onInitialized:^(NSError * _Nullable err) {
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:nil options:nil onInitialized:^(NSError * _Nullable err) {
         XCTAssertNil(client);
         XCTAssertNotNil(err);
         [expectation fulfill];
@@ -34,9 +34,9 @@
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
-- (void)testBuilderCreatesClientWithUserAndEnvKey {
+- (void)testBuilderCreatesClientWithUserAndSDKKey {
     DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
-    DVCClient *client = [DVCClient initialize:@"my_env_key" user:user options:nil onInitialized:nil];
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
 }
 
@@ -44,7 +44,7 @@
 
 - (void)testVariableIsCreated {
     DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
-    DVCClient *client = [DVCClient initialize:@"my_env_key" user:user options:nil onInitialized:nil];
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
     DVCVariable *variable = [client stringVariableWithKey:@"my-key" defaultValue:@"default-value"];
     XCTAssertNotNil(variable);

@@ -110,7 +110,7 @@ class DevCycleService: DevCycleServiceProtocol {
         eventsRequest.httpMethod = "POST"
         eventsRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         eventsRequest.addValue("application/json", forHTTPHeaderField: "Accept")
-        eventsRequest.addValue(config.environmentKey, forHTTPHeaderField: "Authorization")
+        eventsRequest.addValue(config.sdkKey, forHTTPHeaderField: "Authorization")
         let jsonBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
         Log.debug("Post Events Payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
         eventsRequest.httpBody = jsonBody
@@ -145,7 +145,7 @@ class DevCycleService: DevCycleServiceProtocol {
         saveEntityRequest.httpMethod = "PATCH"
         saveEntityRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         saveEntityRequest.addValue("application/json", forHTTPHeaderField: "Accept")
-        saveEntityRequest.addValue(config.environmentKey, forHTTPHeaderField: "Authorization")
+        saveEntityRequest.addValue(config.sdkKey, forHTTPHeaderField: "Authorization")
         if let jsonBody = try? JSONSerialization.data(withJSONObject: userBody, options: .prettyPrinted) {
            // build the save entity request with this data object
             Log.info("Save entity payload: \(String(data: jsonBody, encoding: .utf8) ?? "")")
@@ -253,7 +253,7 @@ class DevCycleService: DevCycleServiceProtocol {
             url = NetworkingConstants.sdkUrl + NetworkingConstants.hostUrl
             url.append("\(NetworkingConstants.Version.v1)")
             url.append("\(NetworkingConstants.UrlPaths.config)")
-            querySpecificItems.append(URLQueryItem(name: "envKey", value: config.environmentKey))
+            querySpecificItems.append(URLQueryItem(name: "sdkKey", value: config.sdkKey))
         }
         var urlComponents: URLComponents = URLComponents(string: url)!
         if (!querySpecificItems.isEmpty) {

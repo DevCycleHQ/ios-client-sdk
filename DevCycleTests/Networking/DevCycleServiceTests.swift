@@ -11,14 +11,14 @@ class DevCycleServiceTests: XCTestCase {
     func testCreateConfigURLRequest() throws {
         let url = getService().createConfigRequest(user: getTestUser(), enableEdgeDB: false).url?.absoluteString
         XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/mobileSDKConfig"))
-        XCTAssert(url!.contains("envKey=my_env_key"))
+        XCTAssert(url!.contains("sdkKey=my_sdk_key"))
         XCTAssert(url!.contains("user_id=my_user"))
     }
     
     func testCreateConfigURLRequestWithEdgeDB() throws {
         let url = getService().createConfigRequest(user: getTestUser(), enableEdgeDB: true).url?.absoluteString
         XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/mobileSDKConfig"))
-        XCTAssert(url!.contains("envKey=my_env_key"))
+        XCTAssert(url!.contains("sdkKey=my_sdk_key"))
         XCTAssert(url!.contains("user_id=my_user"))
         XCTAssert(url!.contains("enableEdgeDB=true"))
     }
@@ -83,7 +83,7 @@ extension DevCycleServiceTests {
 
     func getService() -> DevCycleService {
         let user = getTestUser()
-        let config = DVCConfig(environmentKey: "my_env_key", user: user)
+        let config = DVCConfig(sdkKey: "my_sdk_key", user: user)
         return DevCycleService(config: config, cacheService: MockCacheService())
     }
     
