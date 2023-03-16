@@ -257,20 +257,11 @@ public class DVCClient {
         if (Thread.isMainThread) {
             return self.variable(key, defaultValue)
         } else {
-            var variable = DVCVariable(
-                key: key,
-                type: String(describing: T.self),
-                value: nil,
-                defaultValue: defaultValue,
-                evalReason: nil
-            )
-            DispatchQueue.main.sync {
-                variable = self.variable(key, defaultValue)
+            return DispatchQueue.main.sync {
+                self.variable(key, defaultValue)
             }
-            return variable
         }
     }
-
     internal func variable<T>(_ key: String, _ defaultValue: T) -> DVCVariable<T> {
         let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
         if (regex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) != nil) {
