@@ -252,8 +252,26 @@ public class DVCClient {
             }
         })
     }
-
+    
     public func variable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
+        if (Thread.isMainThread) {
+            return self.variable(key, defaultValue)
+        } else {
+            var variable = DVCVariable(
+                key: key,
+                type: String(describing: T.self),
+                value: nil,
+                defaultValue: defaultValue,
+                evalReason: nil
+            )
+            DispatchQueue.main.sync {
+                variable = self.variable(key, defaultValue)
+            }
+            return variable
+        }
+    }
+
+    internal func variable<T>(_ key: String, _ defaultValue: T) -> DVCVariable<T> {
         let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
         if (regex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) != nil) {
             Log.error("The variable key \(key) is invalid. It must contain only lowercase letters, numbers, hyphens and underscores. The default value will always be returned for this call.")
@@ -292,7 +310,7 @@ public class DVCClient {
         if (!self.closed) {
             self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
         }
-        
+
         return variable
     }
     
