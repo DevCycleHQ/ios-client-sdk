@@ -315,16 +315,6 @@ public class DVCClient {
     }
     
     public func identifyUser(user: DVCUser, callback: IdentifyCompletedHandler? = nil) throws {
-        if (Thread.isMainThread) {
-            try? self.identifyUser(user, callback)
-        } else {
-            DispatchQueue.main.sync {
-                try? self.identifyUser(user, callback)
-            }
-        }
-    }
-    
-    internal func identifyUser(_ user: DVCUser, _ callback: IdentifyCompletedHandler? = nil) throws {
         guard let currentUser = self.user, let userId = currentUser.userId, let incomingUserId = user.userId else {
             throw ClientError.InvalidUser
         }
@@ -405,13 +395,7 @@ public class DVCClient {
     
     
     public func flushEvents(callback: FlushCompletedHandler?) {
-        if (Thread.isMainThread) {
-            self.flushEvents(callback)
-        } else {
-            DispatchQueue.main.sync {
-                self.flushEvents(callback)
-            }
-        }
+        self.flushEvents(callback)
     }
     
     internal func flushEvents(_ callback: FlushCompletedHandler? = nil) {
