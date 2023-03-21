@@ -252,17 +252,8 @@ public class DVCClient {
             }
         })
     }
-    
+
     public func variable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
-        if (Thread.isMainThread) {
-            return self.variable(key, defaultValue)
-        } else {
-            return DispatchQueue.main.sync {
-                self.variable(key, defaultValue)
-            }
-        }
-    }
-    internal func variable<T>(_ key: String, _ defaultValue: T) -> DVCVariable<T> {
         let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
         if (regex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) != nil) {
             Log.error("The variable key \(key) is invalid. It must contain only lowercase letters, numbers, hyphens and underscores. The default value will always be returned for this call.")
@@ -301,21 +292,11 @@ public class DVCClient {
         if (!self.closed) {
             self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
         }
-
+        
         return variable
     }
     
     public func identifyUser(user: DVCUser, callback: IdentifyCompletedHandler? = nil) throws {
-        if (Thread.isMainThread) {
-            try? self.identifyUser(user, callback)
-        } else {
-            DispatchQueue.main.sync {
-                try? self.identifyUser(user, callback)
-            }
-        }
-    }
-    
-    internal func identifyUser(_ user: DVCUser, _ callback: IdentifyCompletedHandler? = nil) throws {
         guard let currentUser = self.user, let userId = currentUser.userId, let incomingUserId = user.userId else {
             throw ClientError.InvalidUser
         }
@@ -396,13 +377,7 @@ public class DVCClient {
     
     
     public func flushEvents(callback: FlushCompletedHandler?) {
-        if (Thread.isMainThread) {
-            self.flushEvents(callback)
-        } else {
-            DispatchQueue.main.sync {
-                self.flushEvents(callback)
-            }
-        }
+        self.flushEvents(callback)
     }
     
     internal func flushEvents(_ callback: FlushCompletedHandler? = nil) {
