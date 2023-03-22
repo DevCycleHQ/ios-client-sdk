@@ -53,6 +53,8 @@ public class DVCClient {
     private var variableInstanceDictonary = [String: NSMapTable<AnyObject, AnyObject>]()
     private var isConfigCached: Bool = false
     
+    private var variableQueue = DispatchQueue(label: "com.devcycle.VariableQueue")
+    
     /**
         Method to initialize the Client object after building
      */
@@ -266,34 +268,35 @@ public class DVCClient {
             )
         }
 
-        var variable: DVCVariable<T>
-        if (self.variableInstanceDictonary[key] == nil) {
-            self.variableInstanceDictonary[key] = NSMapTable<AnyObject, AnyObject>(valueOptions: .weakMemory)
-        }
-
-        if let variableFromDictonary = self.variableInstanceDictonary[key]?.object(forKey: defaultValue as AnyObject) as? DVCVariable<T> {
-            variable = variableFromDictonary
-        } else {
-            if let config = self.config?.userConfig,
-               let variableFromApi = config.variables[key] {
-                variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue)
-            } else {
-                variable = DVCVariable(
-                    key: key,
-                    type: String(describing: T.self),
-                    value: nil,
-                    defaultValue: defaultValue,
-                    evalReason: nil
-                )
+        return variableQueue.sync {
+            var variable: DVCVariable<T>
+            if (self.variableInstanceDictonary[key] == nil) {
+                self.variableInstanceDictonary[key] = NSMapTable<AnyObject, AnyObject>(valueOptions: .weakMemory)
             }
-            self.variableInstanceDictonary[key]?.setObject(variable, forKey: defaultValue as AnyObject)
+            if let variableFromDictionary = self.variableInstanceDictonary[key]?.object(forKey: defaultValue as AnyObject) as? DVCVariable<T> {
+                variable = variableFromDictionary
+            } else {
+                if let config = self.config?.userConfig,
+                   let variableFromApi = config.variables[key] {
+                    variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue)
+                } else {
+                    variable = DVCVariable(
+                        key: key,
+                        type: String(describing: T.self),
+                        value: nil,
+                        defaultValue: defaultValue,
+                        evalReason: nil
+                    )
+                }
+                    self.variableInstanceDictonary[key]?.setObject(variable, forKey: defaultValue as AnyObject)
+            }
+            
+            if (!self.closed) {
+                self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+            }
+            
+            return variable
         }
-        
-        if (!self.closed) {
-            self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
-        }
-        
-        return variable
     }
     
     public func identifyUser(user: DVCUser, callback: IdentifyCompletedHandler? = nil) throws {
