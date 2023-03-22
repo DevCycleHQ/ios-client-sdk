@@ -13,6 +13,7 @@
 		52133B2228DE00BC0007691D /* ProcessConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2128DE00BC0007691D /* ProcessConfig.swift */; };
 		52133B2428DE0FEB0007691D /* GetTestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2328DE0FEB0007691D /* GetTestConfig.swift */; };
 		5226DF06290C588900630745 /* NotificationNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5226DF05290C588900630745 /* NotificationNames.swift */; };
+		523A31D029CB411A008F3347 /* ThreadingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523A31CF29CB411A008F3347 /* ThreadingTests.swift */; };
 		52404CEA27F3A9FB00290A31 /* isEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52404CE927F3A9FB00290A31 /* isEqual.swift */; };
 		52404CED27F4A92100290A31 /* IsEqualTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52404CEC27F4A92100290A31 /* IsEqualTests.swift */; };
 		524D58242770F78B00D7CC56 /* ObjCDVCVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524D58232770F78B00D7CC56 /* ObjCDVCVariable.swift */; };
@@ -85,6 +86,7 @@
 		52133B2128DE00BC0007691D /* ProcessConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessConfig.swift; sourceTree = "<group>"; };
 		52133B2328DE0FEB0007691D /* GetTestConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTestConfig.swift; sourceTree = "<group>"; };
 		5226DF05290C588900630745 /* NotificationNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationNames.swift; sourceTree = "<group>"; };
+		523A31CF29CB411A008F3347 /* ThreadingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThreadingTests.swift; path = DevCycleTests/Models/ThreadingTests.swift; sourceTree = SOURCE_ROOT; };
 		52404CE927F3A9FB00290A31 /* isEqual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isEqual.swift; sourceTree = "<group>"; };
 		52404CEC27F4A92100290A31 /* IsEqualTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsEqualTests.swift; sourceTree = "<group>"; };
 		524D58232770F78B00D7CC56 /* ObjCDVCVariable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjCDVCVariable.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 		52133B1E28DDFAF90007691D /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				523A31CF29CB411A008F3347 /* ThreadingTests.swift */,
 				52E693F52758032500B52375 /* DevCycleServiceTests.swift */,
 			);
 			path = Networking;
@@ -456,6 +459,7 @@
 				52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */,
 				52404CED27F4A92100290A31 /* IsEqualTests.swift in Sources */,
 				5268DB6B275020F800D17A40 /* DVCClientTest.swift in Sources */,
+				523A31D029CB411A008F3347 /* ThreadingTests.swift in Sources */,
 				529F0C90277374150075AAB4 /* ObjcDVCVariableTests.m in Sources */,
 				5268DB69275020D900D17A40 /* DVCUserTest.swift in Sources */,
 				52A1139F27AB235C000B8285 /* EventQueueTests.swift in Sources */,
