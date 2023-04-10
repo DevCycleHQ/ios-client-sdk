@@ -224,6 +224,11 @@ public class DVCClient {
     }
 
     private func setupSSEConnection() {
+        if let disableRealtimeUpdates = self.options?.disableRealtimeUpdates, disableRealtimeUpdates {
+            Log.info("Disabling Realtime Updates based on Initialization parameter")
+            return
+        }
+
         guard let sseURL = self.config?.userConfig?.sse?.url else {
             Log.error("No SSE URL in config")
             return
