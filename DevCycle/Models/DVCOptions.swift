@@ -13,6 +13,7 @@ public class DVCOptions {
     var enableEdgeDB: Bool = false
     var disableConfigCache: Bool = false
     var configCacheTTL: Int = 604800000
+    var disableRealtimeUpdates: Bool = false
     
     public class OptionsBuilder {
         var options: DVCOptions
@@ -48,6 +49,11 @@ public class DVCOptions {
         
         public func configCacheTTL(_ ttl: Int = 604800000) -> OptionsBuilder {
             self.options.configCacheTTL = ttl
+            return self
+        }
+
+        public func disableRealtimeUpdates(_ disable: Bool) -> OptionsBuilder {
+            self.options.disableRealtimeUpdates = disable
             return self
         }
         

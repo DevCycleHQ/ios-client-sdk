@@ -21,6 +21,7 @@ class DVCOptionsTest: XCTestCase {
                 .enableEdgeDB(true)
                 .configCacheTTL(172800000)
                 .disableConfigCache(true)
+                .disableRealtimeUpdates(true)
                 .build()
         XCTAssertNotNil(options)
         XCTAssert(options.flushEventsIntervalMs == 1000)
@@ -28,6 +29,7 @@ class DVCOptionsTest: XCTestCase {
         XCTAssert(options.enableEdgeDB)
         XCTAssert(options.configCacheTTL == 172800000)
         XCTAssert(options.disableConfigCache)
+        XCTAssert(options.disableRealtimeUpdates)
     }
     
     func testBuilderReturnsOptionsAndSomeAreNil() {
@@ -38,5 +40,6 @@ class DVCOptionsTest: XCTestCase {
         XCTAssertNil(options.flushEventsIntervalMs)
         XCTAssertFalse(options.disableEventLogging!)
         XCTAssertFalse(options.enableEdgeDB)
+        XCTAssertFalse(options.disableRealtimeUpdates)
     }
 }
