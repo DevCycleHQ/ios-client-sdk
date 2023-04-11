@@ -40,6 +40,17 @@
     XCTAssertNotNil(client);
 }
 
+- (void)testBuilderCreatesClientWithUserAndSDKKeyAndOptions {
+    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DVCOptions *options = [[DVCOptions alloc] init];
+    options.logLevel = LogLevel.info;
+    options.disableRealtimeUpdates = @true;
+    options.configCacheTTL = @86400000;
+    
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:options onInitialized:nil];
+    XCTAssertNotNil(client);
+}
+
 #pragma mark - Variable Tests
 
 - (void)testVariableIsCreated {
