@@ -20,6 +20,8 @@ public class ObjCOptions: NSObject {
     @objc public var disableEventLogging: NSNumber?
     @objc public var logLevel: NSNumber?
     @objc public var enableEdgeDB: NSNumber?
+    @objc public var disableConfigCache: NSNumber?
+    @objc public var configCacheTTL: NSNumber?
     @objc public var disableRealtimeUpdates: NSNumber?
     
     func buildDVCOptions() -> DVCOptions {
@@ -37,6 +39,16 @@ public class ObjCOptions: NSObject {
         if let enableEdgeDB = self.enableEdgeDB,
            let enable = enableEdgeDB as? Bool {
             optionsBuilder = optionsBuilder.enableEdgeDB(enable)
+        }
+        
+        if let disableConfigCache = self.disableConfigCache,
+           let disable = disableConfigCache as? Bool {
+            optionsBuilder = optionsBuilder.disableConfigCache(disable)
+        }
+        
+        if let configCacheTTL = self.configCacheTTL,
+           let interval = configCacheTTL as? Int {
+            optionsBuilder = optionsBuilder.configCacheTTL(interval)
         }
         
         if let disableRealtimeUpdates = self.disableRealtimeUpdates,
@@ -59,6 +71,7 @@ public class ObjCOptions: NSObject {
             }
             optionsBuilder = optionsBuilder.logLevel(setLogLevel)
         }
+        
         return optionsBuilder.build()
     }
 }
