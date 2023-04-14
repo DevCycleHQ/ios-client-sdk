@@ -277,19 +277,19 @@ class DVCClientTest: XCTestCase {
         client.initialized = true
 
         XCTAssertEqual(client.lastIdentifiedUser?.userId, user1.userId)
-        client.refetchConfig(sse: true, lastModified: 123)
+        client.refetchConfig(sse: true, lastModified: 123, etag: "etag")
         XCTAssertEqual(service.numberOfConfigCalls, 2)
 
         let user2 = try! DVCUser.builder().userId("user2").build()
         try! client.identifyUser(user: user2)
         XCTAssertEqual(client.lastIdentifiedUser?.userId, user2.userId)
-        client.refetchConfig(sse: true, lastModified: 456)
+        client.refetchConfig(sse: true, lastModified: 456, etag: "etag")
         XCTAssertEqual(service.numberOfConfigCalls, 4)
 
         let user3 = try! DVCUser.builder().userId("user3").build()
         try! client.identifyUser(user: user3)
         XCTAssertEqual(client.lastIdentifiedUser?.userId, user3.userId)
-        client.refetchConfig(sse: true, lastModified: 789)
+        client.refetchConfig(sse: true, lastModified: 789, etag: "etag")
         XCTAssertEqual(service.numberOfConfigCalls, 6)
     }
     

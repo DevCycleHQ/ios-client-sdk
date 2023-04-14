@@ -201,9 +201,9 @@ public class DVCClient {
         self.options = options
     }
     
-    func refetchConfig(sse: Bool, lastModified: Int?) {
+    func refetchConfig(sse: Bool, lastModified: Int?, etag: String?) {
         if let lastIdentifiedUser = self.lastIdentifiedUser, self.initialized {
-            let extraParams = RequestParams(sse: sse, lastModified: lastModified)
+            let extraParams = RequestParams(sse: sse, lastModified: lastModified, etag: etag)
             self.service?.getConfig(user: lastIdentifiedUser, enableEdgeDB: self.enableEdgeDB, extraParams: extraParams, completion: { [weak self] config, error in
                 guard let self = self else { return }
                 if let error = error {
@@ -251,7 +251,7 @@ public class DVCClient {
                 let sseMessage = try SSEMessage(from: messageDictionary)
                 if (sseMessage.data.type == nil || sseMessage.data.type == "refetchConfig") {
                     if (self?.config?.userConfig?.etag == nil || sseMessage.data.etag != self?.config?.userConfig?.etag) {
-                        self?.refetchConfig(sse: true, lastModified: sseMessage.data.lastModified)
+                        self?.refetchConfig(sse: true, lastModified: sseMessage.data.lastModified, etag: sseMessage.data.etag)
                     }
                 }
             } catch {
@@ -482,7 +482,7 @@ public class DVCClient {
     @objc func appMovedToForeground() {
         inactivityWorkItem?.cancel()
         if let connected = self.sseConnection?.connected, !connected {
-            self.refetchConfig(sse: false, lastModified: nil)
+            self.refetchConfig(sse: false, lastModified: nil, etag: nil)
             self.sseConnection?.reopen()
         }
     }
