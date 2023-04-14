@@ -58,6 +58,7 @@ struct NetworkingConstants {
 struct RequestParams {
     var sse: Bool
     var lastModified: Int?
+    var etag: String?
 }
 
 protocol DevCycleServiceProtocol {
@@ -212,6 +213,9 @@ class DevCycleService: DevCycleServiceProtocol {
             }
             if let lastModified = extraParams.lastModified {
                 userQueryItems.append(URLQueryItem(name: "sseLastModified", value: String(lastModified)))
+            }
+            if let etag = extraParams.etag {
+                userQueryItems.append(URLQueryItem(name: "sseEtag", value: etag))
             }
         }
         var urlComponents: URLComponents = createRequestUrl(type: "config", userQueryItems)
