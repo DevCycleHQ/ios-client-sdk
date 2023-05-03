@@ -15,8 +15,6 @@ This version of the DevCycle Client SDK supports iOS 12.0+ / tvOS 12.0+ / watchO
 
 ## Installation
 
-** Note **: Versions `1.3.2` and below are deprecated due to changes to the `UserConfig` model that support new properties from the retrieved config.
-
 ### CocoaPods
 
 The SDK can be installed into your iOS project by adding the following to your cocoapod spec:
@@ -26,16 +24,6 @@ pod 'DevCycle'
 ```
 Then, run `pod install`.
 
-### Carthage
-
-Include the following in your `Cartfile` to integrate DevCycle as a dependency to your project: 
-
-```swift
-github "DevCycleHQ/ios-client-sdk"
-```
-
-Then, run `carthage update --use-xcframeworks`. Drag the built .xcframework bundles from Carthage/Build into the "Frameworks and Libraries" section of your application’s Xcode project.
-
 ### Swift Package Manager
 
 To use the library with Swift Package Manager, include it as a dependency in your `Package.swift` file like so:
@@ -43,7 +31,7 @@ To use the library with Swift Package Manager, include it as a dependency in you
 ```
 ...
     dependencies: [
-        .package(url: "https://github.com/DevCycleHQ/ios-client-sdk.git", .upToNextMinor("1.6.0")),
+        .package(url: "https://github.com/DevCycleHQ/ios-client-sdk.git", .upToNextMajor("1.11.2")),
     ],
     targets: [
         .target(
@@ -55,6 +43,18 @@ To use the library with Swift Package Manager, include it as a dependency in you
 ```
 
 You can also add it through Xcode, i.e. `File > Swift Packages > Add Package Dependency`, then enter the repository clone URL.
+
+### Carthage
+
+**WARNING: Carthage Support is currently not working correctly, we are investigating soutions.**
+
+Include the following in your `Cartfile` to integrate DevCycle as a dependency to your project: 
+
+```swift
+github "DevCycleHQ/ios-client-sdk"
+```
+
+Then, run `carthage update --use-xcframeworks`. Drag the built .xcframework bundles from Carthage/Build into the "Frameworks and Libraries" section of your application’s Xcode project.
 
 ## Usage
 
