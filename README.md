@@ -46,7 +46,7 @@ You can also add it through Xcode, i.e. `File > Swift Packages > Add Package Dep
 
 ### Carthage
 
-**WARNING: Carthage Support is currently not working correctly, we are investigating soutions.**
+**WARNING: MacOS development with Carthage is currently not supported with DevCycle.**
 
 Include the following in your `Cartfile` to integrate DevCycle as a dependency to your project: 
 
