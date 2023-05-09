@@ -199,12 +199,16 @@ class DVCClientTest: XCTestCase {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         let variable = client.variable(key: "UNSUPPORTED\\key%$", defaultValue: true)
         XCTAssertTrue(variable.value)
+        let variableValue = client.variableValue(key: "UNSUPPORTED\\key%$", defaultValue: true)
+        XCTAssertTrue(variableValue)
     }
     
     func testVariableFunctionWorksIfVariableKeyHasSupportedCharacters() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         let variable = client.variable(key: "supported-keys_here", defaultValue: true)
         XCTAssertTrue(variable.value)
+        let variableValue = client.variableValue(key: "supported-keys_here", defaultValue: true)
+        XCTAssertTrue(variableValue)
     }
 
     func testVariableMethodReturnsDefaultedVariableWhenKeyIsNotInConfig() {
@@ -216,6 +220,9 @@ class DVCClientTest: XCTestCase {
         XCTAssertFalse(variable.value)
         XCTAssertTrue(variable.isDefaulted)
         XCTAssertFalse(variable.defaultValue)
+        
+        let variableValue = client.variableValue(key: "some_non_existent_variable", defaultValue: false)
+        XCTAssertFalse(variableValue)
     }
 
     func testVariableMethodReturnsCorrectVariableForKey() {
@@ -225,17 +232,26 @@ class DVCClientTest: XCTestCase {
 
         let boolVar = client.variable(key: "bool-var", defaultValue: false)
         XCTAssertTrue(boolVar.value)
+        let boolValue = client.variableValue(key: "bool-var", defaultValue: false)
+        XCTAssertTrue(boolValue)
 
         let numVar = client.variable(key: "num-var", defaultValue: 0)
         XCTAssertEqual(numVar.value, 4)
+        let numValue = client.variableValue(key: "num-var", defaultValue: 0)
+        XCTAssertEqual(numValue, 4)
 
         let stringVar = client.variable(key: "string-var", defaultValue: "default-string")
         XCTAssertEqual(stringVar.value, "string1")
+        let stringValue = client.variableValue(key: "string-var", defaultValue: "default-string")
+        XCTAssertEqual(stringValue, "string1")
 
         let defaultDict: NSDictionary = ["some_key": "some_value"]
         let jsonVar = client.variable(key: "json-var", defaultValue: defaultDict)
         XCTAssertEqual(jsonVar.value["key1"] as! String, "value1")
         XCTAssertEqual((jsonVar.value["key2"] as! NSDictionary)["nestedKey1"] as! String, "nestedValue1")
+        let jsonValue = client.variableValue(key: "json-var", defaultValue: defaultDict)
+        XCTAssertEqual(jsonValue["key1"] as! String, "value1")
+        XCTAssertEqual((jsonValue["key2"] as! NSDictionary)["nestedKey1"] as! String, "nestedValue1")
     }
 
     func testVariableMethodReturnSameInstanceOfVariable() {
