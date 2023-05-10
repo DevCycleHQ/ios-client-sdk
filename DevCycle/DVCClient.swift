@@ -259,6 +259,10 @@ public class DVCClient {
             }
         })
     }
+    
+    public func variableValue<T>(key: String, defaultValue: T) -> T {
+        return variable(key: key, defaultValue: defaultValue).value
+    }
 
     public func variable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
         let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
