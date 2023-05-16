@@ -65,4 +65,24 @@
     XCTAssertEqual(variable.defaultValue, @"default-value");
 }
 
+- (void)testVariableValueIsCreated {
+    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
+    XCTAssertNotNil(client);
+    NSString *variableValue = [client stringVariableValueWithKey:@"my-key" defaultValue:@"default-value"];
+    XCTAssertNotNil(variableValue);
+    XCTAssertTrue([variableValue isEqualToString:@"String"]);
+    XCTAssertEqual(variableValue, @"default-value");
+}
+
+- (void)testVariableValueBool {
+    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
+    XCTAssertNotNil(client);
+    BOOL boolValue = [client boolVariableValueWithKey:@"my-key" defaultValue:true];
+    XCTAssertTrue(boolValue);
+    
+    NSDictionary* jsonValue = [client jsonVariableValueWithKey:@"my-key" defaultValue:@{}];
+}
+
 @end
