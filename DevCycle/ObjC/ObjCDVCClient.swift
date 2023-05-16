@@ -132,6 +132,22 @@ public class ObjCDVCClient: NSObject {
         }
     }
     
+    @objc public func stringVariableValue(key: String, defaultValue: String) -> String {
+        return variableValue(key: key, defaultValue: defaultValue)
+    }
+    
+    @objc public func numberVariableValue(key: String, defaultValue: NSNumber) -> NSNumber {
+        return variableValue(key: key, defaultValue: defaultValue)
+    }
+    
+    @objc public func boolVariableValue(key: String, defaultValue: Bool) -> Bool {
+        return variableValue(key: key, defaultValue: defaultValue)
+    }
+    
+    @objc public func jsonVariableValue(key: String, defaultValue: NSObject) -> NSObject {
+        return variableValue(key: key, defaultValue: defaultValue)
+    }
+    
     @objc public func stringVariable(key: String, defaultValue: String) -> ObjCDVCVariable {
         return variable(key: key, defaultValue: defaultValue)
     }
@@ -146,6 +162,13 @@ public class ObjCDVCClient: NSObject {
     
     @objc public func jsonVariable(key: String, defaultValue: NSObject) -> ObjCDVCVariable {
         return variable(key: key, defaultValue: defaultValue)
+    }
+    
+    func variableValue<T>(key: String, defaultValue: T) -> T {
+        guard let client = self.client else {
+            return defaultValue
+        }
+        return client.variable(key: key, defaultValue: defaultValue).value
     }
     
     func variable<T>(key: String, defaultValue: T) -> ObjCDVCVariable {
