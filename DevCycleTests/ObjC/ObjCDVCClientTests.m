@@ -71,7 +71,6 @@
     XCTAssertNotNil(client);
     NSString *variableValue = [client stringVariableValueWithKey:@"my-key" defaultValue:@"default-value"];
     XCTAssertNotNil(variableValue);
-    XCTAssertTrue([variableValue isEqualToString:@"String"]);
     XCTAssertEqual(variableValue, @"default-value");
 }
 
@@ -81,8 +80,6 @@
     XCTAssertNotNil(client);
     BOOL boolValue = [client boolVariableValueWithKey:@"my-key" defaultValue:true];
     XCTAssertTrue(boolValue);
-    
-    NSDictionary* jsonValue = [client jsonVariableValueWithKey:@"my-key" defaultValue:@{}];
 }
 
 @end
