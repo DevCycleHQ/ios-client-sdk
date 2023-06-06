@@ -18,7 +18,7 @@ enum UserError: Error {
     case InvalidUser
 }
 
-public class UserBuilder {
+open class UserBuilder {
     private let cacheService: CacheServiceProtocol = CacheService()
     
     var user: DVCUser
@@ -113,7 +113,7 @@ public class UserBuilder {
 }
 
 
-public class DVCUser: Codable {
+open class DVCUser: Codable {
     public var userId: String?
     public var isAnonymous: Bool?
     public var email: String?

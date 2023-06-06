@@ -6,7 +6,7 @@
 
 import Foundation
 
-public class DVCOptions {
+open class DVCOptions {
     var flushEventsIntervalMs: Int?
     var disableEventLogging: Bool?
     var logLevel: LogLevel = .error
@@ -15,7 +15,7 @@ public class DVCOptions {
     var configCacheTTL: Int = 604800000
     var disableRealtimeUpdates: Bool = false
     
-    public class OptionsBuilder {
+    open class OptionsBuilder {
         var options: DVCOptions
         
         init () {

@@ -28,7 +28,7 @@ public typealias IdentifyCompletedHandler = (Error?, [String: Variable]?) -> Voi
 public typealias FlushCompletedHandler = (Error?) -> Void
 public typealias CloseCompletedHandler = () -> Void
 
-public class DVCClient {
+open class DVCClient {
     var sdkKey: String?
     var user: DVCUser?
     var lastIdentifiedUser: DVCUser?
@@ -424,7 +424,7 @@ public class DVCClient {
         self.sseConnection?.close()
     }
     
-    public class ClientBuilder {
+    open class ClientBuilder {
         private var client: DVCClient
         private var service: DevCycleServiceProtocol?
 

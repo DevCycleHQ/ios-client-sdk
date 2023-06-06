@@ -9,7 +9,7 @@ import Foundation
 
 public typealias VariableValueHandler<T> = (T) -> Void
 
-public class DVCVariable<T> {
+open class DVCVariable<T> {
     public var key: String
     public var type: String
     public var handler: VariableValueHandler<T>?

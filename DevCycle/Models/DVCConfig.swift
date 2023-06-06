@@ -6,7 +6,7 @@
 
 import Foundation
 
-public class DVCConfig {
+open class DVCConfig {
     var sdkKey: String
     var user: DVCUser
     var userConfig: UserConfig? {

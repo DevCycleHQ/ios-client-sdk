@@ -50,7 +50,7 @@ public enum CustomDataValue: Codable {
     }
 }
 
-public class CustomData: Codable {
+open class CustomData: Codable {
     public var data: [String: CustomDataValue]
     
     public static func customDataFromDic(_ data: [String: Any]) throws -> CustomData {

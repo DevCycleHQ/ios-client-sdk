@@ -10,7 +10,7 @@ enum EventError: Error {
     case MissingEventType
 }
 
-public class DVCEvent {
+open class DVCEvent {
     var type: String?
     var target: String?
     var clientDate: Date?
@@ -25,7 +25,7 @@ public class DVCEvent {
         self.metaData = metaData
     }
     
-    public class EventBuilder {
+    open class EventBuilder {
         var event: DVCEvent
         
         init () {
