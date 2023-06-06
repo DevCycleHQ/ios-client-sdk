@@ -12,7 +12,6 @@ class ViewController: NSViewController {
     @IBOutlet weak var loginButton: NSButton!
     
     var loggedIn: Bool = false
-    var client: DVCClient?
     var titleHeaderVar: DVCVariable<String>?
     var loginCtaVar: DVCVariable<String>?
     
@@ -27,16 +26,17 @@ class ViewController: NSViewController {
     }
     
     @objc func didFinishLaunching() {
-        // Do any additional setup after loading the view.
-        self.client = DevCycleManager.shared.client
-        self.loginCtaVar = client?.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
-            self.setLoginButtonTitle(self.loggedIn)
-        })
-        self.titleHeaderVar = client?.variable(key: "title-header-copy", defaultValue: "DevCycle iOS Example App").onUpdate(handler: { value in
+        do {
+            // Do any additional setup after loading the view.
+            self.loginCtaVar = try DevCycleManager.shared.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
+                self.setLoginButtonTitle(self.loggedIn)
+            })
+            self.titleHeaderVar = try DevCycleManager.shared.variable(key: "title-header-copy", defaultValue: "DevCycle iOS Example App").onUpdate(handler: { value in
+                self.setTitleHeader()
+            })
             self.setTitleHeader()
-        })
-        self.setTitleHeader()
-        self.setLoginButtonTitle(false)
+            self.setLoginButtonTitle(false)
+        } catch { }
     }
     
     func setTitleHeader() {
@@ -57,7 +57,7 @@ class ViewController: NSViewController {
     @IBAction func loginButtonPressed(_ sender: Any) {
         print("Login Button")
         
-        guard let client = self.client else { return }
+        guard let client = DevCycleManager.shared.client else { return }
         if (self.loggedIn) {
             try? client.resetUser { [weak self] error, variables in
                 guard let self = self else { return }
@@ -102,7 +102,7 @@ class ViewController: NSViewController {
     }
     
     @IBAction func track(_ sender: Any) {
-        guard let client = self.client else { return }
+        guard let client = DevCycleManager.shared.client else { return }
         let event = try! DVCEvent.builder()
                                  .type("my_event")
                                  .target("my_target")
@@ -116,7 +116,7 @@ class ViewController: NSViewController {
     
     @IBAction func logAllFeatures(_ sender: Any) {
         print("logAllFeatures Button Pressed")
-        guard let client = self.client else { return }
+        guard let client = DevCycleManager.shared.client else { return }
         print("All Features: \(client.allFeatures())")
         print("All Variables: \(client.allVariables())")
     }

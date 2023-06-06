@@ -38,7 +38,7 @@ class DevCycleManager {
         guard let client = self.client else {
             throw DevCycleManagerError.MissingClient
         }
-        var variable = client.variable(key: key, defaultValue: defaultValue)
+        let variable = client.variable(key: key, defaultValue: defaultValue)
         if (variable.isDefaulted) {
             // track variableDefaulted event
         } else {
