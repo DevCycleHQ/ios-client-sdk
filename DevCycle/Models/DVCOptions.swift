@@ -14,6 +14,8 @@ public class DVCOptions {
     var disableConfigCache: Bool = false
     var configCacheTTL: Int = 604800000
     var disableRealtimeUpdates: Bool = false
+    var disableAutomaticEventLogging: Bool = false
+    var disableCustomEventLogging: Bool = false
     
     public class OptionsBuilder {
         var options: DVCOptions
@@ -27,8 +29,19 @@ public class DVCOptions {
             return self
         }
         
+        @available(*, deprecated, message: "Use disableAutomaticEventLogging or disableCustomEventLogging")
         public func disableEventLogging(_ disable: Bool) -> OptionsBuilder {
             self.options.disableEventLogging = disable
+            return self
+        }
+        
+        public func disableAutomaticEventLogging(_ disable: Bool) -> OptionsBuilder{
+            self.options.disableAutomaticEventLogging = disable
+            return self
+        }
+        
+        public func disableCustomEventLogging(_ disable: Bool) -> OptionsBuilder{
+            self.options.disableCustomEventLogging = disable
             return self
         }
         

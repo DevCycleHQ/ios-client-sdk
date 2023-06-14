@@ -31,7 +31,7 @@ class DVCClientTest: XCTestCase {
         let dictionary = try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
         self.userConfig = try! UserConfig(from: dictionary)
     }
-    
+        
     func testBuilderReturnsNilIfNoSDKKey() {
         XCTAssertNil(try? self.builder.user(self.user).build(onInitialized: nil))
     }
@@ -46,6 +46,7 @@ class DVCClientTest: XCTestCase {
         XCTAssertNotNil(client.user)
         XCTAssertNotNil(client.sdkKey)
         XCTAssertNil(client.options)
+        client.close(callback: nil)
     }
     
     func testBuilderReturnsClientUsingEnvironmentKey() {
@@ -54,6 +55,7 @@ class DVCClientTest: XCTestCase {
         XCTAssertNotNil(client.user)
         XCTAssertNotNil(client.sdkKey)
         XCTAssertNil(client.options)
+        client.close(callback: nil)
     }
     
     func testSetupCallsGetConfig() {
@@ -62,6 +64,7 @@ class DVCClientTest: XCTestCase {
         client.setSDKKey("")
         client.setUser(self.user)
         client.setup(service: service)
+        client.close(callback: nil)
     }
     
     func testBuilderReturnsClientWithOptions() {
@@ -71,20 +74,21 @@ class DVCClientTest: XCTestCase {
         XCTAssertNotNil(client.options)
         XCTAssertNotNil(client.user)
         XCTAssertNotNil(client.sdkKey)
+        client.close(callback: nil)
     }
     
     func testTrackWithValidDVCEventNoOptionals() {
         let expectation = XCTestExpectation(description: "EventQueue has one event")
         let client = DVCClient()
         let event: DVCEvent = try! DVCEvent.builder().type("test").build()
-        
+
         client.track(event)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             XCTAssertTrue(client.eventQueue.events.count == 1)
             expectation.fulfill()
         }
-        
+
         wait(for: [expectation], timeout: 1.0)
     }
     
@@ -93,14 +97,14 @@ class DVCClientTest: XCTestCase {
         let client = DVCClient()
         let metaData: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
         let event: DVCEvent = try! DVCEvent.builder().type("test").target("test").clientDate(Date()).value(1).metaData(metaData).build()
-        
+
         client.track(event)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             XCTAssertTrue(client.eventQueue.events.count == 1)
             expectation.fulfill()
         }
-        
+
         wait(for: [expectation], timeout: 1.0)
     }
     
@@ -122,7 +126,7 @@ class DVCClientTest: XCTestCase {
     
     func testFlushEventsWithOneEventInQueue() {
         let expectation = XCTestExpectation(description: "EventQueue publishes an event")
-        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
+        let options = DVCOptions.builder().flushEventsIntervalMs(100).build()
         let service = MockService() // will assert if publishEvents was called
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
@@ -131,17 +135,18 @@ class DVCClientTest: XCTestCase {
         
         client.track(event)
         client.flushEvents()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             XCTAssertTrue(service.publishCallCount == 1)
             expectation.fulfill()
         }
         
         wait(for: [expectation], timeout: 1.0)
+        client.close(callback: nil)
     }
     
     func testFlushEventsWithOneEventInQueueAndCallback() {
         let expectation = XCTestExpectation(description: "EventQueue publishes an event")
-        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
+        let options = DVCOptions.builder().flushEventsIntervalMs(100).build()
         let service = MockService() // will assert if publishEvents was called
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
@@ -156,17 +161,17 @@ class DVCClientTest: XCTestCase {
             XCTAssertEqual(service.eventPublishCount, 1)
             expectation.fulfill()
         })
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             XCTAssertTrue(service.publishCallCount == 1)
             expectation.fulfill()
         }
         
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 2.0)
     }
     
     func testCloseFlushesRemainingEvents() {
         let expectation = XCTestExpectation(description: "Close flushes remaining events")
-        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(10000).build()
+        let options = DVCOptions.builder().flushEventsIntervalMs(10000).build()
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).build(onInitialized: nil)
         let service = MockService() // will assert if publishEvents was called
         client.setup(service: service)
@@ -193,6 +198,7 @@ class DVCClientTest: XCTestCase {
         client.variable(key: "test-key", defaultValue: false)
         
         wait(for: [expectation], timeout: 6.0)
+        client.close(callback: nil)
     }
     
     func testVariableReturnsDefaultForUnsupportedVariableKeys() {
@@ -201,6 +207,7 @@ class DVCClientTest: XCTestCase {
         XCTAssertTrue(variable.value)
         let variableValue = client.variableValue(key: "UNSUPPORTED\\key%$", defaultValue: true)
         XCTAssertTrue(variableValue)
+        client.close(callback: nil)
     }
     
     func testVariableFunctionWorksIfVariableKeyHasSupportedCharacters() {
@@ -209,6 +216,7 @@ class DVCClientTest: XCTestCase {
         XCTAssertTrue(variable.value)
         let variableValue = client.variableValue(key: "supported-keys_here", defaultValue: true)
         XCTAssertTrue(variableValue)
+        client.close(callback: nil)
     }
 
     func testVariableMethodReturnsDefaultedVariableWhenKeyIsNotInConfig() {
@@ -223,6 +231,7 @@ class DVCClientTest: XCTestCase {
         
         let variableValue = client.variableValue(key: "some_non_existent_variable", defaultValue: false)
         XCTAssertFalse(variableValue)
+        client.close(callback: nil)
     }
 
     func testVariableMethodReturnsCorrectVariableForKey() {
@@ -252,6 +261,7 @@ class DVCClientTest: XCTestCase {
         let jsonValue = client.variableValue(key: "json-var", defaultValue: defaultDict)
         XCTAssertEqual(jsonValue["key1"] as! String, "value1")
         XCTAssertEqual((jsonValue["key2"] as! NSDictionary)["nestedKey1"] as! String, "nestedValue1")
+        client.close(callback: nil)
     }
 
     func testVariableMethodReturnSameInstanceOfVariable() {
@@ -271,6 +281,7 @@ class DVCClientTest: XCTestCase {
         let defaultDict: NSDictionary = ["some_key": "some_value"]
         let jsonVar = client.variable(key: "json-var", defaultValue: defaultDict)
         XCTAssert(client.variable(key: "json-var", defaultValue: defaultDict) === jsonVar)
+        client.close(callback: nil)
     }
 
     func testVariableMethodReturnsDifferentVariableForANewDefaultValue() {
@@ -283,6 +294,7 @@ class DVCClientTest: XCTestCase {
 
         stringVar = client.variable(key: "string-var", defaultValue: "new default value")
         XCTAssert(client.variable(key: "string-var", defaultValue: "new default value") === stringVar)
+        client.close(callback: nil)
     }
 
     func testRefetchConfigUsesTheCorrectUser() {
@@ -307,12 +319,13 @@ class DVCClientTest: XCTestCase {
         XCTAssertEqual(client.lastIdentifiedUser?.userId, user3.userId)
         client.refetchConfig(sse: true, lastModified: 789, etag: "etag")
         XCTAssertEqual(service.numberOfConfigCalls, 6)
+        client.close(callback: nil)
     }
     
     func testSseCloseGetsCalledWhenBackgrounded() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialized = true
-        
+
         let mockSSEConnection = MockSSEConnection()
         client.sseConnection = mockSSEConnection
         client.inactivityDelayMS = 0
@@ -323,21 +336,22 @@ class DVCClientTest: XCTestCase {
         #elseif os(macOS)
             NotificationCenter.default.post(name: NSApplication.willResignActiveNotification, object: nil)
         #endif
-        
+
         let expectation = XCTestExpectation(description: "close gets called when backgrounded")
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             XCTAssert(mockSSEConnection.closeCalled)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 2.0)
+        client.close(callback: nil)
     }
 
     func testSseReopenGetsCalledWhenForegrounded() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
 
         client.initialized = true
-        
+
         let mockSSEConnection = MockSSEConnection()
         mockSSEConnection.connected = false
         client.sseConnection = mockSSEConnection
@@ -348,20 +362,21 @@ class DVCClientTest: XCTestCase {
         #elseif os(macOS)
             NotificationCenter.default.post(name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
-        
+
         let expectation = XCTestExpectation(description: "reopen gets called when foregrounded")
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             XCTAssert(mockSSEConnection.reopenCalled)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 2.0)
+        client.close(callback: nil)
     }
     
     func testSseReopenDoesntGetCalledWhenForegroundedBeforeInactivityDelay() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialized = true
-        
+
         let mockSSEConnection = MockSSEConnection()
         mockSSEConnection.connected = true
         client.sseConnection = mockSSEConnection
@@ -373,9 +388,9 @@ class DVCClientTest: XCTestCase {
         #elseif os(macOS)
             NotificationCenter.default.post(name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
-        
+
         let expectation = XCTestExpectation(description: "reopen doesn't called when foregrounded")
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             XCTAssertFalse(mockSSEConnection.reopenCalled)
             XCTAssertFalse(mockSSEConnection.closeCalled)
@@ -406,6 +421,7 @@ class DVCClientTest: XCTestCase {
             XCTAssertNotNil(anonUser2)
             XCTAssertNotEqual(anonUser2.userId, anonUser1.userId)
         })
+        client.close(callback: nil)
     }
     
     func testResetUserGeneratesANewAnonymousUserId() {
@@ -420,7 +436,49 @@ class DVCClientTest: XCTestCase {
         
         // client.lastIdentifiedUser is updated to be the anonymous user when `resetUser` is called
         XCTAssertNotEqual(anonUser1.userId, client.lastIdentifiedUser?.userId)
+        client.close(callback: nil)
     }
+    
+        func testDisableCustomEventLogging() {
+            let expectation = XCTestExpectation(description: "test disableCustomEventLogging")
+            let options = DVCOptions.builder().disableCustomEventLogging(true).flushEventsIntervalMs(100).build()
+            let service = MockService() // will assert if publishEvents was called
+
+            let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
+
+            let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
+
+            client.track(event)
+            client.flushEvents()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                XCTAssertTrue(service.publishCallCount == 0)
+                expectation.fulfill()
+            }
+
+            wait(for: [expectation], timeout: 1)
+            client.close(callback: nil)
+        }
+    
+        func testDisableAutomaticEventLogging() {
+            let expectation = XCTestExpectation(description: "test disableAutomaticEventLogging")
+            let options = DVCOptions.builder().disableAutomaticEventLogging(true).flushEventsIntervalMs(10000).build()
+            let service = MockService() // will assert if publishEvents was called
+    
+            let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
+    
+            let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
+    
+            client.variable(key: "test-key", defaultValue: false)
+            client.flushEvents()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                XCTAssertTrue(service.publishCallCount == 0)
+                expectation.fulfill()
+            }
+    
+            wait(for: [expectation], timeout: 1.0)
+            client.close(callback: nil)
+        }
+
 }
 
 extension DVCClientTest {
