@@ -37,7 +37,6 @@ public class DVCClient {
     var configCompletionHandlers: [ClientInitializedHandler] = []
     var initialized: Bool = false
     var eventQueue: EventQueue = EventQueue()
-    
     private let defaultFlushInterval: Int = 10000
     private var flushEventsInterval: Double = 10.0
     private var enableEdgeDB: Bool = false
@@ -52,6 +51,8 @@ public class DVCClient {
     private var inactivityWorkItem: DispatchWorkItem?
     private var variableInstanceDictonary = [String: NSMapTable<AnyObject, AnyObject>]()
     private var isConfigCached: Bool = false
+    private var disableAutomaticEventLogging: Bool = false
+    private var disableCustomEventLogging: Bool = false
     
     private var variableQueue = DispatchQueue(label: "com.devcycle.VariableQueue")
     
@@ -76,6 +77,8 @@ public class DVCClient {
             Log.level = options.logLevel
             self.flushEventsInterval = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
             self.enableEdgeDB = options.enableEdgeDB
+            self.disableAutomaticEventLogging = options.disableAutomaticEventLogging
+            self.disableCustomEventLogging = options.disableCustomEventLogging
         } else {
             Log.level = .error
         }
@@ -83,7 +86,7 @@ public class DVCClient {
         self.lastIdentifiedUser = self.user
         
         self.setup(service: service, callback: callback)
-        
+                
         #if os(iOS) || os(tvOS)
             NotificationCenter.default.addObserver(self,
                                                    selector: #selector(appMovedToBackground),
@@ -301,7 +304,9 @@ public class DVCClient {
             }
             
             if (!self.closed) {
-                self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+                if(!self.disableAutomaticEventLogging){
+                    self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+                }
             }
             
             return variable
@@ -384,7 +389,9 @@ public class DVCClient {
             Log.error("DVCClient is closed, cannot log new events.")
             return
         }
-        self.eventQueue.queue(event)
+        if(!self.disableCustomEventLogging){
+            self.eventQueue.queue(event)
+        }
     }
     
     
