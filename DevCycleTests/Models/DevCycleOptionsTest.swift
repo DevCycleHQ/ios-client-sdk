@@ -1,21 +1,20 @@
 //
-//  DVCUser.swift
+//  DevCycleOptionsTest.swift
 //  DevCycleTests
-//
 //
 
 import XCTest
 @testable import DevCycle
 
-class DVCOptionsTest: XCTestCase {
+class DevCycleOptionsTest: XCTestCase {
     func testOptionsAreNil() {
-        let options = DVCOptions()
+        let options = DevCycleOptions()
         XCTAssertNil(options.disableEventLogging)
         XCTAssertNil(options.flushEventsIntervalMs)
     }
     
     func testBuilderReturnsOptions() {
-        let options = DVCOptions.builder()
+        let options = DevCycleOptions.builder()
                 .disableEventLogging(false)
                 .flushEventsIntervalMs(1000)
                 .enableEdgeDB(true)
@@ -33,6 +32,17 @@ class DVCOptionsTest: XCTestCase {
     }
     
     func testBuilderReturnsOptionsAndSomeAreNil() {
+        let options = DevCycleOptions.builder()
+                .disableEventLogging(false)
+                .build()
+        XCTAssertNotNil(options)
+        XCTAssertNil(options.flushEventsIntervalMs)
+        XCTAssertFalse(options.disableEventLogging!)
+        XCTAssertFalse(options.enableEdgeDB)
+        XCTAssertFalse(options.disableRealtimeUpdates)
+    }
+    
+    func testDeprecatedDVCOptions {
         let options = DVCOptions.builder()
                 .disableEventLogging(false)
                 .build()

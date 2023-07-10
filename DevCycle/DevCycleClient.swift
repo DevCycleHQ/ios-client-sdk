@@ -33,7 +33,7 @@ public class DevCycleClient {
     var user: DevCycleUser?
     var lastIdentifiedUser: DevCycleUser?
     var config: DVCConfig?
-    var options: DVCOptions?
+    var options: DevCycleOptions?
     var configCompletionHandlers: [ClientInitializedHandler] = []
     var initialized: Bool = false
     var eventQueue: EventQueue = EventQueue()
@@ -200,7 +200,7 @@ public class DevCycleClient {
         self.user = user
     }
     
-    func setOptions(_ options: DVCOptions) {
+    func setOptions(_ options: DevCycleOptions) {
         self.options = options
     }
     
@@ -455,7 +455,7 @@ public class DevCycleClient {
             return self
         }
         
-        public func options(_ options: DVCOptions) -> ClientBuilder {
+        public func options(_ options: DevCycleOptions) -> ClientBuilder {
             self.client.setOptions(options)
             return self
         }

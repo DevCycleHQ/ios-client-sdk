@@ -34,13 +34,13 @@
 		5268DB6727501D6000D17A40 /* DevCycleUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6527501D6000D17A40 /* DevCycleUser.swift */; };
 		5268DB69275020D900D17A40 /* DevCycleUserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB68275020D900D17A40 /* DevCycleUserTest.swift */; };
 		5268DB6B275020F800D17A40 /* DevCycleClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6A275020F800D17A40 /* DevCycleClientTests.swift */; };
-		5276C9F0275E682B00B9A324 /* DVCOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9EF275E682B00B9A324 /* DVCOptions.swift */; };
-		5276C9F2275E6E0D00B9A324 /* DVCOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */; };
+		5276C9F0275E682B00B9A324 /* DevCycleOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9EF275E682B00B9A324 /* DevCycleOptions.swift */; };
+		5276C9F2275E6E0D00B9A324 /* DevCycleOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9F1275E6E0D00B9A324 /* DevCycleOptionsTest.swift */; };
 		529CE32328DCBEC2009AB137 /* RequestConsolidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529CE32228DCBEC2009AB137 /* RequestConsolidator.swift */; };
 		529F0C90277374150075AAB4 /* ObjcDVCVariableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 529F0C8F277374150075AAB4 /* ObjcDVCVariableTests.m */; };
 		529F0CA52774D6BE0075AAB4 /* URLSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529F0CA42774D6BE0075AAB4 /* URLSessionMock.swift */; };
 		52A1139F27AB235C000B8285 /* EventQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A1139E27AB235C000B8285 /* EventQueueTests.swift */; };
-		52A486762784A3E600DABA34 /* ObjCDVCOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A486752784A3E600DABA34 /* ObjCDVCOptions.swift */; };
+		52A486762784A3E600DABA34 /* ObjCDevCycleOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A486752784A3E600DABA34 /* ObjCDevCycleOptions.swift */; };
 		52A487032788C0FF00DABA34 /* ObjCUserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A487022788C0FF00DABA34 /* ObjCUserConfig.swift */; };
 		52A48707278C9BE200DABA34 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A48706278C9BE200DABA34 /* Log.swift */; };
 		52A96990279F3AAA00D3A602 /* PlatformDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A9698F279F3AAA00D3A602 /* PlatformDetails.swift */; };
@@ -109,13 +109,13 @@
 		5268DB6527501D6000D17A40 /* DevCycleUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevCycleUser.swift; sourceTree = "<group>"; };
 		5268DB68275020D900D17A40 /* DevCycleUserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleUserTest.swift; sourceTree = "<group>"; };
 		5268DB6A275020F800D17A40 /* DevCycleClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleClientTests.swift; sourceTree = "<group>"; };
-		5276C9EF275E682B00B9A324 /* DVCOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCOptions.swift; sourceTree = "<group>"; };
-		5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCOptionsTest.swift; sourceTree = "<group>"; };
+		5276C9EF275E682B00B9A324 /* DevCycleOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleOptions.swift; sourceTree = "<group>"; };
+		5276C9F1275E6E0D00B9A324 /* DevCycleOptionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleOptionsTest.swift; sourceTree = "<group>"; };
 		529CE32228DCBEC2009AB137 /* RequestConsolidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestConsolidator.swift; sourceTree = "<group>"; };
 		529F0C8F277374150075AAB4 /* ObjcDVCVariableTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjcDVCVariableTests.m; sourceTree = "<group>"; };
 		529F0CA42774D6BE0075AAB4 /* URLSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionMock.swift; sourceTree = "<group>"; };
 		52A1139E27AB235C000B8285 /* EventQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventQueueTests.swift; sourceTree = "<group>"; };
-		52A486752784A3E600DABA34 /* ObjCDVCOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDVCOptions.swift; sourceTree = "<group>"; };
+		52A486752784A3E600DABA34 /* ObjCDevCycleOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDevCycleOptions.swift; sourceTree = "<group>"; };
 		52A487022788C0FF00DABA34 /* ObjCUserConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCUserConfig.swift; sourceTree = "<group>"; };
 		52A48706278C9BE200DABA34 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		52A9698F279F3AAA00D3A602 /* PlatformDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformDetails.swift; sourceTree = "<group>"; };
@@ -188,7 +188,7 @@
 				5264A780275EB7DC00FEDB43 /* ObjCDevCycleUser.swift */,
 				5264A78627626A2200FEDB43 /* ObjCErrors.swift */,
 				D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */,
-				52A486752784A3E600DABA34 /* ObjCDVCOptions.swift */,
+				52A486752784A3E600DABA34 /* ObjCDevCycleOptions.swift */,
 				52A487022788C0FF00DABA34 /* ObjCUserConfig.swift */,
 			);
 			path = ObjC;
@@ -199,7 +199,7 @@
 			children = (
 				5268DB68275020D900D17A40 /* DevCycleUserTest.swift */,
 				524F4E61276D20A500CB9069 /* DVCVariableTests.swift */,
-				5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */,
+				5276C9F1275E6E0D00B9A324 /* DevCycleOptionsTest.swift */,
 				5268DB6A275020F800D17A40 /* DevCycleClientTests.swift */,
 				52A1139E27AB235C000B8285 /* EventQueueTests.swift */,
 				5264A78F2768E9F400FEDB43 /* UserConfigTests.swift */,
@@ -287,7 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				52E693EC2756816A00B52375 /* DVCConfig.swift */,
-				5276C9EF275E682B00B9A324 /* DVCOptions.swift */,
+				5276C9EF275E682B00B9A324 /* DevCycleOptions.swift */,
 				5264A78A2763F6D800FEDB43 /* UserConfig.swift */,
 				D9341C11276967DE00BC753F /* DVCEvent.swift */,
 				5264A7BC2769381500FEDB43 /* Cache.swift */,
@@ -431,7 +431,7 @@
 				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
 				5264A7BD2769381600FEDB43 /* Cache.swift in Sources */,
 				52404CEA27F3A9FB00290A31 /* isEqual.swift in Sources */,
-				52A486762784A3E600DABA34 /* ObjCDVCOptions.swift in Sources */,
+				52A486762784A3E600DABA34 /* ObjCDevCycleOptions.swift in Sources */,
 				52A96A0F27A0A7CF00D3A602 /* EventQueue.swift in Sources */,
 				52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */,
 				5268DB6727501D6000D17A40 /* DevCycleUser.swift in Sources */,
@@ -441,7 +441,7 @@
 				5268DB6627501D6000D17A40 /* DevCycleClient.swift in Sources */,
 				D9341C12276967DE00BC753F /* DVCEvent.swift in Sources */,
 				524F4E60276BDDBD00CB9069 /* DVCVariable.swift in Sources */,
-				5276C9F0275E682B00B9A324 /* DVCOptions.swift in Sources */,
+				5276C9F0275E682B00B9A324 /* DevCycleOptions.swift in Sources */,
 				524D58242770F78B00D7CC56 /* ObjCDVCVariable.swift in Sources */,
 				52133B2228DE00BC0007691D /* ProcessConfig.swift in Sources */,
 			);
@@ -453,7 +453,7 @@
 			files = (
 				529F0CA52774D6BE0075AAB4 /* URLSessionMock.swift in Sources */,
 				52133B2028DDFB260007691D /* RequestConsolidatorTests.swift in Sources */,
-				5276C9F2275E6E0D00B9A324 /* DVCOptionsTest.swift in Sources */,
+				5276C9F2275E6E0D00B9A324 /* DevCycleOptionsTest.swift in Sources */,
 				5264A7902768E9F400FEDB43 /* UserConfigTests.swift in Sources */,
 				0B721685290B21CD004D0AB7 /* SSEMessage.swift in Sources */,
 				52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */,

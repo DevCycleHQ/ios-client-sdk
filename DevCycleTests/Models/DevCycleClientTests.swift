@@ -78,7 +78,7 @@ class DevCycleClientTest: XCTestCase {
     }
     
     func testBuilderReturnsClientWithOptions() {
-        let options = DVCOptions.builder().disableEventLogging(false).flushEventsIntervalMs(100).build()
+        let options = DevCycleOptions.builder().disableEventLogging(false).flushEventsIntervalMs(100).build()
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).build(onInitialized: nil)
         XCTAssertNotNil(client)
         XCTAssertNotNil(client.options)
@@ -136,7 +136,7 @@ class DevCycleClientTest: XCTestCase {
     
     func testFlushEventsWithOneEventInQueue() {
         let expectation = XCTestExpectation(description: "EventQueue publishes an event")
-        let options = DVCOptions.builder().flushEventsIntervalMs(100).build()
+        let options = DevCycleOptions.builder().flushEventsIntervalMs(100).build()
         let service = MockService() // will assert if publishEvents was called
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
@@ -156,7 +156,7 @@ class DevCycleClientTest: XCTestCase {
     
     func testFlushEventsWithOneEventInQueueAndCallback() {
         let expectation = XCTestExpectation(description: "EventQueue publishes an event")
-        let options = DVCOptions.builder().flushEventsIntervalMs(100).build()
+        let options = DevCycleOptions.builder().flushEventsIntervalMs(100).build()
         let service = MockService() // will assert if publishEvents was called
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
@@ -181,7 +181,7 @@ class DevCycleClientTest: XCTestCase {
     
     func testCloseFlushesRemainingEvents() {
         let expectation = XCTestExpectation(description: "Close flushes remaining events")
-        let options = DVCOptions.builder().flushEventsIntervalMs(10000).build()
+        let options = DevCycleOptions.builder().flushEventsIntervalMs(10000).build()
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).build(onInitialized: nil)
         let service = MockService() // will assert if publishEvents was called
         client.setup(service: service)
@@ -451,7 +451,7 @@ class DevCycleClientTest: XCTestCase {
     
         func testDisableCustomEventLogging() {
             let expectation = XCTestExpectation(description: "test disableCustomEventLogging")
-            let options = DVCOptions.builder().disableCustomEventLogging(true).flushEventsIntervalMs(100).build()
+            let options = DevCycleOptions.builder().disableCustomEventLogging(true).flushEventsIntervalMs(100).build()
             let service = MockService() // will assert if publishEvents was called
 
             let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
@@ -471,7 +471,7 @@ class DevCycleClientTest: XCTestCase {
     
         func testDisableAutomaticEventLogging() {
             let expectation = XCTestExpectation(description: "test disableAutomaticEventLogging")
-            let options = DVCOptions.builder().disableAutomaticEventLogging(true).flushEventsIntervalMs(10000).build()
+            let options = DevCycleOptions.builder().disableAutomaticEventLogging(true).flushEventsIntervalMs(10000).build()
             let service = MockService() // will assert if publishEvents was called
     
             let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)

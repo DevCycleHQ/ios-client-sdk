@@ -27,7 +27,7 @@ public class ObjCDevCycleClient: NSObject {
     public static func initialize(
         sdkKey: String,
         user: ObjCDevCycleUser,
-        options: ObjCOptions?
+        options: ObjCDevCycleOptions?
     ) -> ObjCDevCycleClient {
         return ObjCDevCycleClient(
             sdkKey: sdkKey,
@@ -41,7 +41,7 @@ public class ObjCDevCycleClient: NSObject {
     public static func initialize(
         sdkKey: String,
         user: ObjCDevCycleUser,
-        options: ObjCOptions?,
+        options: ObjCDevCycleOptions?,
         onInitialized: ((Error?) -> Void)?
     ) -> ObjCDevCycleClient {
         return ObjCDevCycleClient(
@@ -55,7 +55,7 @@ public class ObjCDevCycleClient: NSObject {
     init(
         sdkKey: String,
         user: ObjCDevCycleUser,
-        options: ObjCOptions?,
+        options: ObjCDevCycleOptions?,
         onInitialized: ((Error?) -> Void)?
     ) {
         do {
