@@ -65,7 +65,7 @@ extension RequestConsolidatorTests {
             XCTAssert(true)
         }
 
-        func publishEvents(events: [DVCEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+        func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
             XCTAssert(true)
         }
         

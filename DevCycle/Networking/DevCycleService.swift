@@ -63,7 +63,7 @@ struct RequestParams {
 
 protocol DevCycleServiceProtocol {
     func getConfig(user:DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler)
-    func publishEvents(events: [DVCEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler)
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler)
     func saveEntity(user:DevCycleUser, completion: @escaping SaveEntityCompletionHandler)
     func makeRequest(request: URLRequest, completion: @escaping CompletionHandler)
 }
@@ -90,7 +90,7 @@ class DevCycleService: DevCycleServiceProtocol {
         requestConsolidator.queue(request: configRequest, user: user, callback: completion)
     }
     
-    func publishEvents(events: [DVCEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
         var eventsRequest = createEventsRequest()
         let userEncoder = JSONEncoder()
         userEncoder.dateEncodingStrategy = .iso8601
@@ -266,7 +266,7 @@ class DevCycleService: DevCycleServiceProtocol {
         return urlComponents
     }
     
-    private func generateEventPayload(_ events: [DVCEvent], _ userId: String, _ featureVariables: [String:String]?) -> [[String:Any]] {
+    private func generateEventPayload(_ events: [DevCycleEvent], _ userId: String, _ featureVariables: [String:String]?) -> [[String:Any]] {
         var eventsJSON: [[String:Any]] = []
         let formatter = ISO8601DateFormatter()
         

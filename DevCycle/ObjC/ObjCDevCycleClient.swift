@@ -198,7 +198,7 @@ public class ObjCDevCycleClient: NSObject {
     }
     
     @objc(track:err:)
-    public func track(_ event: ObjCDVCEvent) throws {
+    public func track(_ event: ObjCDevCycleEvent) throws {
         guard let client = self.client else { return }
         let dvcEvent = try event.buildDVCEvent()
         client.track(dvcEvent)

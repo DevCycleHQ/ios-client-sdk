@@ -48,8 +48,8 @@
 		52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693E927567E2600B52375 /* DevCycleService.swift */; };
 		52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693EC2756816A00B52375 /* DVCConfig.swift */; };
 		52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693F52758032500B52375 /* DevCycleServiceTests.swift */; };
-		D9341C12276967DE00BC753F /* DVCEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C11276967DE00BC753F /* DVCEvent.swift */; };
-		D9341C14276A3C8A00BC753F /* ObjCDVCEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */; };
+		D9341C12276967DE00BC753F /* DevCycleEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C11276967DE00BC753F /* DevCycleEvent.swift */; };
+		D9341C14276A3C8A00BC753F /* ObjCDevCycleEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C13276A3C8A00BC753F /* ObjCDevCycleEvent.swift */; };
 		E66CF1C82901E9C7008734FD /* LDSwiftEventSource.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E66CF1C72901E9C7008734FD /* LDSwiftEventSource.xcframework */; };
 		E66CF1C92901E9C7008734FD /* LDSwiftEventSource.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E66CF1C72901E9C7008734FD /* LDSwiftEventSource.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E673EFC7290093C400C2C4BE /* SSEConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E673EFC6290093C400C2C4BE /* SSEConnection.swift */; };
@@ -123,8 +123,8 @@
 		52E693E927567E2600B52375 /* DevCycleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleService.swift; sourceTree = "<group>"; };
 		52E693EC2756816A00B52375 /* DVCConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCConfig.swift; sourceTree = "<group>"; };
 		52E693F52758032500B52375 /* DevCycleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleServiceTests.swift; sourceTree = "<group>"; };
-		D9341C11276967DE00BC753F /* DVCEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCEvent.swift; sourceTree = "<group>"; };
-		D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDVCEvent.swift; sourceTree = "<group>"; };
+		D9341C11276967DE00BC753F /* DevCycleEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleEvent.swift; sourceTree = "<group>"; };
+		D9341C13276A3C8A00BC753F /* ObjCDevCycleEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDevCycleEvent.swift; sourceTree = "<group>"; };
 		E66CF1C72901E9C7008734FD /* LDSwiftEventSource.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = LDSwiftEventSource.xcframework; path = Carthage/Build/LDSwiftEventSource.xcframework; sourceTree = "<group>"; };
 		E673EFC6290093C400C2C4BE /* SSEConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEConnection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -187,7 +187,7 @@
 				5264A77A275E9A7E00FEDB43 /* ObjCDevCycleClient.swift */,
 				5264A780275EB7DC00FEDB43 /* ObjCDevCycleUser.swift */,
 				5264A78627626A2200FEDB43 /* ObjCErrors.swift */,
-				D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */,
+				D9341C13276A3C8A00BC753F /* ObjCDevCycleEvent.swift */,
 				52A486752784A3E600DABA34 /* ObjCDevCycleOptions.swift */,
 				52A487022788C0FF00DABA34 /* ObjCUserConfig.swift */,
 			);
@@ -289,7 +289,7 @@
 				52E693EC2756816A00B52375 /* DVCConfig.swift */,
 				5276C9EF275E682B00B9A324 /* DevCycleOptions.swift */,
 				5264A78A2763F6D800FEDB43 /* UserConfig.swift */,
-				D9341C11276967DE00BC753F /* DVCEvent.swift */,
+				D9341C11276967DE00BC753F /* DevCycleEvent.swift */,
 				5264A7BC2769381500FEDB43 /* Cache.swift */,
 				52A9698F279F3AAA00D3A602 /* PlatformDetails.swift */,
 				0F2DD759279EFA6B00540C9D /* CustomData.swift */,
@@ -425,7 +425,7 @@
 				5264A781275EB7DC00FEDB43 /* ObjCDevCycleUser.swift in Sources */,
 				52A96990279F3AAA00D3A602 /* PlatformDetails.swift in Sources */,
 				52A48707278C9BE200DABA34 /* Log.swift in Sources */,
-				D9341C14276A3C8A00BC753F /* ObjCDVCEvent.swift in Sources */,
+				D9341C14276A3C8A00BC753F /* ObjCDevCycleEvent.swift in Sources */,
 				5226DF06290C588900630745 /* NotificationNames.swift in Sources */,
 				5264A77B275E9A7E00FEDB43 /* ObjCDevCycleClient.swift in Sources */,
 				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
@@ -439,7 +439,7 @@
 				52A487032788C0FF00DABA34 /* ObjCUserConfig.swift in Sources */,
 				529CE32328DCBEC2009AB137 /* RequestConsolidator.swift in Sources */,
 				5268DB6627501D6000D17A40 /* DevCycleClient.swift in Sources */,
-				D9341C12276967DE00BC753F /* DVCEvent.swift in Sources */,
+				D9341C12276967DE00BC753F /* DevCycleEvent.swift in Sources */,
 				524F4E60276BDDBD00CB9069 /* DVCVariable.swift in Sources */,
 				5276C9F0275E682B00B9A324 /* DevCycleOptions.swift in Sources */,
 				524D58242770F78B00D7CC56 /* ObjCDVCVariable.swift in Sources */,

@@ -384,7 +384,7 @@ public class DevCycleClient {
         return self.config?.userConfig?.variables ?? [:]
     }
 
-    public func track(_ event: DVCEvent) {
+    public func track(_ event: DevCycleEvent) {
         if (self.closed) {
             Log.error("DevCycleClient is closed, cannot log new events.")
             return

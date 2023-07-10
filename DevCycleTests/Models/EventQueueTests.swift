@@ -10,11 +10,23 @@ import XCTest
 
 class EventQueueTests: XCTestCase {
     
+    func testDeprecatedDVCEvent() {
+        let eventQueue = EventQueue()
+        let expectation = XCTestExpectation(description: "Events are serially queued")
+        let event1 = try! DVCEvent.builder().type("dvcEvent").build()
+        eventQueue.queue(event1)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            XCTAssert(eventQueue.events.first?.type == "dvcEvent")
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 3.0)
+    }
+    
     func testSerialOrderOfEvents() {
         let eventQueue = EventQueue()
         let expectation = XCTestExpectation(description: "Events are serially queued")
-        let event1 = try! DVCEvent.builder().type("event1").build()
-        let event2 = try! DVCEvent.builder().type("event2").build()
+        let event1 = try! DevCycleEvent.builder().type("event1").build()
+        let event2 = try! DevCycleEvent.builder().type("event2").build()
         eventQueue.queue(event1)
         eventQueue.queue(event2)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -28,7 +40,7 @@ class EventQueueTests: XCTestCase {
     func testFlushCancelsIfFlushInProgress() {
         let eventQueue = EventQueue()
         let expectation = XCTestExpectation(description: "Subsequent flushes are cancelled")
-        let event = try! DVCEvent.builder().type("event1").build()
+        let event = try! DevCycleEvent.builder().type("event1").build()
         let user = try! DevCycleUser.builder().userId("user1").build()
         eventQueue.queue(event)
         eventQueue.flush(service: MockService(), user: user, callback: nil)
@@ -42,7 +54,7 @@ class EventQueueTests: XCTestCase {
     func testFlushRequeuesIfErrorRetryable() {
         let eventQueue = EventQueue()
         let expectation = XCTestExpectation(description: "Flush Requeues Retryable Event")
-        let event = try! DVCEvent.builder().type("event1").build()
+        let event = try! DevCycleEvent.builder().type("event1").build()
         let user = try! DevCycleUser.builder().userId("user1").build()
         eventQueue.queue(event)
         eventQueue.flush(service: MockWithErrorCodeService(errorCode: 500), user: user, callback: nil)
@@ -55,7 +67,7 @@ class EventQueueTests: XCTestCase {
     func testFlushDoesntRequeueIfErrorNotRetryable() {
         let eventQueue = EventQueue()
         let expectation = XCTestExpectation(description: "Subsequent flushes are cancelled")
-        let event = try! DVCEvent.builder().type("event1").build()
+        let event = try! DevCycleEvent.builder().type("event1").build()
         let user = try! DevCycleUser.builder().userId("user1").build()
         eventQueue.queue(event)
         eventQueue.flush(service: MockWithErrorCodeService(errorCode: 403), user: user, callback: nil)
@@ -69,7 +81,7 @@ class EventQueueTests: XCTestCase {
 private class MockService: DevCycleServiceProtocol {
     func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
     
-    func publishEvents(events: [DVCEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             completion((nil, nil, nil))
@@ -88,7 +100,7 @@ class MockWithErrorCodeService: DevCycleServiceProtocol {
     }
     
     func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
-    func publishEvents(events: [DVCEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
         let error = NSError(domain: "api.devcycle.com", code: self.errorCode)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             completion((nil, nil, error))

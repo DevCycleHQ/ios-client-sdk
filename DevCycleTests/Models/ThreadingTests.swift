@@ -43,7 +43,7 @@ final class ThreadingTests: XCTestCase {
 private class MockService: DevCycleServiceProtocol {
     func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
     
-    func publishEvents(events: [DVCEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {}
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {}
     
     func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {}
     

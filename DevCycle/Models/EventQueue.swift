@@ -13,17 +13,17 @@ enum EventQueueErrors: Error {
 
 class EventQueue {
     var eventDispatchQueue = DispatchQueue(label: "com.devcycle.EventQueue")
-    var events: [DVCEvent] = []
+    var events: [DevCycleEvent] = []
     var aggregateEventQueue: DVCAggregateEvents = DVCAggregateEvents()
     var flushing: Bool = false
     
-    func queue(_ event: DVCEvent) {
+    func queue(_ event: DevCycleEvent) {
         eventDispatchQueue.async {
             self.events.append(event)
         }
     }
     
-    func queue(_ events: [DVCEvent]) {
+    func queue(_ events: [DevCycleEvent]) {
         eventDispatchQueue.async {
             self.events.append(contentsOf: events)
         }
@@ -36,7 +36,7 @@ class EventQueue {
             return
         }
         
-        var eventsToFlush: [DVCEvent] = []
+        var eventsToFlush: [DevCycleEvent] = []
         eventDispatchQueue.sync {
             self.flushing = true
             eventsToFlush = self.events
