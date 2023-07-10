@@ -14,7 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Insert code here to initialize your application
         // create anonymous user
-        let user = try? DVCUser.builder()
+        let user = try? DevCycleUser.builder()
                                .isAnonymous(true)
                                .build()
         
