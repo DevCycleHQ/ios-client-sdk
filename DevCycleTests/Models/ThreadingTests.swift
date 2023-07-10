@@ -11,7 +11,7 @@ import XCTest
 final class ThreadingTests: XCTestCase {
     private var service: MockService!
     private var user: DVCUser!
-    private var builder: DVCClient.ClientBuilder!
+    private var builder: DevCycleClient.ClientBuilder!
     private var userConfig: UserConfig!
     
     override func setUpWithError() throws {
@@ -19,7 +19,7 @@ final class ThreadingTests: XCTestCase {
         self.user = try! DVCUser.builder()
                     .userId("my_user")
                     .build()
-        self.builder = DVCClient.builder().service(service)
+        self.builder = DevCycleClient.builder().service(service)
 
         let data = getConfigData(name: "test_config")
         let dictionary = try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]

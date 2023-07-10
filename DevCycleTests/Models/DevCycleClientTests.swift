@@ -1,5 +1,5 @@
 //
-//  DVCClient.swift
+//  DevCycleClient.swift
 //  DevCycleTests
 //
 //
@@ -14,10 +14,10 @@ import WatchKit
 @testable import DevCycle
 
 
-class DVCClientTest: XCTestCase {
+class DevCycleClientTest: XCTestCase {
     private var service: MockService!
     private var user: DVCUser!
-    private var builder: DVCClient.ClientBuilder!
+    private var builder: DevCycleClient.ClientBuilder!
     private var userConfig: UserConfig!
     
     override func setUp() {
@@ -25,7 +25,7 @@ class DVCClientTest: XCTestCase {
         self.user = try! DVCUser.builder()
                     .userId("my_user")
                     .build()
-        self.builder = DVCClient.builder().service(service)
+        self.builder = DevCycleClient.builder().service(service)
 
         let data = getConfigData(name: "test_config")
         let dictionary = try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
@@ -58,8 +58,18 @@ class DVCClientTest: XCTestCase {
         client.close(callback: nil)
     }
     
+    func testDepracatedDVCClientWorks() {
+        let builder = DevCycleClient.builder().service(service)
+        let client = try! builder.user(self.user).environmentKey("my_sdk_key").build(onInitialized: nil)
+        XCTAssertNotNil(client)
+        XCTAssertNotNil(client.user)
+        XCTAssertNotNil(client.sdkKey)
+        XCTAssertNil(client.options)
+        client.close(callback: nil)
+    }
+    
     func testSetupCallsGetConfig() {
-        let client = DVCClient()
+        let client = DevCycleClient()
         let service = MockService() // will assert if getConfig was called
         client.setSDKKey("")
         client.setUser(self.user)
@@ -79,7 +89,7 @@ class DVCClientTest: XCTestCase {
     
     func testTrackWithValidDVCEventNoOptionals() {
         let expectation = XCTestExpectation(description: "EventQueue has one event")
-        let client = DVCClient()
+        let client = DevCycleClient()
         let event: DVCEvent = try! DVCEvent.builder().type("test").build()
 
         client.track(event)
@@ -94,7 +104,7 @@ class DVCClientTest: XCTestCase {
     
     func testTrackWithValidDVCEventWithAllParamsDefined() {
         let expectation = XCTestExpectation(description: "EventQueue has one fully defined event")
-        let client = DVCClient()
+        let client = DevCycleClient()
         let metaData: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
         let event: DVCEvent = try! DVCEvent.builder().type("test").target("test").clientDate(Date()).value(1).metaData(metaData).build()
 
@@ -110,7 +120,7 @@ class DVCClientTest: XCTestCase {
     
     func testTrackWithValidDVCEventWithAllParamsDefinedAndDoubleValue() {
         let expectation = XCTestExpectation(description: "EventQueue has one fully defined event")
-        let client = DVCClient()
+        let client = DevCycleClient()
         let metaData: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
         let event: DVCEvent = try! DVCEvent.builder().type("test").target("test").clientDate(Date()).value(364.25).metaData(metaData).build()
         
@@ -300,7 +310,7 @@ class DVCClientTest: XCTestCase {
     func testRefetchConfigUsesTheCorrectUser() {
         let service = MockService()
         let user1 = try! DVCUser.builder().userId("user1").build()
-        let client = try! DVCClient.builder().user(user1).sdkKey("my_sdk_key").build(onInitialized: nil)
+        let client = try! DevCycleClient.builder().user(user1).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.setup(service: service)
         client.initialized = true
 
@@ -481,7 +491,7 @@ class DVCClientTest: XCTestCase {
 
 }
 
-extension DVCClientTest {
+extension DevCycleClientTest {
     private class MockService: DevCycleServiceProtocol {
         public var publishCallCount: Int = 0
         public var userForGetConfig: DVCUser?

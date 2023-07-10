@@ -1,5 +1,5 @@
 //
-//  DVCClient.swift
+//  DevCycleClient.swift
 //  DevCycle-iOS-SDK
 //
 //
@@ -28,7 +28,7 @@ public typealias IdentifyCompletedHandler = (Error?, [String: Variable]?) -> Voi
 public typealias FlushCompletedHandler = (Error?) -> Void
 public typealias CloseCompletedHandler = () -> Void
 
-public class DVCClient {
+public class DevCycleClient {
     var sdkKey: String?
     var user: DVCUser?
     var lastIdentifiedUser: DVCUser?
@@ -386,7 +386,7 @@ public class DVCClient {
 
     public func track(_ event: DVCEvent) {
         if (self.closed) {
-            Log.error("DVCClient is closed, cannot log new events.")
+            Log.error("DevCycleClient is closed, cannot log new events.")
             return
         }
         if(!self.disableCustomEventLogging){
@@ -432,14 +432,14 @@ public class DVCClient {
     }
     
     public class ClientBuilder {
-        private var client: DVCClient
+        private var client: DevCycleClient
         private var service: DevCycleServiceProtocol?
 
         init() {
-            self.client = DVCClient()
+            self.client = DevCycleClient()
         }
         
-        @available(*, deprecated)
+        @available(*, deprecated, message: "Use sdkKey()")
         public func environmentKey(_ key: String) -> ClientBuilder {
             self.client.setSDKKey(key)
             return self
@@ -465,7 +465,7 @@ public class DVCClient {
             return self
         }
         
-        public func build(onInitialized: ClientInitializedHandler?) throws -> DVCClient {
+        public func build(onInitialized: ClientInitializedHandler?) throws -> DevCycleClient {
             guard self.client.sdkKey != nil else {
                 Log.error("Missing SDK Key", tags: ["build"])
                 throw ClientError.MissingSDKKeyOrUser
@@ -481,7 +481,7 @@ public class DVCClient {
             } else {
                 result.initialize(callback: onInitialized)
             }
-            self.client = DVCClient()
+            self.client = DevCycleClient()
             return result
         }
     }
@@ -507,3 +507,6 @@ public class DVCClient {
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay), execute: work)
     }
 }
+
+@available(*, deprecated, message: "Use DevCycleClient")
+public typealias DVCClient = DevCycleClient
