@@ -7,20 +7,20 @@ import Foundation
 import DevCycle
 
 struct DevCycleKeys {
-    static var DEVELOPMENT = "<YOUR SDK KEY>"
+    static var DEVELOPMENT = "<DEVCYCLE_MOBILE_SDK_KEY>"
 }
 
 class DevCycleManager {
     
-    var client: DVCClient?
+    var client: DevCycleClient?
     static let shared = DevCycleManager()
     
-    func initialize(user: DVCUser) {
-        let options = DVCOptions.builder()
+    func initialize(user: DevCycleUser) {
+        let options = DevCycleOptions.builder()
                                 .logLevel(.debug)
                                 .build()
         
-        guard let client = try? DVCClient.builder()
+        guard let client = try? DevCycleClient.builder()
                 .sdkKey(DevCycleKeys.DEVELOPMENT)
                 .user(user)
                 .options(options)
