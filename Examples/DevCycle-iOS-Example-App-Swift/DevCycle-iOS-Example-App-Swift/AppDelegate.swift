@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // TODO: Set SDK KEY in DevCycleManager.swift
         
         // create anonymous user
-        let user = try? DVCUser.builder()
+        let user = try? DevCycleUser.builder()
                                .isAnonymous(true)
                                .build()
         
