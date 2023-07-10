@@ -20,7 +20,7 @@ class RequestConsolidator {
         self.cacheService = cacheService
     }
     
-    func queue(request: URLRequest, user: DVCUser, callback: @escaping ConfigCompletionHandler) {
+    func queue(request: URLRequest, user: DevCycleUser, callback: @escaping ConfigCompletionHandler) {
         if (self.requestInFlight) {
             self.requestCallbacks.append(
                 RequestWithCallback(
@@ -57,7 +57,7 @@ class RequestConsolidator {
         }
     }
     
-    func makeLastRequestInQueue(user: DVCUser, complete: (() -> Void)?) {
+    func makeLastRequestInQueue(user: DevCycleUser, complete: (() -> Void)?) {
         guard let lastRequest = self.requestCallbacks.last?.request else {
             print("No last request to make in queue")
             return

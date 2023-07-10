@@ -30,8 +30,8 @@ public typealias CloseCompletedHandler = () -> Void
 
 public class DevCycleClient {
     var sdkKey: String?
-    var user: DVCUser?
-    var lastIdentifiedUser: DVCUser?
+    var user: DevCycleUser?
+    var lastIdentifiedUser: DevCycleUser?
     var config: DVCConfig?
     var options: DVCOptions?
     var configCompletionHandlers: [ClientInitializedHandler] = []
@@ -196,7 +196,7 @@ public class DevCycleClient {
         self.sdkKey = sdkKey
     }
     
-    func setUser(_ user: DVCUser) {
+    func setUser(_ user: DevCycleUser) {
         self.user = user
     }
     
@@ -219,7 +219,7 @@ public class DevCycleClient {
         }
     }
 
-    private func cacheUser(user: DVCUser) {
+    private func cacheUser(user: DevCycleUser) {
         self.cacheService.save(user: user)
         if user.isAnonymous == true, let userId = user.userId {
             self.cacheService.setAnonUserId(anonUserId: userId)
@@ -313,12 +313,12 @@ public class DevCycleClient {
         }
     }
     
-    public func identifyUser(user: DVCUser, callback: IdentifyCompletedHandler? = nil) throws {
+    public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
         guard let currentUser = self.user, let userId = currentUser.userId, let incomingUserId = user.userId else {
             throw ClientError.InvalidUser
         }
         self.flushEvents()
-        var updateUser: DVCUser = currentUser
+        var updateUser: DevCycleUser = currentUser
         if (userId == incomingUserId) {
             updateUser.update(with: user)
         } else {
@@ -351,7 +351,7 @@ public class DevCycleClient {
         
         let cachedAnonUserId = self.cacheService.getAnonUserId()
         self.cacheService.clearAnonUserId()
-        let anonUser = try DVCUser.builder().isAnonymous(true).build()
+        let anonUser = try DevCycleUser.builder().isAnonymous(true).build()
         
         self.lastIdentifiedUser = anonUser
 
@@ -450,7 +450,7 @@ public class DevCycleClient {
             return self
         }
         
-        public func user(_ user: DVCUser) -> ClientBuilder {
+        public func user(_ user: DevCycleUser) -> ClientBuilder {
             self.client.setUser(user)
             return self
         }

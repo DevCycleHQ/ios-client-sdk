@@ -16,13 +16,13 @@ import WatchKit
 
 class DevCycleClientTest: XCTestCase {
     private var service: MockService!
-    private var user: DVCUser!
+    private var user: DevCycleUser!
     private var builder: DevCycleClient.ClientBuilder!
     private var userConfig: UserConfig!
     
     override func setUp() {
         self.service = MockService()
-        self.user = try! DVCUser.builder()
+        self.user = try! DevCycleUser.builder()
                     .userId("my_user")
                     .build()
         self.builder = DevCycleClient.builder().service(service)
@@ -309,7 +309,7 @@ class DevCycleClientTest: XCTestCase {
 
     func testRefetchConfigUsesTheCorrectUser() {
         let service = MockService()
-        let user1 = try! DVCUser.builder().userId("user1").build()
+        let user1 = try! DevCycleUser.builder().userId("user1").build()
         let client = try! DevCycleClient.builder().user(user1).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.setup(service: service)
         client.initialized = true
@@ -318,13 +318,13 @@ class DevCycleClientTest: XCTestCase {
         client.refetchConfig(sse: true, lastModified: 123, etag: "etag")
         XCTAssertEqual(service.numberOfConfigCalls, 2)
 
-        let user2 = try! DVCUser.builder().userId("user2").build()
+        let user2 = try! DevCycleUser.builder().userId("user2").build()
         try! client.identifyUser(user: user2)
         XCTAssertEqual(client.lastIdentifiedUser?.userId, user2.userId)
         client.refetchConfig(sse: true, lastModified: 456, etag: "etag")
         XCTAssertEqual(service.numberOfConfigCalls, 4)
 
-        let user3 = try! DVCUser.builder().userId("user3").build()
+        let user3 = try! DevCycleUser.builder().userId("user3").build()
         try! client.identifyUser(user: user3)
         XCTAssertEqual(client.lastIdentifiedUser?.userId, user3.userId)
         client.refetchConfig(sse: true, lastModified: 789, etag: "etag")
@@ -411,14 +411,14 @@ class DevCycleClientTest: XCTestCase {
     
     func testIdentifyUserClearsCachedAnonymousUserId() {
         // Build Anon User, generates a new UUID
-        let anonUser1 = try! DVCUser.builder().isAnonymous(true).build()
+        let anonUser1 = try! DevCycleUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser1)
         
         // Call Identify with a NOT anonymous User, this should erase the Cached UUID of anonUser1
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: { [weak self] error in
             // Since the cached Anonymous User Id is only cleared on successful identify call,
             // the anonUser3.userId should be the same as anonUser1.userId
-            let anonUser3 = try! DVCUser.builder().isAnonymous(true).build()
+            let anonUser3 = try! DevCycleUser.builder().isAnonymous(true).build()
             XCTAssertNotNil(anonUser3)
             XCTAssertEqual(anonUser3.userId, anonUser1.userId)
         })
@@ -427,7 +427,7 @@ class DevCycleClientTest: XCTestCase {
         
         try! client.identifyUser(user: self.user, callback: { [weak self] error, variables in
             // Wait for successful identifyUser callback, then build a new anonymous User, which SHOULD generate a new UUID
-            let anonUser2 = try! DVCUser.builder().isAnonymous(true).build()
+            let anonUser2 = try! DevCycleUser.builder().isAnonymous(true).build()
             XCTAssertNotNil(anonUser2)
             XCTAssertNotEqual(anonUser2.userId, anonUser1.userId)
         })
@@ -435,7 +435,7 @@ class DevCycleClientTest: XCTestCase {
     }
     
     func testResetUserGeneratesANewAnonymousUserId() {
-        let anonUser1 = try! DVCUser.builder().isAnonymous(true).build()
+        let anonUser1 = try! DevCycleUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser1)
         
         let client = try! self.builder.user(anonUser1).sdkKey("my_sdk_key").build(onInitialized: nil)
@@ -494,18 +494,18 @@ class DevCycleClientTest: XCTestCase {
 extension DevCycleClientTest {
     private class MockService: DevCycleServiceProtocol {
         public var publishCallCount: Int = 0
-        public var userForGetConfig: DVCUser?
+        public var userForGetConfig: DevCycleUser?
         public var numberOfConfigCalls: Int = 0
         public var eventPublishCount: Int = 0
 
-        func getConfig(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {
+        func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {
             self.userForGetConfig = user
             self.numberOfConfigCalls += 1
 
             XCTAssert(true)
         }
 
-        func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
+        func publishEvents(events: [DVCEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
             self.publishCallCount += 1
             self.eventPublishCount += events.count
             XCTAssert(true)
@@ -514,7 +514,7 @@ extension DevCycleClientTest {
             })
         }
         
-        func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {
+        func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {
             XCTAssert(true)
         }
         

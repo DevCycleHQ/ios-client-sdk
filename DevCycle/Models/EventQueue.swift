@@ -29,7 +29,7 @@ class EventQueue {
         }
     }
     
-    func flush(service: DevCycleServiceProtocol, user: DVCUser, callback: FlushCompletedHandler? = nil) {
+    func flush(service: DevCycleServiceProtocol, user: DevCycleUser, callback: FlushCompletedHandler? = nil) {
         if (self.flushing) {
             Log.warn("Flushing already in progress, cancelling flush")
             callback?(EventQueueErrors.FlushingInProgress)

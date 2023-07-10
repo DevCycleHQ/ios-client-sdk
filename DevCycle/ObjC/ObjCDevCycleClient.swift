@@ -13,7 +13,7 @@ public class ObjCDevCycleClient: NSObject {
     @objc(initialize:user:)
     public static func initialize(
         sdkKey: String,
-        user: ObjCUser
+        user: ObjCDevCycleUser
     ) -> ObjCDevCycleClient {
         return ObjCDevCycleClient(
             sdkKey: sdkKey,
@@ -26,7 +26,7 @@ public class ObjCDevCycleClient: NSObject {
     @objc(initialize:user:options:)
     public static func initialize(
         sdkKey: String,
-        user: ObjCUser,
+        user: ObjCDevCycleUser,
         options: ObjCOptions?
     ) -> ObjCDevCycleClient {
         return ObjCDevCycleClient(
@@ -40,7 +40,7 @@ public class ObjCDevCycleClient: NSObject {
     @objc(initialize:user:options:onInitialized:)
     public static func initialize(
         sdkKey: String,
-        user: ObjCUser,
+        user: ObjCDevCycleUser,
         options: ObjCOptions?,
         onInitialized: ((Error?) -> Void)?
     ) -> ObjCDevCycleClient {
@@ -54,7 +54,7 @@ public class ObjCDevCycleClient: NSObject {
     
     init(
         sdkKey: String,
-        user: ObjCUser,
+        user: ObjCDevCycleUser,
         options: ObjCOptions?,
         onInitialized: ((Error?) -> Void)?
     ) {
@@ -69,7 +69,7 @@ public class ObjCDevCycleClient: NSObject {
                 throw ObjCClientErrors.InvalidUser
             }
             
-            let dvcUser = try user.buildDVCUser()
+            let dvcUser = try user.buildDevCycleUser()
             
             var clientBuilder = DevCycleClient.builder()
                 .sdkKey(sdkKey)
@@ -96,16 +96,16 @@ public class ObjCDevCycleClient: NSObject {
     
     
     @objc(identifyUser:callback:)
-    public func identify(user: ObjCUser, callback: ((Error?, [String: ObjCVariable]?) -> Void)?) {
+    public func identify(user: ObjCDevCycleUser, callback: ((Error?, [String: ObjCVariable]?) -> Void)?) {
         do {
             guard let client = self.client else { return }
             guard user.userId != nil else {
                 callback?(NSError(), nil)
                 return
             }
-            let dvcUser = try user.buildDVCUser()
+            let dvcUser = try user.buildDevCycleUser()
 
-            let createdUser = DVCUser()
+            let createdUser = DevCycleUser()
             createdUser.userId = user.userId!
             createdUser.isAnonymous = false
             createdUser.update(with: dvcUser)

@@ -20,9 +20,9 @@
 		524F4E60276BDDBD00CB9069 /* DVCVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */; };
 		524F4E62276D20A600CB9069 /* DVCVariableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524F4E61276D20A500CB9069 /* DVCVariableTests.swift */; };
 		5256A99A2798716400E749FF /* ObjCDevCycleClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5256A9982798716400E749FF /* ObjCDevCycleClientTests.m */; };
-		5256A99B2798716400E749FF /* ObjcDVCUserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5256A9992798716400E749FF /* ObjcDVCUserTests.m */; };
+		5256A99B2798716400E749FF /* ObjcDevCycleUserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5256A9992798716400E749FF /* ObjcDevCycleUserTests.m */; };
 		5264A77B275E9A7E00FEDB43 /* ObjCDevCycleClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A77A275E9A7E00FEDB43 /* ObjCDevCycleClient.swift */; };
-		5264A781275EB7DC00FEDB43 /* ObjCDVCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A780275EB7DC00FEDB43 /* ObjCDVCUser.swift */; };
+		5264A781275EB7DC00FEDB43 /* ObjCDevCycleUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A780275EB7DC00FEDB43 /* ObjCDevCycleUser.swift */; };
 		5264A78727626A2200FEDB43 /* ObjCErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A78627626A2200FEDB43 /* ObjCErrors.swift */; };
 		5264A78B2763F6D800FEDB43 /* UserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5264A78A2763F6D800FEDB43 /* UserConfig.swift */; };
 		5264A78E2768E94600FEDB43 /* test_config.json in Resources */ = {isa = PBXBuildFile; fileRef = 5264A78D2768E94500FEDB43 /* test_config.json */; };
@@ -31,8 +31,8 @@
 		5268DB5727501CFC00D17A40 /* DevCycle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5268DB4D27501CFC00D17A40 /* DevCycle.framework */; };
 		5268DB5D27501CFC00D17A40 /* DevCycle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5268DB4F27501CFC00D17A40 /* DevCycle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5268DB6627501D6000D17A40 /* DevCycleClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6427501D6000D17A40 /* DevCycleClient.swift */; };
-		5268DB6727501D6000D17A40 /* DVCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6527501D6000D17A40 /* DVCUser.swift */; };
-		5268DB69275020D900D17A40 /* DVCUserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB68275020D900D17A40 /* DVCUserTest.swift */; };
+		5268DB6727501D6000D17A40 /* DevCycleUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6527501D6000D17A40 /* DevCycleUser.swift */; };
+		5268DB69275020D900D17A40 /* DevCycleUserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB68275020D900D17A40 /* DevCycleUserTest.swift */; };
 		5268DB6B275020F800D17A40 /* DevCycleClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6A275020F800D17A40 /* DevCycleClientTests.swift */; };
 		5276C9F0275E682B00B9A324 /* DVCOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9EF275E682B00B9A324 /* DVCOptions.swift */; };
 		5276C9F2275E6E0D00B9A324 /* DVCOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */; };
@@ -93,10 +93,10 @@
 		524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCVariable.swift; sourceTree = "<group>"; };
 		524F4E61276D20A500CB9069 /* DVCVariableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCVariableTests.swift; sourceTree = "<group>"; };
 		5256A9982798716400E749FF /* ObjCDevCycleClientTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjCDevCycleClientTests.m; sourceTree = "<group>"; };
-		5256A9992798716400E749FF /* ObjcDVCUserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjcDVCUserTests.m; sourceTree = "<group>"; };
+		5256A9992798716400E749FF /* ObjcDevCycleUserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjcDevCycleUserTests.m; sourceTree = "<group>"; };
 		5264A77A275E9A7E00FEDB43 /* ObjCDevCycleClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDevCycleClient.swift; sourceTree = "<group>"; };
 		5264A77D275EACA300FEDB43 /* DevCycleTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DevCycleTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		5264A780275EB7DC00FEDB43 /* ObjCDVCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDVCUser.swift; sourceTree = "<group>"; };
+		5264A780275EB7DC00FEDB43 /* ObjCDevCycleUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDevCycleUser.swift; sourceTree = "<group>"; };
 		5264A78627626A2200FEDB43 /* ObjCErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCErrors.swift; sourceTree = "<group>"; };
 		5264A78A2763F6D800FEDB43 /* UserConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfig.swift; sourceTree = "<group>"; };
 		5264A78D2768E94500FEDB43 /* test_config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_config.json; sourceTree = "<group>"; };
@@ -106,8 +106,8 @@
 		5268DB4F27501CFC00D17A40 /* DevCycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DevCycle.h; sourceTree = "<group>"; };
 		5268DB5627501CFC00D17A40 /* DevCycleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DevCycleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5268DB6427501D6000D17A40 /* DevCycleClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevCycleClient.swift; sourceTree = "<group>"; };
-		5268DB6527501D6000D17A40 /* DVCUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DVCUser.swift; sourceTree = "<group>"; };
-		5268DB68275020D900D17A40 /* DVCUserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCUserTest.swift; sourceTree = "<group>"; };
+		5268DB6527501D6000D17A40 /* DevCycleUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevCycleUser.swift; sourceTree = "<group>"; };
+		5268DB68275020D900D17A40 /* DevCycleUserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleUserTest.swift; sourceTree = "<group>"; };
 		5268DB6A275020F800D17A40 /* DevCycleClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleClientTests.swift; sourceTree = "<group>"; };
 		5276C9EF275E682B00B9A324 /* DVCOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCOptions.swift; sourceTree = "<group>"; };
 		5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCOptionsTest.swift; sourceTree = "<group>"; };
@@ -185,7 +185,7 @@
 			children = (
 				524D58232770F78B00D7CC56 /* ObjCDVCVariable.swift */,
 				5264A77A275E9A7E00FEDB43 /* ObjCDevCycleClient.swift */,
-				5264A780275EB7DC00FEDB43 /* ObjCDVCUser.swift */,
+				5264A780275EB7DC00FEDB43 /* ObjCDevCycleUser.swift */,
 				5264A78627626A2200FEDB43 /* ObjCErrors.swift */,
 				D9341C13276A3C8A00BC753F /* ObjCDVCEvent.swift */,
 				52A486752784A3E600DABA34 /* ObjCDVCOptions.swift */,
@@ -197,7 +197,7 @@
 		5264A78C2768E87C00FEDB43 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				5268DB68275020D900D17A40 /* DVCUserTest.swift */,
+				5268DB68275020D900D17A40 /* DevCycleUserTest.swift */,
 				524F4E61276D20A500CB9069 /* DVCVariableTests.swift */,
 				5276C9F1275E6E0D00B9A324 /* DVCOptionsTest.swift */,
 				5268DB6A275020F800D17A40 /* DevCycleClientTests.swift */,
@@ -236,7 +236,7 @@
 				52E693EB2756815C00B52375 /* Models */,
 				52E693E827557B5700B52375 /* Networking */,
 				5268DB6427501D6000D17A40 /* DevCycleClient.swift */,
-				5268DB6527501D6000D17A40 /* DVCUser.swift */,
+				5268DB6527501D6000D17A40 /* DevCycleUser.swift */,
 				524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */,
 				5268DB4F27501CFC00D17A40 /* DevCycle.h */,
 				E673EFC6290093C400C2C4BE /* SSEConnection.swift */,
@@ -261,7 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				5256A9982798716400E749FF /* ObjCDevCycleClientTests.m */,
-				5256A9992798716400E749FF /* ObjcDVCUserTests.m */,
+				5256A9992798716400E749FF /* ObjcDevCycleUserTests.m */,
 				529F0C8F277374150075AAB4 /* ObjcDVCVariableTests.m */,
 			);
 			path = ObjC;
@@ -422,7 +422,7 @@
 				5264A78B2763F6D800FEDB43 /* UserConfig.swift in Sources */,
 				E673EFC7290093C400C2C4BE /* SSEConnection.swift in Sources */,
 				0F2DD75A279EFA6B00540C9D /* CustomData.swift in Sources */,
-				5264A781275EB7DC00FEDB43 /* ObjCDVCUser.swift in Sources */,
+				5264A781275EB7DC00FEDB43 /* ObjCDevCycleUser.swift in Sources */,
 				52A96990279F3AAA00D3A602 /* PlatformDetails.swift in Sources */,
 				52A48707278C9BE200DABA34 /* Log.swift in Sources */,
 				D9341C14276A3C8A00BC753F /* ObjCDVCEvent.swift in Sources */,
@@ -434,7 +434,7 @@
 				52A486762784A3E600DABA34 /* ObjCDVCOptions.swift in Sources */,
 				52A96A0F27A0A7CF00D3A602 /* EventQueue.swift in Sources */,
 				52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */,
-				5268DB6727501D6000D17A40 /* DVCUser.swift in Sources */,
+				5268DB6727501D6000D17A40 /* DevCycleUser.swift in Sources */,
 				5264A78727626A2200FEDB43 /* ObjCErrors.swift in Sources */,
 				52A487032788C0FF00DABA34 /* ObjCUserConfig.swift in Sources */,
 				529CE32328DCBEC2009AB137 /* RequestConsolidator.swift in Sources */,
@@ -461,11 +461,11 @@
 				5268DB6B275020F800D17A40 /* DevCycleClientTests.swift in Sources */,
 				523A31D029CB411A008F3347 /* ThreadingTests.swift in Sources */,
 				529F0C90277374150075AAB4 /* ObjcDVCVariableTests.m in Sources */,
-				5268DB69275020D900D17A40 /* DVCUserTest.swift in Sources */,
+				5268DB69275020D900D17A40 /* DevCycleUserTest.swift in Sources */,
 				52A1139F27AB235C000B8285 /* EventQueueTests.swift in Sources */,
 				52133B2428DE0FEB0007691D /* GetTestConfig.swift in Sources */,
 				5256A99A2798716400E749FF /* ObjCDevCycleClientTests.m in Sources */,
-				5256A99B2798716400E749FF /* ObjcDVCUserTests.m in Sources */,
+				5256A99B2798716400E749FF /* ObjcDevCycleUserTests.m in Sources */,
 				524F4E62276D20A600CB9069 /* DVCVariableTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
