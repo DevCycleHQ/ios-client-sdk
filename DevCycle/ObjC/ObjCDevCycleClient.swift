@@ -200,7 +200,7 @@ public class ObjCDevCycleClient: NSObject {
     @objc(track:err:)
     public func track(_ event: ObjCDevCycleEvent) throws {
         guard let client = self.client else { return }
-        let dvcEvent = try event.buildDVCEvent()
+        let dvcEvent = try event.buildDevCycleEvent()
         client.track(dvcEvent)
     }
     

@@ -87,10 +87,10 @@ class DevCycleClientTest: XCTestCase {
         client.close(callback: nil)
     }
     
-    func testTrackWithValidDVCEventNoOptionals() {
+    func testTrackWithValidDevCycleEventNoOptionals() {
         let expectation = XCTestExpectation(description: "EventQueue has one event")
         let client = DevCycleClient()
-        let event: DVCEvent = try! DVCEvent.builder().type("test").build()
+        let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").build()
 
         client.track(event)
 
@@ -102,11 +102,11 @@ class DevCycleClientTest: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
     
-    func testTrackWithValidDVCEventWithAllParamsDefined() {
+    func testTrackWithValidDevCycleEventWithAllParamsDefined() {
         let expectation = XCTestExpectation(description: "EventQueue has one fully defined event")
         let client = DevCycleClient()
         let metaData: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
-        let event: DVCEvent = try! DVCEvent.builder().type("test").target("test").clientDate(Date()).value(1).metaData(metaData).build()
+        let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").target("test").clientDate(Date()).value(1).metaData(metaData).build()
 
         client.track(event)
 
@@ -118,11 +118,11 @@ class DevCycleClientTest: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
     
-    func testTrackWithValidDVCEventWithAllParamsDefinedAndDoubleValue() {
+    func testTrackWithValidDevCycleEventWithAllParamsDefinedAndDoubleValue() {
         let expectation = XCTestExpectation(description: "EventQueue has one fully defined event")
         let client = DevCycleClient()
         let metaData: [String:Any] = ["test1": "key", "test2": 2, "test3": false]
-        let event: DVCEvent = try! DVCEvent.builder().type("test").target("test").clientDate(Date()).value(364.25).metaData(metaData).build()
+        let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").target("test").clientDate(Date()).value(364.25).metaData(metaData).build()
         
         client.track(event)
         
@@ -141,7 +141,7 @@ class DevCycleClientTest: XCTestCase {
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
         
-        let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
+        let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").clientDate(Date()).build()
         
         client.track(event)
         client.flushEvents()
@@ -161,7 +161,7 @@ class DevCycleClientTest: XCTestCase {
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
         
-        let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
+        let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").clientDate(Date()).build()
         
         client.track(event)
         client.flushEvents(callback: { error in
@@ -185,7 +185,7 @@ class DevCycleClientTest: XCTestCase {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).build(onInitialized: nil)
         let service = MockService() // will assert if publishEvents was called
         client.setup(service: service)
-        let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
+        let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").clientDate(Date()).build()
         
         client.track(event)
         client.close(callback: {
@@ -456,7 +456,7 @@ class DevCycleClientTest: XCTestCase {
 
             let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
 
-            let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
+            let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").clientDate(Date()).build()
 
             client.track(event)
             client.flushEvents()
@@ -476,7 +476,7 @@ class DevCycleClientTest: XCTestCase {
     
             let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).service(service).build(onInitialized: nil)
     
-            let event: DVCEvent = try! DVCEvent.builder().type("test").clientDate(Date()).build()
+            let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").clientDate(Date()).build()
     
             client.variable(key: "test-key", defaultValue: false)
             client.flushEvents()
@@ -505,7 +505,7 @@ extension DevCycleClientTest {
             XCTAssert(true)
         }
 
-        func publishEvents(events: [DVCEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+        func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
             self.publishCallCount += 1
             self.eventPublishCount += events.count
             XCTAssert(true)

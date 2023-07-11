@@ -42,7 +42,7 @@ class DevCycleOptionsTest: XCTestCase {
         XCTAssertFalse(options.disableRealtimeUpdates)
     }
     
-    func testDeprecatedDVCOptions {
+    func testDeprecatedDVCOptions() {
         let options = DVCOptions.builder()
                 .disableEventLogging(false)
                 .build()

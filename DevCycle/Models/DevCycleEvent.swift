@@ -1,5 +1,5 @@
 //
-//  DVCEvent.swift
+//  DevCycleEvent.swift
 //  DevCycle
 //
 //

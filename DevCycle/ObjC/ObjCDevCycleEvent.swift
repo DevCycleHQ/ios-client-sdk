@@ -1,5 +1,5 @@
 //
-//  ObjCDVCEvent.swift
+//  ObjCDevCycleEvent.swift
 //  DevCycle
 //
 //
@@ -33,7 +33,7 @@ public class ObjCDevCycleEvent: NSObject {
         return builder
     }
     
-    func buildDVCEvent() throws -> DevCycleEvent {
+    func buildDevCycleEvent() throws -> DevCycleEvent {
         if self.type == nil {
             throw ObjCEventErrors.MissingEventType
         }
@@ -58,12 +58,12 @@ public class ObjCDevCycleEvent: NSObject {
         do {
             return try eventBuilder.build()
         } catch {
-            Log.error("Error building DVCEvent: \(error)", tags: ["event", "build"])
+            Log.error("Error building DevCycleEvent: \(error)", tags: ["event", "build"])
             throw error
         }
     }
 }
 
-@available(*, deprecated, message: "Use DVCEvent")
+@available(*, deprecated, message: "Use DevCycleEvent")
 @objc(DVCEvent)
 public class ObjCDVCEvent: ObjCDevCycleEvent {}
