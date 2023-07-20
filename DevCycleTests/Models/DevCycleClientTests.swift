@@ -58,7 +58,7 @@ class DevCycleClientTest: XCTestCase {
         client.close(callback: nil)
     }
     
-    func testDepracatedDVCClientWorks() {
+    func testDeprecatedDVCClientWorks() {
         let builder = DevCycleClient.builder().service(service)
         let client = try! builder.user(self.user).environmentKey("my_sdk_key").build(onInitialized: nil)
         XCTAssertNotNil(client)
