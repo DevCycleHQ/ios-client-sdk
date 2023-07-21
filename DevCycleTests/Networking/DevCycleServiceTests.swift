@@ -59,7 +59,7 @@ extension DevCycleServiceTests {
             return Cache(config: nil, user: nil)
         }
         
-        func save(user: DVCUser) {
+        func save(user: DevCycleUser) {
             self.saveUserCalled = true
         }
         func setAnonUserId(anonUserId: String) {
@@ -72,11 +72,11 @@ extension DevCycleServiceTests {
             // TODO: update implementation for tests
         }
         
-        func saveConfig(user: DVCUser, fetchDate: Int, configToSave: Data?) {
+        func saveConfig(user: DevCycleUser, fetchDate: Int, configToSave: Data?) {
             self.saveConfigCalled = true
         }
         
-        func getConfig(user: DVCUser, ttlMs: Int) -> UserConfig? {
+        func getConfig(user: DevCycleUser, ttlMs: Int) -> UserConfig? {
             return nil
         }
     }
@@ -87,8 +87,8 @@ extension DevCycleServiceTests {
         return DevCycleService(config: config, cacheService: MockCacheService())
     }
     
-    func getTestUser() -> DVCUser {
-        return try! DVCUser.builder()
+    func getTestUser() -> DevCycleUser {
+        return try! DevCycleUser.builder()
             .userId("my_user")
             .build()
     }

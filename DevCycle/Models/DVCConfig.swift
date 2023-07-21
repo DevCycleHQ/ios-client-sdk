@@ -8,7 +8,7 @@ import Foundation
 
 public class DVCConfig {
     var sdkKey: String
-    var user: DVCUser
+    var user: DevCycleUser
     var userConfig: UserConfig? {
         didSet {
             if let userConfig = self.userConfig {
@@ -21,7 +21,7 @@ public class DVCConfig {
         }
     }
     
-    init(sdkKey: String, user: DVCUser) {
+    init(sdkKey: String, user: DevCycleUser) {
         self.sdkKey = sdkKey
         self.user = user
     }

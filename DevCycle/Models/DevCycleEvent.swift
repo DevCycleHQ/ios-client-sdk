@@ -1,5 +1,5 @@
 //
-//  DVCEvent.swift
+//  DevCycleEvent.swift
 //  DevCycle
 //
 //
@@ -10,7 +10,7 @@ enum EventError: Error {
     case MissingEventType
 }
 
-public class DVCEvent {
+public class DevCycleEvent {
     var type: String?
     var target: String?
     var clientDate: Date?
@@ -26,10 +26,10 @@ public class DVCEvent {
     }
     
     public class EventBuilder {
-        var event: DVCEvent
+        var event: DevCycleEvent
         
         init () {
-            self.event = DVCEvent(type: nil, target: nil, clientDate: nil, value: nil, metaData: nil)
+            self.event = DevCycleEvent(type: nil, target: nil, clientDate: nil, value: nil, metaData: nil)
         }
         
         public func type(_ type: String) -> EventBuilder {
@@ -57,12 +57,12 @@ public class DVCEvent {
             return self
         }
         
-        public func build() throws -> DVCEvent {
+        public func build() throws -> DevCycleEvent {
             guard let _ = self.event.type else {
                 throw EventError.MissingEventType
             }
             let result = self.event
-            self.event = DVCEvent(type: nil, target: nil, clientDate: nil, value: nil, metaData: nil)
+            self.event = DevCycleEvent(type: nil, target: nil, clientDate: nil, value: nil, metaData: nil)
             return result
         }
     }
@@ -72,13 +72,16 @@ public class DVCEvent {
     }
 }
 
+@available(*, deprecated, message: "Use DevCycleEvent")
+public typealias DVCEvent = DevCycleEvent
+
 enum DVCEventTypes: String {
     case VariableDefaulted, VariableEvaluated
 }
 
 struct DVCAggregateEvents {
-    var variableDefaulted: [String:DVCEvent]
-    var variableEvaluated: [String:DVCEvent]
+    var variableDefaulted: [String:DevCycleEvent]
+    var variableEvaluated: [String:DevCycleEvent]
     
     init () {
         self.variableDefaulted = [:]
@@ -90,23 +93,23 @@ struct DVCAggregateEvents {
             if let variableEvaluatedEvent = self.variableEvaluated[variableKey] {
                 variableEvaluatedEvent.value = variableEvaluatedEvent.value! + 1
             } else {
-                self.variableEvaluated[variableKey] = DVCEvent(type: "variableEvaluated", target: variableKey, clientDate: nil, value: 1, metaData: nil)
+                self.variableEvaluated[variableKey] = DevCycleEvent(type: "variableEvaluated", target: variableKey, clientDate: nil, value: 1, metaData: nil)
             }
         } else {
             if let variableDefaultedEvent = self.variableDefaulted[variableKey] {
                 variableDefaultedEvent.value = variableDefaultedEvent.value! + 1
             } else {
-                self.variableDefaulted[variableKey] = DVCEvent(type: "variableDefaulted", target: variableKey, clientDate: nil, value: 1, metaData: nil)
+                self.variableDefaulted[variableKey] = DevCycleEvent(type: "variableDefaulted", target: variableKey, clientDate: nil, value: 1, metaData: nil)
             }
         }
     }
     
-    func getAllAggregateEvents() -> [DVCEvent] {
-        var allAggregateEvents: [DVCEvent] = []
-        allAggregateEvents.append(contentsOf: self.variableDefaulted.map { (_: String, defaultedEvent: DVCEvent) -> DVCEvent in
+    func getAllAggregateEvents() -> [DevCycleEvent] {
+        var allAggregateEvents: [DevCycleEvent] = []
+        allAggregateEvents.append(contentsOf: self.variableDefaulted.map { (_: String, defaultedEvent: DevCycleEvent) -> DevCycleEvent in
             defaultedEvent
         })
-        allAggregateEvents.append(contentsOf: self.variableEvaluated.map { (_: String, evaluatedEvent: DVCEvent) -> DVCEvent in
+        allAggregateEvents.append(contentsOf: self.variableEvaluated.map { (_: String, evaluatedEvent: DevCycleEvent) -> DevCycleEvent in
             evaluatedEvent
         })
         return allAggregateEvents

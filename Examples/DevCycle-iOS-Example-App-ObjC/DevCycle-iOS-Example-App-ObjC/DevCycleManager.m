@@ -9,13 +9,13 @@
 
 @interface DevCycleManager()
 
-@property (atomic) DVCClient * _Nullable client;
+@property (atomic) DevCycleClient* _Nullable client;
 
 @end
 
 @implementation DevCycleManager
 
-static NSString *const DEVELOPMENT_KEY = @"<YOUR SDK KEY>";
+static NSString *const DEVCYCLE_KEY = @"<DEVCYCLE_MOBILE_SDK_KEY>";
 
 + (id)sharedManager {
     static DevCycleManager *sharedMyManager = nil;
@@ -33,13 +33,13 @@ static NSString *const DEVELOPMENT_KEY = @"<YOUR SDK KEY>";
   return self;
 }
 
-- (DVCClient*)initialize:(DVCUser *)user onInitialized:(void (^_Nullable)(NSError*))onInitialized {
+- (DevCycleClient*)initialize:(DevCycleUser *)user onInitialized:(void (^_Nullable)(NSError*))onInitialized {
     NSError *err = nil;
     
-    DVCOptions *options = [[DVCOptions alloc] init];
+    DevCycleOptions *options = [[DevCycleOptions alloc] init];
 //    options.logLevel = LogLevel.debug;
     
-    self.client = [DVCClient initialize:DEVELOPMENT_KEY
+    self.client = [DevCycleClient initialize:DEVCYCLE_KEY
                                    user:user
                                 options:options
                           onInitialized:^(NSError * _Nullable error) {

@@ -8,17 +8,17 @@ import Foundation
 
 protocol CacheServiceProtocol {
     func load() -> Cache
-    func save(user: DVCUser)
+    func save(user: DevCycleUser)
     func setAnonUserId(anonUserId: String)
     func getAnonUserId() -> String?
     func clearAnonUserId()
-    func saveConfig(user: DVCUser, fetchDate: Int, configToSave: Data?)
-    func getConfig(user: DVCUser, ttlMs: Int) -> UserConfig?
+    func saveConfig(user: DevCycleUser, fetchDate: Int, configToSave: Data?)
+    func getConfig(user: DevCycleUser, ttlMs: Int) -> UserConfig?
 }
 
 struct Cache {
     var config: UserConfig?
-    var user: DVCUser?
+    var user: DevCycleUser?
     var anonUserId: String?
 }
 
@@ -35,7 +35,7 @@ class CacheService: CacheServiceProtocol {
     
     func load() -> Cache {
         var userConfig: UserConfig?
-        var dvcUser: DVCUser?
+        var dvcUser: DevCycleUser?
         if let data = defaults.object(forKey: CacheKeys.config) as? Data,
            let dictionary = try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String:Any],
            let config = try? UserConfig(from: dictionary)
@@ -43,14 +43,14 @@ class CacheService: CacheServiceProtocol {
             userConfig = config
         }
         if let data = defaults.object(forKey: CacheKeys.user) as? Data {
-            dvcUser = try? JSONDecoder().decode(DVCUser.self, from: data)
+            dvcUser = try? JSONDecoder().decode(DevCycleUser.self, from: data)
         }
         let anonUserId = self.getAnonUserId()
 
         return Cache(config: userConfig, user: dvcUser, anonUserId: anonUserId)
     }
     
-    func save(user: DVCUser) {
+    func save(user: DevCycleUser) {
         if let data = try? JSONEncoder().encode(user) {
             defaults.set(data, forKey: CacheKeys.user)
         }
@@ -68,7 +68,7 @@ class CacheService: CacheServiceProtocol {
         self.remove(key: CacheKeys.anonUserId)
     }
     
-    func saveConfig(user: DVCUser, fetchDate: Int, configToSave: Data?) {
+    func saveConfig(user: DevCycleUser, fetchDate: Int, configToSave: Data?) {
         let key = getConfigKeyPrefix(user: user)
         defaults.set(configToSave, forKey: key)
         if let data = user.userId {
@@ -77,7 +77,7 @@ class CacheService: CacheServiceProtocol {
         self.setInt(key: "\(key).FETCH_DATE", value: fetchDate)
     }
     
-    func getConfig(user: DVCUser, ttlMs: Int) -> UserConfig? {
+    func getConfig(user: DevCycleUser, ttlMs: Int) -> UserConfig? {
         let key = getConfigKeyPrefix(user: user)
         var config: UserConfig?
         
@@ -125,7 +125,7 @@ class CacheService: CacheServiceProtocol {
         defaults.removeObject(forKey: key)
     }
     
-    private func getConfigKeyPrefix(user: DVCUser) -> String {
+    private func getConfigKeyPrefix(user: DevCycleUser) -> String {
         return (user.isAnonymous ?? false) ? CacheKeys.anonymousConfigKey : CacheKeys.identifiedConfigKey
     }
 }

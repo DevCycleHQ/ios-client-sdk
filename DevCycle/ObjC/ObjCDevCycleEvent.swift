@@ -1,13 +1,13 @@
 //
-//  ObjCDVCEvent.swift
+//  ObjCDevCycleEvent.swift
 //  DevCycle
 //
 //
 
 import Foundation
 
-@objc(DVCEvent)
-public class ObjCDVCEvent: NSObject {
+@objc(DevCycleEvent)
+public class ObjCDevCycleEvent: NSObject {
     @objc var type: String?
     @objc var target: String?
     @objc var clientDate: NSDate?
@@ -15,30 +15,30 @@ public class ObjCDVCEvent: NSObject {
     @objc var metaData: NSDictionary?
 
     @objc(initializeWithType:)
-    public static func initialize(type: String) -> ObjCDVCEvent {
+    public static func initialize(type: String) -> ObjCDevCycleEvent {
         return self.initialize(type: type, target: nil, value: nil)
     }
     
     @objc(initializeWithType:target:)
-    public static func initialize(type: String, target: String?) -> ObjCDVCEvent {
+    public static func initialize(type: String, target: String?) -> ObjCDevCycleEvent {
         return self.initialize(type: type, target: target, value: nil)
     }
     
     @objc(initializeWithType:target:value:)
-    public static func initialize(type: String, target: String?, value: NSNumber?) -> ObjCDVCEvent {
-        let builder = ObjCDVCEvent()
+    public static func initialize(type: String, target: String?, value: NSNumber?) -> ObjCDevCycleEvent {
+        let builder = ObjCDevCycleEvent()
         builder.type = type
         builder.target = target
         builder.value = value
         return builder
     }
     
-    func buildDVCEvent() throws -> DVCEvent {
+    func buildDevCycleEvent() throws -> DevCycleEvent {
         if self.type == nil {
             throw ObjCEventErrors.MissingEventType
         }
         
-        var eventBuilder = DVCEvent.builder()
+        var eventBuilder = DevCycleEvent.builder()
         if let eventType = self.type {
             eventBuilder = eventBuilder.type(eventType)
         }
@@ -58,8 +58,12 @@ public class ObjCDVCEvent: NSObject {
         do {
             return try eventBuilder.build()
         } catch {
-            Log.error("Error building DVCEvent: \(error)", tags: ["event", "build"])
+            Log.error("Error building DevCycleEvent: \(error)", tags: ["event", "build"])
             throw error
         }
     }
 }
+
+@available(*, deprecated, message: "Use DevCycleEvent")
+@objc(DVCEvent)
+public class ObjCDVCEvent: ObjCDevCycleEvent {}

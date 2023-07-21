@@ -6,8 +6,8 @@
 
 import Foundation
 
-@objc(DVCUser)
-public class ObjCUser: NSObject {
+@objc(DevCycleUser)
+public class ObjCDevCycleUser: NSObject {
     @objc public var userId: String?
     @objc public var isAnonymous: NSNumber?
     @objc public var email: String?
@@ -22,8 +22,8 @@ public class ObjCUser: NSObject {
     }
     
     @objc(initializeWithUserId:)
-    public static func initialize(userId: String?) -> ObjCUser {
-        let builder = ObjCUser()
+    public static func initialize(userId: String?) -> ObjCDevCycleUser {
+        let builder = ObjCDevCycleUser()
         if (userId == nil) {
             builder.isAnonymous = true
         } else {
@@ -33,8 +33,8 @@ public class ObjCUser: NSObject {
         return builder
     }
     
-    func buildDVCUser() throws -> DVCUser {
-        var userBuilder = DVCUser.builder()
+    func buildDevCycleUser() throws -> DevCycleUser {
+        var userBuilder = DevCycleUser.builder()
         if let userId = self.userId {
             userBuilder = userBuilder.userId(userId)
         } else {
@@ -65,8 +65,13 @@ public class ObjCUser: NSObject {
         do {
             return try userBuilder.build()
         } catch {
-            Log.error("Error building DVCUser: \(error)", tags: ["user", "build"])
+            Log.error("Error building DevCycleUser: \(error)", tags: ["user", "build"])
             throw error
         }
     }
 }
+
+@available(*, deprecated, message: "Use DevCycleUser")
+@objc(DVCUser)
+public class ObjCDVCUser: ObjCDevCycleUser {}
+

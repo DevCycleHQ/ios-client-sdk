@@ -10,16 +10,16 @@ import XCTest
 
 final class ThreadingTests: XCTestCase {
     private var service: MockService!
-    private var user: DVCUser!
-    private var builder: DVCClient.ClientBuilder!
+    private var user: DevCycleUser!
+    private var builder: DevCycleClient.ClientBuilder!
     private var userConfig: UserConfig!
     
     override func setUpWithError() throws {
         self.service = MockService()
-        self.user = try! DVCUser.builder()
+        self.user = try! DevCycleUser.builder()
                     .userId("my_user")
                     .build()
-        self.builder = DVCClient.builder().service(service)
+        self.builder = DevCycleClient.builder().service(service)
 
         let data = getConfigData(name: "test_config")
         let dictionary = try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
@@ -41,11 +41,11 @@ final class ThreadingTests: XCTestCase {
 }
 
 private class MockService: DevCycleServiceProtocol {
-    func getConfig(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
+    func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
     
-    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {}
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {}
     
-    func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {}
+    func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {}
     
     func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {}
 }

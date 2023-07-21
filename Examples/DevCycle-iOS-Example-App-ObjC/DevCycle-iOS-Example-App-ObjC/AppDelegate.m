@@ -19,7 +19,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // TODO: Set SDK Key in DevCycleManager.m
     
-    DVCUser *user = [DVCUser initializeWithUserId:@"test_user"];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"test_user"];
     user.customData = @{
         @"key": @"value",
         @"num": @610.610,
@@ -27,25 +27,25 @@
     };
     
     [[DevCycleManager sharedManager] initialize:user onInitialized:^(NSError * _Nonnull err) {
-        DVCClient *client = [[DevCycleManager sharedManager] client];
+        DevCycleClient *client = [[DevCycleManager sharedManager] client];
         if (err || client == nil) {
             return NSLog(@"Error starting DevCycle: %@", err.description);
         }
         
         NSString *stringValue = [client stringVariableValueWithKey:@"string_key" defaultValue:@"default"];
         NSNumber *numValue = [client numberVariableValueWithKey:@"num_key" defaultValue:@610];
-        Bool boolValue = [client boolVariableValueWithKey:@"bool_key" defaultValue:NO];
+        BOOL boolValue = [client boolVariableValueWithKey:@"bool_key" defaultValue:NO];
         DVCVariable *jsonVar = [[client jsonVariableWithKey:@"json_key" defaultValue:@{@"key": @"value"}]
                                 onUpdateWithHandler:^(id _Nonnull value) {
             NSLog(@"json_key value updated: %@", value);
         }];
         
-        NSLog(@"DVC Var Values\n string: %@\n num: %@\n bool: %@\n json: %@", stringValue, numValue, boolValue, jsonVar.value);
+        NSLog(@"DevCycle Variable Values\n string: %@\n num: %@\n bool: %@\n json: %@", stringValue, numValue, boolValue, jsonVar.value);
         
         NSDictionary *allFeatures = [client allFeatures];
-        NSLog(@"DVC All Features: %@", allFeatures);
+        NSLog(@"DevCycle All Features: %@", allFeatures);
         NSDictionary *allVariables = [client allVariables];
-        NSLog(@"DVC All Variables: %@", allVariables);
+        NSLog(@"DevCycle All Variables: %@", allVariables);
     }];
     
     return YES;

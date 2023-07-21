@@ -1,5 +1,5 @@
 //
-//  ObjcDVCUserTests.m
+//  ObjcDevCycleUserTests.m
 //  DevCycleTests
 //
 //
@@ -7,13 +7,20 @@
 #import <XCTest/XCTest.h>
 @import DevCycle;
 
-@interface ObjcDVCUserTests : XCTestCase
+@interface ObjcDevCycleUserTests : XCTestCase
 
 @end
 
-@implementation ObjcDVCUserTests
+@implementation ObjcDevCycleUserTests
 
 - (void)testCreateUser {
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
+    DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
+    XCTAssertNotNil(user);
+    XCTAssertNotNil(client);
+}
+
+- (void)testDeprecatedDVCUser {
     DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
     DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(user);
@@ -21,15 +28,15 @@
 }
 
 - (void)testAnonUser {
-    DVCUser *user = [[DVCUser alloc] init];
-    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
+    DevCycleUser *user = [[DevCycleUser alloc] init];
+    DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(user);
     XCTAssertTrue(user.isAnonymous);
 }
 
 - (void)testNonUserIdPropertiesAreNil {
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
-    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
+    DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(user);
     XCTAssert([user.userId isEqual:@"my_user"]);
     XCTAssertFalse([user.isAnonymous boolValue]);
@@ -41,12 +48,12 @@
 }
 
 - (void)testNonUserIdPropertiesAreNotNil {
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     user.isAnonymous = @NO;
     user.email = @"email.com";
     user.name = @"Jason Smith";
     user.country = @"CAN";
-    DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
+    DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(user);
     XCTAssert([user.userId isEqual:@"my_user"]);
     XCTAssertFalse([user.isAnonymous boolValue]);

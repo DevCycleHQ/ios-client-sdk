@@ -1,7 +1,6 @@
 //
-//  DVCUser.swift
+//  DevCycleUser.swift
 //  DevCycle-iOS-SDK
-//
 //
 
 import Foundation
@@ -21,12 +20,12 @@ enum UserError: Error {
 public class UserBuilder {
     private let cacheService: CacheServiceProtocol = CacheService()
     
-    var user: DVCUser
+    var user: DevCycleUser
     var customData: [String: Any]?
     var privateCustomData: [String: Any]?
     
     init() {
-        self.user = DVCUser()
+        self.user = DevCycleUser()
     }
     
     public func userId(_ userId: String) -> UserBuilder {
@@ -79,7 +78,7 @@ public class UserBuilder {
         return self
     }
     
-    public func build() throws -> DVCUser {
+    public func build() throws -> DevCycleUser {
         guard self.user.userId?.trimmingCharacters(in: .whitespacesAndNewlines) != ""
         else {
             throw UserError.InvalidUser
@@ -105,7 +104,7 @@ public class UserBuilder {
         }
         
         let result = self.user
-        self.user = DVCUser()
+        self.user = DevCycleUser()
         self.customData = nil
         self.privateCustomData = nil
         return result
@@ -113,7 +112,7 @@ public class UserBuilder {
 }
 
 
-public class DVCUser: Codable {
+public class DevCycleUser: Codable {
     public var userId: String?
     public var isAnonymous: Bool?
     public var email: String?
@@ -152,7 +151,7 @@ public class DVCUser: Codable {
            case isAnonymous, email, name, language, country, appVersion, appBuild, customData, privateCustomData, lastSeenDate, createdDate, platform, platformVersion, deviceModel, sdkType, sdkVersion
     }
     
-    public func update(with user: DVCUser) {
+    public func update(with user: DevCycleUser) {
         self.lastSeenDate = Date()
         self.email = user.email
         self.name = user.name
@@ -199,11 +198,14 @@ public class DVCUser: Codable {
     }
 }
 
+@available(*, deprecated, message: "Use DevCycleUser")
+public typealias DVCUser = DevCycleUser
+
 class QueryItemBuilder {
     var items: [URLQueryItem]
-    let user: DVCUser
+    let user: DevCycleUser
     
-    init(user: DVCUser) {
+    init(user: DevCycleUser) {
         self.items = []
         self.user = user
     }

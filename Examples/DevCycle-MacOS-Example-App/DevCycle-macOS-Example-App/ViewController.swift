@@ -12,7 +12,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var loginButton: NSButton!
     
     var loggedIn: Bool = false
-    var client: DVCClient?
+    var client: DevCycleClient?
     var titleHeaderVar: DVCVariable<String>?
     var loginCtaVar: DVCVariable<String>?
     
@@ -66,7 +66,7 @@ class ViewController: NSViewController {
                 print("Variables: \(String(describing: variables))")
             }
         } else {
-            let user = try? DVCUser.builder()
+            let user = try? DevCycleUser.builder()
                               .userId("my-user1")
                               .email("my-email@email.com")
                               .country("CA")
@@ -103,7 +103,7 @@ class ViewController: NSViewController {
     
     @IBAction func track(_ sender: Any) {
         guard let client = self.client else { return }
-        let event = try! DVCEvent.builder()
+        let event = try! DevCycleEvent.builder()
                                  .type("my_event")
                                  .target("my_target")
                                  .value(3)
@@ -111,7 +111,7 @@ class ViewController: NSViewController {
                                  .clientDate(Date())
                                  .build()
         client.track(event)
-        print("Tracked event to DVC")
+        print("Tracked event to DevCycle")
     }
     
     @IBAction func logAllFeatures(_ sender: Any) {

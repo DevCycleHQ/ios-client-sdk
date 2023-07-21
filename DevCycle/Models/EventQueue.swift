@@ -13,30 +13,30 @@ enum EventQueueErrors: Error {
 
 class EventQueue {
     var eventDispatchQueue = DispatchQueue(label: "com.devcycle.EventQueue")
-    var events: [DVCEvent] = []
+    var events: [DevCycleEvent] = []
     var aggregateEventQueue: DVCAggregateEvents = DVCAggregateEvents()
     var flushing: Bool = false
     
-    func queue(_ event: DVCEvent) {
+    func queue(_ event: DevCycleEvent) {
         eventDispatchQueue.async {
             self.events.append(event)
         }
     }
     
-    func queue(_ events: [DVCEvent]) {
+    func queue(_ events: [DevCycleEvent]) {
         eventDispatchQueue.async {
             self.events.append(contentsOf: events)
         }
     }
     
-    func flush(service: DevCycleServiceProtocol, user: DVCUser, callback: FlushCompletedHandler? = nil) {
+    func flush(service: DevCycleServiceProtocol, user: DevCycleUser, callback: FlushCompletedHandler? = nil) {
         if (self.flushing) {
             Log.warn("Flushing already in progress, cancelling flush")
             callback?(EventQueueErrors.FlushingInProgress)
             return
         }
         
-        var eventsToFlush: [DVCEvent] = []
+        var eventsToFlush: [DevCycleEvent] = []
         eventDispatchQueue.sync {
             self.flushing = true
             eventsToFlush = self.events

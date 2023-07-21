@@ -1,21 +1,21 @@
 //
-//  ObjCDVCClient.swift
+//  ObjCDevCycleClient.swift
 //  DevCycle
 //
 //
 
 import Foundation
 
-@objc(DVCClient)
-public class ObjCDVCClient: NSObject {
-    var client: DVCClient?
+@objc(DevCycleClient)
+public class ObjCDevCycleClient: NSObject {
+    var client: DevCycleClient?
     
     @objc(initialize:user:)
     public static func initialize(
         sdkKey: String,
-        user: ObjCUser
-    ) -> ObjCDVCClient {
-        return ObjCDVCClient(
+        user: ObjCDevCycleUser
+    ) -> ObjCDevCycleClient {
+        return ObjCDevCycleClient(
             sdkKey: sdkKey,
             user: user,
             options: nil,
@@ -26,10 +26,10 @@ public class ObjCDVCClient: NSObject {
     @objc(initialize:user:options:)
     public static func initialize(
         sdkKey: String,
-        user: ObjCUser,
-        options: ObjCOptions?
-    ) -> ObjCDVCClient {
-        return ObjCDVCClient(
+        user: ObjCDevCycleUser,
+        options: ObjCDevCycleOptions?
+    ) -> ObjCDevCycleClient {
+        return ObjCDevCycleClient(
             sdkKey: sdkKey,
             user: user,
             options: options,
@@ -40,11 +40,11 @@ public class ObjCDVCClient: NSObject {
     @objc(initialize:user:options:onInitialized:)
     public static func initialize(
         sdkKey: String,
-        user: ObjCUser,
-        options: ObjCOptions?,
+        user: ObjCDevCycleUser,
+        options: ObjCDevCycleOptions?,
         onInitialized: ((Error?) -> Void)?
-    ) -> ObjCDVCClient {
-        return ObjCDVCClient(
+    ) -> ObjCDevCycleClient {
+        return ObjCDevCycleClient(
             sdkKey: sdkKey,
             user: user,
             options: options,
@@ -54,8 +54,8 @@ public class ObjCDVCClient: NSObject {
     
     init(
         sdkKey: String,
-        user: ObjCUser,
-        options: ObjCOptions?,
+        user: ObjCDevCycleUser,
+        options: ObjCDevCycleOptions?,
         onInitialized: ((Error?) -> Void)?
     ) {
         do {
@@ -69,19 +69,19 @@ public class ObjCDVCClient: NSObject {
                 throw ObjCClientErrors.InvalidUser
             }
             
-            let dvcUser = try user.buildDVCUser()
+            let dvcUser = try user.buildDevCycleUser()
             
-            var clientBuilder = DVCClient.builder()
+            var clientBuilder = DevCycleClient.builder()
                 .sdkKey(sdkKey)
                 .user(dvcUser)
             
             if let dvcOptions = options {
-                clientBuilder = clientBuilder.options(dvcOptions.buildDVCOptions())
+                clientBuilder = clientBuilder.options(dvcOptions.buildDevCycleOptions())
             }
             
             guard let client = try? clientBuilder.build(onInitialized: onInitialized)
             else {
-                Log.error("Error creating client", tags: ["build", "objc"])
+                Log.error("Error creating DevCycleClient", tags: ["build", "objc"])
                 throw ObjCClientErrors.InvalidClient
             }
             self.client = client
@@ -89,23 +89,23 @@ public class ObjCDVCClient: NSObject {
             if let onInitializedCallback = onInitialized {
                 onInitializedCallback(error)
             } else {
-                Log.error("Error initializing DVCClient: \(error)")
+                Log.error("Error initializing DevCycleClient: \(error)")
             }
         }
     }
     
     
     @objc(identifyUser:callback:)
-    public func identify(user: ObjCUser, callback: ((Error?, [String: ObjCVariable]?) -> Void)?) {
+    public func identify(user: ObjCDevCycleUser, callback: ((Error?, [String: ObjCVariable]?) -> Void)?) {
         do {
             guard let client = self.client else { return }
             guard user.userId != nil else {
                 callback?(NSError(), nil)
                 return
             }
-            let dvcUser = try user.buildDVCUser()
+            let dvcUser = try user.buildDevCycleUser()
 
-            let createdUser = DVCUser()
+            let createdUser = DevCycleUser()
             createdUser.userId = user.userId!
             createdUser.isAnonymous = false
             createdUser.update(with: dvcUser)
@@ -118,7 +118,7 @@ public class ObjCDVCClient: NSObject {
             if let idCallback = callback {
                 idCallback(error, nil)
             } else {
-                Log.error("Error calling DVCClient identifyUser:callback: \(error)")
+                Log.error("Error calling DevCycleClient identifyUser:callback: \(error)")
             }
         }
     }
@@ -198,9 +198,9 @@ public class ObjCDVCClient: NSObject {
     }
     
     @objc(track:err:)
-    public func track(_ event: ObjCDVCEvent) throws {
+    public func track(_ event: ObjCDevCycleEvent) throws {
         guard let client = self.client else { return }
-        let dvcEvent = try event.buildDVCEvent()
+        let dvcEvent = try event.buildDevCycleEvent()
         client.track(dvcEvent)
     }
     
@@ -209,7 +209,7 @@ public class ObjCDVCClient: NSObject {
     }
 }
 
-extension ObjCDVCClient {
+extension ObjCDevCycleClient {
     func featureToObjCFeature(_ features: [String: Feature]?) -> [String: ObjCFeature] {
         var objcFeatures: [String: ObjCFeature] = [:]
         if let features = features {
@@ -230,3 +230,7 @@ extension ObjCDVCClient {
         return objcVariables
     }
 }
+
+@available(*, deprecated, message: "Use DevCycleClient")
+@objc(DVCClient)
+public class ObjCDVCClient: ObjCDevCycleClient {}

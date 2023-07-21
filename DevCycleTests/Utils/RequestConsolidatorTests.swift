@@ -16,7 +16,7 @@ class RequestConsolidatorTests: XCTestCase {
         let requestConsolidator = RequestConsolidator(service: mockService, cacheService: mockCacheService)
         let request = URLRequest(url: URL(string: "https://dummy.com")!)
         let expectation = expectation(description: "One request completes")
-        let user = try! DVCUser.builder().userId("test_user").build()
+        let user = try! DevCycleUser.builder().userId("test_user").build()
         requestConsolidator.queue(request: request, user: user) { response in
             XCTAssertEqual(response.config?.variables["testVar"]?.value as! String, "any_value")
             expectation.fulfill()
@@ -32,7 +32,7 @@ class RequestConsolidatorTests: XCTestCase {
         let request1 = URLRequest(url: URL(string: "https://dummy.com/firstPage")!)
         let request2 = URLRequest(url: URL(string: "https://dummy.com/secondPage")!)
         let request3 = URLRequest(url: URL(string: "https://dummy.com/thirdPage")!)
-        let user = try! DVCUser.builder().userId("test_user").build()
+        let user = try! DevCycleUser.builder().userId("test_user").build()
         let expectation = expectation(description: "Multiple request completes")
         expectation.expectedFulfillmentCount = 3
         requestConsolidator.queue(request: request1, user: user) { response in
@@ -61,15 +61,15 @@ class RequestConsolidatorTests: XCTestCase {
 
 extension RequestConsolidatorTests {
     class MockService: DevCycleServiceProtocol {
-        func getConfig(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {
+        func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {
             XCTAssert(true)
         }
 
-        func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
+        func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
             XCTAssert(true)
         }
         
-        func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {
+        func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {
             XCTAssert(true)
         }
         
