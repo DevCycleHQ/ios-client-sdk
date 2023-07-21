@@ -1,8 +1,6 @@
 //
-//  ObjCDVCOptions.swift
+//  ObjCDevCycleOptions.swift
 //  DevCycle
-//
-//  Copyright © 2022 Taplytics. All rights reserved.
 //
 
 import Foundation
@@ -14,8 +12,8 @@ public class ObjCLogLevel: NSObject {
     @objc public static let error = NSNumber(2)
 }
 
-@objc(DVCOptions)
-public class ObjCOptions: NSObject {
+@objc(DevCycleOptions)
+public class ObjCDevCycleOptions: NSObject {
     @objc public var flushEventsIntervalMs: NSNumber?
     @objc public var disableEventLogging: NSNumber?
     @objc public var logLevel: NSNumber?
@@ -24,8 +22,8 @@ public class ObjCOptions: NSObject {
     @objc public var configCacheTTL: NSNumber?
     @objc public var disableRealtimeUpdates: NSNumber?
     
-    func buildDVCOptions() -> DVCOptions {
-        var optionsBuilder = DVCOptions.builder()
+    func buildDevCycleOptions() -> DevCycleOptions {
+        var optionsBuilder = DevCycleOptions.builder()
         if let flushEventsIntervalMs = self.flushEventsIntervalMs,
            let interval = flushEventsIntervalMs as? Int {
             optionsBuilder = optionsBuilder.flushEventsIntervalMs(interval)
@@ -76,3 +74,6 @@ public class ObjCOptions: NSObject {
     }
 }
 
+@available(*, deprecated, message: "Use DevCycleOptions")
+@objc(DVCOptions)
+public class ObjCDVCOptions: ObjCDevCycleOptions {}

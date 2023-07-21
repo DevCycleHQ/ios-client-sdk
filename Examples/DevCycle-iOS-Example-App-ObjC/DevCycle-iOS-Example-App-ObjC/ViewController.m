@@ -11,7 +11,7 @@
 @interface ViewController ()
 
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
-@property (strong) DVCClient *client;
+@property (atomic) DevCycleClient *client;
 @property BOOL loggedIn;
 
 @end
@@ -22,13 +22,13 @@
     __weak typeof(self) weakSelf = self;
     if (self.loggedIn) {
         [self.client resetUser:^(NSError *error, NSDictionary<NSString *,id> *variables) {
-            NSLog(@"Reset User!");
+            NSLog(@"DevCycle: Reset User!");
             NSLog(@"%@", variables);
             weakSelf.loggedIn = NO;
             [weakSelf.loginButton setTitle:@"Log In" forState:UIControlStateNormal];
         }];
     } else {
-        DVCUser *user = [DVCUser initializeWithUserId:@"my-user"];
+        DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my-user"];
         user.userId = @"my-user";
         user.name = @"My Name";
         user.language = @"en";
@@ -37,7 +37,7 @@
         
         [self.client identifyUser:user callback:^(NSError *error, NSDictionary<NSString *,id> *variables) {
             if (error) {
-                return NSLog(@"Error calling DVCClient identifyUser:callback: %@", error);
+                return NSLog(@"Error calling DevCycleClient identifyUser:callback: %@", error);
             }
             NSLog(@"Identified User!");
             NSLog(@"%@", variables);
@@ -49,12 +49,12 @@
 
 - (IBAction)track:(id)sender {
     NSError *err = nil;
-    DVCEvent *event = [DVCEvent initializeWithType:@"my-event"];
+    DevCycleEvent *event = [DevCycleEvent initializeWithType:@"my-event"];
     [self.client track:event err:&err];
     if (err) {
-        NSLog(@"Error calling DVCClient track:err: %@", err);
+        NSLog(@"Error calling DevCycleClient track:err: %@", err);
     } else {
-        NSLog(@"Tracked event to DVC");
+        NSLog(@"Tracked event to DevCycle");
     }
 }
 

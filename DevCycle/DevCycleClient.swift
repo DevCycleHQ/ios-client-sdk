@@ -1,5 +1,5 @@
 //
-//  DVCClient.swift
+//  DevCycleClient.swift
 //  DevCycle-iOS-SDK
 //
 //
@@ -28,12 +28,12 @@ public typealias IdentifyCompletedHandler = (Error?, [String: Variable]?) -> Voi
 public typealias FlushCompletedHandler = (Error?) -> Void
 public typealias CloseCompletedHandler = () -> Void
 
-public class DVCClient {
+public class DevCycleClient {
     var sdkKey: String?
-    var user: DVCUser?
-    var lastIdentifiedUser: DVCUser?
+    var user: DevCycleUser?
+    var lastIdentifiedUser: DevCycleUser?
     var config: DVCConfig?
-    var options: DVCOptions?
+    var options: DevCycleOptions?
     var configCompletionHandlers: [ClientInitializedHandler] = []
     var initialized: Bool = false
     var eventQueue: EventQueue = EventQueue()
@@ -196,11 +196,11 @@ public class DVCClient {
         self.sdkKey = sdkKey
     }
     
-    func setUser(_ user: DVCUser) {
+    func setUser(_ user: DevCycleUser) {
         self.user = user
     }
     
-    func setOptions(_ options: DVCOptions) {
+    func setOptions(_ options: DevCycleOptions) {
         self.options = options
     }
     
@@ -219,7 +219,7 @@ public class DVCClient {
         }
     }
 
-    private func cacheUser(user: DVCUser) {
+    private func cacheUser(user: DevCycleUser) {
         self.cacheService.save(user: user)
         if user.isAnonymous == true, let userId = user.userId {
             self.cacheService.setAnonUserId(anonUserId: userId)
@@ -313,12 +313,12 @@ public class DVCClient {
         }
     }
     
-    public func identifyUser(user: DVCUser, callback: IdentifyCompletedHandler? = nil) throws {
+    public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
         guard let currentUser = self.user, let userId = currentUser.userId, let incomingUserId = user.userId else {
             throw ClientError.InvalidUser
         }
         self.flushEvents()
-        var updateUser: DVCUser = currentUser
+        var updateUser: DevCycleUser = currentUser
         if (userId == incomingUserId) {
             updateUser.update(with: user)
         } else {
@@ -351,7 +351,7 @@ public class DVCClient {
         
         let cachedAnonUserId = self.cacheService.getAnonUserId()
         self.cacheService.clearAnonUserId()
-        let anonUser = try DVCUser.builder().isAnonymous(true).build()
+        let anonUser = try DevCycleUser.builder().isAnonymous(true).build()
         
         self.lastIdentifiedUser = anonUser
 
@@ -384,9 +384,9 @@ public class DVCClient {
         return self.config?.userConfig?.variables ?? [:]
     }
 
-    public func track(_ event: DVCEvent) {
+    public func track(_ event: DevCycleEvent) {
         if (self.closed) {
-            Log.error("DVCClient is closed, cannot log new events.")
+            Log.error("DevCycleClient is closed, cannot log new events.")
             return
         }
         if(!self.disableCustomEventLogging){
@@ -419,10 +419,10 @@ public class DVCClient {
     
     public func close(callback: CloseCompletedHandler?) {
         if (self.closed) {
-            Log.error("DVC Client is already closed.")
+            Log.error("DevCycleClient is already closed.")
             return
         }
-        Log.info("Closing DVC client and flushing remaining events.")
+        Log.info("Closing DevCycleClient and flushing remaining events.")
         self.closed = true
         self.flushTimer?.invalidate()
         self.flushEvents(callback: { error in
@@ -432,14 +432,14 @@ public class DVCClient {
     }
     
     public class ClientBuilder {
-        private var client: DVCClient
+        private var client: DevCycleClient
         private var service: DevCycleServiceProtocol?
 
         init() {
-            self.client = DVCClient()
+            self.client = DevCycleClient()
         }
         
-        @available(*, deprecated)
+        @available(*, deprecated, message: "Use sdkKey()")
         public func environmentKey(_ key: String) -> ClientBuilder {
             self.client.setSDKKey(key)
             return self
@@ -450,12 +450,12 @@ public class DVCClient {
             return self
         }
         
-        public func user(_ user: DVCUser) -> ClientBuilder {
+        public func user(_ user: DevCycleUser) -> ClientBuilder {
             self.client.setUser(user)
             return self
         }
         
-        public func options(_ options: DVCOptions) -> ClientBuilder {
+        public func options(_ options: DevCycleOptions) -> ClientBuilder {
             self.client.setOptions(options)
             return self
         }
@@ -465,7 +465,7 @@ public class DVCClient {
             return self
         }
         
-        public func build(onInitialized: ClientInitializedHandler?) throws -> DVCClient {
+        public func build(onInitialized: ClientInitializedHandler?) throws -> DevCycleClient {
             guard self.client.sdkKey != nil else {
                 Log.error("Missing SDK Key", tags: ["build"])
                 throw ClientError.MissingSDKKeyOrUser
@@ -481,7 +481,7 @@ public class DVCClient {
             } else {
                 result.initialize(callback: onInitialized)
             }
-            self.client = DVCClient()
+            self.client = DevCycleClient()
             return result
         }
     }
@@ -507,3 +507,6 @@ public class DVCClient {
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay), execute: work)
     }
 }
+
+@available(*, deprecated, message: "Use DevCycleClient")
+public typealias DVCClient = DevCycleClient

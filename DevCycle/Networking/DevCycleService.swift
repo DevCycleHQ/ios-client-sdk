@@ -62,9 +62,9 @@ struct RequestParams {
 }
 
 protocol DevCycleServiceProtocol {
-    func getConfig(user:DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler)
-    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler)
-    func saveEntity(user:DVCUser, completion: @escaping SaveEntityCompletionHandler)
+    func getConfig(user:DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler)
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler)
+    func saveEntity(user:DevCycleUser, completion: @escaping SaveEntityCompletionHandler)
     func makeRequest(request: URLRequest, completion: @escaping CompletionHandler)
 }
 
@@ -75,7 +75,7 @@ class DevCycleService: DevCycleServiceProtocol {
     var cacheService: CacheServiceProtocol
     var requestConsolidator: RequestConsolidator!
 
-    private var newUser: DVCUser?
+    private var newUser: DevCycleUser?
     
     init(config: DVCConfig, cacheService: CacheServiceProtocol) {
         let sessionConfig = URLSessionConfiguration.default
@@ -85,12 +85,12 @@ class DevCycleService: DevCycleServiceProtocol {
         self.requestConsolidator = RequestConsolidator(service: self, cacheService: cacheService)
     }
     
-    func getConfig(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {
+    func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {
         let configRequest = createConfigRequest(user: user, enableEdgeDB: enableEdgeDB, extraParams: extraParams)
         requestConsolidator.queue(request: configRequest, user: user, callback: completion)
     }
     
-    func publishEvents(events: [DVCEvent], user: DVCUser, completion: @escaping PublishEventsCompletionHandler) {
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
         var eventsRequest = createEventsRequest()
         let userEncoder = JSONEncoder()
         userEncoder.dateEncodingStrategy = .iso8601
@@ -124,7 +124,7 @@ class DevCycleService: DevCycleServiceProtocol {
         }
     }
     
-    func saveEntity(user: DVCUser, completion: @escaping SaveEntityCompletionHandler) {
+    func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {
         var saveEntityRequest = createSaveEntityRequest()
         
         guard let userIsAnonymous = user.isAnonymous, !userIsAnonymous else {
@@ -203,7 +203,7 @@ class DevCycleService: DevCycleServiceProtocol {
         }.resume()
     }
     
-    func createConfigRequest(user: DVCUser, enableEdgeDB: Bool, extraParams: RequestParams? = nil) -> URLRequest {
+    func createConfigRequest(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams? = nil) -> URLRequest {
         var userQueryItems: [URLQueryItem] = user.toQueryItems()
         let queryItem = URLQueryItem(name: "enableEdgeDB", value: String(enableEdgeDB))
         userQueryItems.append(queryItem)
@@ -266,7 +266,7 @@ class DevCycleService: DevCycleServiceProtocol {
         return urlComponents
     }
     
-    private func generateEventPayload(_ events: [DVCEvent], _ userId: String, _ featureVariables: [String:String]?) -> [[String:Any]] {
+    private func generateEventPayload(_ events: [DevCycleEvent], _ userId: String, _ featureVariables: [String:String]?) -> [[String:Any]] {
         var eventsJSON: [[String:Any]] = []
         let formatter = ISO8601DateFormatter()
         

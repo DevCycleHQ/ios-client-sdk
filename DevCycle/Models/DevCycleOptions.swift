@@ -6,7 +6,7 @@
 
 import Foundation
 
-public class DVCOptions {
+public class DevCycleOptions {
     var flushEventsIntervalMs: Int?
     var disableEventLogging: Bool?
     var logLevel: LogLevel = .error
@@ -18,10 +18,10 @@ public class DVCOptions {
     var disableCustomEventLogging: Bool = false
     
     public class OptionsBuilder {
-        var options: DVCOptions
+        var options: DevCycleOptions
         
         init () {
-            self.options = DVCOptions()
+            self.options = DevCycleOptions()
         }
         
         public func flushEventsIntervalMs(_ interval: Int? = 10000) -> OptionsBuilder {
@@ -70,9 +70,9 @@ public class DVCOptions {
             return self
         }
         
-        public func build() -> DVCOptions {
+        public func build() -> DevCycleOptions {
             let result = self.options
-            self.options = DVCOptions()
+            self.options = DevCycleOptions()
             return result
         }
     }
@@ -81,3 +81,6 @@ public class DVCOptions {
         return OptionsBuilder()
     }
 }
+
+@available(*, deprecated, message: "Use DevCycleOptions")
+public typealias DVCOptions = DevCycleOptions
