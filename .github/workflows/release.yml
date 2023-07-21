@@ -65,6 +65,7 @@ jobs:
           git push origin HEAD:main
         if: inputs.draft != true
 
+      # This will automatically trigger publishing to Carthage and Swift Package Manager
       - uses: DevCycleHQ/release-action/create-release@main
         id: create-release
         with:
@@ -81,6 +82,7 @@ jobs:
           echo "::notice title=Release URL::${{ steps.create-release.outputs.release-url }}"
 
   publish-cocoapods:
+    needs: release
     runs-on: macos-12
     steps:
       - uses: actions/checkout@v3
@@ -100,4 +102,4 @@ jobs:
 
       - name: Notify Sleuth
         run: |
-          curl -X POST -d api_key=${{ secrets.SLEUTH_API_TOKEN }} -d environment=production -d sha={{ github.sha }} https://app.sleuth.io/api/1/deployments/taplytics/ios-client-sdk/register_deploy
+          curl -X POST -d api_key=${{ secrets.SLEUTH_API_KEY }} -d environment=production -d sha={{ github.sha }} https://app.sleuth.io/api/1/deployments/taplytics/ios-client-sdk/register_deploy
