@@ -65,16 +65,7 @@ public class ObjCDevCycleUser: NSObject {
         do {
             return try userBuilder.build()
         } catch {
-            Log.error("Error building DVCUser: \(error)", tags: ["user", "build"])
-            throw error
-        }
-    }
-    
-    @available(*, deprecated, message: "Use buildDevCycleUser")
-    func buildDVCUser() throws -> DVCUser {
-        do {
-            return try buildDevCycleUser()
-        } catch {
+            Log.error("Error building DevCycleUser: \(error)", tags: ["user", "build"])
             throw error
         }
     }

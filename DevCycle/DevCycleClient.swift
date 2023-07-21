@@ -419,10 +419,10 @@ public class DevCycleClient {
     
     public func close(callback: CloseCompletedHandler?) {
         if (self.closed) {
-            Log.error("DVC Client is already closed.")
+            Log.error("DevCycleClient is already closed.")
             return
         }
-        Log.info("Closing DVC client and flushing remaining events.")
+        Log.info("Closing DevCycleClient and flushing remaining events.")
         self.closed = true
         self.flushTimer?.invalidate()
         self.flushEvents(callback: { error in

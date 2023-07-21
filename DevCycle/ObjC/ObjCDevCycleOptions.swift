@@ -22,7 +22,7 @@ public class ObjCDevCycleOptions: NSObject {
     @objc public var configCacheTTL: NSNumber?
     @objc public var disableRealtimeUpdates: NSNumber?
     
-    func buildDVCOptions() -> DevCycleOptions {
+    func buildDevCycleOptions() -> DevCycleOptions {
         var optionsBuilder = DevCycleOptions.builder()
         if let flushEventsIntervalMs = self.flushEventsIntervalMs,
            let interval = flushEventsIntervalMs as? Int {

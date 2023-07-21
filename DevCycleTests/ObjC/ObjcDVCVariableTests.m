@@ -15,7 +15,7 @@
 @implementation ObjcDVCVariableTests
 
 - (void)testVariableGetsCreatedWithDefault {
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DevCycleClient *client = [DevCycleClient initialize:@"key" user:user];
     DVCVariable *variable = [client stringVariableWithKey:@"my-key" defaultValue:@"my-default"];
     XCTAssertNotNil(variable);

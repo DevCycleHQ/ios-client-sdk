@@ -76,7 +76,7 @@ public class ObjCDevCycleClient: NSObject {
                 .user(dvcUser)
             
             if let dvcOptions = options {
-                clientBuilder = clientBuilder.options(dvcOptions.buildDVCOptions())
+                clientBuilder = clientBuilder.options(dvcOptions.buildDevCycleOptions())
             }
             
             guard let client = try? clientBuilder.build(onInitialized: onInitialized)

@@ -15,7 +15,7 @@
 
 - (void)testBuilderReturnsErrorIfNoSDKKey {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Builder returns error if no sdk key"];
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DevCycleClient *client = [DevCycleClient initialize:nil user:user options:nil onInitialized:^(NSError * _Nullable err) {
         XCTAssertNil(client);
         XCTAssertNotNil(err);
@@ -35,14 +35,14 @@
 }
 
 - (void)testBuilderCreatesClientWithUserAndSDKKey {
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
 }
 
 - (void)testBuilderCreatesClientWithUserAndSDKKeyAndOptions {
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
-    DVCOptions *options = [[DVCOptions alloc] init];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
+    DevCycleOptions *options = [[DevCycleOptions alloc] init];
     options.logLevel = LogLevel.info;
     options.disableRealtimeUpdates = @true;
     options.configCacheTTL = @86400000;
@@ -52,7 +52,7 @@
 }
 
 - (void)testDepracatedDVCClientWorks {
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DVCClient *client = [DVCClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
 }
@@ -60,7 +60,7 @@
 #pragma mark - Variable Tests
 
 - (void)testVariableIsCreated {
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
     DVCVariable *variable = [client stringVariableWithKey:@"my-key" defaultValue:@"default-value"];
@@ -72,7 +72,7 @@
 }
 
 - (void)testVariableValueIsCreated {
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
     NSString *variableValue = [client stringVariableValueWithKey:@"my-key" defaultValue:@"default-value"];
@@ -81,7 +81,7 @@
 }
 
 - (void)testVariableValueBool {
-    DVCUser *user = [DVCUser initializeWithUserId:@"my_user"];
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
     BOOL boolValue = [client boolVariableValueWithKey:@"my-key" defaultValue:true];
