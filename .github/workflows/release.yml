@@ -47,7 +47,7 @@ jobs:
 
       - name: Update version in code
         run: |
-          sed -i 's/spec.version[[:space:]]*=[[:space:]]*"[0-9]\+\.[0-9]\+\.[0-9]\+"/spec.version      = "9.9.9"/g' ./DevCycle.podspec
+          sed -i 's/spec.version[[:space:]]*=[[:space:]]*"[0-9]\+\.[0-9]\+\.[0-9]\+"/spec.version = "9.9.9"/g' ./DevCycle.podspec
           sed -i 's/MARKETING_VERSION = [0-9]\+\.[0-9]\+\.[0-9]\+;/MARKETING_VERSION = 9.9.9;/g' ./DevCycle.xcodeproj/project.pbxproj
           sed -i 's/var sdkVersion = "[0-9]\+\.[0-9]\+\.[0-9]\+"/var sdkVersion = "9.9.9"/g' ./DevCycle/Models/PlatformDetails.swift
 
@@ -98,7 +98,7 @@ jobs:
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: |
-          pod trunk push DevCycle.podspec --allow-warnings --verbose
+          ls DevCycle.podspec --allow-warnings --verbose
 
       - name: Notify Sleuth
         run: |
