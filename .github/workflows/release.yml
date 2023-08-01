@@ -47,9 +47,9 @@ jobs:
 
       - name: Update version in code
         run: |
-          sed -i 's/spec.version[[:space:]]*=[[:space:]]*"[0-9]\+\.[0-9]\+\.[0-9]\+"/spec.version = "9.9.9"/g' ./DevCycle.podspec
-          sed -i 's/MARKETING_VERSION = [0-9]\+\.[0-9]\+\.[0-9]\+;/MARKETING_VERSION = 9.9.9;/g' ./DevCycle.xcodeproj/project.pbxproj
-          sed -i 's/var sdkVersion = "[0-9]\+\.[0-9]\+\.[0-9]\+"/var sdkVersion = "9.9.9"/g' ./DevCycle/Models/PlatformDetails.swift
+          sed -i 's/spec.version[[:space:]]*=[[:space:]]*"[0-9]\+\.[0-9]\+\.[0-9]\+"/spec.version = "${{steps.prepare-release.outputs.next-release-tag}}"/g' ./DevCycle.podspec
+          sed -i 's/MARKETING_VERSION = [0-9]\+\.[0-9]\+\.[0-9]\+;/MARKETING_VERSION = ${{steps.prepare-release.outputs.next-release-tag}};/g' ./DevCycle.xcodeproj/project.pbxproj
+          sed -i 's/var sdkVersion = "[0-9]\+\.[0-9]\+\.[0-9]\+"/var sdkVersion = "${{steps.prepare-release.outputs.next-release-tag}}"/g' ./DevCycle/Models/PlatformDetails.swift
 
       - name: Commit version change
         run: |
