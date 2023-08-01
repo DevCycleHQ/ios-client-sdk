@@ -98,4 +98,4 @@ jobs:
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: |
-          ls DevCycle.podspec --allow-warnings --verbose
+          pod trunk push DevCycle.podspec --allow-warnings --verbose
