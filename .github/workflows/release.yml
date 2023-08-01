@@ -99,7 +99,3 @@ jobs:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: |
           ls DevCycle.podspec --allow-warnings --verbose
-
-      - name: Notify Sleuth
-        run: |
-          curl -X POST -d api_key=${{ secrets.SLEUTH_API_KEY }} -d environment=production -d sha={{ github.sha }} https://app.sleuth.io/api/1/deployments/taplytics/ios-client-sdk/register_deploy
