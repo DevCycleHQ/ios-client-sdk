@@ -14,7 +14,7 @@ Pod::Spec.new do |spec|
   spec.tvos.deployment_target    = "12.0"
   spec.watchos.deployment_target = "7.0"
   spec.ios.deployment_target     = "12.0"
-  spec.source = { :git => 'https://github.com/DevCycleHQ/ios-client-sdk.git', :tag => "#{spec.version}" }
+  spec.source = { :git => 'https://github.com/DevCycleHQ/ios-client-sdk.git', :tag => "v#{spec.version}" }
 
   spec.author       = { "DevCycle" => "help@taplytics.com" }
 
