@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: "Prerelease"
+        required: true
+        default: false
+        type: boolean
+      draft:
+        description: "Draft"
+        required: true
+        default: false
+        type: boolean
+      version-increment-type:
+        description: 'Which part of the version to increment:'
+        required: true
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+        default: 'patch'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repo with credentials that can bypass branch protection, and fetch git history instead of just latest commit
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.AUTOMATION_USER_TOKEN }}
+          fetch-depth: 0
+
+      - uses: DevCycleHQ/release-action/prepare-release@main
+        id: prepare-release
+        with:
+          github-token: ${{ secrets.AUTOMATION_USER_TOKEN }}
+          prerelease: ${{ github.event.inputs.prerelease }}
+          draft: ${{ github.event.inputs.draft }}
+          version-increment-type: ${{ github.event.inputs.version-increment-type }}
+
+      - name: Update version in code
+        run: |
+          sed -i 's/spec.version[[:space:]]*=[[:space:]]*"[0-9]\+\.[0-9]\+\.[0-9]\+"/spec.version = "${{steps.prepare-release.outputs.next-release-tag}}"/g' ./DevCycle.podspec
+          sed -i 's/MARKETING_VERSION = [0-9]\+\.[0-9]\+\.[0-9]\+;/MARKETING_VERSION = ${{steps.prepare-release.outputs.next-release-tag}};/g' ./DevCycle.xcodeproj/project.pbxproj
+          sed -i 's/var sdkVersion = "[0-9]\+\.[0-9]\+\.[0-9]\+"/var sdkVersion = "${{steps.prepare-release.outputs.next-release-tag}}"/g' ./DevCycle/Models/PlatformDetails.swift
+
+      - name: Commit version change
+        run: |
+          git config --global user.email "github-tracker-bot@taplytics.com"
+          git config --global user.name "DevCycle Automation"
+          git add ./DevCycle.podspec
+          git add ./DevCycle.xcodeproj/project.pbxproj
+          git add ./DevCycle/Models/PlatformDetails.swift
+          git commit -m "Release ${{steps.prepare-release.outputs.next-release-tag}}"
+
+      - name: Push version change
+        run: |
+          git push origin HEAD:main
+        if: inputs.draft != true
+
+      # This will automatically trigger publishing to Carthage and Swift Package Manager
+      - uses: DevCycleHQ/release-action/create-release@main
+        id: create-release
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.prepare-release.outputs.next-release-tag }}
+          target: main
+          prerelease: ${{ github.event.inputs.prerelease }}
+          draft: ${{ github.event.inputs.draft }}
+          changelog: ${{ steps.prepare-release.outputs.changelog }}
+
+      - name: Display link to release
+        run: |
+          echo "::notice title=Release ID::${{ steps.create-release.outputs.release-id }}"
+          echo "::notice title=Release URL::${{ steps.create-release.outputs.release-url }}"
+
+  publish-cocoapods:
+    needs: release
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.AUTOMATION_USER_TOKEN }}
+          fetch-depth: 0
+
+      - name: Fix WatchOS Simulators
+        run: |
+          ./fix_watchos_simulators.sh
+
+      - name: Publish to CocoaPods
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          ls DevCycle.podspec --allow-warnings --verbose
