@@ -92,7 +92,7 @@ jobs:
 
       - name: Fix WatchOS Simulators
         run: |
-          ./fix_watchos_simulators.sh
+          ./scripts/fix_watchos_simulators.sh
 
       - name: Publish to CocoaPods
         env:
