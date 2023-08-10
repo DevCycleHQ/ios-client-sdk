@@ -14,7 +14,9 @@ public class ObjCLogLevel: NSObject {
 
 @objc(DevCycleOptions)
 public class ObjCDevCycleOptions: NSObject {
+    @available(*, deprecated, message: "Use eventFlushIntervalMS")
     @objc public var flushEventsIntervalMs: NSNumber?
+    @objc public var eventFlushIntervalMS: NSNumber?
     @objc public var disableEventLogging: NSNumber?
     @objc public var logLevel: NSNumber?
     @objc public var enableEdgeDB: NSNumber?
@@ -27,9 +29,12 @@ public class ObjCDevCycleOptions: NSObject {
     
     func buildDevCycleOptions() -> DevCycleOptions {
         var optionsBuilder = DevCycleOptions.builder()
-        if let flushEventsIntervalMs = self.flushEventsIntervalMs,
-           let interval = flushEventsIntervalMs as? Int {
-            optionsBuilder = optionsBuilder.flushEventsIntervalMs(interval)
+        if let eventFlushIntervalMS = self.eventFlushIntervalMS,
+           let interval = eventFlushIntervalMS as? Int {
+            optionsBuilder = optionsBuilder.eventFlushIntervalMS(interval)
+        } else if let flushEventsIntervalMs = self.flushEventsIntervalMs,
+                  let interval = flushEventsIntervalMs as? Int {
+            optionsBuilder = optionsBuilder.eventFlushIntervalMS(interval)
         }
         
         if let disableEventLogging = self.disableEventLogging,

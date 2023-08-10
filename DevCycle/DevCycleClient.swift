@@ -75,7 +75,7 @@ public class DevCycleClient {
     internal func initialize(service: DevCycleServiceProtocol, callback: ClientInitializedHandler?) {
         if let options = self.options {
             Log.level = options.logLevel
-            self.flushEventsInterval = Double(self.options?.flushEventsIntervalMs ?? self.defaultFlushInterval) / 1000.0
+            self.flushEventsInterval = Double(self.options?.eventFlushIntervalMS ?? self.defaultFlushInterval) / 1000.0
             self.enableEdgeDB = options.enableEdgeDB
             self.disableAutomaticEventLogging = options.disableAutomaticEventLogging
             self.disableCustomEventLogging = options.disableCustomEventLogging
