@@ -21,6 +21,9 @@ public class ObjCDevCycleOptions: NSObject {
     @objc public var disableConfigCache: NSNumber?
     @objc public var configCacheTTL: NSNumber?
     @objc public var disableRealtimeUpdates: NSNumber?
+    @objc public var disableAutomaticEventLogging: NSNumber?
+    @objc public var disableCustomEventLogging: NSNumber?
+    @objc public var apiProxyURL: NSString?
     
     func buildDevCycleOptions() -> DevCycleOptions {
         var optionsBuilder = DevCycleOptions.builder()
@@ -52,6 +55,21 @@ public class ObjCDevCycleOptions: NSObject {
         if let disableRealtimeUpdates = self.disableRealtimeUpdates,
            let disable = disableRealtimeUpdates as? Bool {
             optionsBuilder = optionsBuilder.disableRealtimeUpdates(disable)
+        }
+        
+        if let disableAutomaticEventLogging = self.disableAutomaticEventLogging,
+           let disable = disableAutomaticEventLogging as? Bool {
+            optionsBuilder = optionsBuilder.disableAutomaticEventLogging(disable)
+        }
+        
+        if let disableCustomEventLogging = self.disableCustomEventLogging,
+           let disable = disableCustomEventLogging as? Bool {
+            optionsBuilder = optionsBuilder.disableCustomEventLogging(disable)
+        }
+        
+        if let apiProxyURL = self.apiProxyURL,
+           let proxyURL = apiProxyURL as? String {
+            optionsBuilder = optionsBuilder.apiProxyURL(proxyURL)
         }
         
         if let logLevel = self.logLevel,

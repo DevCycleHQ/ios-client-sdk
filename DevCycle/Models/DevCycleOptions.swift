@@ -1,7 +1,6 @@
 //
-//  DVCOptions.swift
+//  DevCycleOptions.swift
 //  DevCycle
-//
 //
 
 import Foundation
@@ -16,6 +15,7 @@ public class DevCycleOptions {
     var disableRealtimeUpdates: Bool = false
     var disableAutomaticEventLogging: Bool = false
     var disableCustomEventLogging: Bool = false
+    var apiProxyURL: String?
     
     public class OptionsBuilder {
         var options: DevCycleOptions
@@ -67,6 +67,11 @@ public class DevCycleOptions {
 
         public func disableRealtimeUpdates(_ disable: Bool) -> OptionsBuilder {
             self.options.disableRealtimeUpdates = disable
+            return self
+        }
+        
+        public func apiProxyURL(_ proxyURL: String) -> OptionsBuilder {
+            self.options.apiProxyURL = proxyURL
             return self
         }
         

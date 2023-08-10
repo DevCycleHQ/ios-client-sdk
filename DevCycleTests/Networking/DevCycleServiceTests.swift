@@ -15,6 +15,14 @@ class DevCycleServiceTests: XCTestCase {
         XCTAssert(url!.contains("user_id=my_user"))
     }
     
+    func testProxyConfigURL() throws {
+        let options = DevCycleOptions.builder().apiProxyURL("localhost:4000").build()
+        let url = getService(options).createConfigRequest(user: getTestUser(), enableEdgeDB: false).url?.absoluteString
+        XCTAssert(url!.contains("localhost:4000/v1/mobileSDKConfig"))
+        XCTAssert(url!.contains("sdkKey=my_sdk_key"))
+        XCTAssert(url!.contains("user_id=my_user"))
+    }
+    
     func testCreateConfigURLRequestWithEdgeDB() throws {
         let url = getService().createConfigRequest(user: getTestUser(), enableEdgeDB: true).url?.absoluteString
         XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/mobileSDKConfig"))
@@ -29,9 +37,23 @@ class DevCycleServiceTests: XCTestCase {
         XCTAssertFalse(url!.contains("user_id=my_user"))
     }
     
+    func testProxyEventUrl() throws {
+        let options = DevCycleOptions.builder().apiProxyURL("localhost:4000").build()
+        let url = getService(options).createEventsRequest().url?.absoluteString
+        XCTAssert(url!.contains("localhost:4000/v1/events"))
+        XCTAssertFalse(url!.contains("user_id=my_user"))
+    }
+    
     func testCreateSaveEntityRequest() throws {
         let url = getService().createSaveEntityRequest().url?.absoluteString
         XCTAssert(url!.contains("https://sdk-api.devcycle.com/v1/edgedb"))
+        XCTAssert(url!.contains("my_user"))
+    }
+    
+    func testProxyEntityUrl() throws {
+        let options = DevCycleOptions.builder().apiProxyURL("localhost:4000").build()
+        let url = getService(options).createSaveEntityRequest().url?.absoluteString
+        XCTAssert(url!.contains("localhost:4000/v1/edgedb"))
         XCTAssert(url!.contains("my_user"))
     }
     
@@ -81,10 +103,10 @@ extension DevCycleServiceTests {
         }
     }
 
-    func getService() -> DevCycleService {
+    func getService(_ options: DevCycleOptions? = nil) -> DevCycleService {
         let user = getTestUser()
         let config = DVCConfig(sdkKey: "my_sdk_key", user: user)
-        return DevCycleService(config: config, cacheService: MockCacheService())
+        return DevCycleService(config: config, cacheService: MockCacheService(), options: options)
     }
     
     func getTestUser() -> DevCycleUser {
