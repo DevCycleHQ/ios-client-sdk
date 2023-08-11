@@ -28,6 +28,7 @@ public typealias IdentifyCompletedHandler = (Error?, [String: Variable]?) -> Voi
 public typealias FlushCompletedHandler = (Error?) -> Void
 public typealias CloseCompletedHandler = () -> Void
 
+
 public class DevCycleClient {
     var sdkKey: String?
     var user: DevCycleUser?
@@ -42,6 +43,7 @@ public class DevCycleClient {
     private var enableEdgeDB: Bool = false
     var inactivityDelayMS: Double = 120000
     
+    let eventEmitter: EventEmitter = EventEmitter()
     private var service: DevCycleServiceProtocol?
     private var cacheService: CacheServiceProtocol = CacheService()
     private var cache: Cache?
@@ -140,9 +142,14 @@ public class DevCycleClient {
         
         self.service?.getConfig(user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
             guard let self = self else { return }
+            var requestErrored = false
+            
             if let error = error {
                 Log.error("Error getting config: \(error)", tags: ["setup"])
                 self.cache = self.cacheService.load()
+                
+                self.eventEmitter.emitError(error)
+                requestErrored = true
             } else {
                 if let config = config {
                     Log.debug("Config: \(config)", tags: ["setup"])
@@ -165,14 +172,14 @@ public class DevCycleClient {
                 }
             }
 
-            self.setupSSEConnection()
-
-            for handler in self.configCompletionHandlers {
-                handler(error)
-            }
-            callback?(error)
-            self.initialized = true
+            self.configCompletionHandlers.forEach { handler in handler(error) }
             self.configCompletionHandlers = []
+
+            self.initialized = true
+            callback?(error)
+            self.eventEmitter.emitInitialized(!requestErrored)
+            
+            self.setupSSEConnection()
         })
         
         self.flushTimer = Timer.scheduledTimer(
@@ -420,6 +427,14 @@ public class DevCycleClient {
 
     public func allVariables() -> [String: Variable] {
         return self.config?.userConfig?.variables ?? [:]
+    }
+    
+    public func subscribe(_ handler: SubscribeHandlers) {
+        self.eventEmitter.subscribe(handler)
+    }
+    
+    public func unsubscribe(_ handler: SubscribeHandlers) {
+        self.eventEmitter.unsubscribe(handler)
     }
 
     public func track(_ event: DevCycleEvent) {
