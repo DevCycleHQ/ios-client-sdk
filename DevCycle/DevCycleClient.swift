@@ -429,11 +429,11 @@ public class DevCycleClient {
         return self.config?.userConfig?.variables ?? [:]
     }
     
-    public func subscribe(_ handler: SubscribeHandlers) {
+    public func subscribe(_ handler: DevCycleEventHandlers) {
         self.eventEmitter.subscribe(handler)
     }
     
-    public func unsubscribe(_ handler: SubscribeHandlers) {
+    public func unsubscribe(_ handler: DevCycleEventHandlers) {
         self.eventEmitter.unsubscribe(handler)
     }
 

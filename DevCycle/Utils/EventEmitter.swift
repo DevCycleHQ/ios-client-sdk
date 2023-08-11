@@ -8,39 +8,36 @@ public typealias EventHandler = (Any?) -> Void
 public typealias SubscribeErrorHandler = (Error) -> Void
 public typealias SubscribeInitializedHandler = (Bool) -> Void
 
-public struct SubscribeError {
+public struct ErrorHandler {
     // Had to add this index field, because I can't make this struct Equitable to do a equality comparison
     // because you can't compare anon function pointers... so it was either this or generate a UUID to compare.
     fileprivate var index: Int?
     var handler: SubscribeErrorHandler
-    let key = "error"
-    
     
     public init(_ handler: @escaping SubscribeErrorHandler) {
         self.handler = handler
     }
 }
 
-public struct SubscribeInitialized {
+public struct InitializedHandler {
     fileprivate var index: Int?
     var handler: SubscribeInitializedHandler
-    let key = "initialized"
     
     public init(_ handler: @escaping SubscribeInitializedHandler) {
         self.handler = handler
     }
 }
 
-public enum SubscribeHandlers {
-    case error(SubscribeError)
-    case initialized(SubscribeInitialized)
+public enum DevCycleEventHandlers {
+    case error(ErrorHandler)
+    case initialized(InitializedHandler)
 }
 
 class EventEmitter {
-    var errorHandlers: [SubscribeError] = []
-    var initHandlers: [SubscribeInitialized] = []
+    var errorHandlers: [ErrorHandler] = []
+    var initHandlers: [InitializedHandler] = []
     
-    func subscribe(_ handler: SubscribeHandlers) {
+    func subscribe(_ handler: DevCycleEventHandlers) {
         switch handler {
         case .error(var errorHandler):
             self.errorHandlers.append(errorHandler)
@@ -53,7 +50,7 @@ class EventEmitter {
         }
     }
     
-    func unsubscribe(_ handler: SubscribeHandlers) {
+    func unsubscribe(_ handler: DevCycleEventHandlers) {
         switch handler {
         case .error(let errorHandler):
             if let index = errorHandler.index {
@@ -69,9 +66,7 @@ class EventEmitter {
     }
     
     func emitError(_ err: Error) {
-        self.errorHandlers.forEach { errSub in
-            errSub.handler(err)
-        }
+        self.errorHandlers.forEach { errHandler in errHandler.handler(err) }
     }
     
     func emitInitialized(_ success: Bool) {

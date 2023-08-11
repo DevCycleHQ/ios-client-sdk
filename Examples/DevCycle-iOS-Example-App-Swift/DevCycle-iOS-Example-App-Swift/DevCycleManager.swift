@@ -32,11 +32,11 @@ class DevCycleManager {
         self.client = client
         
         
-        client.subscribe(SubscribeHandlers.error(SubscribeError { error in
+        client.subscribe(DevCycleEventHandlers.error(ErrorHandler { error in
             print("DevCycle Error: \(error.localizedDescription)")
         }))
-        client.subscribe(SubscribeHandlers.initialized(SubscribeInitialized({ success in
+        client.subscribe(DevCycleEventHandlers.initialized(InitializedHandler { success in
             print("DevCycle Initialized: \(success) from subscription")
-        })))
+        }))
     }
 }
