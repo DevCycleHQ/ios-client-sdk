@@ -31,12 +31,21 @@ class DevCycleManager {
         }
         self.client = client
         
-        
-        client.subscribe(DevCycleEventHandlers.error(ErrorHandler { error in
+        let errHandler = ErrorEventHandler { error in
             print("DevCycle Error: \(error.localizedDescription)")
-        }))
-        client.subscribe(DevCycleEventHandlers.initialized(InitializedHandler { success in
+        }
+        client.subscribe(errHandler)
+        
+        let initHandler = InitializedEventHandler { success in
             print("DevCycle Initialized: \(success) from subscription")
-        }))
+        }
+        client.subscribe(initHandler)
+        
+        
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(15), repeats: false) { timer in
+            print("Cleanup handlers")
+            client.unsubscribe(errHandler)
+            client.unsubscribe(initHandler)
+        }
     }
 }

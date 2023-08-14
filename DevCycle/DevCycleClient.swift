@@ -148,7 +148,7 @@ public class DevCycleClient {
                 Log.error("Error getting config: \(error)", tags: ["setup"])
                 self.cache = self.cacheService.load()
                 
-                self.eventEmitter.emitError(error)
+                self.eventEmitter.emit(EventEmitValues.error(error))
                 requestErrored = true
             } else {
                 if let config = config {
@@ -177,7 +177,7 @@ public class DevCycleClient {
 
             self.initialized = true
             callback?(error)
-            self.eventEmitter.emitInitialized(!requestErrored)
+            self.eventEmitter.emit(EventEmitValues.initialized(!requestErrored))
             
             self.setupSSEConnection()
         })
@@ -429,12 +429,18 @@ public class DevCycleClient {
         return self.config?.userConfig?.variables ?? [:]
     }
     
-    public func subscribe(_ handler: DevCycleEventHandlers) {
-        self.eventEmitter.subscribe(handler)
+    public func subscribe(_ handler: InitializedEventHandler) {
+        self.eventEmitter.subscribe(EventHandlers.initialized(handler))
+    }
+    public func subscribe(_ handler: ErrorEventHandler) {
+        self.eventEmitter.subscribe(EventHandlers.error(handler))
     }
     
-    public func unsubscribe(_ handler: DevCycleEventHandlers) {
-        self.eventEmitter.unsubscribe(handler)
+    public func unsubscribe(_ handler: InitializedEventHandler) {
+        self.eventEmitter.unsubscribe(EventHandlers.initialized(handler))
+    }
+    public func unsubscribe(_ handler: ErrorEventHandler) {
+        self.eventEmitter.unsubscribe(EventHandlers.error(handler))
     }
 
     public func track(_ event: DevCycleEvent) {
