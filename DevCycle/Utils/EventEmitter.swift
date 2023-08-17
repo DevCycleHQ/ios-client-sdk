@@ -3,14 +3,12 @@
 //  DevCycle
 //
 
-public typealias VariableSet = [String: Variable]
-
 public typealias ErrorHandlerCallback = (Error) -> Void
 public typealias InitializedHandlerCallback = (Bool) -> Void
 public typealias ConfigUpdatedHandlerCallback = (VariableSet) -> Void
-public typealias VariableUpdatedHandlerCallback = (String, Variable) -> Void
+public typealias VariableUpdatedHandlerCallback = (String, Variable?) -> Void
 public typealias VariableEvaluatedHandlerCallback = (String, DVCVariable<Any>) -> Void
-public typealias FeatureUpdatedHandlerCallback = (String, Feature) -> Void
+public typealias FeatureUpdatedHandlerCallback = (String, Feature?) -> Void
 
 public class BaseHandler<T>: Equatable {
     public static func == (lhs: BaseHandler, rhs: BaseHandler) -> Bool {
@@ -53,9 +51,9 @@ enum EventEmitValues {
     case error(Error)
     case initialized(Bool)
     case configUpdated(VariableSet)
-    case variableUpdated(String, Variable)
+    case variableUpdated(String, Variable?)
     case variableEvaluated(String, DVCVariable<Any>)
-    case featureUpdated(String, Feature)
+    case featureUpdated(String, Feature?)
 }
 
 class EventEmitter {
@@ -147,6 +145,58 @@ class EventEmitter {
         }
     }
     
+    func emitFeatureUpdates(oldFeatures: FeatureSet?, newFeatures: FeatureSet) {
+        if self.featureUpdatedHandlers.count == 0
+            && self.allFeatureUpdatedHandlers.count == 0 {
+            return
+        }
+        guard let oldFeatures = oldFeatures else {
+            newFeatures.forEach { (key: String, variable: Feature) in
+                self.emit(EventEmitValues.featureUpdated(key, variable))
+            }
+            return
+        }
+        
+        let keys = Set(Array(oldFeatures.keys) + Array(newFeatures.keys))
+        keys.forEach { key in
+            let oldFeatureVar = oldFeatures[key]?._variation
+            let newFeature = newFeatures[key]
+            let newFeatureVar = newFeature?._variation
+            
+            if oldFeatureVar != newFeatureVar {
+                self.emit(EventEmitValues.featureUpdated(key, newFeature))
+            }
+        }
+    }
+    
+    func emitVariableUpdates(
+        oldVariables: VariableSet?,
+        newVariables: VariableSet,
+        variableInstanceDic: VariableInstanceDic
+    ) {
+        if self.variableUpdatedHandlers.count == 0
+            && self.allVariableUpdatedHandlers.count == 0 {
+            return
+        }
+        
+        guard let oldVariables = oldVariables else {
+            newVariables.forEach { (key: String, variable: Variable) in
+                self.emit(EventEmitValues.variableUpdated(key, variable))
+            }
+            return
+        }
+        
+        let keys = Set(Array(oldVariables.keys) + Array(newVariables.keys))
+        keys.forEach { key in
+            let oldVariable = oldVariables[key]
+            let newVariable = newVariables[key]
+            
+            if oldVariable != newVariable {
+                self.emit(EventEmitValues.variableUpdated(key, newVariable))
+            }
+        }
+    }
+    
     func emit(_ emitValues: EventEmitValues) {
         switch emitValues {
         case .error(let err):
@@ -171,10 +221,4 @@ class EventEmitter {
             allFeatureUpdatedHandlers.forEach { handler in handler.callback(key, feature) }
         }
     }
-    
-//    private func emitValuesByKey<T: BaseHandler<Any>, V>(_ key: String, variable: V, handlersByKey: [String : [T]]) {
-//        if let handlers = handlersByKey[key] {
-//            handlers.forEach { handler in handler.callback(key, variable) }
-//        }
-//    }
 }

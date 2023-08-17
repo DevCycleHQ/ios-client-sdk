@@ -28,6 +28,8 @@ public typealias IdentifyCompletedHandler = (Error?, [String: Variable]?) -> Voi
 public typealias FlushCompletedHandler = (Error?) -> Void
 public typealias CloseCompletedHandler = () -> Void
 
+internal typealias VariableInstanceDic = [String: NSMapTable<AnyObject, AnyObject>]
+
 
 public class DevCycleClient {
     var sdkKey: String?
@@ -51,7 +53,7 @@ public class DevCycleClient {
     private var flushTimer: Timer?
     private var closed: Bool = false
     private var inactivityWorkItem: DispatchWorkItem?
-    private var variableInstanceDictonary = [String: NSMapTable<AnyObject, AnyObject>]()
+    private var variableInstanceDictonary = VariableInstanceDic()
     private var isConfigCached: Bool = false
     private var disableAutomaticEventLogging: Bool = false
     private var disableCustomEventLogging: Bool = false
@@ -154,21 +156,17 @@ public class DevCycleClient {
                 if let config = config {
                     Log.debug("Config: \(config)", tags: ["setup"])
                 }
-                self.config?.userConfig = config
-                self.isConfigCached = false
-                
-                self.cacheUser(user: user)
+                self.setUserConfig(config)
+                self.cacheUser(user)
 
-                if (self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB)) {
-                    if (!(user.isAnonymous ?? false)) {
-                        self.service?.saveEntity(user: user, completion: { data, response, error in
-                            if error != nil {
-                                Log.error("Error saving user entity for \(user). Error: \(String(describing: error))")
-                            } else {
-                                Log.info("Saved user entity")
-                            }
-                        })
-                    }
+                if (self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB) && !(user.isAnonymous ?? false)) {
+                    self.service?.saveEntity(user: user, completion: { data, response, error in
+                        if error != nil {
+                            Log.error("Error saving user entity for \(user). Error: \(String(describing: error))")
+                        } else {
+                            Log.info("Saved user entity")
+                        }
+                    })
                 }
             }
 
@@ -216,17 +214,40 @@ public class DevCycleClient {
             let extraParams = RequestParams(sse: sse, lastModified: lastModified, etag: etag)
             self.service?.getConfig(user: lastIdentifiedUser, enableEdgeDB: self.enableEdgeDB, extraParams: extraParams, completion: { [weak self] config, error in
                 guard let self = self else { return }
+                
                 if let error = error {
                     Log.error("Error getting config: \(error)", tags: ["refetchConfig"])
+                    self.eventEmitter.emit(EventEmitValues.error(error))
                 } else {
-                    self.config?.userConfig = config
-                    self.isConfigCached = false
+                    self.setUserConfig(config)
                 }
             })
         }
     }
+    
+    private func setUserConfig(_ config: UserConfig?) {
+        let oldConfig = self.config
+        self.config?.userConfig = config
+        self.isConfigCached = false
+        
+        if let config = config {
+            self.eventEmitter.emitFeatureUpdates(
+                oldFeatures: oldConfig?.userConfig?.features,
+                newFeatures: config.features
+            )
+            self.eventEmitter.emitVariableUpdates(
+                oldVariables: oldConfig?.userConfig?.variables,
+                newVariables: config.variables,
+                variableInstanceDic: self.variableInstanceDictonary
+            )
+            
+            if oldConfig == nil || config.etag != oldConfig?.userConfig?.etag {
+                self.eventEmitter.emit(EventEmitValues.configUpdated(config.variables))
+            }
+        }
+    }
 
-    private func cacheUser(user: DevCycleUser) {
+    private func cacheUser(_ user: DevCycleUser) {
         self.cacheService.save(user: user)
         if user.isAnonymous == true, let userId = user.userId {
             self.cacheService.setAnonUserId(anonUserId: userId)
@@ -314,8 +335,9 @@ public class DevCycleClient {
         return getVariable(key: key, defaultValue: defaultValue)
     }
 
+    private let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
+
     func getVariable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
-        let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
         if (regex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) != nil) {
             Log.error("The variable key \(key) is invalid. It must contain only lowercase letters, numbers, hyphens and underscores. The default value will always be returned for this call.")
             return DVCVariable(
@@ -354,6 +376,8 @@ public class DevCycleClient {
                 self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
             }
             
+        
+            self.eventEmitter.emit(EventEmitValues.variableEvaluated(variable.key, variable))            
             return variable
         }
     }
@@ -374,18 +398,19 @@ public class DevCycleClient {
 
         self.service?.getConfig(user: updateUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
             guard let self = self else { return }
+            
             if let error = error {
                 Log.error("Error getting config: \(error)", tags: ["identify"])
                 self.cache = self.cacheService.load()
+                self.eventEmitter.emit(EventEmitValues.error(error))
             } else {
                 if let config = config {
                     Log.debug("Config: \(config)", tags: ["identify"])
                 }
-                self.config?.userConfig = config
-                self.isConfigCached = false
+                self.setUserConfig(config)
             }
             self.user = user
-            self.cacheUser(user: user)
+            self.cacheUser(user)
             callback?(error, config?.variables)
         })
     }
@@ -402,21 +427,23 @@ public class DevCycleClient {
 
         self.service?.getConfig(user: anonUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil, completion: { [weak self] config, error in
             guard let self = self else { return }
-            guard error == nil else {
+            
+            if let error = error {
                 if let previousAnonUserId = cachedAnonUserId {
                     self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
                 }
+                self.eventEmitter.emit(EventEmitValues.error(error))
                 callback?(error, nil)
                 return
             }
     
             if let config = config {
                 Log.debug("Config: \(config)", tags: ["reset"])
+                self.eventEmitter.emit(EventEmitValues.configUpdated(config.variables))
             }
-            self.config?.userConfig = config
-            self.isConfigCached = false
+            self.setUserConfig(config)
             self.user = anonUser
-            self.cacheUser(user: anonUser)
+            self.cacheUser(anonUser)
             callback?(error, config?.variables)
         })
     }
