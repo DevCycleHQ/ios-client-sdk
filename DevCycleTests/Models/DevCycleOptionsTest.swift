@@ -21,6 +21,9 @@ class DevCycleOptionsTest: XCTestCase {
                 .configCacheTTL(172800000)
                 .disableConfigCache(true)
                 .disableRealtimeUpdates(true)
+                .disableCustomEventLogging(true)
+                .disableAutomaticEventLogging(true)
+                .apiProxyURL("localhost:4000")
                 .build()
         XCTAssertNotNil(options)
         XCTAssert(options.flushEventsIntervalMs == 1000)
@@ -29,6 +32,9 @@ class DevCycleOptionsTest: XCTestCase {
         XCTAssert(options.configCacheTTL == 172800000)
         XCTAssert(options.disableConfigCache)
         XCTAssert(options.disableRealtimeUpdates)
+        XCTAssert(options.disableCustomEventLogging)
+        XCTAssert(options.disableAutomaticEventLogging)
+        XCTAssert(options.apiProxyURL == "localhost:4000")
     }
     
     func testBuilderReturnsOptionsAndSomeAreNil() {
