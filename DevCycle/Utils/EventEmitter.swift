@@ -24,20 +24,29 @@ public class BaseHandler<T>: Equatable {
     }
 }
 
+public class BaseHandlerWithKey<T>: BaseHandler<T> {
+    let key: String?
+
+    public init(key: String?, handler: T) {
+        self.key = key
+        super.init(handler)
+    }
+}
+
 public typealias ErrorEventHandler = BaseHandler<ErrorHandlerCallback>
 public typealias InitializedEventHandler = BaseHandler<InitializedHandlerCallback>
 public typealias ConfigUpdatedEventHandler = BaseHandler<ConfigUpdatedHandlerCallback>
-public typealias VariableUpdatedHandler = BaseHandler<VariableUpdatedHandlerCallback>
-public typealias VariableEvaluatedHandler = BaseHandler<VariableEvaluatedHandlerCallback>
-public typealias FeatureUpdatedHandler = BaseHandler<FeatureUpdatedHandlerCallback>
+public typealias VariableUpdatedHandler = BaseHandlerWithKey<VariableUpdatedHandlerCallback>
+public typealias VariableEvaluatedHandler = BaseHandlerWithKey<VariableEvaluatedHandlerCallback>
+public typealias FeatureUpdatedHandler = BaseHandlerWithKey<FeatureUpdatedHandlerCallback>
 
 enum EventHandlers {
     case error(ErrorEventHandler)
     case initialized(InitializedEventHandler)
     case configUpdated(ConfigUpdatedEventHandler)
-    case variableUpdated(String?, VariableUpdatedHandler)
-    case variableEvaluated(String?, VariableEvaluatedHandler)
-    case featureUpdated(String?, FeatureUpdatedHandler)
+    case variableUpdated(VariableUpdatedHandler)
+    case variableEvaluated(VariableEvaluatedHandler)
+    case featureUpdated(FeatureUpdatedHandler)
 }
 
 enum EventEmitValues {
@@ -68,20 +77,20 @@ class EventEmitter {
             self.initHandlers.append(handler)
         case .configUpdated(let handler):
             self.configUpdatedHandlers.append(handler)
-        case .variableUpdated(let key, let handler):
-            if let key = key {
+        case .variableUpdated(let handler):
+            if let key = handler.key {
                 subscribeByKey(key, handler: handler, handlersByKey: &self.variableUpdatedHandlers)
             } else {
                 self.allVariableUpdatedHandlers.append(handler)
             }
-        case .variableEvaluated(let key, let handler):
-            if let key = key {
+        case .variableEvaluated(let handler):
+            if let key = handler.key {
                 subscribeByKey(key, handler: handler, handlersByKey: &self.variableEvaluatedHandlers)
             } else {
                 self.allVariableEvaluatedHandlers.append(handler)
             }
-        case .featureUpdated(let key, let handler):
-            if let key = key {
+        case .featureUpdated(let handler):
+            if let key = handler.key {
                 subscribeByKey(key, handler: handler, handlersByKey: &self.featureUpdatedHandlers)
             } else {
                 self.allFeatureUpdatedHandlers.append(handler)
@@ -105,23 +114,23 @@ class EventEmitter {
             unsubscribeHandler(handler, handlers: &self.initHandlers)
         case .configUpdated(let handler):
             unsubscribeHandler(handler, handlers: &self.configUpdatedHandlers)
-        case .variableUpdated(let key, let handler):
-            if let key = key {
+        case .variableUpdated(let handler):
+            if let key = handler.key {
                 unsubscribeHandlerByKey(key, handler: handler, handlersByKey: &self.variableUpdatedHandlers)
             } else {
                 unsubscribeHandler(handler, handlers: &self.allVariableUpdatedHandlers)
             }
-        case .variableEvaluated(let key, let handler):
-            if let key = key {
+        case .variableEvaluated(let handler):
+            if let key = handler.key {
                 unsubscribeHandlerByKey(key, handler: handler, handlersByKey: &self.variableEvaluatedHandlers)
             } else {
                 unsubscribeHandler(handler, handlers: &self.allVariableEvaluatedHandlers)
             }
-        case .featureUpdated(let key, let handler):
-            if let key = key {
+        case .featureUpdated(let handler):
+            if let key = handler.key {
                 unsubscribeHandlerByKey(key, handler: handler, handlersByKey: &self.featureUpdatedHandlers)
             } else {
-                unsubscribeHandler(handler, handlers: &self.allVariableEvaluatedHandlers)
+                unsubscribeHandler(handler, handlers: &self.allFeatureUpdatedHandlers)
             }
         }
     }

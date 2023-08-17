@@ -435,12 +435,36 @@ public class DevCycleClient {
     public func subscribe(_ handler: ErrorEventHandler) {
         self.eventEmitter.subscribe(EventHandlers.error(handler))
     }
+    public func subscribe(_ handler: ConfigUpdatedEventHandler) {
+        self.eventEmitter.subscribe(EventHandlers.configUpdated(handler))
+    }
+    public func subscribe(_ handler: VariableUpdatedHandler) {
+        self.eventEmitter.subscribe(EventHandlers.variableUpdated(handler))
+    }
+    public func subscribe(_ handler: VariableEvaluatedHandler) {
+        self.eventEmitter.subscribe(EventHandlers.variableEvaluated(handler))
+    }
+    public func subscribe(_ handler: FeatureUpdatedHandler) {
+        self.eventEmitter.subscribe(EventHandlers.featureUpdated(handler))
+    }
     
     public func unsubscribe(_ handler: InitializedEventHandler) {
         self.eventEmitter.unsubscribe(EventHandlers.initialized(handler))
     }
     public func unsubscribe(_ handler: ErrorEventHandler) {
         self.eventEmitter.unsubscribe(EventHandlers.error(handler))
+    }
+    public func unsubscribe(_ handler: ConfigUpdatedEventHandler) {
+        self.eventEmitter.unsubscribe(EventHandlers.configUpdated(handler))
+    }
+    public func unsubscribe(_ handler: VariableUpdatedHandler) {
+        self.eventEmitter.unsubscribe(EventHandlers.variableUpdated(handler))
+    }
+    public func unsubscribe(_ handler: VariableEvaluatedHandler) {
+        self.eventEmitter.unsubscribe(EventHandlers.variableEvaluated(handler))
+    }
+    public func unsubscribe(_ handler: FeatureUpdatedHandler) {
+        self.eventEmitter.unsubscribe(EventHandlers.featureUpdated(handler))
     }
 
     public func track(_ event: DevCycleEvent) {
