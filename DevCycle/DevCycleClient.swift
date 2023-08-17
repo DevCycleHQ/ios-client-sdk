@@ -67,7 +67,7 @@ public class DevCycleClient {
         
         self.config = DVCConfig(sdkKey: sdkKey, user: user)
         
-        let service = DevCycleService(config: self.config!, cacheService: self.cacheService)
+        let service = DevCycleService(config: self.config!, cacheService: self.cacheService, options: self.options)
 
         self.initialize(service: service, callback: callback)
     }

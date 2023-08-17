@@ -71,16 +71,18 @@ protocol DevCycleServiceProtocol {
 class DevCycleService: DevCycleServiceProtocol {
     var session: URLSession
     var config: DVCConfig
+    var options: DevCycleOptions?
     
     var cacheService: CacheServiceProtocol
     var requestConsolidator: RequestConsolidator!
 
     private var newUser: DevCycleUser?
     
-    init(config: DVCConfig, cacheService: CacheServiceProtocol) {
+    init(config: DVCConfig, cacheService: CacheServiceProtocol, options: DevCycleOptions? = nil) {
         let sessionConfig = URLSessionConfiguration.default
         self.session = URLSession(configuration: sessionConfig)
         self.config = config
+        self.options = options
         self.cacheService = cacheService
         self.requestConsolidator = RequestConsolidator(service: self, cacheService: cacheService)
     }
@@ -243,18 +245,30 @@ class DevCycleService: DevCycleServiceProtocol {
         
         switch(type) {
         case "event":
-            url = NetworkingConstants.eventsUrl + NetworkingConstants.hostUrl
+            if let proxyUrl = self.options?.apiProxyURL {
+                url = proxyUrl
+            } else {
+                url = NetworkingConstants.eventsUrl + NetworkingConstants.hostUrl
+            }
             url.append("\(NetworkingConstants.Version.v1)")
             url.append("\(NetworkingConstants.UrlPaths.events)")
         case "edgeDB":
-            url = NetworkingConstants.sdkUrl + NetworkingConstants.hostUrl
+            if let proxyUrl = self.options?.apiProxyURL {
+                url = proxyUrl
+            } else {
+                url = NetworkingConstants.sdkUrl + NetworkingConstants.hostUrl
+            }
             url.append("\(NetworkingConstants.Version.v1)")
             url.append("\(NetworkingConstants.UrlPaths.edgeDB)")
             if let userId = config.user.userId {
                 url.append("/\(userId)")
             }
         default:
-            url = NetworkingConstants.sdkUrl + NetworkingConstants.hostUrl
+            if let proxyUrl = self.options?.apiProxyURL {
+                url = proxyUrl
+            } else {
+                url = NetworkingConstants.sdkUrl + NetworkingConstants.hostUrl
+            }
             url.append("\(NetworkingConstants.Version.v1)")
             url.append("\(NetworkingConstants.UrlPaths.config)")
             querySpecificItems.append(URLQueryItem(name: "sdkKey", value: config.sdkKey))
