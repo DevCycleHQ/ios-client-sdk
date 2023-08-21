@@ -6,7 +6,7 @@
 import Foundation
 
 public class DevCycleOptions {
-    var flushEventsIntervalMs: Int?
+    var eventFlushIntervalMS: Int?
     var disableEventLogging: Bool?
     var logLevel: LogLevel = .error
     var enableEdgeDB: Bool = false
@@ -25,8 +25,14 @@ public class DevCycleOptions {
         }
         
         // Controls the interval between flushing events to the DevCycle servers in milliseconds, defaults to 10 seconds.
+        public func eventFlushIntervalMS(_ interval: Int? = 10000) -> OptionsBuilder {
+            self.options.eventFlushIntervalMS = interval
+            return self
+        }
+        
+        @available(*, deprecated, message: "Use eventFlushIntervalMS")
         public func flushEventsIntervalMs(_ interval: Int? = 10000) -> OptionsBuilder {
-            self.options.flushEventsIntervalMs = interval
+            self.options.eventFlushIntervalMS = interval
             return self
         }
         
