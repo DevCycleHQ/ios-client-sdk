@@ -10,13 +10,13 @@ class DevCycleOptionsTest: XCTestCase {
     func testOptionsAreNil() {
         let options = DevCycleOptions()
         XCTAssertNil(options.disableEventLogging)
-        XCTAssertNil(options.flushEventsIntervalMs)
+        XCTAssertNil(options.eventFlushIntervalMS)
     }
     
     func testBuilderReturnsOptions() {
         let options = DevCycleOptions.builder()
                 .disableEventLogging(false)
-                .flushEventsIntervalMs(1000)
+                .eventFlushIntervalMS(1000)
                 .enableEdgeDB(true)
                 .configCacheTTL(172800000)
                 .disableConfigCache(true)
@@ -26,7 +26,7 @@ class DevCycleOptionsTest: XCTestCase {
                 .apiProxyURL("localhost:4000")
                 .build()
         XCTAssertNotNil(options)
-        XCTAssert(options.flushEventsIntervalMs == 1000)
+        XCTAssert(options.eventFlushIntervalMS == 1000)
         XCTAssertFalse(options.disableEventLogging!)
         XCTAssert(options.enableEdgeDB)
         XCTAssert(options.configCacheTTL == 172800000)
@@ -42,7 +42,7 @@ class DevCycleOptionsTest: XCTestCase {
                 .disableEventLogging(false)
                 .build()
         XCTAssertNotNil(options)
-        XCTAssertNil(options.flushEventsIntervalMs)
+        XCTAssertNil(options.eventFlushIntervalMS)
         XCTAssertFalse(options.disableEventLogging!)
         XCTAssertFalse(options.enableEdgeDB)
         XCTAssertFalse(options.disableRealtimeUpdates)
@@ -51,9 +51,10 @@ class DevCycleOptionsTest: XCTestCase {
     func testDeprecatedDVCOptions() {
         let options = DVCOptions.builder()
                 .disableEventLogging(false)
+                .flushEventsIntervalMs(2000)
                 .build()
         XCTAssertNotNil(options)
-        XCTAssertNil(options.flushEventsIntervalMs)
+        XCTAssert(options.eventFlushIntervalMS == 2000)
         XCTAssertFalse(options.disableEventLogging!)
         XCTAssertFalse(options.enableEdgeDB)
         XCTAssertFalse(options.disableRealtimeUpdates)
