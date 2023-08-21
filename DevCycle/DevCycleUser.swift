@@ -119,17 +119,18 @@ public class DevCycleUser: Codable {
     public var name: String?
     public var language: String?
     public var country: String?
-    public var appVersion: String?
-    public var appBuild: Int?
     public var customData: CustomData?
     public var privateCustomData: CustomData?
-    public var lastSeenDate: Date
-    public let createdDate: Date
-    public let platform: String
-    public let platformVersion: String
-    public let deviceModel: String
-    public let sdkType: String
-    public let sdkVersion: String
+    
+    internal var lastSeenDate: Date
+    internal let createdDate: Date
+    internal let platform: String
+    internal let platformVersion: String
+    internal let deviceModel: String
+    internal let sdkType: String
+    internal let sdkVersion: String
+    internal var appVersion: String?
+    internal var appBuild: Int?
     
     init() {
         let platform = PlatformDetails()
