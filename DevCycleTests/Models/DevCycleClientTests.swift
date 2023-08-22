@@ -243,6 +243,55 @@ class DevCycleClientTest: XCTestCase {
         XCTAssertFalse(variableValue)
         client.close(callback: nil)
     }
+    
+    func testVariableStringDefaultValue() {
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
+        client.config?.userConfig = self.userConfig
+        client.initialize(callback: nil)
+        
+        let variable = client.variable(key: "some_non_existent_variable", defaultValue: "string")
+        XCTAssert(variable.value == "string")
+        XCTAssert(variable.isDefaulted)
+        XCTAssert(variable.defaultValue == "string")
+        XCTAssert(variable.type == "String")
+    }
+    
+    func testVariableBooleanDefaultValue() {
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
+        client.config?.userConfig = self.userConfig
+        client.initialize(callback: nil)
+        
+        let variable = client.variable(key: "some_non_existent_variable", defaultValue: true)
+        XCTAssertEqual(variable.value, true)
+        XCTAssert(variable.isDefaulted)
+        XCTAssertEqual(variable.defaultValue, true)
+        XCTAssertEqual(variable.type, "Boolean")
+    }
+    
+    func testVariableNumberDefaultValue() {
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
+        client.config?.userConfig = self.userConfig
+        client.initialize(callback: nil)
+        
+        let variable = client.variable(key: "some_non_existent_variable", defaultValue: 10.1)
+        XCTAssertEqual(variable.value, 10.1)
+        XCTAssert(variable.isDefaulted)
+        XCTAssertEqual(variable.defaultValue, 10.1)
+        XCTAssertEqual(variable.type, "Number")
+    }
+    
+    func testVariableJSONDefaultValue() {
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
+        client.config?.userConfig = self.userConfig
+        client.initialize(callback: nil)
+        
+        let defaultVal = ["key":"val"]
+        let variable = client.variable(key: "some_non_existent_variable", defaultValue: defaultVal)
+        XCTAssertEqual(variable.value, defaultVal)
+        XCTAssert(variable.isDefaulted)
+        XCTAssertEqual(variable.defaultValue, defaultVal)
+        XCTAssertEqual(variable.type, "JSON")
+    }
 
     func testVariableMethodReturnsCorrectVariableForKey() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
