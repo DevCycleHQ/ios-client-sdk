@@ -278,6 +278,9 @@ public class DevCycleClient {
     public func variableValue(key: String, defaultValue: NSNumber) -> NSNumber {
         return getVariable(key: key, defaultValue: defaultValue).value
     }
+    public func variableValue(key: String, defaultValue: Dictionary<String, Any>) -> Dictionary<String, Any> {
+        return getVariable(key: key, defaultValue: defaultValue).value
+    }
     public func variableValue(key: String, defaultValue: NSDictionary) -> NSDictionary {
         return getVariable(key: key, defaultValue: defaultValue).value
     }
