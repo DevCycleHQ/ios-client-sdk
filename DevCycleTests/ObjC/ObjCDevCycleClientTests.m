@@ -59,7 +59,7 @@
 
 #pragma mark - Variable Tests
 
-- (void)testVariableIsCreated {
+- (void)testVariableIsDefaulted {
     DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
@@ -70,8 +70,8 @@
     XCTAssertEqual(variable.value, @"default-value");
     XCTAssertEqual(variable.defaultValue, @"default-value");
 }
-
-- (void)testVariableValueIsCreated {
+// TODO: these should all be non-deafulted
+- (void)testVariableValueStringDefault {
     DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
@@ -80,12 +80,30 @@
     XCTAssertEqual(variableValue, @"default-value");
 }
 
-- (void)testVariableValueBool {
+- (void)testVariableValueBoolDefault {
     DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
     DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
     XCTAssertNotNil(client);
     BOOL boolValue = [client boolVariableValueWithKey:@"my-key" defaultValue:true];
     XCTAssertTrue(boolValue);
+}
+
+- (void)testVariableValueNumberDefault {
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
+    DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
+    XCTAssertNotNil(client);
+    NSNumber *numDefault = @610.1;
+    NSNumber *numVal = [client numberVariableValueWithKey:@"my-key" defaultValue:numDefault];
+    XCTAssertEqual(numVal, numDefault);
+}
+
+- (void)testVariableValueJSONDefault {
+    DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
+    DevCycleClient *client = [DevCycleClient initialize:@"my_sdk_key" user:user options:nil onInitialized:nil];
+    XCTAssertNotNil(client);
+    NSDictionary *defaultDic = @{@"key": @"value", @"num": @610};
+    NSDictionary *jsonVal = [client jsonVariableValueWithKey:@"my-key" defaultValue:defaultDic];
+    XCTAssertEqual(jsonVal, defaultDic);
 }
 
 @end
