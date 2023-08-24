@@ -11,7 +11,9 @@ jobs:
       - name: Checkout Project
         uses: actions/checkout@v2
       - name: "Select Latest Xcode"
-        uses: devbotsxyz/xcode-select@main
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: "Set SSH key"
         uses: webfactory/ssh-agent@v0.7.0
         with:
