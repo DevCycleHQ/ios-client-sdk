@@ -11,7 +11,7 @@ jobs:
       - name: Checkout Project
         uses: actions/checkout@v2
       - name: "Select Latest Xcode"
-        uses: devbotsxyz/xcode-select@main
+        uses: mxcl/xcodebuild@v1
       - name: "Carthage Cached Bootstrap"
         uses: DevCycleHQ/carthage-bootstrap@xcframeworks2
         with:
