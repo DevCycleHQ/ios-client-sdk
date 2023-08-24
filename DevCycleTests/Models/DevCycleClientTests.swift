@@ -250,10 +250,15 @@ class DevCycleClientTest: XCTestCase {
         client.initialize(callback: nil)
         
         let variable = client.variable(key: "some_non_existent_variable", defaultValue: "string")
-        XCTAssert(variable.value == "string")
+        XCTAssertEqual(variable.value, "string")
         XCTAssert(variable.isDefaulted)
-        XCTAssert(variable.defaultValue == "string")
-        XCTAssert(variable.type == "String")
+        XCTAssertEqual(variable.defaultValue, "string")
+        XCTAssertEqual(variable.type, DVCVariableTypes.String)
+        
+        let nsString: NSString = "nsString"
+        let varNSString = client.variable(key: "some_non_existent_variable", defaultValue: nsString)
+        XCTAssertEqual(varNSString.defaultValue, nsString)
+        XCTAssertEqual(varNSString.type, DVCVariableTypes.String)
     }
     
     func testVariableBooleanDefaultValue() {
@@ -265,7 +270,7 @@ class DevCycleClientTest: XCTestCase {
         XCTAssertEqual(variable.value, true)
         XCTAssert(variable.isDefaulted)
         XCTAssertEqual(variable.defaultValue, true)
-        XCTAssertEqual(variable.type, "Boolean")
+        XCTAssertEqual(variable.type, DVCVariableTypes.Boolean)
     }
     
     func testVariableNumberDefaultValue() {
@@ -273,11 +278,17 @@ class DevCycleClientTest: XCTestCase {
         client.config?.userConfig = self.userConfig
         client.initialize(callback: nil)
         
-        let variable = client.variable(key: "some_non_existent_variable", defaultValue: 10.1)
-        XCTAssertEqual(variable.value, 10.1)
+        let double: Double = 10.1
+        let variable = client.variable(key: "some_non_existent_variable", defaultValue: double)
+        XCTAssertEqual(variable.value, double)
         XCTAssert(variable.isDefaulted)
-        XCTAssertEqual(variable.defaultValue, 10.1)
-        XCTAssertEqual(variable.type, "Number")
+        XCTAssertEqual(variable.defaultValue, double)
+        XCTAssertEqual(variable.type, DVCVariableTypes.Number)
+        
+        let nsNum: NSNumber = 10.1
+        let variableNum = client.variable(key: "some_non_existent_variable", defaultValue: nsNum)
+        XCTAssertEqual(variableNum.defaultValue, nsNum)
+        XCTAssertEqual(variableNum.type, DVCVariableTypes.Number)
     }
     
     func testVariableJSONDefaultValue() {
@@ -285,12 +296,18 @@ class DevCycleClientTest: XCTestCase {
         client.config?.userConfig = self.userConfig
         client.initialize(callback: nil)
         
-        let defaultVal = ["key":"val"]
+        let defaultVal: Dictionary<String, Any> = ["key":"val"]
         let variable = client.variable(key: "some_non_existent_variable", defaultValue: defaultVal)
-        XCTAssertEqual(variable.value, defaultVal)
+        XCTAssertEqual(variable.value.keys, defaultVal.keys)
+        XCTAssertEqual(variable.value["key"] as! String, defaultVal["key"] as! String)
         XCTAssert(variable.isDefaulted)
-        XCTAssertEqual(variable.defaultValue, defaultVal)
-        XCTAssertEqual(variable.type, "JSON")
+        XCTAssertEqual(variable.defaultValue["key"] as! String, defaultVal["key"] as! String)
+        XCTAssertEqual(variable.type, DVCVariableTypes.JSON)
+        
+        let nsDicDefault: NSDictionary = ["key":"val"]
+        let variable2 = client.variable(key: "some_non_existent_variable", defaultValue: nsDicDefault)
+        XCTAssertEqual(variable2.defaultValue, nsDicDefault)
+        XCTAssertEqual(variable2.type, DVCVariableTypes.JSON)        
     }
 
     func testVariableMethodReturnsCorrectVariableForKey() {
@@ -303,9 +320,9 @@ class DevCycleClientTest: XCTestCase {
         let boolValue = client.variableValue(key: "bool-var", defaultValue: false)
         XCTAssertTrue(boolValue)
 
-        let numVar = client.variable(key: "num-var", defaultValue: 0)
+        let numVar = client.variable(key: "num-var", defaultValue: 0.0)
         XCTAssertEqual(numVar.value, 4)
-        let numValue = client.variableValue(key: "num-var", defaultValue: 0)
+        let numValue = client.variableValue(key: "num-var", defaultValue: 0.0)
         XCTAssertEqual(numValue, 4)
 
         let stringVar = client.variable(key: "string-var", defaultValue: "default-string")
@@ -331,8 +348,8 @@ class DevCycleClientTest: XCTestCase {
         let boolVar = client.variable(key: "bool-var", defaultValue: false)
         XCTAssert(client.variable(key: "bool-var", defaultValue: false) === boolVar)
 
-        let numVar = client.variable(key: "num-var", defaultValue: 0)
-        XCTAssert(client.variable(key: "num-var", defaultValue: 0) === numVar)
+        let numVar = client.variable(key: "num-var", defaultValue: 0.0)
+        XCTAssert(client.variable(key: "num-var", defaultValue: 0.0) === numVar)
 
         let stringVar = client.variable(key: "string-var", defaultValue: "default-string")
         XCTAssert(client.variable(key: "string-var", defaultValue: "default-string") === stringVar)

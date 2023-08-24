@@ -263,17 +263,53 @@ public class DevCycleClient {
         })
     }
     
-    public func variableValue<T>(key: String, defaultValue: T) -> T {
-        return variable(key: key, defaultValue: defaultValue).value
+    public func variableValue(key: String, defaultValue: Bool) -> Bool {
+        return getVariable(key: key, defaultValue: defaultValue).value
+    }
+    public func variableValue(key: String, defaultValue: String) -> String {
+        return getVariable(key: key, defaultValue: defaultValue).value
+    }
+    public func variableValue(key: String, defaultValue: NSString) -> NSString {
+        return getVariable(key: key, defaultValue: defaultValue).value
+    }
+    public func variableValue(key: String, defaultValue: Double) -> Double {
+        return getVariable(key: key, defaultValue: defaultValue).value
+    }
+    public func variableValue(key: String, defaultValue: NSNumber) -> NSNumber {
+        return getVariable(key: key, defaultValue: defaultValue).value
+    }
+    public func variableValue(key: String, defaultValue: NSDictionary) -> NSDictionary {
+        return getVariable(key: key, defaultValue: defaultValue).value
+    }
+    
+    public func variable(key: String, defaultValue: Bool) -> DVCVariable<Bool> {
+        return getVariable(key: key, defaultValue: defaultValue)
+    }
+    public func variable(key: String, defaultValue: String) -> DVCVariable<String> {
+        return getVariable(key: key, defaultValue: defaultValue)
+    }
+    public func variable(key: String, defaultValue: NSString) -> DVCVariable<NSString> {
+        return getVariable(key: key, defaultValue: defaultValue)
+    }
+    public func variable(key: String, defaultValue: Double) -> DVCVariable<Double> {
+        return getVariable(key: key, defaultValue: defaultValue)
+    }
+    public func variable(key: String, defaultValue: NSNumber) -> DVCVariable<NSNumber> {
+        return getVariable(key: key, defaultValue: defaultValue)
+    }
+    public func variable(key: String, defaultValue: Dictionary<String, Any>) -> DVCVariable<Dictionary<String, Any>> {
+        return getVariable(key: key, defaultValue: defaultValue)
+    }
+    public func variable(key: String, defaultValue: NSDictionary) -> DVCVariable<NSDictionary> {
+        return getVariable(key: key, defaultValue: defaultValue)
     }
 
-    public func variable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
+    func getVariable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
         let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
         if (regex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) != nil) {
             Log.error("The variable key \(key) is invalid. It must contain only lowercase letters, numbers, hyphens and underscores. The default value will always be returned for this call.")
             return DVCVariable(
                 key: key,
-                type: String(describing: T.self),
                 value: nil,
                 defaultValue: defaultValue,
                 evalReason: nil
@@ -285,6 +321,7 @@ public class DevCycleClient {
             if (self.variableInstanceDictonary[key] == nil) {
                 self.variableInstanceDictonary[key] = NSMapTable<AnyObject, AnyObject>(valueOptions: .weakMemory)
             }
+            
             if let variableFromDictionary = self.variableInstanceDictonary[key]?.object(forKey: defaultValue as AnyObject) as? DVCVariable<T> {
                 variable = variableFromDictionary
             } else {
@@ -294,19 +331,17 @@ public class DevCycleClient {
                 } else {
                     variable = DVCVariable(
                         key: key,
-                        type: String(describing: T.self),
                         value: nil,
                         defaultValue: defaultValue,
                         evalReason: nil
                     )
                 }
-                    self.variableInstanceDictonary[key]?.setObject(variable, forKey: defaultValue as AnyObject)
+                
+                self.variableInstanceDictonary[key]?.setObject(variable, forKey: defaultValue as AnyObject)
             }
             
-            if (!self.closed) {
-                if(!self.disableAutomaticEventLogging){
-                    self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
-                }
+            if (!self.closed && !self.disableAutomaticEventLogging) {
+                self.eventQueue.updateAggregateEvents(variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
             }
             
             return variable

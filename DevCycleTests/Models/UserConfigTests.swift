@@ -72,7 +72,7 @@ class UserConfigTests: XCTestCase {
         let config = try UserConfig(from: dictionary)
         let variable = config.variables["bool-var"]
         XCTAssert(variable?.key == "bool-var")
-        XCTAssert(variable?.type == "Boolean")
+        XCTAssertEqual(variable?.type, DVCVariableTypes.Boolean)
         XCTAssert((variable?.value as! Bool))
     }
     
@@ -82,7 +82,7 @@ class UserConfigTests: XCTestCase {
         let config = try UserConfig(from: dictionary)
         let variable = config.variables["string-var"]
         XCTAssert(variable?.key == "string-var")
-        XCTAssert(variable?.type == "String")
+        XCTAssertEqual(variable?.type, DVCVariableTypes.String)
         XCTAssert((variable?.value as! String) == "string1")
     }
     
@@ -92,7 +92,7 @@ class UserConfigTests: XCTestCase {
         let config = try UserConfig(from: dictionary)
         let variable = config.variables["num-var"]
         XCTAssert(variable?.key == "num-var")
-        XCTAssert(variable?.type == "Number")
+        XCTAssertEqual(variable?.type, DVCVariableTypes.Number)
         XCTAssert((variable?.value as! Double) == 4)
     }
     
@@ -104,7 +104,7 @@ class UserConfigTests: XCTestCase {
         let json = (variable?.value as! [String: Any])
         let nestedJson = json["key2"]
         XCTAssert(variable?.key == "json-var")
-        XCTAssert(variable?.type == "JSON")
+        XCTAssertEqual(variable?.type, DVCVariableTypes.JSON)
         XCTAssertNotNil(json)
         XCTAssertNotNil(nestedJson)
     }

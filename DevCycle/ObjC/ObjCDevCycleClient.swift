@@ -133,58 +133,64 @@ public class ObjCDevCycleClient: NSObject {
     }
     
     @objc public func stringVariableValue(key: String, defaultValue: String) -> String {
-        return variableValue(key: key, defaultValue: defaultValue)
-    }
-    
-    @objc public func numberVariableValue(key: String, defaultValue: NSNumber) -> NSNumber {
-        return variableValue(key: key, defaultValue: defaultValue)
-    }
-    
-    @objc public func boolVariableValue(key: String, defaultValue: Bool) -> Bool {
-        return variableValue(key: key, defaultValue: defaultValue)
-    }
-    
-    @objc public func jsonVariableValue(key: String, defaultValue: NSObject) -> NSObject {
-        return variableValue(key: key, defaultValue: defaultValue)
-    }
-    
-    @objc public func stringVariable(key: String, defaultValue: String) -> ObjCDVCVariable {
-        return variable(key: key, defaultValue: defaultValue)
-    }
-    
-    @objc public func numberVariable(key: String, defaultValue: NSNumber) -> ObjCDVCVariable {
-        return variable(key: key, defaultValue: defaultValue)
-    }
-    
-    @objc public func boolVariable(key: String, defaultValue: Bool) -> ObjCDVCVariable {
-        return variable(key: key, defaultValue: defaultValue)
-    }
-    
-    @objc public func jsonVariable(key: String, defaultValue: NSObject) -> ObjCDVCVariable {
-        return variable(key: key, defaultValue: defaultValue)
-    }
-    
-    func variableValue<T>(key: String, defaultValue: T) -> T {
         guard let client = self.client else {
             return defaultValue
         }
-        return client.variable(key: key, defaultValue: defaultValue).value
+        return client.variableValue(key: key, defaultValue: defaultValue)
+    }
+    @objc public func numberVariableValue(key: String, defaultValue: NSNumber) -> NSNumber {
+        guard let client = self.client else {
+            return defaultValue
+        }
+        return client.variableValue(key: key, defaultValue: defaultValue)
+    }
+    @objc public func boolVariableValue(key: String, defaultValue: Bool) -> Bool {
+        guard let client = self.client else {
+            return defaultValue
+        }
+        return client.variableValue(key: key, defaultValue: defaultValue)
+    }
+    @objc public func jsonVariableValue(key: String, defaultValue: NSDictionary) -> NSDictionary {
+        guard let client = self.client else {
+            return defaultValue
+        }
+        return client.variableValue(key: key, defaultValue: defaultValue)
     }
     
-    func variable<T>(key: String, defaultValue: T) -> ObjCDVCVariable {
+    @objc public func stringVariable(key: String, defaultValue: String) -> ObjCDVCVariable {
         guard let client = self.client else {
-            return ObjCDVCVariable(
-                DVCVariable<T>(
-                    key: key,
-                    type: String(describing: T.self),
-                    value: nil,
-                    defaultValue: defaultValue,
-                    evalReason: nil
-                )
-            )
+            return objcDefaultVariable(key: key, defaultValue: defaultValue)
         }
-
         return ObjCDVCVariable(client.variable(key: key, defaultValue: defaultValue))
+    }
+    @objc public func numberVariable(key: String, defaultValue: NSNumber) -> ObjCDVCVariable {
+        guard let client = self.client else {
+            return objcDefaultVariable(key: key, defaultValue: defaultValue)
+        }
+        return ObjCDVCVariable(client.variable(key: key, defaultValue: defaultValue))
+    }
+    @objc public func boolVariable(key: String, defaultValue: Bool) -> ObjCDVCVariable {
+        guard let client = self.client else {
+            return objcDefaultVariable(key: key, defaultValue: defaultValue)
+        }
+        return ObjCDVCVariable(client.variable(key: key, defaultValue: defaultValue))
+    }
+    @objc public func jsonVariable(key: String, defaultValue: NSDictionary) -> ObjCDVCVariable {
+        guard let client = self.client else {
+            return objcDefaultVariable(key: key, defaultValue: defaultValue)
+        }
+        return ObjCDVCVariable(client.variable(key: key, defaultValue: defaultValue))
+    }
+    
+    func objcDefaultVariable<T>(key: String, defaultValue: T) -> ObjCDVCVariable {
+        return ObjCDVCVariable(
+            DVCVariable<T>(
+                key: key,
+                value: nil,
+                defaultValue: defaultValue,
+                evalReason: nil
+            )
+        )
     }
     
     @objc public func allFeatures() -> [String: ObjCFeature]? {
