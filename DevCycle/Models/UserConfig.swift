@@ -9,6 +9,7 @@ import Foundation
 enum UserConfigError: Error {
     case MissingInConfig(String)
     case MissingProperty(String)
+    case InvalidVariableType(String)
 }
 
 public struct UserConfig {
@@ -152,18 +153,27 @@ public struct Feature {
 public struct Variable {
     public var _id: String
     public var key: String
-    public var type: String
+    public var type: DVCVariableTypes
     public var value: Any
     public var evalReason: String?
     
     init (from dictionary: [String: Any]) throws {
-        guard let id = dictionary["_id"] as? String else { throw UserConfigError.MissingProperty("_id in Variable object") }
-        guard let key = dictionary["key"] as? String else { throw UserConfigError.MissingProperty("key in Variable object") }
-        guard let type = dictionary["type"] as? String else { throw UserConfigError.MissingProperty("type in Variable object") }
+        guard let id = dictionary["_id"] as? String else {
+            throw UserConfigError.MissingProperty("_id in Variable object")
+        }
+        guard let key = dictionary["key"] as? String else {
+            throw UserConfigError.MissingProperty("key in Variable object")
+        }
+        guard let type = dictionary["type"] as? String else {
+            throw UserConfigError.MissingProperty("type in Variable object")
+        }
+        guard let varType = DVCVariableTypes(rawValue: type) else {
+            throw UserConfigError.InvalidVariableType("invalid Variable type: \(type)")
+        }
         guard let value = dictionary["value"] else { throw UserConfigError.MissingProperty("value in Variable object") }
         self._id = id
         self.key = key
-        self.type = type
+        self.type = varType
         self.evalReason = dictionary["evalReason"] as? String
         
         if (type == "Boolean") {

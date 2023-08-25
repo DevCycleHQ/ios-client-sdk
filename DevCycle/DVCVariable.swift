@@ -9,9 +9,38 @@ import Foundation
 
 public typealias VariableValueHandler<T> = (T) -> Void
 
+public enum DVCVariableTypes: String {
+    case String = "String"
+    case Boolean = "Boolean"
+    case Number = "Number"
+    case JSON = "JSON"
+}
+
+let StringTypes = Set(["String", "NSString"])
+let NumberTypes = Set(["NSNumber", "Double"])
+
+enum DVCVariableTypeError: Error {
+    case invalidType(String)
+}
+
+func DVCVariableTypeFrom(classString: String) throws -> DVCVariableTypes {
+    if StringTypes.contains(classString) {
+        return .String
+    } else if classString == "Bool" {
+        return .Boolean
+    } else if NumberTypes.contains(classString) {
+        return .Number
+    } else if classString.contains("Dictionary") {
+        return .JSON
+    } else {
+        throw DVCVariableTypeError.invalidType("Unkown DVCVariableType from class: \(classString)")
+    }
+}
+
+
 public class DVCVariable<T> {
     public var key: String
-    public var type: String
+    public var type: DVCVariableTypes?
     public var handler: VariableValueHandler<T>?
     public var evalReason: String?
     public var isDefaulted: Bool
@@ -19,18 +48,45 @@ public class DVCVariable<T> {
     public var value: T
     public var defaultValue: T
     
-    init(key: String, type: String, value: T?, defaultValue: T, evalReason: String?) {
+    init(key: String, value: T?, defaultValue: T, evalReason: String?) {
         self.key = key
-        self.type = type
         self.value = value ?? defaultValue
         self.defaultValue = defaultValue
         self.isDefaulted = value == nil
         self.evalReason = evalReason
+        
+        let classString = String(describing: T.self)
+        do {
+            self.type = try DVCVariableTypeFrom(classString: classString)
+        } catch {
+            Log.warn("Variable \(key) is of unsupported type: \(classString). Use variables of type: " +
+                     "String / Boolean / NSNumber / Int / NSDictionary")
+            self.value = defaultValue
+            self.isDefaulted = true
+        }
+        
         addNotificationObserver()
     }
     
     init(from variable: Variable, defaultValue: T) {
         var defaulted = false
+        self.key = variable.key
+        self.defaultValue = defaultValue
+        self.evalReason = variable.evalReason
+
+        let classString = String(describing: T.self)
+        do {
+            self.type = try DVCVariableTypeFrom(classString: classString)
+        } catch {
+            Log.warn("Variable \(variable.key) defaultValue is of unsupported type: \(classString). " +
+                     "Use variables of type: String / Boolean / NSNumber / Double / NSDictionary / Dictionary")
+            self.value = defaultValue
+            self.isDefaulted = true
+            addNotificationObserver()
+            return
+        }
+        
+        
         if let value = variable.value as? T {
             self.value = value
         } else {
@@ -39,11 +95,7 @@ public class DVCVariable<T> {
             defaulted = true
         }
         
-        self.key = variable.key
-        self.defaultValue = defaultValue
-        self.type = variable.type
         self.isDefaulted = defaulted
-        self.evalReason = variable.evalReason
         addNotificationObserver()
     }
     
@@ -56,8 +108,7 @@ public class DVCVariable<T> {
             self.value = value
             self.isDefaulted = false
             if let handler = self.handler,
-               !isEqual(oldValue, variable.value)
-            {
+               !isEqual(oldValue, variable.value) {
                 handler(value)
             }
         } else {
