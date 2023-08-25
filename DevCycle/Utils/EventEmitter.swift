@@ -47,12 +47,12 @@ enum EventHandlers {
     case featureUpdated(FeatureUpdatedHandler)
 }
 
-enum EventEmitValues {
+enum EventEmitValues<T> {
     case error(Error)
     case initialized(Bool)
     case configUpdated(VariableSet)
     case variableUpdated(String, Variable?)
-    case variableEvaluated(String, DVCVariable<Any>)
+    case variableEvaluated(String, DVCVariable<T>)
     case featureUpdated(String, Feature?)
 }
 
@@ -152,7 +152,7 @@ class EventEmitter {
         }
         guard let oldFeatures = oldFeatures else {
             newFeatures.forEach { (key: String, variable: Feature) in
-                self.emit(EventEmitValues.featureUpdated(key, variable))
+                self.emit(EventEmitValues<Any>.featureUpdated(key, variable))
             }
             return
         }
@@ -164,7 +164,7 @@ class EventEmitter {
             let newFeatureVar = newFeature?._variation
             
             if oldFeatureVar != newFeatureVar {
-                self.emit(EventEmitValues.featureUpdated(key, newFeature))
+                self.emit(EventEmitValues<Any>.featureUpdated(key, newFeature))
             }
         }
     }
@@ -181,7 +181,7 @@ class EventEmitter {
         
         guard let oldVariables = oldVariables else {
             newVariables.forEach { (key: String, variable: Variable) in
-                self.emit(EventEmitValues.variableUpdated(key, variable))
+                self.emit(EventEmitValues<Any>.variableUpdated(key, variable))
             }
             return
         }
@@ -192,12 +192,12 @@ class EventEmitter {
             let newVariable = newVariables[key]
             
             if oldVariable != newVariable {
-                self.emit(EventEmitValues.variableUpdated(key, newVariable))
+                self.emit(EventEmitValues<Any>.variableUpdated(key, newVariable))
             }
         }
     }
     
-    func emit(_ emitValues: EventEmitValues) {
+    func emit(_ emitValues: EventEmitValues<Any>) {
         switch emitValues {
         case .error(let err):
             self.errorHandlers.forEach { handler in handler.callback(err) }

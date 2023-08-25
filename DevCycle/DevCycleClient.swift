@@ -150,7 +150,7 @@ public class DevCycleClient {
                 Log.error("Error getting config: \(error)", tags: ["setup"])
                 self.cache = self.cacheService.load()
                 
-                self.eventEmitter.emit(EventEmitValues.error(error))
+                self.eventEmitter.emit(EventEmitValues<Any>.error(error))
                 requestErrored = true
             } else {
                 if let config = config {
@@ -217,7 +217,7 @@ public class DevCycleClient {
                 
                 if let error = error {
                     Log.error("Error getting config: \(error)", tags: ["refetchConfig"])
-                    self.eventEmitter.emit(EventEmitValues.error(error))
+                    self.eventEmitter.emit(EventEmitValues<Any>.error(error))
                 } else {
                     self.setUserConfig(config)
                 }
@@ -242,7 +242,7 @@ public class DevCycleClient {
             )
             
             if oldConfig == nil || config.etag != oldConfig?.userConfig?.etag {
-                self.eventEmitter.emit(EventEmitValues.configUpdated(config.variables))
+                self.eventEmitter.emit(EventEmitValues<Any>.configUpdated(config.variables))
             }
         }
     }
@@ -377,7 +377,7 @@ public class DevCycleClient {
             }
             
         
-            self.eventEmitter.emit(EventEmitValues.variableEvaluated(variable.key, variable))            
+            self.eventEmitter.emit(EventEmitValues<T>.variableEvaluated(variable.key, variable))
             return variable
         }
     }
@@ -402,7 +402,7 @@ public class DevCycleClient {
             if let error = error {
                 Log.error("Error getting config: \(error)", tags: ["identify"])
                 self.cache = self.cacheService.load()
-                self.eventEmitter.emit(EventEmitValues.error(error))
+                self.eventEmitter.emit(EventEmitValues<Any>.error(error))
             } else {
                 if let config = config {
                     Log.debug("Config: \(config)", tags: ["identify"])
@@ -432,7 +432,7 @@ public class DevCycleClient {
                 if let previousAnonUserId = cachedAnonUserId {
                     self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
                 }
-                self.eventEmitter.emit(EventEmitValues.error(error))
+                self.eventEmitter.emit(EventEmitValues<Any>.error(error))
                 callback?(error, nil)
                 return
             }
