@@ -24,7 +24,7 @@ public class ObjCDVCVariable: NSObject {
     init<T>(_ dvcVariable: DVCVariable<T>) {
         self.dvcVariable = dvcVariable
         self.key = dvcVariable.key
-        self.type = dvcVariable.type
+        self.type = dvcVariable.type?.rawValue
         self.evalReason = dvcVariable.evalReason
         self.isDefaulted = dvcVariable.isDefaulted
         self.value = dvcVariable.value
@@ -41,7 +41,7 @@ public class ObjCDVCVariable: NSObject {
     
     func setValues<T>(dvcVariable: DVCVariable<T>) {
         self.key = dvcVariable.key
-        self.type = dvcVariable.type
+        self.type = dvcVariable.type?.rawValue
         self.evalReason = dvcVariable.evalReason
         self.isDefaulted = dvcVariable.isDefaulted
         self.value = dvcVariable.value

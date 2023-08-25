@@ -42,7 +42,7 @@ public class ObjCVariable: NSObject {
     init(_ variable: Variable) {
         self._id = variable._id
         self.key = variable.key
-        self.type = variable.type
+        self.type = variable.type.rawValue
         self.value = variable.value
         self.evalReason = variable.evalReason
     }
