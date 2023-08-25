@@ -230,16 +230,14 @@ public struct Variable: Equatable {
         }
         
         switch lhs.type {
-            case "Boolean":
+            case .Boolean:
                 return (lhs.value as! Bool) == (rhs.value as! Bool)
-            case "String":
+            case .String:
                 return (lhs.value as! String) == (rhs.value as! String)
-            case "Number":
+            case .Number:
                 return (lhs.value as! NSNumber) == (rhs.value as! NSNumber)
-            case "JSON":
+            case .JSON:
                 return (lhs.value as! NSDictionary) == (rhs.value as! NSDictionary)
-            default:
-                return false
         }
     }
 }
