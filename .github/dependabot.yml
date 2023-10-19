@@ -10,4 +10,3 @@ updates:
       interval: "daily"
     reviewers:
       - "devcyclehq/engineering"
-    versioning-strategy: increase
