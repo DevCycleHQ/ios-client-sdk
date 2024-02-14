@@ -2,7 +2,7 @@ name: Build and Test macOS
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -10,15 +10,15 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: "Select Latest Xcode"
+      - name: 'Select Latest Xcode'
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-      - name: "Set SSH key"
-        uses: webfactory/ssh-agent@v0.8.0
+      - name: 'Set SSH key'
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: "Carthage Cached Bootstrap"
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: 'Carthage Cached Bootstrap'
         uses: DevCycleHQ/carthage-bootstrap@xcframeworks2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
