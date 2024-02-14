@@ -1,15 +1,15 @@
-name: Release
+name: Create Release Tag
 
 on:
   workflow_dispatch:
     inputs:
       prerelease:
-        description: "Prerelease"
+        description: 'Prerelease'
         required: true
         default: false
         type: boolean
       draft:
-        description: "Draft"
+        description: 'Draft'
         required: true
         default: false
         type: boolean
@@ -29,7 +29,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-
     steps:
       # Check out the repo with credentials that can bypass branch protection, and fetch git history instead of just latest commit
       - uses: actions/checkout@v4
@@ -81,21 +80,3 @@ jobs:
           echo "::notice title=Release ID::${{ steps.create-release.outputs.release-id }}"
           echo "::notice title=Release URL::${{ steps.create-release.outputs.release-url }}"
 
-  publish-cocoapods:
-    needs: release
-    runs-on: macos-12
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.AUTOMATION_USER_TOKEN }}
-          fetch-depth: 0
-
-      - name: Fix WatchOS Simulators
-        run: |
-          ./scripts/fix_watchos_simulators.sh
-
-      - name: Publish to CocoaPods
-        env:
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        run: |
-          pod trunk push DevCycle.podspec --allow-warnings --verbose

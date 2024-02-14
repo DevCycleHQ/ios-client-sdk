@@ -1,0 +1,31 @@
+name: CocoaPods Publish
+
+on:
+  push:
+    tags:
+      - v*.*.**
+    workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish-cocoapods:
+    needs: release
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AUTOMATION_USER_TOKEN }}
+          fetch-depth: 0
+
+      - name: Fix WatchOS Simulators
+        run: |
+          ./scripts/fix_watchos_simulators.sh
+
+      - name: Publish to CocoaPods
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          pod trunk push DevCycle.podspec --allow-warnings --verbose
+

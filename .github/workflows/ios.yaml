@@ -2,7 +2,7 @@ name: Build and Test iOS
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -10,14 +10,15 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: "Select Latest Xcode"
+      - name: 'Select Latest Xcode'
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-      - name: "Carthage Cached Bootstrap"
+      - name: 'Carthage Cached Bootstrap'
         uses: DevCycleHQ/carthage-bootstrap@xcframeworks2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           use-xcframeworks: true
       - name: Fastlane iOS Tests
         run: fastlane ios tests
+
