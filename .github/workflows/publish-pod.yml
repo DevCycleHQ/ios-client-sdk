@@ -11,7 +11,6 @@ permissions:
 
 jobs:
   publish-cocoapods:
-    needs: release
     runs-on: macos-12
     steps:
       - uses: actions/checkout@v4
