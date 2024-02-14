@@ -39,19 +39,6 @@ run tvOS DevCycle tests
 ----
 
 
-## watchos
-
-### watchos tests
-
-```sh
-[bundle exec] fastlane watchos tests
-```
-
-run watchOS DevCycle tests
-
-----
-
-
 ## Mac
 
 ### mac tests
