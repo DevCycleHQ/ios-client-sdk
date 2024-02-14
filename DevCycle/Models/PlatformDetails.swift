@@ -17,11 +17,11 @@ import IOKit
 
 struct PlatformDetails {
     #if os(iOS) || os(tvOS)
-    var deviceModel: String { UIDevice.current.model }
+    var deviceModel = getDeviceModel()
     var systemVersion: String { UIDevice.current.systemVersion }
     var systemName: String { UIDevice.current.systemName }
     #elseif os(watchOS)
-    var deviceModel: String { WKInterfaceDevice.current().model }
+    var deviceModel = getDeviceModel()
     var systemVersion: String { WKInterfaceDevice.current().systemVersion }
     var systemName: String { WKInterfaceDevice.current().systemName }
     #elseif os(macOS)
@@ -54,5 +54,16 @@ func getMacOSModelIdentifier() -> String {
     } else {
         return "unknown macos"
     }
+}
+#endif
+
+#if os(iOS) || os(tvOS) || os(watchOS)
+func getDeviceModel() -> String {
+    if let simulatorModelIdentifier = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] {
+        return "Simulator " + simulatorModelIdentifier
+    }
+    var sysinfo = utsname()
+    uname(&sysinfo) // ignore return value
+    return String(bytes: Data(bytes: &sysinfo.machine, count: Int(_SYS_NAMELEN)), encoding: .ascii)!.trimmingCharacters(in: .controlCharacters)
 }
 #endif
