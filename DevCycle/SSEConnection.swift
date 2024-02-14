@@ -9,6 +9,8 @@
 import Foundation
 import LDSwiftEventSource
 
+typealias LDEventHandler = LDSwiftEventSource.EventHandler
+
 public typealias MessageHandler = (String) -> Void
 
 protocol SSEConnectionProtocol {
@@ -63,7 +65,7 @@ class SSEConnection: SSEConnectionProtocol {
     }
 }
 
-class Handler: EventHandler {
+class Handler: LDEventHandler {
     private var handler: MessageHandler
     
     init(handler: @escaping MessageHandler) {

@@ -107,8 +107,8 @@ public class DVCVariable<T> {
             let oldValue = self.value
             self.value = value
             self.isDefaulted = false
-            if let handler = self.handler,
-               !isEqual(oldValue, variable.value) {
+            
+            if let handler = self.handler, !isEqual(oldValue, variable.value) {
                 handler(value)
             }
         } else {
@@ -136,7 +136,11 @@ public class DVCVariable<T> {
     }
     
     private func addNotificationObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(propertyChange(notification:)), name: Notification.Name(NotificationNames.NewUserConfig), object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(propertyChange(notification:)),
+            name: Notification.Name(NotificationNames.NewUserConfig),
+            object: nil)
     }
     
     public func onUpdate(handler: @escaping VariableValueHandler<T>) -> DVCVariable {

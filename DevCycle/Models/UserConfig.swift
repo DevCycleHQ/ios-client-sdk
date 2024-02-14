@@ -6,6 +6,9 @@
 
 import Foundation
 
+public typealias VariableSet = [String: Variable]
+public typealias FeatureSet = [String: Feature]
+
 enum UserConfigError: Error {
     case MissingInConfig(String)
     case MissingProperty(String)
@@ -16,17 +19,27 @@ public struct UserConfig {
     var project: Project
     var environment: Environment
     var featureVariationMap: [String: String]
-    var features: [String: Feature]
-    var variables: [String: Variable]
+    var features: FeatureSet
+    var variables: VariableSet
     var sse: SSE?
     var etag: String?
     
-    init(from dictionary: [String:Any]) throws {
-        guard let environment = dictionary["environment"] as? [String: Any] else { throw UserConfigError.MissingInConfig("environment") }
-        guard let project = dictionary["project"] as? [String: Any] else { throw UserConfigError.MissingInConfig("project") }
-        guard let featureVariationMap = dictionary["featureVariationMap"] as? [String: String] else { throw UserConfigError.MissingInConfig("featureVariationMap") }
-        guard var featureMap = dictionary["features"] as? [String: Any] else { throw UserConfigError.MissingInConfig("features") }
-        guard var variablesMap = dictionary["variables"] as? [String: Any] else { throw UserConfigError.MissingInConfig("variables") }
+    init(from dictionary: [String: Any]) throws {
+        guard let environment = dictionary["environment"] as? [String: Any] else {
+            throw UserConfigError.MissingInConfig("environment")
+        }
+        guard let project = dictionary["project"] as? [String: Any] else {
+            throw UserConfigError.MissingInConfig("project")
+        }
+        guard let featureVariationMap = dictionary["featureVariationMap"] as? [String: String] else {
+            throw UserConfigError.MissingInConfig("featureVariationMap")
+        }
+        guard var featureMap = dictionary["features"] as? [String: Any] else {
+            throw UserConfigError.MissingInConfig("features")
+        }
+        guard var variablesMap = dictionary["variables"] as? [String: Any] else {
+            throw UserConfigError.MissingInConfig("variables")
+        }
         let sse = dictionary["sse"] as? [String: Any]
         let etag = dictionary["etag"] as? String
 
@@ -47,23 +60,21 @@ public struct UserConfig {
         let variableKeys = Array(variablesMap.keys)
         
         for key in featureKeys {
-            if let featureDict = featureMap[key] as? [String:String]
-            {
+            if let featureDict = featureMap[key] as? [String: String] {
                 let feature = try Feature(from: featureDict)
                 featureMap[key] = feature
             }
         }
         
         for key in variableKeys {
-            if let variableDict = variablesMap[key] as? [String:Any]
-            {
+            if let variableDict = variablesMap[key] as? [String: Any] {
                 let variable = try Variable(from: variableDict)
                 variablesMap[key] = variable
             }
         }
         
-        self.features = featureMap as! [String: Feature]
-        self.variables = variablesMap as! [String: Variable]
+        self.features = featureMap as! FeatureSet
+        self.variables = variablesMap as! VariableSet
     }
 }
 
@@ -73,8 +84,12 @@ public struct Project {
     var settings: Settings
     
     init (from dictionary: [String: Any]) throws {
-        guard let key = dictionary["key"] as? String else { throw UserConfigError.MissingProperty("key in Project") }
-        guard let id = dictionary["_id"] as? String else { throw UserConfigError.MissingProperty("_id in Project") }
+        guard let key = dictionary["key"] as? String else {
+            throw UserConfigError.MissingProperty("key in Project")
+        }
+        guard let id = dictionary["_id"] as? String else {
+            throw UserConfigError.MissingProperty("_id in Project")
+        }
         let settings = dictionary["settings"] as? [String:Any]
         self._id = id
         self.key = key
@@ -117,8 +132,12 @@ public struct Environment {
     var key: String
     
     init (from dictionary: [String: Any]) throws {
-        guard let key = dictionary["key"] as? String else { throw UserConfigError.MissingProperty("key in Environment") }
-        guard let id = dictionary["_id"] as? String else { throw UserConfigError.MissingProperty("_id in Environment") }
+        guard let key = dictionary["key"] as? String else {
+            throw UserConfigError.MissingProperty("key in Environment")
+        }
+        guard let id = dictionary["_id"] as? String else {
+            throw UserConfigError.MissingProperty("_id in Environment")
+        }
         self._id = id
         self.key = key
     }
@@ -134,12 +153,24 @@ public struct Feature {
     public var evalReason: String?
     
     init (from dictionary: [String: String]) throws {
-        guard let id = dictionary["_id"] else { throw UserConfigError.MissingProperty("_id in Feature object") }
-        guard let variation = dictionary["_variation"] else { throw UserConfigError.MissingProperty("_variation in Feature object") }
-        guard let key = dictionary["key"] else { throw UserConfigError.MissingProperty("key in Feature object") }
-        guard let type = dictionary["type"] else { throw UserConfigError.MissingProperty("type in Feature object") }
-        guard let variationKey = dictionary["variationKey"] else { throw UserConfigError.MissingProperty("variationKey in Feature object") }
-        guard let variationName = dictionary["variationName"] else { throw UserConfigError.MissingProperty("variationName in Feature object") }
+        guard let id = dictionary["_id"] else {
+            throw UserConfigError.MissingProperty("_id in Feature object")
+        }
+        guard let variation = dictionary["_variation"] else {
+            throw UserConfigError.MissingProperty("_variation in Feature object")
+        }
+        guard let key = dictionary["key"] else {
+            throw UserConfigError.MissingProperty("key in Feature object")
+        }
+        guard let type = dictionary["type"] else {
+            throw UserConfigError.MissingProperty("type in Feature object")
+        }
+        guard let variationKey = dictionary["variationKey"] else {
+            throw UserConfigError.MissingProperty("variationKey in Feature object")
+        }
+        guard let variationName = dictionary["variationName"] else {
+            throw UserConfigError.MissingProperty("variationName in Feature object")
+        }
         self._id = id
         self._variation = variation
         self.key = key
@@ -150,7 +181,7 @@ public struct Feature {
     }
 }
 
-public struct Variable {
+public struct Variable: Equatable {
     public var _id: String
     public var key: String
     public var type: DVCVariableTypes
@@ -170,7 +201,10 @@ public struct Variable {
         guard let varType = DVCVariableTypes(rawValue: type) else {
             throw UserConfigError.InvalidVariableType("invalid Variable type: \(type)")
         }
-        guard let value = dictionary["value"] else { throw UserConfigError.MissingProperty("value in Variable object") }
+        guard let value = dictionary["value"] else {
+            throw UserConfigError.MissingProperty("value in Variable object")
+        }
+        
         self._id = id
         self.key = key
         self.type = varType
@@ -180,6 +214,30 @@ public struct Variable {
             self.value = value as? Bool ?? value
         } else {
             self.value = value
+        }
+    }
+    
+    public static func == (lhs: Variable, rhs: Variable) -> Bool {
+        return lhs._id == rhs._id &&
+            lhs.key == rhs.key &&
+            compareValues(lhs: lhs, rhs: rhs) &&
+            lhs.evalReason == rhs.evalReason
+    }
+    
+    private static func compareValues(lhs: Variable, rhs: Variable) -> Bool {
+        guard lhs.type == rhs.type else {
+            return false
+        }
+        
+        switch lhs.type {
+            case .Boolean:
+                return (lhs.value as! Bool) == (rhs.value as! Bool)
+            case .String:
+                return (lhs.value as! String) == (rhs.value as! String)
+            case .Number:
+                return (lhs.value as! NSNumber) == (rhs.value as! NSNumber)
+            case .JSON:
+                return (lhs.value as! NSDictionary) == (rhs.value as! NSDictionary)
         }
     }
 }
