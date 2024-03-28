@@ -284,6 +284,10 @@ public class DevCycleClient {
     public func variableValue(key: String, defaultValue: NSDictionary) -> NSDictionary {
         return getVariable(key: key, defaultValue: defaultValue).value
     }
+    @available(*, deprecated, renamed: "variableValue()", message: "Use strictly typed versions of variableValue() methods")
+    public func variableValue<T>(key: String, defaultValue: T) -> T {
+        return getVariable(key: key, defaultValue: defaultValue).value
+    }
     
     public func variable(key: String, defaultValue: Bool) -> DVCVariable<Bool> {
         return getVariable(key: key, defaultValue: defaultValue)
@@ -304,6 +308,10 @@ public class DevCycleClient {
         return getVariable(key: key, defaultValue: defaultValue)
     }
     public func variable(key: String, defaultValue: NSDictionary) -> DVCVariable<NSDictionary> {
+        return getVariable(key: key, defaultValue: defaultValue)
+    }
+    @available(*, deprecated, renamed: "variable()", message: "Use strictly typed versions of variable() methods")
+    public func variable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
         return getVariable(key: key, defaultValue: defaultValue)
     }
 
