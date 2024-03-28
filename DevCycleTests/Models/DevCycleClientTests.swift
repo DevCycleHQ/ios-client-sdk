@@ -211,6 +211,17 @@ class DevCycleClientTest: XCTestCase {
         client.close(callback: nil)
     }
     
+    func testVariableDeprecatedMethod() {
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
+        let defaultVal: Int = 1
+        let variable = client.variable(key: "key", defaultValue: defaultVal)
+        XCTAssertTrue(variable.value == defaultVal)
+        XCTAssertTrue(variable.isDefaulted)
+        let variableValue = client.variableValue(key: "key", defaultValue: defaultVal)
+        XCTAssertTrue(variableValue == defaultVal)
+        client.close(callback: nil)
+    }
+    
     func testVariableReturnsDefaultForUnsupportedVariableKeys() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         let variable = client.variable(key: "UNSUPPORTED\\key%$", defaultValue: true)
