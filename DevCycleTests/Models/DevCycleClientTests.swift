@@ -213,11 +213,12 @@ class DevCycleClientTest: XCTestCase {
     
     func testVariableDeprecatedMethod() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
-        let variable = client.variable<Int>(key: "key", defaultValue: 1)
-        XCTAssertTrue(variable.value == 1)
+        let defaultVal: Int = 1
+        let variable = client.variable(key: "key", defaultValue: defaultVal)
+        XCTAssertTrue(variable.value == defaultVal)
         XCTAssertTrue(variable.isDefaulted)
-        let variableValue = client.variableValue<Int>(key: "key", defaultValue: 1)
-        XCTAssertTrue(variableValue == 1)
+        let variableValue = client.variableValue(key: "key", defaultValue: defaultVal)
+        XCTAssertTrue(variableValue == defaultVal)
         client.close(callback: nil)
     }
     
