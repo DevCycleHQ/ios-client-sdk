@@ -77,6 +77,7 @@ class DevCycleService: DevCycleServiceProtocol {
     var requestConsolidator: RequestConsolidator!
 
     private var newUser: DevCycleUser?
+    private var maxBatchSize = 100
     
     init(config: DVCConfig, cacheService: CacheServiceProtocol, options: DevCycleOptions? = nil) {
         let sessionConfig = URLSessionConfiguration.default
@@ -105,24 +106,39 @@ class DevCycleService: DevCycleServiceProtocol {
             return completion((nil, nil, ClientError.InvalidUser))
         }
         
-        let requestBody: [String: Any] = [
-            "events": eventPayload,
-            "user": userBody
-        ]
-        
         eventsRequest.httpMethod = "POST"
         eventsRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         eventsRequest.addValue("application/json", forHTTPHeaderField: "Accept")
         eventsRequest.addValue(config.sdkKey, forHTTPHeaderField: "Authorization")
-        let jsonBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
-        Log.debug("Post Events Payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
-        eventsRequest.httpBody = jsonBody
         
-        self.makeRequest(request: eventsRequest) { data, response, error in
-            if error != nil || data == nil {
-                return completion((data, response, error))
+        let totalEventsCount = eventPayload.count
+        var startIndex = 0
+        var endIndex = min(self.maxBatchSize, totalEventsCount)
+        
+        while startIndex < totalEventsCount {
+            let batchEvents = Array(eventPayload[startIndex..<endIndex])
+            
+            let requestBody: [String: Any] = [
+                "events": batchEvents,
+                "user": userBody
+            ]
+
+            let jsonBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
+            Log.debug("Post Events Payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
+            eventsRequest.httpBody = jsonBody
+            
+            self.makeRequest(request: eventsRequest) { data, response, error in
+                if error != nil || data == nil {
+                    return completion((data, response, error))
+                }
+                // Continue with next batch
+                startIndex = endIndex
+                endIndex = min(endIndex + self.maxBatchSize, totalEventsCount)
+                
+                if startIndex >= totalEventsCount {
+                    return completion((data, response, nil))
+                }
             }
-            return completion((data, response, nil))
         }
     }
     
