@@ -94,6 +94,7 @@ class DevCycleService: DevCycleServiceProtocol {
     }
     
     func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+        print("in real publishEvents")
         var eventsRequest = createEventsRequest()
         let userEncoder = JSONEncoder()
         userEncoder.dateEncodingStrategy = .iso8601
@@ -134,7 +135,7 @@ class DevCycleService: DevCycleServiceProtocol {
                 // Continue with next batch
                 startIndex = endIndex
                 endIndex = min(endIndex + self.maxBatchSize, totalEventsCount)
-                
+
                 if startIndex >= totalEventsCount {
                     return completion((data, response, nil))
                 }

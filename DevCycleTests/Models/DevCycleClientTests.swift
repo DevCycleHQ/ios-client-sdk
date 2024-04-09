@@ -242,6 +242,7 @@ class DevCycleClientTest: XCTestCase {
 
     func testVariableMethodReturnsDefaultedVariableWhenKeyIsNotInConfig() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
+        client.setup(service: self.service)
         client.config?.userConfig = self.userConfig
         client.initialize(callback: nil)
 
@@ -252,7 +253,6 @@ class DevCycleClientTest: XCTestCase {
         
         let variableValue = client.variableValue(key: "some_non_existent_variable", defaultValue: false)
         XCTAssertFalse(variableValue)
-        client.close(callback: nil)
     }
     
     func testVariableStringDefaultValue() {
@@ -318,12 +318,13 @@ class DevCycleClientTest: XCTestCase {
         let nsDicDefault: NSDictionary = ["key":"val"]
         let variable2 = client.variable(key: "some_non_existent_variable", defaultValue: nsDicDefault)
         XCTAssertEqual(variable2.defaultValue, nsDicDefault)
-        XCTAssertEqual(variable2.type, DVCVariableTypes.JSON)        
+        XCTAssertEqual(variable2.type, DVCVariableTypes.JSON)
     }
 
     func testVariableMethodReturnsCorrectVariableForKey() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialize(callback: nil)
+        client.setup(service: self.service)
         client.config?.userConfig = self.userConfig
 
         let boolVar = client.variable(key: "bool-var", defaultValue: false)
@@ -354,6 +355,7 @@ class DevCycleClientTest: XCTestCase {
     func testVariableMethodReturnSameInstanceOfVariable() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialize(callback: nil)
+        client.setup(service: self.service)
         client.config?.userConfig = self.userConfig
 
         let boolVar = client.variable(key: "bool-var", defaultValue: false)
@@ -374,6 +376,7 @@ class DevCycleClientTest: XCTestCase {
     func testVariableMethodReturnsDifferentVariableForANewDefaultValue() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: nil)
         client.initialize(callback: nil)
+        client.setup(service: self.service)
         client.config?.userConfig = self.userConfig
 
         var stringVar = client.variable(key: "string-var", defaultValue: "default value")
