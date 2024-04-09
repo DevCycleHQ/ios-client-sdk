@@ -17,10 +17,14 @@ class DevCycleServiceTests: XCTestCase {
     
     func testProxyConfigURL() throws {
         let options = DevCycleOptions.builder().apiProxyURL("localhost:4000").build()
-        let url = getService(options).createConfigRequest(user: getTestUser(), enableEdgeDB: false).url?.absoluteString
+        let service = getService(options)
+        let url = service.createConfigRequest(user: getTestUser(), enableEdgeDB: false).url?.absoluteString
+        let eventsUrl = service.createEventsRequest().url?.absoluteString
+        
         XCTAssert(url!.contains("localhost:4000/v1/mobileSDKConfig"))
         XCTAssert(url!.contains("sdkKey=my_sdk_key"))
         XCTAssert(url!.contains("user_id=my_user"))
+        XCTAssertFalse(eventsUrl!.contains("localhost:4000"))
     }
     
     func testCreateConfigURLRequestWithEdgeDB() throws {
@@ -38,9 +42,13 @@ class DevCycleServiceTests: XCTestCase {
     }
     
     func testProxyEventUrl() throws {
-        let options = DevCycleOptions.builder().apiProxyURL("localhost:4000").build()
-        let url = getService(options).createEventsRequest().url?.absoluteString
+        let options = DevCycleOptions.builder().eventsApiProxyURL("localhost:4000").build()
+        let service = getService(options)
+        let url = service.createEventsRequest().url?.absoluteString
+        let apiUrl = service.createConfigRequest(user: getTestUser(), enableEdgeDB: false).url?.absoluteString
+        
         XCTAssert(url!.contains("localhost:4000/v1/events"))
+        XCTAssertFalse(apiUrl!.contains("localhost:4000"))
         XCTAssertFalse(url!.contains("user_id=my_user"))
     }
     

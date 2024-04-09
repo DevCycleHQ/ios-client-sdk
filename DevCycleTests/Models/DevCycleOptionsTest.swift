@@ -24,6 +24,7 @@ class DevCycleOptionsTest: XCTestCase {
                 .disableCustomEventLogging(true)
                 .disableAutomaticEventLogging(true)
                 .apiProxyURL("localhost:4000")
+                .eventsApiProxyURL("localhost:4001")
                 .build()
         XCTAssertNotNil(options)
         XCTAssert(options.eventFlushIntervalMS == 1000)
@@ -35,6 +36,7 @@ class DevCycleOptionsTest: XCTestCase {
         XCTAssert(options.disableCustomEventLogging)
         XCTAssert(options.disableAutomaticEventLogging)
         XCTAssert(options.apiProxyURL == "localhost:4000")
+        XCTAssert(options.eventsApiProxyURL == "localhost:4001")
     }
     
     func testBuilderReturnsOptionsAndSomeAreNil() {
