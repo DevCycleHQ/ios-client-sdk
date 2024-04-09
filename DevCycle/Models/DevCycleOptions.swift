@@ -16,6 +16,7 @@ public class DevCycleOptions {
     var disableAutomaticEventLogging: Bool = false
     var disableCustomEventLogging: Bool = false
     var apiProxyURL: String?
+    var eventsApiProxyURL: String?
     
     public class OptionsBuilder {
         var options: DevCycleOptions
@@ -87,6 +88,12 @@ public class DevCycleOptions {
         // Allows the SDK to communicate with a proxy of DevCycle APIs.
         public func apiProxyURL(_ proxyURL: String) -> OptionsBuilder {
             self.options.apiProxyURL = proxyURL
+            return self
+        }
+        
+        // Allows the SDK to use a proxy to send to for the events API
+        public func eventsApiProxyURL(_ proxyURL: String) -> OptionsBuilder {
+            self.options.eventsApiProxyURL = proxyURL
             return self
         }
         

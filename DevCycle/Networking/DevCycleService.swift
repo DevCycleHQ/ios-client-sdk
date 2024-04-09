@@ -245,7 +245,7 @@ class DevCycleService: DevCycleServiceProtocol {
         
         switch(type) {
         case "event":
-            if let proxyUrl = self.options?.apiProxyURL {
+            if let proxyUrl = self.options?.eventsApiProxyURL {
                 url = proxyUrl
             } else {
                 url = NetworkingConstants.eventsUrl + NetworkingConstants.hostUrl
