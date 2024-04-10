@@ -72,10 +72,51 @@ class DevCycleServiceTests: XCTestCase {
     }
     
     func testProcessConfigReturnsNilIfBrokenJson() throws {
-        let service = getService()
         let data = "{\"config\":\"key}".data(using: .utf8)
         let config = processConfig(data)
         XCTAssertNil(config)
+    }
+    
+    func testFlushingEvents() {
+        let service = MockDevCycleService()
+        let eventQueue = EventQueue()
+        let user = try! DevCycleUser.builder().userId("user1").build()
+        let expectation = XCTestExpectation(description: "Events are flushed in a single batch")
+        
+        // Generate 205 custom events and add them to the queue
+        for i in 0..<10 {
+            let event = try! DevCycleEvent.builder().type("event_\(i)").build()
+            eventQueue.queue(event)
+        }
+        eventQueue.flush(service: service, user: user, callback: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            XCTAssertEqual(eventQueue.events.count, 0)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertTrue(service.publishEventsCalled)
+        XCTAssertEqual(service.makeRequestCallCount, 1, "makeRequest should have been called 1 time")
+    }
+    
+    func testFlushingEventsInBatches() {
+        let service = MockDevCycleService()
+        let eventQueue = EventQueue()
+        let user = try! DevCycleUser.builder().userId("user1").build()
+        let expectation = XCTestExpectation(description: "Events are serially queued and flushed in multiple batches")
+        
+        // Generate 205 custom events and add them to the queue
+        for i in 0..<205 {
+            let event = try! DevCycleEvent.builder().type("event_\(i)").build()
+            eventQueue.queue(event)
+        }
+        eventQueue.flush(service: service, user: user, callback: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            XCTAssertEqual(eventQueue.events.count, 0)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 3.0)
+        XCTAssertTrue(service.publishEventsCalled)
+        XCTAssertEqual(service.makeRequestCallCount, 3, "makeRequest should have been called 3 times")
     }
 }
 
@@ -111,6 +152,117 @@ extension DevCycleServiceTests {
         }
     }
 
+    class MockDevCycleService: DevCycleServiceProtocol {
+        func getConfig(user: DevCycle.DevCycleUser, enableEdgeDB: Bool, extraParams: DevCycle.RequestParams?, completion: @escaping DevCycle.ConfigCompletionHandler) {
+            // Empty Stub
+        }
+        
+        func saveEntity(user: DevCycle.DevCycleUser, completion: @escaping DevCycle.SaveEntityCompletionHandler) {
+            // Empty Stub
+        }
+        
+        var publishEventsCalled = false
+        var makeRequestCallCount = 0
+        let testMaxBatchSize = 100
+        var sdkKey = "my_sdk_key"
+        
+        func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+            publishEventsCalled = true
+
+            let userEncoder = JSONEncoder()
+            userEncoder.dateEncodingStrategy = .iso8601
+            guard let userId = user.userId, let userData = try? userEncoder.encode(user) else {
+                return completion((nil, nil, ClientError.MissingUser))
+            }
+            
+            let eventPayload = self.generateEventPayload(events, userId, nil)
+            guard let userBody = try? JSONSerialization.jsonObject(with: userData, options: .fragmentsAllowed) else {
+                return completion((nil, nil, ClientError.InvalidUser))
+            }
+
+            self.batchEventsPayload(events: eventPayload, user: userBody, completion: completion)
+        }
+        
+        func makeRequest(request: URLRequest, completion: @escaping CompletionHandler) {
+            self.makeRequestCallCount += 1
+            
+            // Mock implementation for makeRequest
+            let mockData = "Successfully flushed \(self.testMaxBatchSize) events".data(using: .utf8)
+            let mockResponse = HTTPURLResponse(url: URL(string: "https://example.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
+            completion((mockData, mockResponse, nil))
+        }
+        
+        private func generateEventPayload(_ events: [DevCycleEvent], _ userId: String, _ featureVariables: [String:String]?) -> [[String:Any]] {
+            var eventsJSON: [[String:Any]] = []
+            let formatter = ISO8601DateFormatter()
+            
+            for event in events {
+                if event.type == nil {
+                    continue
+                }
+                let eventDate: Date = event.clientDate ?? Date()
+                var eventToPost: [String: Any] = [
+                    "type": event.type!,
+                    "clientDate": formatter.string(from: eventDate),
+                    "user_id": userId,
+                    "featureVars": featureVariables ?? [:]
+                ]
+
+                if (event.target != nil) { eventToPost["target"] = event.target }
+                if (event.value != nil) { eventToPost["value"] = event.value }
+                if (event.metaData != nil) { eventToPost["metaData"] = event.metaData }
+                if (event.type != "variableDefaulted" && event.type != "variableEvaluated") {
+                    eventToPost["customType"] = event.type
+                    eventToPost["type"] = "customEvent"
+                }
+                
+                eventsJSON.append(eventToPost)
+            }
+
+            return eventsJSON
+        }
+
+        private func batchEventsPayload(events: [[String:Any]], user: Any, completion: @escaping PublishEventsCompletionHandler) {
+                let url = URL(string: "http://test.com/v1/events")!
+                var eventsRequest = URLRequest(url: url)
+                eventsRequest.httpMethod = "POST"
+                eventsRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+                eventsRequest.addValue("application/json", forHTTPHeaderField: "Accept")
+                eventsRequest.addValue(self.sdkKey, forHTTPHeaderField: "Authorization")
+                
+                let totalEventsCount = events.count
+                var startIndex = 0
+                var endIndex = min(self.testMaxBatchSize, totalEventsCount)
+                
+                while startIndex < totalEventsCount {
+                    let batchEvents = Array(events[startIndex..<endIndex])
+                    
+                    let requestBody: [String: Any] = [
+                        "events": batchEvents,
+                        "user": user
+                    ]
+
+                    let jsonBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
+                    Log.debug("Post Events Payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
+                    eventsRequest.httpBody = jsonBody
+                    
+                    self.makeRequest(request: eventsRequest) { data, response, error in
+                        if error != nil || data == nil {
+                            return completion((data, response, error))
+                        }
+                        // Continue with next batch
+                        startIndex = endIndex
+                        endIndex = min(endIndex + self.testMaxBatchSize, totalEventsCount)
+
+                        if startIndex >= totalEventsCount {
+                            return completion((data, response, nil))
+                        }
+                    }
+                }
+            }
+    }
+
+
     func getService(_ options: DevCycleOptions? = nil) -> DevCycleService {
         let user = getTestUser()
         let config = DVCConfig(sdkKey: "my_sdk_key", user: user)
@@ -122,7 +274,6 @@ extension DevCycleServiceTests {
             .userId("my_user")
             .build()
     }
-    
 }
 
 
