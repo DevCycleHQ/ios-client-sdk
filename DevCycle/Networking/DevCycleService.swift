@@ -94,7 +94,6 @@ class DevCycleService: DevCycleServiceProtocol {
     }
     
     func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
-        var eventsRequest = createEventsRequest()
         let userEncoder = JSONEncoder()
         userEncoder.dateEncodingStrategy = .iso8601
         guard let userId = user.userId, let userData = try? userEncoder.encode(user) else {
@@ -105,41 +104,8 @@ class DevCycleService: DevCycleServiceProtocol {
         guard let userBody = try? JSONSerialization.jsonObject(with: userData, options: .fragmentsAllowed) else {
             return completion((nil, nil, ClientError.InvalidUser))
         }
-        
-        eventsRequest.httpMethod = "POST"
-        eventsRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        eventsRequest.addValue("application/json", forHTTPHeaderField: "Accept")
-        eventsRequest.addValue(config.sdkKey, forHTTPHeaderField: "Authorization")
-        
-        let totalEventsCount = eventPayload.count
-        var startIndex = 0
-        var endIndex = min(self.maxBatchSize, totalEventsCount)
-        
-        while startIndex < totalEventsCount {
-            let batchEvents = Array(eventPayload[startIndex..<endIndex])
-            
-            let requestBody: [String: Any] = [
-                "events": batchEvents,
-                "user": userBody
-            ]
 
-            let jsonBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
-            Log.debug("Post Events Payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
-            eventsRequest.httpBody = jsonBody
-            
-            self.makeRequest(request: eventsRequest) { data, response, error in
-                if error != nil || data == nil {
-                    return completion((data, response, error))
-                }
-                // Continue with next batch
-                startIndex = endIndex
-                endIndex = min(endIndex + self.maxBatchSize, totalEventsCount)
-
-                if startIndex >= totalEventsCount {
-                    return completion((data, response, nil))
-                }
-            }
-        }
+        self.batchEventsPayload(events: eventPayload, user: userBody, completion: completion)
     }
     
     func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {
@@ -325,5 +291,43 @@ class DevCycleService: DevCycleServiceProtocol {
         }
 
         return eventsJSON
+    }
+
+    private func batchEventsPayload(events: [[String:Any]], user: Any, completion: @escaping PublishEventsCompletionHandler) {
+        var eventsRequest = createEventsRequest()
+        eventsRequest.httpMethod = "POST"
+        eventsRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        eventsRequest.addValue("application/json", forHTTPHeaderField: "Accept")
+        eventsRequest.addValue(self.config.sdkKey, forHTTPHeaderField: "Authorization")
+        
+        let totalEventsCount = events.count
+        var startIndex = 0
+        var endIndex = min(self.maxBatchSize, totalEventsCount)
+        
+        while startIndex < totalEventsCount {
+            let batchEvents = Array(events[startIndex..<endIndex])
+            
+            let requestBody: [String: Any] = [
+                "events": batchEvents,
+                "user": user
+            ]
+
+            let jsonBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
+            Log.debug("Post Events Payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
+            eventsRequest.httpBody = jsonBody
+            
+            self.makeRequest(request: eventsRequest) { data, response, error in
+                if error != nil || data == nil {
+                    return completion((data, response, error))
+                }
+                // Continue with next batch
+                startIndex = endIndex
+                endIndex = min(endIndex + self.maxBatchSize, totalEventsCount)
+
+                if startIndex >= totalEventsCount {
+                    return completion((data, response, nil))
+                }
+            }
+        }
     }
 }

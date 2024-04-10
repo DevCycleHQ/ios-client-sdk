@@ -94,6 +94,7 @@ class DevCycleServiceTests: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1.0)
+        XCTAssertTrue(service.publishEventsCalled)
         XCTAssertEqual(service.makeRequestCallCount, 1, "makeRequest should have been called 1 time")
     }
     
@@ -114,6 +115,7 @@ class DevCycleServiceTests: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 3.0)
+        XCTAssertTrue(service.publishEventsCalled)
         XCTAssertEqual(service.makeRequestCallCount, 3, "makeRequest should have been called 3 times")
     }
 }
@@ -162,12 +164,11 @@ extension DevCycleServiceTests {
         var publishEventsCalled = false
         var makeRequestCallCount = 0
         let testMaxBatchSize = 100
+        var sdkKey = "my_sdk_key"
         
         func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
             publishEventsCalled = true
-            
-            let url = URL(string: "http://test.com/v1/events")!
-            var eventsRequest = URLRequest(url: url)
+
             let userEncoder = JSONEncoder()
             userEncoder.dateEncodingStrategy = .iso8601
             guard let userId = user.userId, let userData = try? userEncoder.encode(user) else {
@@ -179,38 +180,14 @@ extension DevCycleServiceTests {
                 return completion((nil, nil, ClientError.InvalidUser))
             }
 
-            let totalEventsCount = eventPayload.count
-            var startIndex = 0
-            var endIndex = min(self.testMaxBatchSize, totalEventsCount)
-            
-            while startIndex < totalEventsCount {
-                let batchEvents = Array(eventPayload[startIndex..<endIndex])
-                
-                let requestBody: [String: Any] = [
-                    "events": batchEvents,
-                    "user": userBody
-                ]
-
-                let jsonBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
-                eventsRequest.httpBody = jsonBody
-                
-                self.makeRequest(request: eventsRequest) { data, response, error in
-                    // Continue with next batch
-                    startIndex = endIndex
-                    endIndex = min(endIndex + self.testMaxBatchSize, totalEventsCount)
-                    
-                    if startIndex >= totalEventsCount {
-                        return completion((data, response, nil))
-                    }
-                }
-            }
+            self.batchEventsPayload(events: eventPayload, user: userBody, completion: completion)
         }
         
         func makeRequest(request: URLRequest, completion: @escaping CompletionHandler) {
             self.makeRequestCallCount += 1
             
             // Mock implementation for makeRequest
-            let mockData = "Successfully flushed 100 events".data(using: .utf8)
+            let mockData = "Successfully flushed \(self.testMaxBatchSize) events".data(using: .utf8)
             let mockResponse = HTTPURLResponse(url: URL(string: "https://example.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
             completion((mockData, mockResponse, nil))
         }
@@ -244,6 +221,45 @@ extension DevCycleServiceTests {
 
             return eventsJSON
         }
+
+        private func batchEventsPayload(events: [[String:Any]], user: Any, completion: @escaping PublishEventsCompletionHandler) {
+                let url = URL(string: "http://test.com/v1/events")!
+                var eventsRequest = URLRequest(url: url)
+                eventsRequest.httpMethod = "POST"
+                eventsRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+                eventsRequest.addValue("application/json", forHTTPHeaderField: "Accept")
+                eventsRequest.addValue(self.sdkKey, forHTTPHeaderField: "Authorization")
+                
+                let totalEventsCount = events.count
+                var startIndex = 0
+                var endIndex = min(self.testMaxBatchSize, totalEventsCount)
+                
+                while startIndex < totalEventsCount {
+                    let batchEvents = Array(events[startIndex..<endIndex])
+                    
+                    let requestBody: [String: Any] = [
+                        "events": batchEvents,
+                        "user": user
+                    ]
+
+                    let jsonBody = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
+                    Log.debug("Post Events Payload: \(String(data: jsonBody!, encoding: .utf8) ?? "")")
+                    eventsRequest.httpBody = jsonBody
+                    
+                    self.makeRequest(request: eventsRequest) { data, response, error in
+                        if error != nil || data == nil {
+                            return completion((data, response, error))
+                        }
+                        // Continue with next batch
+                        startIndex = endIndex
+                        endIndex = min(endIndex + self.testMaxBatchSize, totalEventsCount)
+
+                        if startIndex >= totalEventsCount {
+                            return completion((data, response, nil))
+                        }
+                    }
+                }
+            }
     }
 
 
