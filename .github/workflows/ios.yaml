@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-13-large
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
@@ -21,4 +21,3 @@ jobs:
           use-xcframeworks: true
       - name: Fastlane iOS Tests
         run: fastlane ios tests
-
