@@ -82,7 +82,6 @@ private class MockService: DevCycleServiceProtocol {
     func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
     
     func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             completion((nil, nil, nil))
         }
