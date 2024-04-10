@@ -94,7 +94,6 @@ class DevCycleService: DevCycleServiceProtocol {
     }
     
     func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
-        print("in real publishEvents")
         var eventsRequest = createEventsRequest()
         let userEncoder = JSONEncoder()
         userEncoder.dateEncodingStrategy = .iso8601

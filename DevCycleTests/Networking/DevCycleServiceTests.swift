@@ -89,7 +89,7 @@ class DevCycleServiceTests: XCTestCase {
             eventQueue.queue(event)
         }
         eventQueue.flush(service: service, user: user, callback: nil)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             XCTAssertEqual(eventQueue.events.count, 0)
             expectation.fulfill()
         }
@@ -109,7 +109,7 @@ class DevCycleServiceTests: XCTestCase {
             eventQueue.queue(event)
         }
         eventQueue.flush(service: service, user: user, callback: nil)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             XCTAssertEqual(eventQueue.events.count, 0)
             expectation.fulfill()
         }
@@ -164,7 +164,6 @@ extension DevCycleServiceTests {
         let testMaxBatchSize = 100
         
         func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
-            print("in mocked DevCycleServiceTests publishEvents")
             publishEventsCalled = true
             
             let url = URL(string: "http://test.com/v1/events")!
