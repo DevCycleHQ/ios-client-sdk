@@ -7,6 +7,6 @@ updates:
   - package-ecosystem: swift
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     reviewers:
       - "devcyclehq/engineering"
