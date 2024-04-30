@@ -31,7 +31,7 @@ struct PlatformDetails {
     #endif
     
     var sdkType = "mobile"
-    var sdkVersion = "1.17.0"
+    var sdkVersion = "1.17.1"
 }
 
 #if os(macOS)
