@@ -24,7 +24,7 @@ jobs:
       - name: Fastlane macOS Tests
         run: fastlane mac tests
         env:
-          FASTLANE_GIT_BEARER_AUTHORIZATION: "${{ env.FASTLANE_GIT_BASIC_AUTHORIZATION }}"
+          FASTLANE_GIT_BEARER_AUTHORIZATION: "${{ env.FASTLANE_GIT_BEARER_AUTHORIZATION }}"
           DEVELOPER_APP_ID: "${{ secrets.DEVELOPER_APP_ID }}"
           MATCH_PASSWORD: "${{ secrets.MATCH_PASSWORD }}"
           TEMP_KEYCHAIN_PASSWORD: "${{ secrets.TEMP_KEYCHAIN_PASSWORD }}"
