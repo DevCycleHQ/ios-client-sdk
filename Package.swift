@@ -27,7 +27,10 @@ let package = Package(
             dependencies: [
                 .product(name: "LDSwiftEventSource", package: "LDSwiftEventSource")
             ],
-            path: "DevCycle"
+            path: "DevCycle",
+            resources: [
+                .process("PrivacyInfo.xcprivacy")
+            ]
         ),
         .testTarget(
             name: "DevCycleTests",

@@ -36,6 +36,7 @@
 		5268DB6B275020F800D17A40 /* DevCycleClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5268DB6A275020F800D17A40 /* DevCycleClientTests.swift */; };
 		5276C9F0275E682B00B9A324 /* DevCycleOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9EF275E682B00B9A324 /* DevCycleOptions.swift */; };
 		5276C9F2275E6E0D00B9A324 /* DevCycleOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5276C9F1275E6E0D00B9A324 /* DevCycleOptionsTest.swift */; };
+		5282C90A2BF50F1D00AF9D0D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5282C9092BF50F1D00AF9D0D /* PrivacyInfo.xcprivacy */; };
 		529CE32328DCBEC2009AB137 /* RequestConsolidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529CE32228DCBEC2009AB137 /* RequestConsolidator.swift */; };
 		529F0C90277374150075AAB4 /* ObjcDVCVariableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 529F0C8F277374150075AAB4 /* ObjcDVCVariableTests.m */; };
 		529F0CA52774D6BE0075AAB4 /* URLSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529F0CA42774D6BE0075AAB4 /* URLSessionMock.swift */; };
@@ -111,6 +112,7 @@
 		5268DB6A275020F800D17A40 /* DevCycleClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleClientTests.swift; sourceTree = "<group>"; };
 		5276C9EF275E682B00B9A324 /* DevCycleOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleOptions.swift; sourceTree = "<group>"; };
 		5276C9F1275E6E0D00B9A324 /* DevCycleOptionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleOptionsTest.swift; sourceTree = "<group>"; };
+		5282C9092BF50F1D00AF9D0D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		529CE32228DCBEC2009AB137 /* RequestConsolidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestConsolidator.swift; sourceTree = "<group>"; };
 		529F0C8F277374150075AAB4 /* ObjcDVCVariableTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjcDVCVariableTests.m; sourceTree = "<group>"; };
 		529F0CA42774D6BE0075AAB4 /* URLSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionMock.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				524F4E5F276BDDBD00CB9069 /* DVCVariable.swift */,
 				5268DB4F27501CFC00D17A40 /* DevCycle.h */,
 				E673EFC6290093C400C2C4BE /* SSEConnection.swift */,
+				5282C9092BF50F1D00AF9D0D /* PrivacyInfo.xcprivacy */,
 			);
 			path = DevCycle;
 			sourceTree = "<group>";
@@ -364,6 +367,9 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				KnownAssetTags = (
+					New,
+				);
 				LastSwiftUpdateCheck = 1310;
 				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = Taplytics;
@@ -401,6 +407,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5282C90A2BF50F1D00AF9D0D /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
