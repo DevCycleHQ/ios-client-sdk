@@ -11,7 +11,7 @@ jobs:
       - name: Checkout Project
         uses: actions/checkout@v4
       - name: Setup Fastlane Auth
-        run: echo "FASTLANE_GIT_BASIC_AUTHORIZATION=$(echo -n taplytics-robot:${{ secrets.AUTOMATION_USER_TOKEN }} | base64 -w 0)" >> "$GITHUB_ENV"
+        run: echo "FASTLANE_GIT_BASIC_AUTHORIZATION=$(echo -n taplytics-robot:${{ secrets.AUTOMATION_USER_TOKEN }} | base64)" >> "$GITHUB_ENV"
       - name: "Select Latest Xcode"
         uses: maxim-lobanov/setup-xcode@v1
         with:
