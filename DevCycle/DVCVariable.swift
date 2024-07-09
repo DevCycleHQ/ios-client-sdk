@@ -32,6 +32,8 @@ func DVCVariableTypeFrom(classString: String) throws -> DVCVariableTypes {
         return .Number
     } else if classString.contains("Dictionary") {
         return .JSON
+    } else if classString.contains("Array") {
+        return .JSON
     } else {
         throw DVCVariableTypeError.invalidType("Unkown DVCVariableType from class: \(classString)")
     }
