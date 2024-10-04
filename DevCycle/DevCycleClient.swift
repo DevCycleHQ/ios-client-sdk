@@ -96,6 +96,10 @@ public class DevCycleClient {
                                                    selector: #selector(appMovedToForeground),
                                                    name: UIApplication.willEnterForegroundNotification,
                                                    object: nil)
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(appMovedToForeground),
+                                                   name: UIApplication.didBecomeActiveNotification,
+                                                   object: nil)
         #elseif os(watchOS)
             NotificationCenter.default.addObserver(self,
                                                    selector: #selector(appMovedToBackground),
