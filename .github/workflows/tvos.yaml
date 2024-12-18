@@ -2,11 +2,11 @@ name: Build and Test tvOS
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-    runs-on: macos-13-large
+    runs-on: macos-latest
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
