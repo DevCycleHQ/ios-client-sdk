@@ -18,6 +18,11 @@ jobs:
         run: which carthage
       - name: Add homebrew to PATH
         run: echo "/opt/homebrew/bin:${PATH}" >> $GITHUB_PATH
+      - name: Debug PATH and Carthage
+        run: |
+          echo "Current PATH: $PATH"
+          ls -l /opt/homebrew/bin/carthage
+          which carthage
       - name: "Carthage Cached Bootstrap"
         uses: DevCycleHQ/carthage-bootstrap@v1.1.0
         with:
