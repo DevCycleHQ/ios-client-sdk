@@ -4,24 +4,24 @@ on:
   workflow_dispatch:
     inputs:
       prerelease:
-        description: 'Prerelease'
+        description: "Prerelease"
         required: true
         default: false
         type: boolean
       draft:
-        description: 'Draft'
+        description: "Draft"
         required: true
         default: false
         type: boolean
       version-increment-type:
-        description: 'Which part of the version to increment:'
+        description: "Which part of the version to increment:"
         required: true
         type: choice
         options:
           - major
           - minor
           - patch
-        default: 'patch'
+        default: "patch"
 
 permissions:
   contents: write
@@ -68,7 +68,7 @@ jobs:
       - uses: DevCycleHQ/release-action/create-release@v2.3.0
         id: create-release
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.AUTOMATION_USER_TOKEN }}
           tag: ${{ steps.prepare-release.outputs.next-release-tag }}
           target: main
           prerelease: ${{ github.event.inputs.prerelease }}
@@ -79,4 +79,3 @@ jobs:
         run: |
           echo "::notice title=Release ID::${{ steps.create-release.outputs.release-id }}"
           echo "::notice title=Release URL::${{ steps.create-release.outputs.release-url }}"
-

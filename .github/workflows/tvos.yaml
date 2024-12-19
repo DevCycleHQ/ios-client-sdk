@@ -17,7 +17,7 @@ jobs:
       - name: "Carthage Cached Bootstrap"
         uses: DevCycleHQ/carthage-bootstrap@xcframeworks2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.AUTOMATION_USER_TOKEN }}
           use-xcframeworks: true
       - name: Fastlane tvOS Tests
         run: fastlane tvos tests
