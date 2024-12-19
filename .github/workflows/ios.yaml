@@ -16,6 +16,8 @@ jobs:
           xcode-version: latest-stable
       - name: Verify Carthage Installation
         run: which carthage
+      - name: Add homebrew to PATH
+        run: echo "/opt/homebrew/bin" >> $GITHUB_PATH
       - name: "Carthage Cached Bootstrap"
         uses: DevCycleHQ/carthage-bootstrap@v1.1.0
         with:
