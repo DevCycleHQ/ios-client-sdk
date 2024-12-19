@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0B721685290B21CD004D0AB7 /* SSEMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B721684290B21CD004D0AB7 /* SSEMessage.swift */; };
 		0F2DD75A279EFA6B00540C9D /* CustomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2DD759279EFA6B00540C9D /* CustomData.swift */; };
+		0FD643D52A8680E4004BB036 /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FD643D42A8680E4004BB036 /* EventEmitter.swift */; };
 		52133B2028DDFB260007691D /* RequestConsolidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */; };
 		52133B2228DE00BC0007691D /* ProcessConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2128DE00BC0007691D /* ProcessConfig.swift */; };
 		52133B2428DE0FEB0007691D /* GetTestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2328DE0FEB0007691D /* GetTestConfig.swift */; };
@@ -83,6 +84,7 @@
 /* Begin PBXFileReference section */
 		0B721684290B21CD004D0AB7 /* SSEMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEMessage.swift; sourceTree = "<group>"; };
 		0F2DD759279EFA6B00540C9D /* CustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomData.swift; sourceTree = "<group>"; };
+		0FD643D42A8680E4004BB036 /* EventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
 		52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestConsolidatorTests.swift; sourceTree = "<group>"; };
 		52133B2128DE00BC0007691D /* ProcessConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessConfig.swift; sourceTree = "<group>"; };
 		52133B2328DE0FEB0007691D /* GetTestConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTestConfig.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 				529CE32228DCBEC2009AB137 /* RequestConsolidator.swift */,
 				52133B2128DE00BC0007691D /* ProcessConfig.swift */,
 				5226DF05290C588900630745 /* NotificationNames.swift */,
+				0FD643D42A8680E4004BB036 /* EventEmitter.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -451,6 +454,7 @@
 				5276C9F0275E682B00B9A324 /* DevCycleOptions.swift in Sources */,
 				524D58242770F78B00D7CC56 /* ObjCDVCVariable.swift in Sources */,
 				52133B2228DE00BC0007691D /* ProcessConfig.swift in Sources */,
+				0FD643D52A8680E4004BB036 /* EventEmitter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
