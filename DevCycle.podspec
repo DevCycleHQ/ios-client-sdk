@@ -21,6 +21,6 @@ Pod::Spec.new do |spec|
   spec.source_files  = "DevCycle/**/*.{h,m,swift}"
   spec.swift_version = '5.0'
 
-  spec.dependency 'LDSwiftEventSource', '~> 3.0'
+  spec.dependency 'LDSwiftEventSource', '~> 3.3'
 
 end
