@@ -320,17 +320,6 @@ public class DevCycleClient {
     }
 
     func getVariable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
-        let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
-        if (regex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) != nil) {
-            Log.error("The variable key \(key) is invalid. It must contain only lowercase letters, numbers, hyphens and underscores. The default value will always be returned for this call.")
-            return DVCVariable(
-                key: key,
-                value: nil,
-                defaultValue: defaultValue,
-                evalReason: nil
-            )
-        }
-
         return variableQueue.sync {
             var variable: DVCVariable<T>
             if (self.variableInstanceDictonary[key] == nil) {
