@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "DevCycle"
-  spec.version = "1.17.3"
+  spec.version = "1.17.4"
   spec.summary      = "The iOS SDK for Devcycle!"
 
   spec.description  = <<-DESC
