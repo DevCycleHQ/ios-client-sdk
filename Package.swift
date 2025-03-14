@@ -18,7 +18,7 @@ let package = Package(
        .package(
             name: "LDSwiftEventSource",
             url: "https://github.com/LaunchDarkly/swift-eventsource.git",
-            .upToNextMajor(from: "3.0.0")
+            .upToNextMajor(from: "3.3.0")
        )
    ],
     targets: [
