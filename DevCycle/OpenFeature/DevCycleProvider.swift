@@ -31,7 +31,7 @@ public final class DevCycleProvider: FeatureProvider {
     /**
         The DevCycle client instance
      */
-    private var client: DevCycleClient?
+    private(set) public var devcycleClient: DevCycleClient?
 
     /**
         The SDK key for DevCycle
@@ -94,7 +94,7 @@ public final class DevCycleProvider: FeatureProvider {
         try await withCheckedThrowingContinuation {
             (continuation: CheckedContinuation<Void, Error>) in
             do {
-                self.client = try DevCycleClient.builder()
+                self.devcycleClient = try DevCycleClient.builder()
                     .sdkKey(sdkKey)
                     .user(user)
                     .options(options ?? DevCycleOptions())
@@ -125,7 +125,7 @@ public final class DevCycleProvider: FeatureProvider {
         async throws
     {
         do {
-            guard let client = self.client else {
+            guard let client = self.devcycleClient else {
                 Log.warn(
                     "Context set before DevCycleProvider was fully initialized. "
                         + "The context will be ignored until initialization completes."
@@ -300,7 +300,7 @@ public final class DevCycleProvider: FeatureProvider {
         defaultValue: Bool,
         context: EvaluationContext?
     ) throws -> ProviderEvaluation<Bool> {
-        let variable = client?.variable(key: key, defaultValue: defaultValue)
+        let variable = devcycleClient?.variable(key: key, defaultValue: defaultValue)
 
         return ProviderEvaluation(
             value: variable?.value ?? defaultValue,
@@ -322,7 +322,7 @@ public final class DevCycleProvider: FeatureProvider {
         defaultValue: String,
         context: EvaluationContext?
     ) throws -> ProviderEvaluation<String> {
-        let variable = client?.variable(key: key, defaultValue: defaultValue)
+        let variable = devcycleClient?.variable(key: key, defaultValue: defaultValue)
 
         return ProviderEvaluation(
             value: variable?.value ?? defaultValue,
@@ -346,7 +346,7 @@ public final class DevCycleProvider: FeatureProvider {
     ) throws -> ProviderEvaluation<Int64> {
         // DevCycle doesn't have a dedicated integer type, so we need to use Double
         let doubleValue = Double(defaultValue)
-        let variable = client?.variable(key: key, defaultValue: doubleValue)
+        let variable = devcycleClient?.variable(key: key, defaultValue: doubleValue)
 
         return ProviderEvaluation(
             value: variable?.value != nil ? Int64(variable!.value) : defaultValue,
@@ -368,7 +368,7 @@ public final class DevCycleProvider: FeatureProvider {
         defaultValue: Double,
         context: EvaluationContext?
     ) throws -> ProviderEvaluation<Double> {
-        let variable = client?.variable(key: key, defaultValue: defaultValue)
+        let variable = devcycleClient?.variable(key: key, defaultValue: defaultValue)
 
         return ProviderEvaluation(
             value: variable?.value ?? defaultValue,
@@ -413,7 +413,7 @@ public final class DevCycleProvider: FeatureProvider {
             }
         }
 
-        let variable = client?.variable(key: key, defaultValue: dictionaryValue)
+        let variable = devcycleClient?.variable(key: key, defaultValue: dictionaryValue)
 
         return ProviderEvaluation(
             value: convertDictionaryToValue(variable?.value ?? [:]),
