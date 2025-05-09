@@ -4,28 +4,33 @@ import PackageDescription
 let package = Package(
     name: "DevCycle",
     platforms: [
-        .iOS(.v12),
-        .tvOS(.v12),
-        .macOS(.v10_13),
-        .watchOS(.v7)
+        .iOS(.v14),
+        .tvOS(.v14),
+        .macOS(.v11),
+        .watchOS(.v7),
     ],
     products: [
         .library(
             name: "DevCycle",
-            targets: ["DevCycle"]),
+            targets: ["DevCycle"])
     ],
     dependencies: [
-       .package(
+        .package(
             name: "LDSwiftEventSource",
             url: "https://github.com/LaunchDarkly/swift-eventsource.git",
             .upToNextMajor(from: "3.3.0")
-       )
-   ],
+        ),
+        .package(
+            url: "https://github.com/open-feature/swift-sdk.git",
+            .upToNextMajor(from: "0.3.0")
+        ),
+    ],
     targets: [
         .target(
             name: "DevCycle",
             dependencies: [
-                .product(name: "LDSwiftEventSource", package: "LDSwiftEventSource")
+                .product(name: "LDSwiftEventSource", package: "LDSwiftEventSource"),
+                .product(name: "OpenFeature", package: "swift-sdk"),
             ],
             path: "DevCycle",
             resources: [
@@ -35,7 +40,7 @@ let package = Package(
         .testTarget(
             name: "DevCycleTests",
             dependencies: [
-                "DevCycle",
+                "DevCycle"
             ],
             path: "DevCycleTests",
             exclude: ["ObjC"]
@@ -43,11 +48,10 @@ let package = Package(
         .testTarget(
             name: "DevCycleTests-ObjC",
             dependencies: [
-                "DevCycle",
+                "DevCycle"
             ],
             path: "DevCycleTests/ObjC"
         ),
     ],
     swiftLanguageVersions: [.v5]
 )
-
