@@ -128,6 +128,14 @@ platform :openfeature do
       # Remove the version constraint
       sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#            .upToNextMajor(from: \"1.0.0\")##g' Package.swift")
       
+      # Also remove the trailing comma if it exists
+      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#path: \"..\",$#path: \"..\"#g' Package.swift")
+      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#path: \"..\",#path: \"..\"#g' Package.swift")
+      
+      # Print the modified Package.swift for debugging
+      UI.message("Modified Package.swift content for debugging:")
+      sh("cd ../DevCycle-OpenFeature-Provider && cat Package.swift")
+      
       # Run the tests
       sh("cd ../DevCycle-OpenFeature-Provider && swift test")
     ensure
