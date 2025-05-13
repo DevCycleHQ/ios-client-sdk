@@ -301,10 +301,26 @@ public final class DevCycleProvider: FeatureProvider {
             )
         }
 
+        let dictionaryValue = convertValueToDictionary(defaultValue)
+        let variable = devcycleClient!.variable(key: key, defaultValue: dictionaryValue)
+
+        return ProviderEvaluation(
+            value: variable.isDefaulted ? defaultValue : convertDictionaryToValue(variable.value),
+            reason: variable.isDefaulted
+                ? Reason.defaultReason.rawValue : Reason.targetingMatch.rawValue
+        )
+    }
+
+    /**
+        Converts an OpenFeature Value to Dictionary
+        - Parameter value: The Value to convert
+        - Returns: The converted Dictionary
+     */
+    internal func convertValueToDictionary(_ value: Value) -> [String: Any] {
         var dictionaryValue: [String: Any] = [:]
 
         // Convert Value to Dictionary if possible
-        if case .structure(let attributes) = defaultValue {
+        if case .structure(let attributes) = value {
             for (key, value) in attributes {
                 switch value {
                 case .string(let stringValue):
@@ -316,7 +332,8 @@ public final class DevCycleProvider: FeatureProvider {
                 case let .integer(intValue):
                     dictionaryValue[key] = intValue
                 case .structure(let structValue):
-                    dictionaryValue[key] = structValue
+                    // Recursively convert nested structures
+                    dictionaryValue[key] = convertValueToDictionary(.structure(structValue))
                 default:
                     // Skip unsupported types
                     break
@@ -324,13 +341,7 @@ public final class DevCycleProvider: FeatureProvider {
             }
         }
 
-        let variable = devcycleClient!.variable(key: key, defaultValue: dictionaryValue)
-
-        return ProviderEvaluation(
-            value: variable.isDefaulted ? defaultValue : convertDictionaryToValue(variable.value),
-            reason: variable.isDefaulted
-                ? Reason.defaultReason.rawValue : Reason.targetingMatch.rawValue
-        )
+        return dictionaryValue
     }
 
     /**

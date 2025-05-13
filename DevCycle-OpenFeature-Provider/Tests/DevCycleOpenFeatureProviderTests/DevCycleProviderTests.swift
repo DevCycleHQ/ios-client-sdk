@@ -741,4 +741,103 @@ final class DevCycleProviderTests: XCTestCase {
         XCTAssertEqual(customData["specialChars"] as? String, "!@#$%^&*()_+{}:\"<>?|[];',./")
         XCTAssertEqual(customData["emoji"] as? String, "😀🚀💻🔥")
     }
+
+    // MARK: - Value to Dictionary Conversion Tests
+
+    func testConvertValueToDictionaryWithPrimitiveTypes() {
+        // Test the internal method directly with primitive types
+        let value = Value.structure([
+            "string": .string("hello world"),
+            "boolean": .boolean(true),
+            "integer": .integer(123),
+            "double": .double(45.67),
+        ])
+
+        let result = provider.convertValueToDictionary(value)
+
+        // Validate the result
+        XCTAssertEqual(result.count, 4, "Should have 4 entries")
+        XCTAssertEqual(result["string"] as? String, "hello world")
+        XCTAssertEqual(result["boolean"] as? Bool, true)
+        XCTAssertEqual(result["integer"] as? Int64, 123)
+        XCTAssertEqual(result["double"] as? Double, 45.67)
+    }
+
+    func testConvertValueToDictionaryWithNestedStructure() {
+        // Test the internal method with nested structures
+        let value = Value.structure([
+            "topLevel": .boolean(true),
+            "nestedDict": .structure([
+                "nestedString": .string("nested value"),
+                "nestedBool": .boolean(false),
+                "deeplyNested": .structure([
+                    "level3": .string("deeply nested value"),
+                    "number": .double(123.456),
+                ]),
+            ]),
+        ])
+
+        let result = provider.convertValueToDictionary(value)
+
+        // Validate the result
+        XCTAssertEqual(result.count, 2, "Should have 2 top-level entries")
+        XCTAssertEqual(result["topLevel"] as? Bool, true)
+
+        // Check first level nesting
+        if let nestedDict = result["nestedDict"] as? [String: Any] {
+            XCTAssertEqual(nestedDict.count, 3, "Nested dict should have 3 entries")
+            XCTAssertEqual(nestedDict["nestedString"] as? String, "nested value")
+            XCTAssertEqual(nestedDict["nestedBool"] as? Bool, false)
+
+            // Check second level nesting
+            if let deeplyNested = nestedDict["deeplyNested"] as? [String: Any] {
+                XCTAssertEqual(deeplyNested.count, 2, "Deeply nested dict should have 2 entries")
+                XCTAssertEqual(deeplyNested["level3"] as? String, "deeply nested value")
+                XCTAssertEqual(deeplyNested["number"] as? Double, 123.456)
+            } else {
+                XCTFail("Expected deeply nested dictionary")
+            }
+        } else {
+            XCTFail("Expected nested dictionary")
+        }
+    }
+
+    func testConvertValueToDictionaryWithUnsupportedTypes() {
+        // Test how the method handles unsupported Value types
+        let value = Value.structure([
+            "normalKey": .string("normal value"),
+            "unsupportedKey": .list([.string("item1"), .string("item2")]),
+        ])
+
+        let result = provider.convertValueToDictionary(value)
+
+        // Only the normal key should be present, unsupported type should be skipped
+        XCTAssertEqual(result.count, 1, "Should have 1 entry")
+        XCTAssertEqual(result["normalKey"] as? String, "normal value")
+        XCTAssertNil(result["unsupportedKey"], "Unsupported types should be skipped")
+    }
+
+    func testConvertValueToDictionaryWithEmptyStructure() {
+        // Test with empty structure
+        let value = Value.structure([:])
+
+        let result = provider.convertValueToDictionary(value)
+
+        // Verify result is empty
+        XCTAssertTrue(result.isEmpty, "Result should be empty")
+    }
+
+    func testConvertValueToDictionaryWithNonStructureValue() {
+        // Test with non-structure Value types
+        let stringValue = Value.string("just a string")
+        let boolValue = Value.boolean(true)
+        let doubleValue = Value.double(123.45)
+        let intValue = Value.integer(42)
+
+        // All should convert to empty dictionaries since they're not structures
+        XCTAssertTrue(provider.convertValueToDictionary(stringValue).isEmpty)
+        XCTAssertTrue(provider.convertValueToDictionary(boolValue).isEmpty)
+        XCTAssertTrue(provider.convertValueToDictionary(doubleValue).isEmpty)
+        XCTAssertTrue(provider.convertValueToDictionary(intValue).isEmpty)
+    }
 }

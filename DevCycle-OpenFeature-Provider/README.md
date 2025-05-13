@@ -76,7 +76,7 @@ See the [Examples README](./Examples/README.md) for more details.
 
 ### Local Setup
 
-During development, this package is configured to use the local DevCycle SDK:
+During development, this package can be configured to use the local DevCycle SDK:
 
 ```swift
 // In Package.swift
@@ -89,26 +89,4 @@ During development, this package is configured to use the local DevCycle SDK:
 This setup allows for easier development and testing:
 - Changes to the main DevCycle SDK are immediately reflected in the provider
 - You can test changes to both packages together without publishing
-
-### Publishing
-
-Before publishing this package:
-
-1. Update the Package.swift file to use the GitHub URL instead of the local path:
-   ```swift
-   .package(
-       name: "DevCycle",
-       url: "https://github.com/DevCycleHQ/ios-client-sdk.git",
-       .upToNextMajor(from: "1.0.0")
-   )
-   ```
-
-2. Update version numbers as needed
-3. Test with the published version of the DevCycle SDK
-
-## Requirements
-
-- iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+
-- Swift 5.3+
-- OpenFeature Swift SDK 0.3.0+
-- DevCycle SDK 1.0.0+ 
+- Make sure you revert this to not break publishing
