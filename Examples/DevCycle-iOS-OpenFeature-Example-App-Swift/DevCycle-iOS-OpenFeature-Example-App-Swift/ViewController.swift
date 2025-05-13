@@ -55,35 +55,28 @@ class ViewController: UIViewController {
         } else {
             Task {
                 let context = MutableContext(attributes: [
-                    "userId": Value.string("my-user1"),
-                    "email": Value.string("my-email@email.com"),
-                    "country": Value.string("CA"),
-                    "name": Value.string("Ash Ketchum"),
-                    "language": Value.string("EN"),
-                    "customData": Value.structure(["customkey": Value.string("customValue")]),
-                    "privateCustomData": Value.structure([
-                        "customkey2": Value.string("customValue2")
+                    "userId": .string("my-user1"),
+                    "email": .string("my-email@email.com"),
+                    "country": .string("CA"),
+                    "name": .string("Ash Ketchum"),
+                    "language": .string("EN"),
+                    "customData": .structure(["customkey": .string("customValue")]),
+                    "privateCustomData": .structure([
+                        "customkey2": .string("customValue2")
                     ]),
                 ])
                 await OpenFeatureAPI.shared.setEvaluationContextAndWait(evaluationContext: context)
 
                 DispatchQueue.main.async {
                     self.setLoginButtonTitle(true)
-                    print("Logged in as User: \(String(describing: context.asMap()["userId"]))!")
+                    print("Logged in as User: \(String(describing: context.asMap()["userId"]!))")
 
                     let variable = ofClient.getDoubleValue(key: "num_key", defaultValue: 0)
                     let variable2 = ofClient.getDoubleValue(
                         key: "num_key_defaulted", defaultValue: 0)
-                    if variable == 1 {
-                        print("Num_key is 1!")
-                    } else {
-                        print("Num_key is 0!")
-                    }
-                    if variable2 == 1 {
-                        print("Evaluated num_key_defaulted")
-                    } else {
-                        print("Defaulted num_key_defaulted")
-                    }
+
+                    print("Num_key is: \(variable)")
+                    print("Num_key_defaulted is: \(variable2)")
                 }
             }
         }
@@ -92,7 +85,7 @@ class ViewController: UIViewController {
     @IBAction func track(_ sender: Any) {
         let dvcProvider = OpenFeatureManager.shared.provider
         let client = dvcProvider?.devcycleClient
-        
+
         let event = try! DevCycleEvent.builder()
             .type("my_event")
             .target("my_target")

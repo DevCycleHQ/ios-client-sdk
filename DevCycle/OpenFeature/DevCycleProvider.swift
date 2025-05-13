@@ -52,6 +52,9 @@ public final class DevCycleProvider: FeatureProvider {
     public init(sdkKey: String, options: DevCycleOptions? = nil) {
         self.sdkKey = sdkKey
         self.options = options
+        if let logLevel = options?.logLevel {
+            Log.level = logLevel
+        }
     }
 
     /**
@@ -59,6 +62,7 @@ public final class DevCycleProvider: FeatureProvider {
         - Parameter initialContext: The initial evaluation context
      */
     public func initialize(initialContext: EvaluationContext?) async throws {
+        Log.debug("DevCycleProvider initialize: \(initialContext)")
         if initialContext == nil {
             Log.warn(
                 "DevCycleProvider initialized without context being set. "
@@ -125,6 +129,7 @@ public final class DevCycleProvider: FeatureProvider {
         async throws
     {
         do {
+            Log.debug("DevCycleProvider onContextSet: \(newContext)")
             guard let client = self.devcycleClient else {
                 Log.warn(
                     "Context set before DevCycleProvider was fully initialized. "
@@ -151,6 +156,7 @@ public final class DevCycleProvider: FeatureProvider {
                 }
             }
         } catch {
+            Log.error("DevCycleProvider onContextSet error: \(error)")
             throw OpenFeatureError.generalError(message: "Error setting context: \(error)")
         }
     }
@@ -161,16 +167,24 @@ public final class DevCycleProvider: FeatureProvider {
         - Returns: The DevCycle user
      */
     private func dvcUserFromContext(_ context: EvaluationContext) throws -> DevCycleUser {
-        // Get the user ID from targeting key or user_id
-        guard let userId = context.getTargetingKey() ?? context.asMap()["user_id"] as? String else {
+        // Extract attributes from context
+        let attributes = unwrapValues(context.asMap())
+
+        // Get first non-empty userId from context, attributes, or targetingKey
+        let userId = [
+            context.getTargetingKey(),
+            attributes["user_id"] as? String,
+            attributes["userId"] as? String,
+        ]
+        .compactMap { $0 }
+        .first { !$0.isEmpty }
+        guard let userId = userId else {
+            Log.error("Targeting key or user_id missing from EvaluationContext: \(attributes)")
             throw OpenFeatureError.targetingKeyMissingError
         }
 
         let userBuilder = DevCycleUser.builder()
             .userId(userId)
-
-        // Extract attributes from context
-        let attributes = context.asMap()
 
         // Create dictionaries to collect custom data
         var customData: [String: Any] = [:]
@@ -178,7 +192,7 @@ public final class DevCycleProvider: FeatureProvider {
 
         for (key, value) in attributes {
             // Skip targetingKey and user_id as they're handled separately
-            if key == "targetingKey" || key == "user_id" {
+            if key == "targetingKey" || key == "user_id" || key == "userId" {
                 continue
             }
 
@@ -209,16 +223,12 @@ public final class DevCycleProvider: FeatureProvider {
                 for (dataKey, dataValue) in newData {
                     customData[dataKey] = dataValue
                 }
+            } else if isFlatJsonValue(value) {
+                customData[key] = value
             } else {
-                // Add any other property to customData if it can be converted
-                if let validValue = convertToValidCustomDataValue(value) {
-                    customData[key] = validValue
-                } else {
-                    Log.warn(
-                        "Unknown EvaluationContext property \"\(key)\" type. "
-                            + "DevCycleUser only supports flat customData properties of type string / number / boolean / null"
-                    )
-                }
+                Log.warn(
+                    "Unknown EvaluationContext property \"\(key)\" type. DevCycleUser only supports flat customData properties of type string / number / boolean / null"
+                )
             }
         }
 
@@ -232,7 +242,33 @@ public final class DevCycleProvider: FeatureProvider {
             _ = userBuilder.privateCustomData(privateCustomData)
         }
 
-        return try userBuilder.build()
+        let user = try userBuilder.build()
+        if let data = try? JSONEncoder().encode(user),
+            let jsonString = String(data: data, encoding: .utf8)
+        {
+            Log.info("DevCycle user: \(jsonString)")
+        }
+        return user
+    }
+
+    private func unwrapValues(_ map: [String: Value]) -> [String: Any] {
+        var result: [String: Any] = [:]
+        for (key, value) in map {
+            switch value {
+            case .string(let str): result[key] = str
+            case .boolean(let bool): result[key] = bool
+            case .double(let dbl): result[key] = dbl
+            case .integer(let int): result[key] = int
+            case .structure(let dict): result[key] = unwrapValues(dict)
+            default: break
+            }
+        }
+        return result
+    }
+
+    private func isFlatJsonValue(_ value: Any) -> Bool {
+        value is String || value is Int || value is Double || value is Bool || value is NSNull
+            || value is NSNumber
     }
 
     /**
@@ -242,49 +278,17 @@ public final class DevCycleProvider: FeatureProvider {
      */
     private func convertToDVCCustomData(_ data: [String: Any]) -> [String: Any] {
         var customData: [String: Any] = [:]
-
         for (key, value) in data {
-            if let validValue = convertToValidCustomDataValue(value) {
-                switch validValue {
-                case .string(let stringValue):
-                    customData[key] = stringValue
-                case .number(let numberValue):
-                    customData[key] = numberValue
-                case .boolean(let boolValue):
-                    customData[key] = boolValue
-                }
+            if isFlatJsonValue(value) {
+                customData[key] = value
             } else {
                 Log.warn(
                     "Custom data property \"\(key)\" has unsupported type \(type(of: value)). "
-                        + "DevCycleUser only supports flat customData properties of type "
-                        + "string / number / boolean / null"
+                        + "DevCycleUser only supports flat customData properties of type string / number / boolean / null"
                 )
             }
         }
-
         return customData
-    }
-
-    /**
-        Creates a CustomDataValue from any value if possible
-        - Parameter value: The value to convert
-        - Returns: A valid CustomDataValue or nil if not convertible
-     */
-    private func convertToValidCustomDataValue(_ value: Any) -> CustomDataValue? {
-        // Try to convert to valid CustomDataValue types
-        if let stringValue = value as? String {
-            return CustomDataValue.string(stringValue)
-        } else if let boolValue = value as? Bool {
-            return CustomDataValue.boolean(boolValue)
-        } else if let numberValue = value as? NSNumber {
-            if CFGetTypeID(numberValue) == CFBooleanGetTypeID() {
-                return CustomDataValue.boolean(numberValue.boolValue)
-            } else {
-                return CustomDataValue.number(numberValue.doubleValue)
-            }
-        }
-
-        return nil
     }
 
     /**
