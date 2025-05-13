@@ -383,7 +383,8 @@ public final class DevCycleProvider: FeatureProvider {
         .compactMap { $0 }
         .first { !$0.isEmpty }
         guard let userId = userId else {
-            Log.error("Targeting key or user_id missing from EvaluationContext: \(attributes)")
+            Log.error(
+                "Targeting key or user_id missing from EvaluationContext: \(attributes)")
             throw OpenFeatureError.targetingKeyMissingError
         }
 

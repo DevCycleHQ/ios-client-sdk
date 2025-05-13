@@ -8,7 +8,7 @@ import Foundation
 public class DevCycleOptions {
     private(set) public var eventFlushIntervalMS: Int?
     private(set) public var disableEventLogging: Bool?
-    private(set) public var logLevel: LogLevel = .error
+    public var logLevel: LogLevel = .error
     private(set) public var enableEdgeDB: Bool = false
     private(set) public var disableConfigCache: Bool = false
     private(set) public var configCacheTTL: Int = 604_800_000
