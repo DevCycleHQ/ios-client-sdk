@@ -28,11 +28,7 @@ jobs:
           github-token: ${{ secrets.AUTOMATION_USER_TOKEN }}
           use-xcframeworks: true
 
-      - name: Install Ruby Dependencies
-        run: |
-          bundle install
-
       # The fastlane task will handle temporarily modifying the Package.swift
       # to use the local path reference, and then restoring it afterward
       - name: Fastlane OpenFeature Tests
-        run: bundle exec fastlane openfeature tests
+        run: fastlane openfeature tests

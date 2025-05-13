@@ -132,10 +132,6 @@ platform :openfeature do
       sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#path: \"..\",$#path: \"..\"#g' Package.swift")
       sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#path: \"..\",#path: \"..\"#g' Package.swift")
       
-      # Print the modified Package.swift for debugging
-      UI.message("Modified Package.swift content for debugging:")
-      sh("cd ../DevCycle-OpenFeature-Provider && cat Package.swift")
-      
       # Run the tests
       sh("cd ../DevCycle-OpenFeature-Provider && swift test")
     ensure
