@@ -392,8 +392,6 @@
 				Base,
 			);
 			mainGroup = 5268DB2427501C8600D17A40;
-			packageReferences = (
-			);
 			productRefGroup = 5268DB2F27501C8600D17A40 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -409,7 +407,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0F7789512DD390DF009E8E7E /* README.md in Resources */,
 				5282C90A2BF50F1D00AF9D0D /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

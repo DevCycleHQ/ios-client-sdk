@@ -4,9 +4,9 @@ import PackageDescription
 let package = Package(
     name: "DevCycle",
     platforms: [
-        .iOS(.v14),
-        .tvOS(.v14),
-        .macOS(.v11),
+        .iOS(.v12),
+        .tvOS(.v12),
+        .macOS(.v10_13),
         .watchOS(.v7),
     ],
     products: [
