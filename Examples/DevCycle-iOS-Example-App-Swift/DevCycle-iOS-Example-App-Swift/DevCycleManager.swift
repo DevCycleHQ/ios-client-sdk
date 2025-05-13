@@ -8,7 +8,7 @@ import DevCycle
 import Foundation
 
 struct DevCycleKeys {
-    static var DEVELOPMENT = "YOUR_DEVCYCLE_MOBILE_KEY_HERE"
+    static var DEVELOPMENT = "<YOUR_DEVCYCLE_MOBILE_KEY_HERE>"
 }
 
 class DevCycleManager {
@@ -18,7 +18,7 @@ class DevCycleManager {
 
     func initialize(user: DevCycleUser) {
         let options = DevCycleOptions.builder()
-            //                                .logLevel(.debug)
+            // .logLevel(.debug)
             .build()
 
         guard

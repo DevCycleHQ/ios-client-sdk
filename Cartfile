@@ -1,2 +1,1 @@
 github "LaunchDarkly/swift-eventsource" ~> 3.0
-github "open-feature/swift-sdk" ~> 0.3.0

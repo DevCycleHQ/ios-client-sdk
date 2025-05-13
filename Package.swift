@@ -19,18 +19,13 @@ let package = Package(
             name: "LDSwiftEventSource",
             url: "https://github.com/LaunchDarkly/swift-eventsource.git",
             .upToNextMajor(from: "3.3.0")
-        ),
-        .package(
-            url: "https://github.com/open-feature/swift-sdk.git",
-            .upToNextMajor(from: "0.3.0")
-        ),
+        )
     ],
     targets: [
         .target(
             name: "DevCycle",
             dependencies: [
-                .product(name: "LDSwiftEventSource", package: "LDSwiftEventSource"),
-                .product(name: "OpenFeature", package: "swift-sdk"),
+                .product(name: "LDSwiftEventSource", package: "LDSwiftEventSource")
             ],
             path: "DevCycle",
             resources: [
