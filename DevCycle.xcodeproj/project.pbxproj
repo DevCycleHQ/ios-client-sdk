@@ -9,10 +9,6 @@
 /* Begin PBXBuildFile section */
 		0B721685290B21CD004D0AB7 /* SSEMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B721684290B21CD004D0AB7 /* SSEMessage.swift */; };
 		0F2DD75A279EFA6B00540C9D /* CustomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2DD759279EFA6B00540C9D /* CustomData.swift */; };
-		0F7789502DD390DF009E8E7E /* DevCycleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F77894D2DD390DF009E8E7E /* DevCycleProvider.swift */; };
-		0F7789512DD390DF009E8E7E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 0F77894E2DD390DF009E8E7E /* README.md */; };
-		0F7789542DD39101009E8E7E /* DevCycleProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7789522DD39101009E8E7E /* DevCycleProviderTests.swift */; };
-		0F7789572DD3962E009E8E7E /* OpenFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 0F7789562DD3962E009E8E7E /* OpenFeature */; };
 		52133B2028DDFB260007691D /* RequestConsolidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */; };
 		52133B2228DE00BC0007691D /* ProcessConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2128DE00BC0007691D /* ProcessConfig.swift */; };
 		52133B2428DE0FEB0007691D /* GetTestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2328DE0FEB0007691D /* GetTestConfig.swift */; };
@@ -87,9 +83,6 @@
 /* Begin PBXFileReference section */
 		0B721684290B21CD004D0AB7 /* SSEMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEMessage.swift; sourceTree = "<group>"; };
 		0F2DD759279EFA6B00540C9D /* CustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomData.swift; sourceTree = "<group>"; };
-		0F77894D2DD390DF009E8E7E /* DevCycleProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleProvider.swift; sourceTree = "<group>"; };
-		0F77894E2DD390DF009E8E7E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		0F7789522DD39101009E8E7E /* DevCycleProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleProviderTests.swift; sourceTree = "<group>"; };
 		52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestConsolidatorTests.swift; sourceTree = "<group>"; };
 		52133B2128DE00BC0007691D /* ProcessConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessConfig.swift; sourceTree = "<group>"; };
 		52133B2328DE0FEB0007691D /* GetTestConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTestConfig.swift; sourceTree = "<group>"; };
@@ -144,7 +137,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E66CF1C82901E9C7008734FD /* LDSwiftEventSource.xcframework in Frameworks */,
-				0F7789572DD3962E009E8E7E /* OpenFeature in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,23 +151,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0F77894F2DD390DF009E8E7E /* OpenFeature */ = {
-			isa = PBXGroup;
-			children = (
-				0F77894D2DD390DF009E8E7E /* DevCycleProvider.swift */,
-				0F77894E2DD390DF009E8E7E /* README.md */,
-			);
-			path = OpenFeature;
-			sourceTree = "<group>";
-		};
-		0F7789532DD39101009E8E7E /* OpenFeature */ = {
-			isa = PBXGroup;
-			children = (
-				0F7789522DD39101009E8E7E /* DevCycleProviderTests.swift */,
-			);
-			path = OpenFeature;
-			sourceTree = "<group>";
-		};
 		52133B1E28DDFAF90007691D /* Networking */ = {
 			isa = PBXGroup;
 			children = (
@@ -258,7 +233,6 @@
 		5268DB4E27501CFC00D17A40 /* DevCycle */ = {
 			isa = PBXGroup;
 			children = (
-				0F77894F2DD390DF009E8E7E /* OpenFeature */,
 				52404CE827F3A9CE00290A31 /* Utils */,
 				5264A779275E994B00FEDB43 /* ObjC */,
 				52E693EB2756815C00B52375 /* Models */,
@@ -276,7 +250,6 @@
 		5268DB5A27501CFC00D17A40 /* DevCycleTests */ = {
 			isa = PBXGroup;
 			children = (
-				0F7789532DD39101009E8E7E /* OpenFeature */,
 				52404CEB27F4A8F800290A31 /* Utils */,
 				529F0CA32774D6A70075AAB4 /* Mocks */,
 				529F0C8E277373D10075AAB4 /* ObjC */,
@@ -465,7 +438,6 @@
 				D9341C14276A3C8A00BC753F /* ObjCDevCycleEvent.swift in Sources */,
 				5226DF06290C588900630745 /* NotificationNames.swift in Sources */,
 				5264A77B275E9A7E00FEDB43 /* ObjCDevCycleClient.swift in Sources */,
-				0F7789502DD390DF009E8E7E /* DevCycleProvider.swift in Sources */,
 				52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */,
 				5264A7BD2769381600FEDB43 /* Cache.swift in Sources */,
 				52404CEA27F3A9FB00290A31 /* isEqual.swift in Sources */,
@@ -497,7 +469,6 @@
 				52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */,
 				52404CED27F4A92100290A31 /* IsEqualTests.swift in Sources */,
 				5268DB6B275020F800D17A40 /* DevCycleClientTests.swift in Sources */,
-				0F7789542DD39101009E8E7E /* DevCycleProviderTests.swift in Sources */,
 				523A31D029CB411A008F3347 /* ThreadingTests.swift in Sources */,
 				529F0C90277374150075AAB4 /* ObjcDVCVariableTests.m in Sources */,
 				5268DB69275020D900D17A40 /* DevCycleUserTest.swift in Sources */,
@@ -836,25 +807,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		0F7789552DD3962E009E8E7E /* XCRemoteSwiftPackageReference "swift-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:open-feature/swift-sdk.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.3.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		0F7789562DD3962E009E8E7E /* OpenFeature */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0F7789552DD3962E009E8E7E /* XCRemoteSwiftPackageReference "swift-sdk" */;
-			productName = OpenFeature;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5268DB2527501C8600D17A40 /* Project object */;
 }
