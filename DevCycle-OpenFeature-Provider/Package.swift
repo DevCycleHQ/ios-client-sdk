@@ -20,8 +20,9 @@ let package = Package(
             url: "https://github.com/open-feature/swift-sdk.git",
             .upToNextMajor(from: "0.3.0")
         ),
-        // For local development, fastlane will dynamically update this package reference
-        // to use the local path. No change needed to this file.
+        // For testing, fastlane will dynamically update this package reference
+        // to use the local path. For local development, you can use the following:
+        // .package(name: "DevCycle", path: "..")
         .package(
             name: "DevCycle",
             url: "https://github.com/DevCycleHQ/ios-client-sdk.git",
