@@ -2,7 +2,6 @@
 //  DevCycleProvider.swift
 //  DevCycleOpenFeatureProvider
 //
-//
 
 import Combine
 import DevCycle
@@ -14,11 +13,6 @@ public struct DevCycleProviderMetadata: ProviderMetadata {
 }
 
 public final class DevCycleProvider: FeatureProvider {
-    public func observe() -> AnyPublisher<OpenFeature.ProviderEvent?, Never> {
-        // Return an empty publisher for now
-        return Just(nil).eraseToAnyPublisher()
-    }
-
     /**
         Provider hooks
      */
@@ -43,6 +37,11 @@ public final class DevCycleProvider: FeatureProvider {
         Options for DevCycle client
      */
     private let options: DevCycleOptions?
+
+    /**
+        Event handler for provider events
+     */
+    private let eventHandler = EventHandler()
 
     /**
         Initializes a new instance of the DevCycleProvider
@@ -84,10 +83,20 @@ public final class DevCycleProvider: FeatureProvider {
 
             // Initialize client
             try await initializeDevCycleClient(with: user)
+
+            // Report provider ready
+            eventHandler.send(.ready)
         } catch {
+            // Report provider error
+            eventHandler.send(
+                ProviderEvent.error(errorCode: .providerNotReady, message: "Initialization error"))
             throw OpenFeatureError.providerFatalError(
                 message: "DevCycle client initialization error: \(error)")
         }
+    }
+
+    public func observe() -> AnyPublisher<OpenFeature.ProviderEvent?, Never> {
+        return eventHandler.observe()
     }
 
     /**
@@ -140,14 +149,22 @@ public final class DevCycleProvider: FeatureProvider {
 
             let user = try dvcUserFromContext(newContext)
 
+            // Mark provider as stale while context is being updated
+            eventHandler.send(.stale)
+
             try await withCheckedThrowingContinuation {
                 (continuation: CheckedContinuation<Void, Error>) in
                 do {
                     try client.identifyUser(user: user) { error, _ in
                         if let error = error {
-                            Log.error("DevCycle identify user error: \(error)")
+                            print("DevCycle identify user error: \(error)")
+                            self.eventHandler.send(
+                                ProviderEvent.error(
+                                    errorCode: .general, message: "User identification error"))
                             continuation.resume(throwing: error)
                         } else {
+                            // Once user is identified, the context has been updated
+                            self.eventHandler.send(.configurationChanged)
                             continuation.resume()
                         }
                     }
@@ -157,6 +174,8 @@ public final class DevCycleProvider: FeatureProvider {
             }
         } catch {
             Log.error("DevCycleProvider onContextSet error: \(error)")
+            eventHandler.send(
+                ProviderEvent.error(errorCode: .general, message: "Context set error"))
             throw OpenFeatureError.generalError(message: "Error setting context: \(error)")
         }
     }
