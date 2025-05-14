@@ -43,6 +43,8 @@ public final class DevCycleProvider: FeatureProvider {
      */
     private let eventHandler = EventHandler()
 
+    // MARK: - FeatureProvider Methods
+
     /**
         Initializes a new instance of the DevCycleProvider
         - Parameters:
@@ -97,35 +99,6 @@ public final class DevCycleProvider: FeatureProvider {
 
     public func observe() -> AnyPublisher<OpenFeature.ProviderEvent?, Never> {
         return eventHandler.observe()
-    }
-
-    /**
-        Creates and initializes the DevCycle client
-        - Parameter user: The DevCycle user to initialize with
-     */
-    private func initializeDevCycleClient(with user: DevCycleUser) async throws {
-        try await withCheckedThrowingContinuation {
-            (continuation: CheckedContinuation<Void, Error>) in
-            do {
-                self.devcycleClient = try DevCycleClient.builder()
-                    .sdkKey(sdkKey)
-                    .user(user)
-                    .options(options ?? DevCycleOptions.builder().build())
-                    .build { error in
-                        if let error = error {
-                            continuation.resume(
-                                throwing: OpenFeatureError.providerFatalError(
-                                    message: "DevCycle client initialization error: \(error)"))
-                        } else {
-                            continuation.resume()
-                        }
-                    }
-
-                // TODO: add support for `ConfigurationChanged` and `Error` events to OF
-            } catch {
-                continuation.resume(throwing: error)
-            }
-        }
     }
 
     /**
@@ -328,6 +301,37 @@ public final class DevCycleProvider: FeatureProvider {
             reason: variable.isDefaulted
                 ? Reason.defaultReason.rawValue : Reason.targetingMatch.rawValue
         )
+    }
+
+    // MARK: - Internal Methods
+
+    /**
+        Creates and initializes the DevCycle client
+        - Parameter user: The DevCycle user to initialize with
+     */
+    internal func initializeDevCycleClient(with user: DevCycleUser) async throws {
+        try await withCheckedThrowingContinuation {
+            (continuation: CheckedContinuation<Void, Error>) in
+            do {
+                self.devcycleClient = try DevCycleClient.builder()
+                    .sdkKey(sdkKey)
+                    .user(user)
+                    .options(options ?? DevCycleOptions.builder().build())
+                    .build { error in
+                        if let error = error {
+                            continuation.resume(
+                                throwing: OpenFeatureError.providerFatalError(
+                                    message: "DevCycle client initialization error: \(error)"))
+                        } else {
+                            continuation.resume()
+                        }
+                    }
+
+                // TODO: add support for `ConfigurationChanged` and `Error` events to OF
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
     }
 
     /**
