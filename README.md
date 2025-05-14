@@ -62,7 +62,7 @@ If you want to use DevCycle with the [OpenFeature](https://openfeature.dev) API,
 
 ```swift
 // Swift Package Manager
-.package(url: "https://github.com/DevCycleHQ/ios-client-sdk.git", from: "1.0.0")
+.package(url: "https://github.com/DevCycleHQ/ios-client-sdk.git", from: "1.18.0")
 
 // In your target dependencies
 .target(
