@@ -49,7 +49,7 @@ To add the DevCycle OpenFeature Provider to your own iOS project:
 3. Initialize the provider and set it up with OpenFeature:
    ```swift
    // Create the DevCycle provider
-   let provider = DevCycleProvider(sdkKey: "YOUR_DEVCYCLE_SDK_KEY")
+   let provider = DevCycleProvider(sdkKey: "DEVCYCLE_MOBILE_SDK_KEY")
    
    // Set the provider in OpenFeature
    Task {

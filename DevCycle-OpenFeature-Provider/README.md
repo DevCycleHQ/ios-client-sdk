@@ -32,7 +32,7 @@ import DevCycle
 import DevCycleOpenFeatureProvider
 
 // Configure the DevCycle provider
-let provider = DevCycleProvider(sdkKey: "<YOUR_DEVCYCLE_SDK_KEY>")
+let provider = DevCycleProvider(sdkKey: "<DEVCYCLE_MOBILE_SDK_KEY>")
 
 // Set up the evaluation context
 let evaluationContext = MutableContext(

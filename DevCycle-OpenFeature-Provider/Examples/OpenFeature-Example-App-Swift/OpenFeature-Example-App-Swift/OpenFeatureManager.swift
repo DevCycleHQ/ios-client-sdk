@@ -4,13 +4,13 @@
 //
 //
 
-import Foundation
 import DevCycle
 import DevCycleOpenFeatureProvider
+import Foundation
 import OpenFeature
 
 struct DevCycleKeys {
-    static var DEVELOPMENT = "<YOUR_DEVCYCLE_MOBILE_KEY_HERE>"
+    static var DEVELOPMENT = "<DEVCYCLE_MOBILE_SDK_KEY>"
 }
 
 class OpenFeatureManager {

@@ -8,7 +8,7 @@ import DevCycle
 import Foundation
 
 struct DevCycleKeys {
-    static var DEVELOPMENT = "<YOUR_DEVCYCLE_MOBILE_KEY_HERE>"
+    static var DEVELOPMENT = "<DEVCYCLE_MOBILE_SDK_KEY>"
 }
 
 class DevCycleManager {
