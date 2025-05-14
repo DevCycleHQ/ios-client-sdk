@@ -137,6 +137,9 @@ platform :openfeature do
     ensure
       # Restore the original Package.swift
       sh("cd ../DevCycle-OpenFeature-Provider && cp Package.swift.backup Package.swift")
+      
+      # Clean up the backup file
+      sh("cd ../DevCycle-OpenFeature-Provider && rm Package.swift.backup")
     end
   end
 end
