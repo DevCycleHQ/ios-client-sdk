@@ -1,6 +1,6 @@
 # DevCycle OpenFeature Provider
 
-This package provides a DevCycle provider implementation for the [OpenFeature](https://openfeature.dev) feature flagging SDK. It allows you to use DevCycle as the feature flag management system behind the standardized OpenFeature API.
+This package provides a DevCycle provider implementation for the [OpenFeature iOS SDK](https://openfeature.dev/docs/reference/technologies/client/swift) feature flagging SDK. It allows you to use DevCycle as the feature flag management system behind the standardized OpenFeature API.
 
 ## Installation
 
@@ -9,15 +9,16 @@ This package provides a DevCycle provider implementation for the [OpenFeature](h
 Add the dependency to your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/DevCycleHQ/ios-client-sdk.git", from: "1.0.0")
+.package(url: "https://github.com/DevCycleHQ/ios-client-sdk.git", from: "1.18.0")
 ```
 
-Then add the `DevCycleOpenFeatureProvider` to your target's dependencies:
+Then add both `DevCycle` and `DevCycleOpenFeatureProvider` to your target's dependencies:
 
 ```swift
 .target(
     name: "YourTarget",
     dependencies: [
+        .product(name: "DevCycle", package: "ios-client-sdk"),
         .product(name: "DevCycleOpenFeatureProvider", package: "ios-client-sdk")
     ]
 )
@@ -27,6 +28,7 @@ Then add the `DevCycleOpenFeatureProvider` to your target's dependencies:
 
 ```swift
 import OpenFeature
+import DevCycle
 import DevCycleOpenFeatureProvider
 
 // Configure the DevCycle provider
