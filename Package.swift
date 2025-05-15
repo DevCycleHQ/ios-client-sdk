@@ -7,20 +7,20 @@ let package = Package(
         .iOS(.v12),
         .tvOS(.v12),
         .macOS(.v10_13),
-        .watchOS(.v7)
+        .watchOS(.v7),
     ],
     products: [
         .library(
             name: "DevCycle",
-            targets: ["DevCycle"]),
+            targets: ["DevCycle"])
     ],
     dependencies: [
-       .package(
+        .package(
             name: "LDSwiftEventSource",
             url: "https://github.com/LaunchDarkly/swift-eventsource.git",
             .upToNextMajor(from: "3.3.0")
-       )
-   ],
+        )
+    ],
     targets: [
         .target(
             name: "DevCycle",
@@ -35,7 +35,7 @@ let package = Package(
         .testTarget(
             name: "DevCycleTests",
             dependencies: [
-                "DevCycle",
+                "DevCycle"
             ],
             path: "DevCycleTests",
             exclude: ["ObjC"]
@@ -43,11 +43,10 @@ let package = Package(
         .testTarget(
             name: "DevCycleTests-ObjC",
             dependencies: [
-                "DevCycle",
+                "DevCycle"
             ],
             path: "DevCycleTests/ObjC"
         ),
     ],
     swiftLanguageVersions: [.v5]
 )
-
