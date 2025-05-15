@@ -9,7 +9,7 @@ let package = Package(
     platforms: [
         .iOS(.v12),
         .tvOS(.v12),
-        .macOS(.v10_13),  // Keep lower requirement for core SDK
+        .macOS(.v10_13),
         .watchOS(.v7),
     ],
     products: [
