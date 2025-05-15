@@ -1,5 +1,8 @@
 name: Build and Test OpenFeature Provider
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     branches: [main]
