@@ -6,10 +6,11 @@
 //
 
 import XCTest
+
 @testable import DevCycle
 
 class EventQueueTests: XCTestCase {
-    
+
     func testDeprecatedDVCEvent() {
         let eventQueue = EventQueue()
         let expectation = XCTestExpectation(description: "Events are serially queued")
@@ -21,7 +22,7 @@ class EventQueueTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 3.0)
     }
-    
+
     func testSerialOrderOfEvents() {
         let eventQueue = EventQueue()
         let expectation = XCTestExpectation(description: "Events are serially queued")
@@ -50,27 +51,29 @@ class EventQueueTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 3.0)
     }
-    
+
     func testFlushRequeuesIfErrorRetryable() {
         let eventQueue = EventQueue()
         let expectation = XCTestExpectation(description: "Flush Requeues Retryable Event")
         let event = try! DevCycleEvent.builder().type("event1").build()
         let user = try! DevCycleUser.builder().userId("user1").build()
         eventQueue.queue(event)
-        eventQueue.flush(service: MockWithErrorCodeService(errorCode: 500), user: user, callback: nil)
+        eventQueue.flush(
+            service: MockWithErrorCodeService(errorCode: 500), user: user, callback: nil)
         let result = XCTWaiter.wait(for: [expectation], timeout: 2.0)
         if result == XCTWaiter.Result.timedOut {
             XCTAssertEqual(eventQueue.events.count, 1)
         }
     }
-    
+
     func testFlushDoesntRequeueIfErrorNotRetryable() {
         let eventQueue = EventQueue()
         let expectation = XCTestExpectation(description: "Subsequent flushes are cancelled")
         let event = try! DevCycleEvent.builder().type("event1").build()
         let user = try! DevCycleUser.builder().userId("user1").build()
         eventQueue.queue(event)
-        eventQueue.flush(service: MockWithErrorCodeService(errorCode: 403), user: user, callback: nil)
+        eventQueue.flush(
+            service: MockWithErrorCodeService(errorCode: 403), user: user, callback: nil)
         let result = XCTWaiter.wait(for: [expectation], timeout: 2.0)
         if result == XCTWaiter.Result.timedOut {
             XCTAssertEqual(eventQueue.events.count, 0)
@@ -79,17 +82,30 @@ class EventQueueTests: XCTestCase {
 }
 
 private class MockService: DevCycleServiceProtocol {
-    func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
-    
-    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+    func getConfig(
+        user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?,
+        completion: @escaping ConfigCompletionHandler
+    ) {}
+    func publishEvents(
+        events: [DevCycleEvent], user: DevCycleUser,
+        completion: @escaping PublishEventsCompletionHandler
+    ) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             completion((nil, nil, nil))
         }
     }
-    
     func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {}
-    
     func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {}
+
+    // Async/await stubs
+    func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?) async throws
+        -> UserConfig?
+    { return nil }
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser) async throws {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+    }
+    func saveEntity(user: DevCycleUser) async throws {}
+    func makeRequest(request: URLRequest) async throws -> DataResponse { return (nil, nil, nil) }
 }
 
 class MockWithErrorCodeService: DevCycleServiceProtocol {
@@ -97,9 +113,14 @@ class MockWithErrorCodeService: DevCycleServiceProtocol {
     init(errorCode: Int) {
         self.errorCode = errorCode
     }
-    
-    func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?, completion: @escaping ConfigCompletionHandler) {}
-    func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+    func getConfig(
+        user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?,
+        completion: @escaping ConfigCompletionHandler
+    ) {}
+    func publishEvents(
+        events: [DevCycleEvent], user: DevCycleUser,
+        completion: @escaping PublishEventsCompletionHandler
+    ) {
         let error = NSError(domain: "api.devcycle.com", code: self.errorCode)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             completion((nil, nil, error))
@@ -107,4 +128,15 @@ class MockWithErrorCodeService: DevCycleServiceProtocol {
     }
     func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {}
     func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {}
+
+    // Async/await stubs
+    func getConfig(user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?) async throws
+        -> UserConfig?
+    { return nil }
+    func publishEvents(events: [DevCycleEvent], user: DevCycleUser) async throws {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        throw NSError(domain: "api.devcycle.com", code: self.errorCode)
+    }
+    func saveEntity(user: DevCycleUser) async throws {}
+    func makeRequest(request: URLRequest) async throws -> DataResponse { return (nil, nil, nil) }
 }
