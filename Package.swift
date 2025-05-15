@@ -1,12 +1,12 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 import PackageDescription
 
 let package = Package(
     name: "DevCycle",
     platforms: [
-        .iOS(.v12),
-        .tvOS(.v12),
-        .macOS(.v10_13),
+        .iOS(.v13),
+        .tvOS(.v13),
+        .macOS(.v10_15),
         .watchOS(.v7),
     ],
     products: [

@@ -70,11 +70,43 @@ public class DevCycleClient {
         let service = DevCycleService(
             config: self.config!, cacheService: self.cacheService, options: self.options)
 
-        self.initialize(service: service, callback: callback)
+        Task {
+            do {
+                try await self.initialize(service: service)
+                callback?(nil)
+            } catch {
+                callback?(error)
+            }
+        }
     }
 
-    internal func initialize(service: DevCycleServiceProtocol, callback: ClientInitializedHandler?)
-    {
+    func initialize() async throws {
+        guard let user = self.user, let sdkKey = self.sdkKey else {
+            throw ClientError.MissingSDKKeyOrUser
+        }
+
+        self.config = DVCConfig(sdkKey: sdkKey, user: user)
+
+        let service = DevCycleService(
+            config: self.config!, cacheService: self.cacheService, options: self.options)
+
+        try await self.initialize(service: service)
+    }
+
+    internal func initialize(
+        service: DevCycleServiceProtocol, callback: ClientInitializedHandler? = nil
+    ) {
+        Task {
+            do {
+                try await self.initialize(service: service)
+                callback?(nil)
+            } catch {
+                callback?(error)
+            }
+        }
+    }
+
+    internal func initialize(service: DevCycleServiceProtocol) async throws {
         if let options = self.options {
             Log.level = options.logLevel
             self.flushEventsInterval =
@@ -88,7 +120,7 @@ public class DevCycleClient {
 
         self.lastIdentifiedUser = self.user
 
-        self.setup(service: service, callback: callback)
+        try await self.setup(service: service)
 
         #if os(iOS) || os(tvOS)
             NotificationCenter.default.addObserver(
@@ -135,9 +167,19 @@ public class DevCycleClient {
         Setup client with the DevCycleService and the callback
      */
     func setup(service: DevCycleServiceProtocol, callback: ClientInitializedHandler? = nil) {
+        Task {
+            do {
+                try await self.setup(service: service)
+                callback?(nil)
+            } catch {
+                callback?(error)
+            }
+        }
+    }
+
+    func setup(service: DevCycleServiceProtocol) async throws {
         guard let user = self.user else {
-            callback?(ClientError.MissingSDKKeyOrUser)
-            return
+            throw ClientError.MissingSDKKeyOrUser
         }
         self.service = service
 
@@ -154,54 +196,40 @@ public class DevCycleClient {
             Log.debug("Loaded config from cache")
         }
 
-        self.service?.getConfig(
-            user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
-            completion: { [weak self] config, error in
-                guard let self = self else { return }
-                if let error = error {
-                    Log.error("Error getting config: \(error)", tags: ["setup"])
-                    self.cache = self.cacheService.load()
-                } else {
-                    if let config = config {
-                        Log.debug("Config: \(config)", tags: ["setup"])
-                    }
-                    self.config?.userConfig = config
-                    self.isConfigCached = false
-
-                    self.cacheUser(user: user)
-
-                    if self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB) {
-                        if !(user.isAnonymous ?? false) {
-                            self.service?.saveEntity(
-                                user: user,
-                                completion: { data, response, error in
-                                    if error != nil {
-                                        Log.error(
-                                            "Error saving user entity for \(user). Error: \(String(describing: error))"
-                                        )
-                                    } else {
-                                        Log.info("Saved user entity")
-                                    }
-                                })
-                        }
+        do {
+            let config = try await self.service?.getConfig(
+                user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil
+            )
+            if let config = config {
+                Log.debug("Config: \(config)", tags: ["setup"])
+                self.config?.userConfig = config
+                self.isConfigCached = false
+                self.cacheUser(user: user)
+                if self.checkIfEdgeDBEnabled(config: config, enableEdgeDB: self.enableEdgeDB) {
+                    if !(user.isAnonymous ?? false) {
+                        try? await self.service?.saveEntity(user: user)
+                        Log.info("Saved user entity")
                     }
                 }
+            }
+        } catch {
+            Log.error("Error getting config: \(error)", tags: ["setup"])
+            self.cache = self.cacheService.load()
+            throw error
+        }
 
-                self.setupSSEConnection()
-
-                for handler in self.configCompletionHandlers {
-                    handler(error)
-                }
-                callback?(error)
-                self.initialized = true
-                self.configCompletionHandlers = []
-            })
+        self.setupSSEConnection()
+        self.initialized = true
+        self.configCompletionHandlers.forEach { $0(nil) }
+        self.configCompletionHandlers = []
 
         self.flushTimer = Timer.scheduledTimer(
             withTimeInterval: TimeInterval(self.flushEventsInterval),
             repeats: true
-        ) {
-            timer in self.flushEvents()
+        ) { [weak self] _ in
+            Task { [weak self] in
+                try? await self?.flushEvents()
+            }
         }
     }
 
@@ -407,12 +435,23 @@ public class DevCycleClient {
     }
 
     public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
+        Task {
+            do {
+                let variables = try await self.identifyUser(user: user)
+                callback?(nil, variables)
+            } catch {
+                callback?(error, nil)
+            }
+        }
+    }
+
+    public func identifyUser(user: DevCycleUser) async throws -> [String: Variable]? {
         guard let currentUser = self.user, let userId = currentUser.userId,
             let incomingUserId = user.userId
         else {
             throw ClientError.InvalidUser
         }
-        self.flushEvents()
+        try await self.flushEvents()
         var updateUser: DevCycleUser = currentUser
         if userId == incomingUserId {
             updateUser.update(with: user)
@@ -422,29 +461,41 @@ public class DevCycleClient {
 
         self.lastIdentifiedUser = user
 
-        self.service?.getConfig(
-            user: updateUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
-            completion: { [weak self] config, error in
-                guard let self = self else { return }
-                if let error = error {
-                    Log.error("Error getting config: \(error)", tags: ["identify"])
-                    self.cache = self.cacheService.load()
-                } else {
-                    if let config = config {
-                        Log.debug("Config: \(config)", tags: ["identify"])
-                    }
-                    self.config?.userConfig = config
-                    self.isConfigCached = false
-                }
-                self.user = user
-                self.cacheUser(user: user)
-                callback?(error, config?.variables)
-            })
+        do {
+            let config = try await self.service?.getConfig(
+                user: updateUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil
+            )
+            if let config = config {
+                Log.debug("Config: \(config)", tags: ["identify"])
+                self.config?.userConfig = config
+                self.isConfigCached = false
+            }
+            self.user = user
+            self.cacheUser(user: user)
+            return config?.variables
+        } catch {
+            Log.error("Error getting config: \(error)", tags: ["identify"])
+            self.cache = self.cacheService.load()
+            self.user = user
+            self.cacheUser(user: user)
+            throw error
+        }
     }
 
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
+        Task {
+            do {
+                let variables = try await self.resetUser()
+                callback?(nil, variables)
+            } catch {
+                callback?(error, nil)
+            }
+        }
+    }
+
+    public func resetUser() async throws -> [String: Variable]? {
         self.cache = cacheService.load()
-        self.flushEvents()
+        try await self.flushEvents()
 
         let cachedAnonUserId = self.cacheService.getAnonUserId()
         self.cacheService.clearAnonUserId()
@@ -452,27 +503,25 @@ public class DevCycleClient {
 
         self.lastIdentifiedUser = anonUser
 
-        self.service?.getConfig(
-            user: anonUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
-            completion: { [weak self] config, error in
-                guard let self = self else { return }
-                guard error == nil else {
-                    if let previousAnonUserId = cachedAnonUserId {
-                        self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
-                    }
-                    callback?(error, nil)
-                    return
-                }
-
-                if let config = config {
-                    Log.debug("Config: \(config)", tags: ["reset"])
-                }
+        do {
+            let config = try await self.service?.getConfig(
+                user: anonUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil
+            )
+            if let config = config {
+                Log.debug("Config: \(config)", tags: ["reset"])
                 self.config?.userConfig = config
                 self.isConfigCached = false
                 self.user = anonUser
                 self.cacheUser(user: anonUser)
-                callback?(error, config?.variables)
-            })
+                return config.variables
+            }
+            return nil
+        } catch {
+            if let previousAnonUserId = cachedAnonUserId {
+                self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
+            }
+            throw error
+        }
     }
 
     public func allFeatures() -> [String: Feature] {
@@ -493,11 +542,7 @@ public class DevCycleClient {
         }
     }
 
-    public func flushEvents(callback: FlushCompletedHandler?) {
-        self.flushEvents(callback)
-    }
-
-    internal func flushEvents(_ callback: FlushCompletedHandler? = nil) {
+    internal func flushEventsInternal(_ callback: FlushCompletedHandler? = nil) {
         if !self.eventQueue.isEmpty() {
             guard let user = self.user else {
                 Log.error("Flushing events failed, user not defined")
@@ -515,6 +560,25 @@ public class DevCycleClient {
         }
     }
 
+    public func flushEvents(callback: FlushCompletedHandler?) {
+        self.flushEventsInternal(callback)
+    }
+
+    /**
+        Async version of flushEvents method
+     */
+    public func flushEvents() async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.flushEventsInternal { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
     public func close(callback: CloseCompletedHandler?) {
         if self.closed {
             Log.error("DevCycleClient is already closed.")
@@ -527,6 +591,17 @@ public class DevCycleClient {
             callback?()
         })
         self.sseConnection?.close()
+    }
+
+    /**
+        Async version of close method
+     */
+    public func close() async {
+        await withCheckedContinuation { continuation in
+            close {
+                continuation.resume()
+            }
+        }
     }
 
     public class ClientBuilder {
@@ -581,6 +656,25 @@ public class DevCycleClient {
             }
             self.client = DevCycleClient()
             return result
+        }
+
+        /**
+            Async version of build method
+         */
+        public func build() async throws -> DevCycleClient {
+            return try await withCheckedThrowingContinuation { continuation in
+                do {
+                    _ = try build { error in
+                        if let error = error {
+                            continuation.resume(throwing: error)
+                        } else {
+                            continuation.resume(returning: self.client)
+                        }
+                    }
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
         }
     }
 
