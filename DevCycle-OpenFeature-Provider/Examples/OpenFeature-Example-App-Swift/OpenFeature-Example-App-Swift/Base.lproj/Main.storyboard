@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="DevCycle_iOS_Example_App_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z9S-Ee-0As">
+                                <rect key="frame" x="172" y="348" width="70" height="34.5"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Log in"/>
+                                <connections>
+                                    <action selector="loginButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Pbm-Am-G5k"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="arc-Dw-zmU">
+                                <rect key="frame" x="174" y="390.5" width="66" height="34.5"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Track"/>
+                                <connections>
+                                    <action selector="track:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gun-DG-ggH"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oBF-y6-vgu">
+                                <rect key="frame" x="92.5" y="433" width="229.5" height="34.5"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Log All Features / Variables"/>
+                                <connections>
+                                    <action selector="logAllFeatures:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2LB-5h-ybe"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DevCycle iOS Example App" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="biN-d1-CPl">
+                                <rect key="frame" x="0.0" y="148" width="414" height="34"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="arc-Dw-zmU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7Uk-SU-0nF"/>
+                            <constraint firstItem="arc-Dw-zmU" firstAttribute="top" secondItem="Z9S-Ee-0As" secondAttribute="bottom" constant="8" symbolic="YES" id="9rK-W4-xDp"/>
+                            <constraint firstItem="biN-d1-CPl" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="TJY-Ul-hCR"/>
+                            <constraint firstItem="biN-d1-CPl" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="100" id="XbS-ZK-cxs"/>
+                            <constraint firstItem="oBF-y6-vgu" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="heW-Bs-xmf"/>
+                            <constraint firstItem="Z9S-Ee-0As" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="300" id="nEq-LN-oq2"/>
+                            <constraint firstItem="Z9S-Ee-0As" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="snx-Qh-j7f"/>
+                            <constraint firstItem="biN-d1-CPl" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="u11-JC-DRe"/>
+                            <constraint firstItem="oBF-y6-vgu" firstAttribute="top" secondItem="arc-Dw-zmU" secondAttribute="bottom" constant="8" symbolic="YES" id="xYU-wu-pbN"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="loginButton" destination="Z9S-Ee-0As" id="u1t-A0-Ct3"/>
+                        <outlet property="titleHeader" destination="biN-d1-CPl" id="E5e-Jm-IpW"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5.7971014492753632" y="44.866071428571423"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -1,0 +1,34 @@
+name: Build and Test OpenFeature Provider
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "DevCycle-OpenFeature-Provider/**"
+      - "DevCycle/**"
+      - "Package.swift"
+      - ".github/workflows/openfeature-provider.yaml"
+      - "fastlane/Fastfile"
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+
+      - name: "Select Latest Xcode"
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: "Carthage Cached Bootstrap"
+        uses: DevCycleHQ/carthage-bootstrap@v1.2.0
+        with:
+          github-token: ${{ secrets.AUTOMATION_USER_TOKEN }}
+          use-xcframeworks: true
+
+      # The fastlane task will handle temporarily modifying the Package.swift
+      # to use the local path reference, and then restoring it afterward
+      - name: Fastlane OpenFeature Tests
+        run: fastlane openfeature tests

@@ -54,7 +54,26 @@ Include the following in your `Cartfile` to integrate DevCycle as a dependency t
 github "DevCycleHQ/ios-client-sdk"
 ```
 
-Then, run `carthage update --use-xcframeworks`. Drag the built .xcframework bundles from Carthage/Build into the "Frameworks and Libraries" section of your application’s Xcode project.
+Then, run `carthage update --use-xcframeworks`. Drag the built .xcframework bundles from Carthage/Build into the "Frameworks and Libraries" section of your application's Xcode project.
+
+## OpenFeature Support
+
+If you want to use DevCycle with the [OpenFeature](https://openfeature.dev) API, we provide a provider in this same repository:
+
+```swift
+// Swift Package Manager
+.package(url: "https://github.com/DevCycleHQ/ios-client-sdk.git", from: "1.18.0")
+
+// In your target dependencies
+.target(
+    name: "YourTarget",
+    dependencies: [
+        .product(name: "DevCycleOpenFeatureProvider", package: "ios-client-sdk")
+    ]
+)
+```
+
+The OpenFeature provider is only available via Swift Package Manager and cannot be installed with CocoaPods or Carthage.
 
 ## Usage
 
