@@ -116,7 +116,7 @@ platform :mac do
 end
 
 platform :openfeature do
-  desc "run OpenFeature Provider tests - requires macOS 11+"
+  desc "run OpenFeature Provider tests"
   lane :tests do
     # Create a backup of Package.swift
     UI.message("Creating backup of Package.swift...")
