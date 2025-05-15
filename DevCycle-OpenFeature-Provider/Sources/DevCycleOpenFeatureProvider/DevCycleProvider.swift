@@ -8,10 +8,12 @@ import DevCycle
 import Foundation
 import OpenFeature
 
+@available(iOS 14.0, tvOS 14.0, macOS 11.0, watchOS 7.0, *)
 public struct DevCycleProviderMetadata: ProviderMetadata {
     public var name: String? = "DevCycle Provider"
 }
 
+@available(iOS 14.0, tvOS 14.0, macOS 11.0, watchOS 7.0, *)
 public final class DevCycleProvider: FeatureProvider {
     /**
         Provider hooks
@@ -52,6 +54,25 @@ public final class DevCycleProvider: FeatureProvider {
           - options: Optional configuration options
      */
     public init(sdkKey: String, options: DevCycleOptions? = nil) {
+        // Check minimum platform requirements
+        #if os(iOS)
+            guard #available(iOS 14.0, *) else {
+                fatalError("DevCycleOpenFeatureProvider requires iOS 14.0 or later")
+            }
+        #elseif os(tvOS)
+            guard #available(tvOS 14.0, *) else {
+                fatalError("DevCycleOpenFeatureProvider requires tvOS 14.0 or later")
+            }
+        #elseif os(macOS)
+            guard #available(macOS 11.0, *) else {
+                fatalError("DevCycleOpenFeatureProvider requires macOS 11.0 or later")
+            }
+        #elseif os(watchOS)
+            guard #available(watchOS 7.0, *) else {
+                fatalError("DevCycleOpenFeatureProvider requires watchOS 7.0 or later")
+            }
+        #endif
+
         self.sdkKey = sdkKey
         self.options = options
         if let logLevel = options?.logLevel {

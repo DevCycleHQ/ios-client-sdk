@@ -116,30 +116,24 @@ platform :mac do
 end
 
 platform :openfeature do
-  desc "run OpenFeature Provider tests with local override"
+  desc "run OpenFeature Provider tests - requires macOS 11+"
   lane :tests do
-    # Create a backup of the original Package.swift
-    sh("cd ../DevCycle-OpenFeature-Provider && cp Package.swift Package.swift.backup")
+    # Create a backup of Package.swift
+    UI.message("Creating backup of Package.swift...")
+    sh("cd .. && cp Package.swift Package.swift.backup")
     
     begin
-      # Replace the URL with local path
-      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#url: \"https://github.com/DevCycleHQ/ios-client-sdk.git\"#path: \"..\"#g' Package.swift")
+      # Temporarily modify Package.swift to set macOS to v11 for tests
+      UI.message("Temporarily setting macOS minimum to 11.0 for OpenFeature tests...")
+      sh("cd .. && sed -i '' 's/.macOS(.v10_13)/.macOS(.v11)/g' Package.swift")
       
-      # Remove the version constraint
-      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#            .upToNextMajor(from: \"1.0.0\")##g' Package.swift")
-      
-      # Also remove the trailing comma if it exists
-      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#path: \"..\",$#path: \"..\"#g' Package.swift")
-      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#path: \"..\",#path: \"..\"#g' Package.swift")
-      
-      # Run the tests
-      sh("cd ../DevCycle-OpenFeature-Provider && swift test")
+      # Run tests with the temporary platform setting
+      UI.message("Running OpenFeature provider tests...")
+      sh("cd .. && swift test --filter DevCycleOpenFeatureProviderTests")
     ensure
-      # Restore the original Package.swift
-      sh("cd ../DevCycle-OpenFeature-Provider && cp Package.swift.backup Package.swift")
-      
-      # Clean up the backup file
-      sh("cd ../DevCycle-OpenFeature-Provider && rm Package.swift.backup")
+      # Always restore from backup, even if tests fail
+      UI.message("Restoring Package.swift from backup...")
+      sh("cd .. && mv Package.swift.backup Package.swift")
     end
   end
 end

@@ -73,7 +73,7 @@ run mac DevCycle tests
 [bundle exec] fastlane openfeature tests
 ```
 
-run OpenFeature Provider tests with local override
+run OpenFeature Provider tests - requires macOS 11+
 
 ----
 
