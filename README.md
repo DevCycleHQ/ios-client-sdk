@@ -11,7 +11,7 @@ all around the world.
 
 ## Requirements
 
-This version of the DevCycle Client SDK supports iOS 12.0+ / tvOS 12.0+ / watchOS 7.0+ / macOS 10.13+
+This version of the DevCycle Client SDK supports iOS 14.0+ / tvOS 14.0+ / watchOS 7.0+ / macOS 11.0+
 
 ## Installation
 
@@ -58,22 +58,28 @@ Then, run `carthage update --use-xcframeworks`. Drag the built .xcframework bund
 
 ## OpenFeature Support
 
-If you want to use DevCycle with the [OpenFeature](https://openfeature.dev) API, we provide a provider in this same repository:
+If you want to use DevCycle with the [OpenFeature](https://openfeature.dev) API, use the provider from its new repository:
 
-```swift
-// Swift Package Manager
-.package(url: "https://github.com/DevCycleHQ/ios-client-sdk.git", from: "1.18.0")
+[https://github.com/DevCycleHQ/ios-openfeature-provider](https://github.com/DevCycleHQ/ios-openfeature-provider)
 
-// In your target dependencies
+Add it to your Swift Package Manager dependencies:
+
+```
+.package(url: "https://github.com/DevCycleHQ/ios-openfeature-provider.git", from: "1.0.0")
+```
+
+And in your target dependencies:
+
+```
 .target(
     name: "YourTarget",
     dependencies: [
-        .product(name: "DevCycleOpenFeatureProvider", package: "ios-client-sdk")
+        .product(name: "DevCycleOpenFeatureProvider", package: "ios-openfeature-provider")
     ]
 )
 ```
 
-The OpenFeature provider is only available via Swift Package Manager and cannot be installed with CocoaPods or Carthage.
+The OpenFeature provider requires iOS 14.0+ / tvOS 14.0+ / watchOS 7.0+ / macOS 11.0+ and is only available via Swift Package Manager. It cannot be installed with CocoaPods or Carthage.
 
 ## Usage
 
