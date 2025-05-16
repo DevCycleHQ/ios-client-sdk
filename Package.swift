@@ -34,17 +34,13 @@ let package = Package(
         ),
         .testTarget(
             name: "DevCycleTests",
-            dependencies: [
-                "DevCycle"
-            ],
+            dependencies: ["DevCycle"],
             path: "DevCycleTests",
             exclude: ["ObjC"]
         ),
         .testTarget(
             name: "DevCycleTests-ObjC",
-            dependencies: [
-                "DevCycle"
-            ],
+            dependencies: ["DevCycle"],
             path: "DevCycleTests/ObjC"
         ),
     ],

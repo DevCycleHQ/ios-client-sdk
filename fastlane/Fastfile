@@ -114,32 +114,3 @@ platform :mac do
     delete_temp_keychain(keychain_name)
   end
 end
-
-platform :openfeature do
-  desc "run OpenFeature Provider tests with local override"
-  lane :tests do
-    # Create a backup of the original Package.swift
-    sh("cd ../DevCycle-OpenFeature-Provider && cp Package.swift Package.swift.backup")
-    
-    begin
-      # Replace the URL with local path
-      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#url: \"https://github.com/DevCycleHQ/ios-client-sdk.git\"#path: \"..\"#g' Package.swift")
-      
-      # Remove the version constraint
-      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#            .upToNextMajor(from: \"1.0.0\")##g' Package.swift")
-      
-      # Also remove the trailing comma if it exists
-      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#path: \"..\",$#path: \"..\"#g' Package.swift")
-      sh("cd ../DevCycle-OpenFeature-Provider && sed -i '' 's#path: \"..\",#path: \"..\"#g' Package.swift")
-      
-      # Run the tests
-      sh("cd ../DevCycle-OpenFeature-Provider && swift test")
-    ensure
-      # Restore the original Package.swift
-      sh("cd ../DevCycle-OpenFeature-Provider && cp Package.swift.backup Package.swift")
-      
-      # Clean up the backup file
-      sh("cd ../DevCycle-OpenFeature-Provider && rm Package.swift.backup")
-    end
-  end
-end
