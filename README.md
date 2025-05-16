@@ -11,7 +11,7 @@ all around the world.
 
 ## Requirements
 
-This version of the DevCycle Client SDK supports iOS 14.0+ / tvOS 14.0+ / watchOS 7.0+ / macOS 11.0+
+This version of the DevCycle Client SDK supports iOS 12.0+ / tvOS 12.0+ / watchOS 7.0+ / macOS 10.13+
 
 ## Installation
 

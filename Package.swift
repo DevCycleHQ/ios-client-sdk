@@ -22,7 +22,6 @@ let package = Package(
         )
     ],
     targets: [
-        // Base DevCycle SDK - supports iOS 12+, tvOS 12+, macOS 10.13+, watchOS 7+
         .target(
             name: "DevCycle",
             dependencies: [
