@@ -58,7 +58,7 @@ Then, run `carthage update --use-xcframeworks`. Drag the built .xcframework bund
 
 ## OpenFeature Support
 
-If you want to use DevCycle with the [OpenFeature](https://openfeature.dev) API, use the provider from its new repository:
+If you want to use DevCycle with the [OpenFeature](https://openfeature.dev) API, use the provider from its repository:
 
 [https://github.com/DevCycleHQ/ios-openfeature-provider](https://github.com/DevCycleHQ/ios-openfeature-provider)
 
