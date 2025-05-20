@@ -64,6 +64,12 @@ jobs:
           git push origin HEAD:main
         if: inputs.draft != true
 
+      - name: Create and push tag
+        if: inputs.draft != true
+        run: |
+          git tag v${{ steps.prepare-release.outputs.next-release-tag }}
+          git push --tags
+
       # This will automatically trigger publishing to Carthage and Swift Package Manager
       - uses: DevCycleHQ/release-action/create-release@v2.3.0
         id: create-release
