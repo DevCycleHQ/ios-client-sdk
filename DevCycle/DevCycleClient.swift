@@ -442,6 +442,23 @@ public class DevCycleClient {
             })
     }
 
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    public func identifyUser(user: DevCycleUser) async throws -> [String: Variable]? {
+        return try await withCheckedThrowingContinuation { continuation in
+            do {
+                try self.identifyUser(user: user) { error, variables in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume(returning: variables)
+                    }
+                }
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
         self.cache = cacheService.load()
         self.flushEvents()
@@ -475,6 +492,23 @@ public class DevCycleClient {
             })
     }
 
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    public func resetUser() async throws -> [String: Variable]? {
+        return try await withCheckedThrowingContinuation { continuation in
+            do {
+                try self.resetUser { error, variables in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume(returning: variables)
+                    }
+                }
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+
     public func allFeatures() -> [String: Feature] {
         return self.config?.userConfig?.features ?? [:]
     }
@@ -495,6 +529,20 @@ public class DevCycleClient {
 
     public func flushEvents(callback: FlushCompletedHandler?) {
         self.flushEvents(callback)
+    }
+
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    public func flushEvents() async throws {
+        try await withCheckedThrowingContinuation {
+            (continuation: CheckedContinuation<Void, Error>) in
+            self.flushEvents({ error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            })
+        }
     }
 
     internal func flushEvents(_ callback: FlushCompletedHandler? = nil) {
@@ -527,6 +575,15 @@ public class DevCycleClient {
             callback?()
         })
         self.sseConnection?.close()
+    }
+
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    public func close() async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            self.close {
+                continuation.resume(returning: ())
+            }
+        }
     }
 
     public class ClientBuilder {
@@ -581,6 +638,25 @@ public class DevCycleClient {
             }
             self.client = DevCycleClient()
             return result
+        }
+
+        @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+        public func build() async throws -> DevCycleClient {
+            return try await withCheckedThrowingContinuation { continuation in
+                do {
+                    var builtClient: DevCycleClient?
+                    _ = try self.build(onInitialized: { error in
+                        if let error = error {
+                            continuation.resume(throwing: error)
+                        } else if let builtClient = builtClient {
+                            continuation.resume(returning: builtClient)
+                        }
+                    })
+                    builtClient = self.client
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
         }
     }
 

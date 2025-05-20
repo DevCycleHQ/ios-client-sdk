@@ -4,19 +4,20 @@
 //
 
 import XCTest
-@testable import DevCycle;
+
+@testable import DevCycle
 
 class SSEMessageTests: XCTestCase {
     func testShouldInitFromJson() throws {
         let jsonData = """
-        {
-            \"id\":\"test_id\",
-            \"timestamp\":123,
-            \"channel\":\"dvc_mobile_test\",
-            \"data\":\"{\\\"etag\\\":\\\"\\\\\\\"123abc\\\\\\\"\\\",\\\"lastModified\\\":123}\",
-            \"name\":\"change\"
-        }
-        """.data(using: .utf8)
+            {
+                \"id\":\"test_id\",
+                \"timestamp\":123,
+                \"channel\":\"dvc_mobile_test\",
+                \"data\":\"{\\\"etag\\\":\\\"\\\\\\\"123abc\\\\\\\"\\\",\\\"lastModified\\\":123}\",
+                \"name\":\"change\"
+            }
+            """.data(using: .utf8)
 
         let dictionary = try JSONSerialization.jsonObject(with: jsonData!) as! [String: Any]
         let sseMessage = try SSEMessage(from: dictionary)
@@ -27,32 +28,36 @@ class SSEMessageTests: XCTestCase {
 
     func testShouldThrowInitErrorWhenDataFieldIsMissing() throws {
         let jsonData = """
-        {
-            \"id\":\"test_id\",
-            \"timestamp\":123,
-            \"channel\":\"dvc_mobile_test\",
-            \"name\":\"change\"
-        }
-        """.data(using: .utf8)
+            {
+                \"id\":\"test_id\",
+                \"timestamp\":123,
+                \"channel\":\"dvc_mobile_test\",
+                \"name\":\"change\"
+            }
+            """.data(using: .utf8)
         let dictionary = try JSONSerialization.jsonObject(with: jsonData!) as! [String: Any]
         XCTAssertThrowsError(try SSEMessage(from: dictionary)) { error in
-            XCTAssertEqual(error as! SSEMessage.SSEMessageError, SSEMessage.SSEMessageError.initError("No data field in SSE JSON"))
+            XCTAssertEqual(
+                error as! SSEMessage.SSEMessageError,
+                SSEMessage.SSEMessageError.initError("No data field in SSE JSON"))
         }
     }
 
     func testShouldThrowErrorWhenDataFieldIsUnparsable() throws {
         let jsonData = """
-        {
-            \"id\":\"test_id\",
-            \"timestamp\":123,
-            \"channel\":\"dvc_mobile_test\",
-            \"data\":\"{\\\"etag\\\":123abc\\\\\\\",\\\"lastModified\\\":123}\",
-            \"name\":\"change\"
-        }
-        """.data(using: .utf8)
+            {
+                \"id\":\"test_id\",
+                \"timestamp\":123,
+                \"channel\":\"dvc_mobile_test\",
+                \"data\":\"{\\\"etag\\\":123abc\\\\\\\",\\\"lastModified\\\":123}\",
+                \"name\":\"change\"
+            }
+            """.data(using: .utf8)
         let dictionary = try JSONSerialization.jsonObject(with: jsonData!) as! [String: Any]
         XCTAssertThrowsError(try SSEMessage(from: dictionary)) { error in
-            XCTAssertEqual(error as! SSEMessage.SSEMessageError, SSEMessage.SSEMessageError.initError("Failed to parse data field in SSE message"))
+            XCTAssertEqual(
+                error as! SSEMessage.SSEMessageError,
+                SSEMessage.SSEMessageError.initError("Failed to parse data field in SSE message"))
         }
     }
 }
