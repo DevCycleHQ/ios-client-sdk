@@ -32,6 +32,8 @@ class DevCycleClientTest: XCTestCase {
             try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
             as! [String: Any]
         self.userConfig = try! UserConfig(from: dictionary)
+
+        service.userConfig = self.userConfig
     }
 
     func testBuilderReturnsNilIfNoSDKKey() {
@@ -654,6 +656,7 @@ class DevCycleClientTest: XCTestCase {
             .build()
         client.track(event)
         try await client.flushEvents()
+        XCTAssertEqual(service.publishCallCount, 1)
         client.close(callback: nil)
     }
 
@@ -671,15 +674,20 @@ extension DevCycleClientTest {
         public var userForGetConfig: DevCycleUser?
         public var numberOfConfigCalls: Int = 0
         public var eventPublishCount: Int = 0
+        public var userConfig: UserConfig?
 
         func getConfig(
-            user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?,
+            user: DevCycleUser,
+            enableEdgeDB: Bool,
+            extraParams: RequestParams?,
             completion: @escaping ConfigCompletionHandler
         ) {
             self.userForGetConfig = user
             self.numberOfConfigCalls += 1
 
-            XCTAssert(true)
+            DispatchQueue.main.async {
+                completion((self.userConfig, nil))
+            }
         }
 
         func publishEvents(
@@ -689,19 +697,21 @@ extension DevCycleClientTest {
             self.publishCallCount += 1
             self.eventPublishCount += events.count
             XCTAssert(true)
-            Timer.scheduledTimer(
-                withTimeInterval: 0.1, repeats: false,
-                block: { timer in
-                    completion((data: nil, urlResponse: nil, error: nil))
-                })
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                completion((data: nil, urlResponse: nil, error: nil))
+            }
         }
 
         func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {
-            XCTAssert(true)
+            DispatchQueue.main.async {
+                completion((data: nil, urlResponse: nil, error: nil))
+            }
         }
 
         func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {
-            XCTAssert(true)
+            DispatchQueue.main.async {
+                completion((data: nil, urlResponse: nil, error: nil))
+            }
         }
     }
 
