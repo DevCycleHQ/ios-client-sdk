@@ -33,17 +33,21 @@
         }
         
         NSString *stringValue = [client stringVariableValueWithKey:@"string_key" defaultValue:@"default"];
+        
         NSNumber *numValue = [client numberVariableValueWithKey:@"num_key" defaultValue:@610];
+        
         BOOL boolValue = [client boolVariableValueWithKey:@"bool_key" defaultValue:NO];
+        
         DVCVariable *jsonVar = [[client jsonVariableWithKey:@"json_key" defaultValue:@{@"key": @"value"}]
                                 onUpdateWithHandler:^(id _Nonnull value) {
             NSLog(@"json_key value updated: %@", value);
         }];
         
-        NSLog(@"DevCycle Variable Values\n string: %@\n num: %@\n bool: %@\n json: %@", stringValue, numValue, boolValue, jsonVar.value);
+        NSLog(@"DevCycle Variable Values\n string: %@\n num: %@\n bool: %i\n json: %@", stringValue, numValue, boolValue, jsonVar.value);
         
         NSDictionary *allFeatures = [client allFeatures];
         NSLog(@"DevCycle All Features: %@", allFeatures);
+        
         NSDictionary *allVariables = [client allVariables];
         NSLog(@"DevCycle All Variables: %@", allVariables);
     }];

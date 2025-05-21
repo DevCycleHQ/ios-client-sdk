@@ -56,14 +56,13 @@ class ViewController: NSViewController {
     }
 
     @IBAction func loginButtonPressed(_ sender: Any) {
-        print("Login Button")
         let isCurrentlyLoggedIn = self.loggedIn
 
         Task {
             guard let client = await DevCycleManager.shared.clientAsync else { return }
             if isCurrentlyLoggedIn {
                 do {
-                    try await client.resetUser()
+                    _ = try await client.resetUser()
                     self.setLoginButtonTitle(false)
                     print("Reset User!")
                 } catch {
@@ -84,13 +83,15 @@ class ViewController: NSViewController {
                             "customkey2": "customValue2"
                         ])
                         .build()
-                    try await client.identifyUser(user: user)
+                    _ = try await client.identifyUser(user: user)
+                    
                     self.setLoginButtonTitle(true)
-                    print("Logged in as User: \(String(describing: user.userId))!")
-                    let numKeyValue = client.variableValue(key: "num_key", defaultValue: 0)
+
+                    let numKeyValue = client.variableValue(key: "num_key", defaultValue: Double(0))
                     print("Num_key is \(numKeyValue)!")
+                    
                     let numKeyDefaultedValue = client.variableValue(
-                        key: "num_key_defaulted", defaultValue: 0)
+                        key: "num_key_defaulted", defaultValue: Double(0))
                     print("Num_key_defaulted is \(numKeyDefaultedValue)!")
                 } catch {
                     print("Error identifying user: \(error)")

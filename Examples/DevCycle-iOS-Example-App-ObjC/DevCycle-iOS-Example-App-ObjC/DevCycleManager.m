@@ -42,11 +42,7 @@ static NSString *const DEVCYCLE_KEY = @"<DEVCYCLE_MOBILE_SDK_KEY>";
     self.client = [DevCycleClient initialize:DEVCYCLE_KEY
                                    user:user
                                 options:options
-                          onInitialized:^(NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"DevCycle failed to initialize: %@", error);
-        }
-    }];
+                          onInitialized:onInitialized];
     if (err) {
         NSLog(@"Error Starting DevCycle: %@", err);
     }

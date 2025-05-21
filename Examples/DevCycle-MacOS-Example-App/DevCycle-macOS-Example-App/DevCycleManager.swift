@@ -16,7 +16,6 @@ class DevCycleManager {
     static let shared = DevCycleManager()
 
     func initialize(user: DevCycleUser) {
-        print("DVC Manager Initialize")
         guard initializationTask == nil else { return }
         initializationTask = Task {
             let options = DevCycleOptions.builder()
@@ -26,7 +25,6 @@ class DevCycleManager {
                 .user(user)
                 .options(options)
                 .build()
-            print("DVC Manager ")
             self.client = client
             return client
         }
@@ -34,7 +32,6 @@ class DevCycleManager {
 
     var clientAsync: DevCycleClient? {
         get async {
-            print("Get clientAsync")
             return await initializationTask?.value
         }
     }
