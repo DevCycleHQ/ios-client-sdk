@@ -6,7 +6,7 @@
 import Foundation
 
 #if canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 enum UserError: Error {
@@ -19,90 +19,79 @@ enum UserError: Error {
 
 public class UserBuilder {
     private let cacheService: CacheServiceProtocol = CacheService()
-    
+
     var user: DevCycleUser
     var customData: [String: Any]?
     var privateCustomData: [String: Any]?
-    
+
     init() {
         self.user = DevCycleUser()
     }
-    
+
     public func userId(_ userId: String) -> UserBuilder {
         self.user.userId = userId
         self.user.isAnonymous = false
         return self
     }
-    
+
     public func isAnonymous(_ isAnonymous: Bool) -> UserBuilder {
-        if (self.user.isAnonymous != nil) { return self }
+        if self.user.isAnonymous != nil { return self }
         self.user.isAnonymous = isAnonymous
-        if (isAnonymous) {
-            if let cachedAnonUserId = self.cacheService.getAnonUserId() {
-                self.user.userId = cachedAnonUserId
-            } else {
-                let generatedAnonId = UUID().uuidString
-                self.user.userId = generatedAnonId
-            }
+        if isAnonymous {
+            self.user.userId = self.cacheService.getOrCreateAnonUserId()
         }
         return self
     }
-    
+
     public func email(_ email: String) -> UserBuilder {
         self.user.email = email
         return self
     }
-    
+
     public func name(_ name: String) -> UserBuilder {
         self.user.name = name
         return self
     }
-    
+
     public func language(_ language: String) -> UserBuilder {
         self.user.language = language
         return self
     }
-    
+
     public func country(_ country: String) -> UserBuilder {
         self.user.country = country
         return self
     }
-    
+
     public func customData(_ customData: [String: Any]) -> UserBuilder {
         self.customData = customData
         return self
     }
-    
+
     public func privateCustomData(_ privateCustomData: [String: Any]) -> UserBuilder {
         self.privateCustomData = privateCustomData
         return self
     }
-    
+
     public func build() throws -> DevCycleUser {
         guard self.user.userId?.trimmingCharacters(in: .whitespacesAndNewlines) != ""
         else {
             throw UserError.InvalidUser
         }
-        
+
         if self.user.userId == nil {
-            if let cachedAnonUserId = self.cacheService.getAnonUserId() {
-                self.user.userId = cachedAnonUserId
-            } else {
-                let generatedAnonId = UUID().uuidString
-                self.user.userId = generatedAnonId
-            }
+            self.user.userId = self.cacheService.getOrCreateAnonUserId()
             self.user.isAnonymous = true
         }
 
-        
         if let customData = self.customData {
             self.user.customData = try CustomData.customDataFromDic(customData)
         }
-        
+
         if let privateCustomData = self.privateCustomData {
             self.user.privateCustomData = try CustomData.customDataFromDic(privateCustomData)
         }
-        
+
         let result = self.user
         self.user = DevCycleUser()
         self.customData = nil
@@ -110,7 +99,6 @@ public class UserBuilder {
         return result
     }
 }
-
 
 public class DevCycleUser: Codable {
     public var userId: String?
@@ -121,7 +109,7 @@ public class DevCycleUser: Codable {
     public var country: String?
     public var customData: CustomData?
     public var privateCustomData: CustomData?
-    
+
     internal var lastSeenDate: Date
     internal let createdDate: Date
     internal let platform: String
@@ -131,7 +119,7 @@ public class DevCycleUser: Codable {
     internal let sdkVersion: String
     internal var appVersion: String?
     internal var appBuild: Int?
-    
+
     init() {
         let platform = PlatformDetails()
         self.lastSeenDate = Date()
@@ -146,12 +134,14 @@ public class DevCycleUser: Codable {
             self.appBuild = Int(appBuildStr)
         }
     }
-    
+
     enum CodingKeys: String, CodingKey {
-           case userId = "user_id"
-           case isAnonymous, email, name, language, country, appVersion, appBuild, customData, privateCustomData, lastSeenDate, createdDate, platform, platformVersion, deviceModel, sdkType, sdkVersion
+        case userId = "user_id"
+        case isAnonymous, email, name, language, country, appVersion, appBuild, customData,
+            privateCustomData, lastSeenDate, createdDate, platform, platformVersion, deviceModel,
+            sdkType, sdkVersion
     }
-    
+
     public func update(with user: DevCycleUser) {
         self.lastSeenDate = Date()
         self.email = user.email
@@ -163,11 +153,11 @@ public class DevCycleUser: Codable {
         self.customData = user.customData
         self.privateCustomData = user.privateCustomData
     }
-    
+
     public static func builder() -> UserBuilder {
         return UserBuilder()
     }
-    
+
     func toQueryItems() -> [URLQueryItem] {
         let builder = QueryItemBuilder(user: self)
             .formatToQueryItem(name: "user_id", value: self.userId)
@@ -185,16 +175,18 @@ public class DevCycleUser: Codable {
             .formatToQueryItem(name: "deviceModel", value: self.deviceModel)
             .formatToQueryItem(name: "sdkType", value: self.sdkType)
             .formatToQueryItem(name: "sdkVersion", value: self.sdkVersion)
-        
+
         if let customData = self.customData,
-           let customDataJSON = try? JSONEncoder().encode(customData) {
+            let customDataJSON = try? JSONEncoder().encode(customData)
+        {
             _ = builder.formatToQueryItem(name: "customData", value: customDataJSON)
         }
         if let privateCustomData = self.privateCustomData,
-           let privateCustomDataJSON = try? JSONEncoder().encode(privateCustomData) {
+            let privateCustomDataJSON = try? JSONEncoder().encode(privateCustomData)
+        {
             _ = builder.formatToQueryItem(name: "privateCustomData", value: privateCustomDataJSON)
         }
-        
+
         return builder.build()
     }
 }
@@ -205,25 +197,26 @@ public typealias DVCUser = DevCycleUser
 class QueryItemBuilder {
     var items: [URLQueryItem]
     let user: DevCycleUser
-    
+
     init(user: DevCycleUser) {
         self.items = []
         self.user = user
     }
-    
+
     func formatToQueryItem<T>(name: String, value: T?) -> QueryItemBuilder {
         guard let property = value else { return self }
         if let map = property as? Data {
-            items.append(URLQueryItem(name: name, value: String(data: map, encoding: String.Encoding.utf8)))
+            items.append(
+                URLQueryItem(name: name, value: String(data: map, encoding: String.Encoding.utf8)))
         } else if let date = property as? Date {
             items.append(URLQueryItem(name: name, value: "\(Int(date.timeIntervalSince1970))"))
         } else {
             items.append(URLQueryItem(name: name, value: "\(property)"))
         }
-        
+
         return self
     }
-    
+
     func build() -> [URLQueryItem] {
         let result = self.items
         self.items = []
