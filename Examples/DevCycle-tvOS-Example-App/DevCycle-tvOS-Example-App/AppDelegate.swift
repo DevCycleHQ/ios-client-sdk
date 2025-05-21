@@ -3,24 +3,32 @@
 //  DevCycle-tvOS-Example-App
 //
 
-import UIKit
 import DevCycle
+import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        // create anonymous user
-        let user = try? DevCycleUser.builder()
-                               .isAnonymous(true)
-                               .build()
-        
-        // initialize DevCycle
-        if let user = user {
-            DevCycleManager.shared.initialize(user: user)
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        do {
+            // TODO: Set SDK Key in DevCycleManager.swift
+
+            // Insert code here to initialize your application
+            // create anonymous user
+            let user = try DevCycleUser.builder()
+                .isAnonymous(true)
+                .build()
+            Task {
+                // Initialize DevCycle
+                await DevCycleManager.shared.initialize(user: user)
+            }
+        } catch {
+            fatalError("Failed to build DevCycleUser: \(error)")
         }
         return true
     }

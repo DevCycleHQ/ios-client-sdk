@@ -3,33 +3,36 @@
 //  DevCycle-tvOS-Example-App
 //
 
-import UIKit
 import DevCycle
+import UIKit
 
 class ViewController: UIViewController {
 
     @IBOutlet weak var titleHeader: UILabel!
     @IBOutlet weak var loginButton: UIButton!
-    
+
     var loggedIn: Bool = false
-    var client: DevCycleClient?
     var titleHeaderVar: DVCVariable<String>?
     var loginCtaVar: DVCVariable<String>?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        self.client = DevCycleManager.shared.client
-        self.loginCtaVar = client?.variable(key: "login-cta-copy", defaultValue: "Log").onUpdate(handler: { value in
-            self.setLoginButtonTitle(self.loggedIn)
-        })
-        self.titleHeaderVar = client?.variable(key: "title-header-copy", defaultValue: "DevCycle iOS Example App").onUpdate(handler: { value in
+        Task {
+            guard let client = await DevCycleManager.shared.clientAsync else { return }
+            self.loginCtaVar = client.variable(key: "login-cta-copy", defaultValue: "Log")
+                .onUpdate(handler: { value in
+                    self.setLoginButtonTitle(self.loggedIn)
+                })
+            self.titleHeaderVar = client.variable(
+                key: "title-header-copy", defaultValue: "DevCycle iOS Example App"
+            ).onUpdate(handler: { value in
+                self.setTitleHeader()
+            })
             self.setTitleHeader()
-        })
-        self.setTitleHeader()
-        self.setLoginButtonTitle(false)
+            self.setLoginButtonTitle(false)
+        }
     }
-    
+
     func setTitleHeader() {
         guard let titleHeaderVar = self.titleHeaderVar else {
             return
@@ -44,69 +47,71 @@ class ViewController: UIViewController {
         self.loggedIn = bool
         self.loginButton.setTitle("\(loginCta.value) \(self.loggedIn ? "out" : "in")", for: .normal)
     }
-    
+
     @IBAction func loginButtonPressed(_ sender: Any) {
-        guard let client = self.client else { return }
-        if (self.loggedIn) {
-            try? client.resetUser { [weak self] error, variables in
-                guard let self = self else { return }
-                self.setLoginButtonTitle(false)
-                print("Reset User!")
-                print("Variables: \(String(describing: variables))")
-            }
-        } else {
-            let user = try? DevCycleUser.builder()
-                              .userId("my-user1")
-                              .email("my-email@email.com")
-                              .country("CA")
-                              .name("Ash Ketchum")
-                              .language("EN")
-                              .customData([
-                                "customkey": "customValue"
-                              ])
-                              .privateCustomData([
-                                "customkey2": "customValue2"
-                              ])
-                              .build()
-            try? client.identifyUser(user: user!) { [weak self] error, variables in
-                guard let self = self else { return }
-                self.setLoginButtonTitle(true)
-                print("Logged in as User: \(String(describing: user?.userId))!")
-                print("Variables: \(String(describing: variables))")
-                
-                let variable = client.variable(key: "num_key", defaultValue: 0)
-                let variable2 = client.variable(key: "num_key_defaulted", defaultValue: 0)
-                if (variable.value == 1) {
-                    print("Num_key is 1!")
-                } else {
-                    print("Num_key is 0!")
+        Task {
+            guard let client = await DevCycleManager.shared.clientAsync else { return }
+            if self.loggedIn {
+                do {
+                    try await client.resetUser()
+                    self.setLoginButtonTitle(false)
+                    print("Reset User!")
+                } catch {
+                    print("Error resetting user: \(error)")
                 }
-                if (variable2.value == 1) {
-                    print("Evaluated num_key_defaulted")
-                } else {
-                    print("Defaulted num_key_defaulted")
+            } else {
+                do {
+                    let user = try DevCycleUser.builder()
+                        .userId("my-user1")
+                        .email("my-email@email.com")
+                        .country("CA")
+                        .name("Ash Ketchum")
+                        .language("EN")
+                        .customData([
+                            "customkey": "customValue"
+                        ])
+                        .privateCustomData([
+                            "customkey2": "customValue2"
+                        ])
+                        .build()
+                    try await client.identifyUser(user: user)
+                    self.setLoginButtonTitle(true)
+                    print("Logged in as User: \(String(describing: user.userId))!")
+
+                    let numKeyValue = client.variableValue(key: "num_key", defaultValue: 0)
+                    print("Num_key is \(numKeyValue)!")
+
+                    let numKeyDefaultedValue = client.variableValue(
+                        key: "num_key_defaulted", defaultValue: 0)
+                    print("Num_key_defaulted is \(numKeyDefaultedValue)!")
+                } catch {
+                    print("Error identifying user: \(error)")
                 }
             }
         }
     }
-    
+
     @IBAction func track(_ sender: Any) {
-        guard let client = self.client else { return }
-        let event = try! DevCycleEvent.builder()
-                                 .type("my_event")
-                                 .target("my_target")
-                                 .value(3)
-                                 .metaData([ "key": "value" ])
-                                 .clientDate(Date())
-                                 .build()
-        client.track(event)
-        print("Tracked event to DevCycle")
+        Task {
+            guard let client = await DevCycleManager.shared.clientAsync else { return }
+            let event = try! DevCycleEvent.builder()
+                .type("my_event")
+                .target("my_target")
+                .value(3)
+                .metaData(["key": "value"])
+                .clientDate(Date())
+                .build()
+            client.track(event)
+            print("Tracked event to DevCycle")
+        }
     }
-    
+
     @IBAction func logAllFeatures(_ sender: Any) {
-        guard let client = self.client else { return }
-        print("All Features: \(client.allFeatures())")
-        print("All Variables: \(client.allVariables())")
+        Task {
+            guard let client = await DevCycleManager.shared.clientAsync else { return }
+            print("All Features: \(client.allFeatures())")
+            print("All Variables: \(client.allVariables())")
+        }
     }
-    
+
 }
