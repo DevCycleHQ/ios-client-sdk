@@ -21,19 +21,16 @@ class DevCycleClientTest: XCTestCase {
     private var userConfig: UserConfig!
 
     override func setUp() {
-        self.service = MockService()
-        self.user = try! DevCycleUser.builder()
-            .userId("my_user")
-            .build()
-        self.builder = DevCycleClient.builder().service(service)
-
         let data = getConfigData(name: "test_config")
         let dictionary =
             try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
             as! [String: Any]
         self.userConfig = try! UserConfig(from: dictionary)
-
-        service.userConfig = self.userConfig
+        self.service = MockService(userConfig: self.userConfig)
+        self.user = try! DevCycleUser.builder()
+            .userId("my_user")
+            .build()
+        self.builder = DevCycleClient.builder().service(service)
     }
 
     func testBuilderReturnsNilIfNoSDKKey() {
@@ -77,7 +74,7 @@ class DevCycleClientTest: XCTestCase {
 
     func testSetupCallsGetConfig() {
         let client = DevCycleClient()
-        let service = MockService()  // will assert if getConfig was called
+        let service = MockService(userConfig: self.userConfig)  // will assert if getConfig was called
         client.setSDKKey("")
         client.setUser(self.user)
         client.setup(service: service)
@@ -149,7 +146,7 @@ class DevCycleClientTest: XCTestCase {
     func testFlushEventsWithOneEventInQueue() {
         let expectation = XCTestExpectation(description: "EventQueue publishes an event")
         let options = DevCycleOptions.builder().flushEventsIntervalMs(100).build()
-        let service = MockService()  // will assert if publishEvents was called
+        let service = MockService(userConfig: self.userConfig)  // will assert if publishEvents was called
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options)
             .service(service).build(onInitialized: nil)
@@ -171,7 +168,7 @@ class DevCycleClientTest: XCTestCase {
     func testFlushEventsWithOneEventInQueueAndCallback() {
         let expectation = XCTestExpectation(description: "EventQueue publishes an event")
         let options = DevCycleOptions.builder().flushEventsIntervalMs(100).build()
-        let service = MockService()  // will assert if publishEvents was called
+        let service = MockService(userConfig: self.userConfig)  // will assert if publishEvents was called
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options)
             .service(service).build(onInitialized: nil)
@@ -200,7 +197,7 @@ class DevCycleClientTest: XCTestCase {
         let options = DevCycleOptions.builder().flushEventsIntervalMs(10000).build()
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).build(
             onInitialized: nil)
-        let service = MockService()  // will assert if publishEvents was called
+        let service = MockService(userConfig: self.userConfig)  // will assert if publishEvents was called
         client.setup(service: service)
         let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").clientDate(Date())
             .build()
@@ -422,7 +419,7 @@ class DevCycleClientTest: XCTestCase {
     }
 
     func testRefetchConfigUsesTheCorrectUser() {
-        let service = MockService()
+        let service = MockService(userConfig: self.userConfig)
         let user1 = try! DevCycleUser.builder().userId("user1").build()
         let client = try! DevCycleClient.builder().user(user1).sdkKey("my_sdk_key").build(
             onInitialized: nil)
@@ -537,6 +534,7 @@ class DevCycleClientTest: XCTestCase {
     }
 
     func testIdentifyUserClearsCachedAnonymousUserId() {
+        CacheService().clearAnonUserId()
         // Build Anon User, generates a new UUID
         let anonUser1 = try! DevCycleUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser1)
@@ -584,7 +582,7 @@ class DevCycleClientTest: XCTestCase {
         let expectation = XCTestExpectation(description: "test disableCustomEventLogging")
         let options = DevCycleOptions.builder().disableCustomEventLogging(true)
             .flushEventsIntervalMs(100).build()
-        let service = MockService()  // will assert if publishEvents was called
+        let service = MockService(userConfig: self.userConfig)  // will assert if publishEvents was called
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options)
             .service(service).build(onInitialized: nil)
@@ -607,7 +605,7 @@ class DevCycleClientTest: XCTestCase {
         let expectation = XCTestExpectation(description: "test disableAutomaticEventLogging")
         let options = DevCycleOptions.builder().disableAutomaticEventLogging(true)
             .flushEventsIntervalMs(10000).build()
-        let service = MockService()  // will assert if publishEvents was called
+        let service = MockService(userConfig: self.userConfig)  // will assert if publishEvents was called
 
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options)
             .service(service).build(onInitialized: nil)
@@ -628,10 +626,10 @@ class DevCycleClientTest: XCTestCase {
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func testAsyncIdentifyUser() async throws {
-        let client = try self.builder.user(self.user).sdkKey("my_sdk_key").service(service).build(
-            onInitialized: nil)
+        let client = try await self.builder.user(self.user).sdkKey("my_sdk_key").service(service)
+            .build()
         client.config?.userConfig = self.userConfig
-        client.initialize(callback: nil)
+
         let variables = try await client.identifyUser(user: self.user)
         XCTAssertNotNil(variables)
         client.close(callback: nil)
@@ -639,10 +637,10 @@ class DevCycleClientTest: XCTestCase {
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func testAsyncResetUser() async throws {
-        let client = try self.builder.user(self.user).sdkKey("my_sdk_key").service(service).build(
-            onInitialized: nil)
+        let client = try await self.builder.user(self.user).sdkKey("my_sdk_key").service(service)
+            .build()
         client.config?.userConfig = self.userConfig
-        client.initialize(callback: nil)
+
         let variables = try await client.resetUser()
         XCTAssertNotNil(variables)
         client.close(callback: nil)
@@ -650,8 +648,8 @@ class DevCycleClientTest: XCTestCase {
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func testAsyncFlushEvents() async throws {
-        let client = try self.builder.user(self.user).sdkKey("my_sdk_key").service(service).build(
-            onInitialized: nil)
+        let client = try await self.builder.user(self.user).sdkKey("my_sdk_key").service(service)
+            .build()
         let event: DevCycleEvent = try! DevCycleEvent.builder().type("test").clientDate(Date())
             .build()
         client.track(event)
@@ -662,8 +660,8 @@ class DevCycleClientTest: XCTestCase {
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func testAsyncClose() async throws {
-        let client = try self.builder.user(self.user).sdkKey("my_sdk_key").service(service).build(
-            onInitialized: nil)
+        let client = try await self.builder.user(self.user).sdkKey("my_sdk_key").service(service)
+            .build()
         await client.close()
     }
 }
@@ -675,6 +673,10 @@ extension DevCycleClientTest {
         public var numberOfConfigCalls: Int = 0
         public var eventPublishCount: Int = 0
         public var userConfig: UserConfig?
+
+        init(userConfig: UserConfig? = nil) {
+            self.userConfig = userConfig
+        }
 
         func getConfig(
             user: DevCycleUser,
