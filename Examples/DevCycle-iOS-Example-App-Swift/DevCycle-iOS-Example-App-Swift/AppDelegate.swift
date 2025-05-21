@@ -4,40 +4,52 @@
 //
 //
 
-import UIKit
 import DevCycle
+import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // TODO: Set SDK KEY in DevCycleManager.swift
-        
-        // create anonymous user
-        let user = try? DevCycleUser.builder()
-                               .isAnonymous(true)
-                               .build()
-        
-        // initialize DevCycle
-        if let user = user {
-            DevCycleManager.shared.initialize(user: user)
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        do {
+            // TODO: Set SDK Key in DevCycleManager.swift
+
+            // Insert code here to initialize your application
+            // create anonymous user
+            let user = try DevCycleUser.builder()
+                .isAnonymous(true)
+                .build()
+            Task {
+                // Initialize DevCycle
+                await DevCycleManager.shared.initialize(user: user)
+            }
+        } catch {
+            fatalError("Failed to build DevCycleUser: \(error)")
         }
-        
         return true
     }
 
     // MARK: UISceneSession Lifecycle
 
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        return UISceneConfiguration(
+            name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+    func application(
+        _ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>
+    ) {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 }
-
