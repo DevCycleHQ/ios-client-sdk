@@ -644,15 +644,15 @@ public class DevCycleClient {
         public func build() async throws -> DevCycleClient {
             return try await withCheckedThrowingContinuation { continuation in
                 do {
-                    var builtClient: DevCycleClient?
-                    _ = try self.build(onInitialized: { error in
+                    var resultClient: DevCycleClient?
+                    let client = try self.build(onInitialized: { error in
                         if let error = error {
                             continuation.resume(throwing: error)
-                        } else if let builtClient = builtClient {
-                            continuation.resume(returning: builtClient)
+                        } else if let resultClient = resultClient {
+                            continuation.resume(returning: resultClient)
                         }
                     })
-                    builtClient = self.client
+                    resultClient = client
                 } catch {
                     continuation.resume(throwing: error)
                 }
