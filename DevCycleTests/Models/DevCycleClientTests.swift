@@ -534,7 +534,6 @@ class DevCycleClientTest: XCTestCase {
     }
 
     func testIdentifyUserClearsCachedAnonymousUserId() {
-        CacheService().clearAnonUserId()
         // Build Anon User, generates a new UUID
         let anonUser1 = try! DevCycleUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser1)
