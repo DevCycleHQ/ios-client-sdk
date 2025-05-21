@@ -46,7 +46,6 @@
 			children = (
 				52A4869C2785F68C00DABA34 /* DevCycle-iOS-Example-App-Swift */,
 				52A4869B2785F68C00DABA34 /* Products */,
-				52A486BB2785F6EC00DABA34 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -71,13 +70,6 @@
 				52A486AB2785F69700DABA34 /* Info.plist */,
 			);
 			path = "DevCycle-iOS-Example-App-Swift";
-			sourceTree = "<group>";
-		};
-		52A486BB2785F6EC00DABA34 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

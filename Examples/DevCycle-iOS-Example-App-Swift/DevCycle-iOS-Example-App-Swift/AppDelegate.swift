@@ -22,10 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let user = try DevCycleUser.builder()
                 .isAnonymous(true)
                 .build()
-            Task {
-                // Initialize DevCycle
-                await DevCycleManager.shared.initialize(user: user)
-            }
+            DevCycleManager.shared.initialize(user: user)
         } catch {
             fatalError("Failed to build DevCycleUser: \(error)")
         }
