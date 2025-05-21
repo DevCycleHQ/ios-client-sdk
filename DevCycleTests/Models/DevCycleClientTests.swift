@@ -538,27 +538,35 @@ class DevCycleClientTest: XCTestCase {
         let anonUser1 = try! DevCycleUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser1)
 
-        // Call Identify with a NOT anonymous User, this should erase the Cached UUID of anonUser1
+        // Add expectations to wait for both callbacks
+        let onInitializedExpectation = XCTestExpectation(description: "onInitialized called")
+        let identifyUserExpectation = XCTestExpectation(description: "identifyUser callback called")
+
+        // Call Identify with a NOT anonymous User, this should NOT erase the Cached UUID of anonUser1
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(onInitialized: {
             [weak self] error in
-            // Since the cached Anonymous User Id is only cleared on successful identify call,
+            // Since the cached Anonymous User Id is only cleared on resetUser,
             // the anonUser3.userId should be the same as anonUser1.userId
             let anonUser3 = try! DevCycleUser.builder().isAnonymous(true).build()
             XCTAssertNotNil(anonUser3)
             XCTAssertEqual(anonUser3.userId, anonUser1.userId)
+            onInitializedExpectation.fulfill()
         })
         client.config?.userConfig = self.userConfig
-        client.initialize(callback: nil)
 
         try! client.identifyUser(
             user: self.user,
             callback: { [weak self] error, variables in
-                // Wait for successful identifyUser callback, then build a new anonymous User, which SHOULD generate a new UUID
+                // After identifyUser, the anon user ID should still be the same
                 let anonUser2 = try! DevCycleUser.builder().isAnonymous(true).build()
                 XCTAssertNotNil(anonUser2)
-                XCTAssertNotEqual(anonUser2.userId, anonUser1.userId)
+                XCTAssertEqual(anonUser2.userId, anonUser1.userId)
+                identifyUserExpectation.fulfill()
             })
         client.close(callback: nil)
+
+        // Wait for both callbacks to complete
+        wait(for: [onInitializedExpectation, identifyUserExpectation], timeout: 1.0)
     }
 
     func testResetUserGeneratesANewAnonymousUserId() {

@@ -245,9 +245,6 @@ public class DevCycleClient {
 
     private func cacheUser(user: DevCycleUser) {
         self.cacheService.save(user: user)
-        if user.isAnonymous == true, let userId = user.userId {
-            self.cacheService.setAnonUserId(anonUserId: userId)
-        }
     }
 
     private func setupSSEConnection() {
