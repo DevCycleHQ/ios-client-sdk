@@ -8,20 +8,27 @@ import DevCycle
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
-    
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // TODO: Set SDK Key in DevCycleManager.swift
-        
-        // Insert code here to initialize your application
-        // create anonymous user
-        let user = try? DevCycleUser.builder()
-                               .isAnonymous(true)
-                               .build()
-        
-        // initialize DevCycle
-        if let user = user {
+
+    override init() {
+        super.init()
+        do {
+            // TODO: Set SDK Key in DevCycleManager.swift
+
+            // Insert code here to initialize your application
+            // create anonymous user
+            let user = try DevCycleUser.builder()
+                .isAnonymous(true)
+                .build()
+            
+            // Initialize DevCycle
             DevCycleManager.shared.initialize(user: user)
+        } catch {
+            fatalError("Failed to build DevCycleUser: \(error)")
         }
+    }
+
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // No DevCycle initialization needed here
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -31,5 +38,5 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
         return true
     }
-    
+
 }

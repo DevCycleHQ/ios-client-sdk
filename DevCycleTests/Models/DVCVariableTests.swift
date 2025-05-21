@@ -6,28 +6,33 @@
 //
 
 import XCTest
+
 @testable import DevCycle
 
 class DVCVariableTests: XCTestCase {
     func testVariableCreatedFromParams() {
-        let variable = DVCVariable(key: "key", value: nil, defaultValue: "default_value", evalReason: nil)
+        let variable = DVCVariable(
+            key: "key", value: nil, defaultValue: "default_value", evalReason: nil)
         XCTAssertNotNil(variable)
     }
-    
+
     func testVariableUpdatesFromVariable() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "String",
-            "value": "my_value"
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "String",
+                "value": "my_value"
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
-        let variable = DVCVariable(key: "my_key", value: nil, defaultValue: "my_default", evalReason: nil)
+        let variable = DVCVariable(
+            key: "my_key", value: nil, defaultValue: "my_default", evalReason: nil)
         XCTAssertNotNil(variable)
-        
+
         variable.update(from: variableFromApi)
         XCTAssertNotNil(variable)
         XCTAssertEqual(variable.key, "my_key")
@@ -37,17 +42,19 @@ class DVCVariableTests: XCTestCase {
         XCTAssertFalse(variable.isDefaulted)
         XCTAssertNil(variable.evalReason)
     }
-    
+
     func testStringVariableCreatedFromVariable() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "String",
-            "value": "my_value"
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "String",
+                "value": "my_value"
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let variable = DVCVariable(from: variableFromApi, defaultValue: "my_default")
         XCTAssertNotNil(variable)
@@ -58,17 +65,19 @@ class DVCVariableTests: XCTestCase {
         XCTAssertFalse(variable.isDefaulted)
         XCTAssertNil(variable.evalReason)
     }
-    
+
     func testBoolVariableCreatedFromVariable() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "Boolean",
-            "value": true
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "Boolean",
+                "value": true
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let variable = DVCVariable(from: variableFromApi, defaultValue: false)
         XCTAssertNotNil(variable)
@@ -79,17 +88,19 @@ class DVCVariableTests: XCTestCase {
         XCTAssertFalse(variable.isDefaulted)
         XCTAssertNil(variable.evalReason)
     }
-    
+
     func testNumberVariableCreatedFromVariable() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "Number",
-            "value": 2.3
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "Number",
+                "value": 2.3
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let variable = DVCVariable(from: variableFromApi, defaultValue: 1.1)
         XCTAssertNotNil(variable)
@@ -100,17 +111,19 @@ class DVCVariableTests: XCTestCase {
         XCTAssertFalse(variable.isDefaulted)
         XCTAssertNil(variable.evalReason)
     }
-    
+
     func testNumberDoubleVariableCreatedFromVariable() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "Number",
-            "value": 2.3
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "Number",
+                "value": 2.3
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let defaultDouble: Double = 1.1
         let variable = DVCVariable(from: variableFromApi, defaultValue: defaultDouble)
@@ -121,14 +134,16 @@ class DVCVariableTests: XCTestCase {
 
     func testNumberNSNumberVariableCreatedFromVariable() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "Number",
-            "value": 2.3
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "Number",
+                "value": 2.3
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let defaultInt: NSNumber = 1
         let variable = DVCVariable(from: variableFromApi, defaultValue: defaultInt)
@@ -136,17 +151,19 @@ class DVCVariableTests: XCTestCase {
         XCTAssertEqual(variable.type, DVCVariableTypes.Number)
         XCTAssertEqual(variable.defaultValue, defaultInt)
     }
-    
+
     func testNumberFloatVariableDefaultsFromVariable() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "Number",
-            "value": 2.3
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "Number",
+                "value": 2.3
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let defaultFloat: Float = 1.1
         let variable = DVCVariable(from: variableFromApi, defaultValue: defaultFloat)
@@ -154,17 +171,19 @@ class DVCVariableTests: XCTestCase {
         XCTAssertEqual(variable.type, nil)
         XCTAssertTrue(variable.isDefaulted)
     }
-    
+
     func testNumberIntVariableDefaultsFromVariable() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "Number",
-            "value": 2.3
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "Number",
+                "value": 2.3
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let defaultInt: Int = 1
         let variable = DVCVariable(from: variableFromApi, defaultValue: defaultInt)
@@ -172,22 +191,24 @@ class DVCVariableTests: XCTestCase {
         XCTAssertEqual(variable.type, nil)
         XCTAssertTrue(variable.isDefaulted)
     }
-    
+
     func testJsonVariableCreatedFromVariable() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "JSON",
-            "value": {
-                "key1": "value1",
-                "key2": {
-                    "nestedKey1": "nestedKey2"
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "JSON",
+                "value": {
+                    "key1": "value1",
+                    "key2": {
+                        "nestedKey1": "nestedKey2"
+                    }
                 }
             }
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let defaultValue: [String: Any] = ["key1": "value2"]
         let variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue)
@@ -199,45 +220,49 @@ class DVCVariableTests: XCTestCase {
         XCTAssertEqual(variable.defaultValue["key1"] as! String, "value2")
         XCTAssertFalse(variable.isDefaulted)
         XCTAssertNil(variable.evalReason)
-        
-        let nsDicDefault: NSDictionary = ["key1":"val"]
+
+        let nsDicDefault: NSDictionary = ["key1": "val"]
         let variable2 = DVCVariable(from: variableFromApi, defaultValue: nsDicDefault)
         XCTAssertEqual(variable2.value["key1"] as! String, "value1")
         XCTAssertEqual(variable2.type, DVCVariableTypes.JSON)
         XCTAssertEqual(variable2.defaultValue["key1"] as! String, "val")
     }
-    
+
     func testReturnsDefaultValueIfValueDoesntMatchDefaultValue() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "String",
-            "value": "my_value"
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "String",
+                "value": "my_value"
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let variable = DVCVariable(from: variableFromApi, defaultValue: 4)
         XCTAssertEqual(variable.value, 4)
         XCTAssertTrue(variable.isDefaulted)
     }
-    
+
     func testReturnsDefaultValueIfJSONObjectDoesntMatch() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "JSON",
-            "value": {
-                "key1": "value1",
-                "key2": {
-                    "nestedKey1": 610
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "JSON",
+                "value": {
+                    "key1": "value1",
+                    "key2": {
+                        "nestedKey1": 610
+                    }
                 }
             }
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let defaultValue = ["key1": "value2"]
         let variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue)
@@ -245,35 +270,40 @@ class DVCVariableTests: XCTestCase {
         XCTAssertEqual(variable.value, defaultValue)
         XCTAssertTrue(variable.isDefaulted)
     }
-    
+
     func testDefaultValueIfValueFromUpdateDoesntMatchDefaultValue() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "String",
-            "value": "my_value"
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "String",
+                "value": "my_value"
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
         let variable = DVCVariable(key: "my_key", value: nil, defaultValue: 4, evalReason: nil)
         variable.update(from: variableFromApi)
         XCTAssertEqual(variable.value, 4)
     }
-    
+
     func testOnUpdateGetsCalledIfValueChanges() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "String",
-            "value": "my_value"
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "String",
+                "value": "my_value"
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
-        let variable = DVCVariable(key: "my_key", value: nil, defaultValue: "new_value", evalReason: nil)
+        let variable = DVCVariable(
+            key: "my_key", value: nil, defaultValue: "new_value", evalReason: nil)
         let exp = expectation(description: "On Update Called With New Value")
         variable.onUpdate { value in
             exp.fulfill()
@@ -284,16 +314,19 @@ class DVCVariableTests: XCTestCase {
 
     func testOnUpdateDoesntGetCalledIfValueTheSame() throws {
         let data = """
-        {
-            "_id": "variable_id",
-            "key": "my_key",
-            "type": "String",
-            "value": "my_value"
-        }
-        """.data(using: .utf8)!
-        let variableDict = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "String",
+                "value": "my_value"
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
         let variableFromApi = try Variable(from: variableDict)
-        let variable = DVCVariable(key: "my_key", value: nil, defaultValue: "my_value", evalReason: nil)
+        let variable = DVCVariable(
+            key: "my_key", value: nil, defaultValue: "my_value", evalReason: nil)
         var onUpdateCalled = false
         let exp = expectation(description: "On Update Not Called")
         variable.onUpdate { value in

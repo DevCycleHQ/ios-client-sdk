@@ -3,31 +3,39 @@
 //  DevCycle-MacOS-Example-App
 //
 
-import Foundation
 import DevCycle
+import Foundation
 
 struct DevCycleKeys {
     static var DEVELOPMENT = "<DEVCYCLE_MOBILE_SDK_KEY>"
 }
 
 class DevCycleManager {
-    
-    var client: DevCycleClient?
+    private var client: DevCycleClient?
+    private var initializationTask: Task<DevCycleClient?, Never>?
     static let shared = DevCycleManager()
-    
+
     func initialize(user: DevCycleUser) {
-        let options = DevCycleOptions.builder()
-                                .logLevel(.debug)
-                                .build()
-        
-        guard let client = try? DevCycleClient.builder()
+        print("DVC Manager Initialize")
+        guard initializationTask == nil else { return }
+        initializationTask = Task {
+            let options = DevCycleOptions.builder()
+                .build()
+            let client = try? await DevCycleClient.builder()
                 .sdkKey(DevCycleKeys.DEVELOPMENT)
                 .user(user)
                 .options(options)
-                .build(onInitialized: nil)
-        else {
-            return
+                .build()
+            print("DVC Manager ")
+            self.client = client
+            return client
         }
-        self.client = client
+    }
+
+    var clientAsync: DevCycleClient? {
+        get async {
+            print("Get clientAsync")
+            return await initializationTask?.value
+        }
     }
 }

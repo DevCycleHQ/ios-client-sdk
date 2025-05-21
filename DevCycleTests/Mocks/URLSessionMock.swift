@@ -12,7 +12,7 @@ class URLSessionDataTaskMock: URLSessionDataTask {
     init(closure: @escaping () -> Void) {
         self.closure = closure
     }
-    
+
     override func resume() {
         closure()
     }
@@ -25,7 +25,7 @@ class URLSessionMock: URLSession {
     override func dataTask(
         with request: URLRequest,
         completionHandler: @escaping CompletionHandler
-        ) -> URLSessionDataTask {
+    ) -> URLSessionDataTask {
         let data = self.data
         let error = self.error
         return URLSessionDataTaskMock {

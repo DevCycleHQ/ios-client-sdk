@@ -12,24 +12,28 @@ struct DevCycleKeys {
 }
 
 class DevCycleManager {
-
-    var client: DevCycleClient?
+    private var client: DevCycleClient?
+    private var initializationTask: Task<DevCycleClient?, Never>?
     static let shared = DevCycleManager()
 
     func initialize(user: DevCycleUser) {
-        let options = DevCycleOptions.builder()
-            // .logLevel(.debug)
-            .build()
-
-        guard
-            let client = try? DevCycleClient.builder()
+        guard initializationTask == nil else { return }
+        initializationTask = Task {
+            let options = DevCycleOptions.builder()
+                .build()
+            let client = try? await DevCycleClient.builder()
                 .sdkKey(DevCycleKeys.DEVELOPMENT)
                 .user(user)
                 .options(options)
-                .build(onInitialized: nil)
-        else {
-            return
+                .build()
+            self.client = client
+            return client
         }
-        self.client = client
+    }
+
+    var clientAsync: DevCycleClient? {
+        get async {
+            return await initializationTask?.value
+        }
     }
 }
