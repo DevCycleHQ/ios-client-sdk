@@ -18,7 +18,7 @@ jobs:
         run: echo "FASTLANE_GIT_BASIC_AUTHORIZATION=$(echo -n taplytics-robot:${{ secrets.AUTOMATION_USER_TOKEN }} | base64)" >> "$GITHUB_ENV"
 
       - name: "Select Latest Xcode"
-        uses: maxim-lobanov/setup-xcode@v1
+        uses: maxim-lobanov/setup-xcode@c51a66b42363123fa82a6cfe02c60af4281dab93
         with:
           xcode-version: latest-stable
 
