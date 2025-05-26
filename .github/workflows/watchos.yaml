@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "Select Latest Xcode"
-        uses: maxim-lobanov/setup-xcode@c51a66b42363123fa82a6cfe02c60af4281dab93
+        uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd
         with:
           xcode-version: latest-stable
 
