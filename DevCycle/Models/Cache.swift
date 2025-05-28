@@ -91,8 +91,10 @@ class CacheService: CacheServiceProtocol {
             return nil
         }
 
-        let oldestValidDateMs = Int(Date().timeIntervalSince1970) - ttlMs
-        if let savedFetchDate = savedFetchDate, savedFetchDate < oldestValidDateMs {
+        let currentTimeSec = Int(Date().timeIntervalSince1970)
+        let ttlSec = ttlMs / 1000
+        let oldestValidTimeSec = currentTimeSec - ttlSec
+        if let savedFetchDate = savedFetchDate, savedFetchDate < oldestValidTimeSec {
             Log.debug("Skipping cached config: last fetched date is too old")
             return nil
         }
@@ -139,7 +141,20 @@ class CacheService: CacheServiceProtocol {
     }
 
     private func getConfigKeyPrefix(user: DevCycleUser) -> String {
-        return (user.isAnonymous ?? false)
-            ? CacheKeys.anonymousConfigKey : CacheKeys.identifiedConfigKey
+        if user.isAnonymous ?? false {
+            // For anonymous users, use the anonUserId if available, otherwise use the base key
+            if let anonUserId = user.userId {
+                return "\(CacheKeys.anonymousConfigKey)_\(anonUserId)"
+            } else {
+                return CacheKeys.anonymousConfigKey
+            }
+        } else {
+            // For identified users, include the userId in the cache key
+            if let userId = user.userId {
+                return "\(CacheKeys.identifiedConfigKey)_\(userId)"
+            } else {
+                return CacheKeys.identifiedConfigKey
+            }
+        }
     }
 }
