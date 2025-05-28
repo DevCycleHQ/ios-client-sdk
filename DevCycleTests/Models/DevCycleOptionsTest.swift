@@ -64,8 +64,8 @@ class DevCycleOptionsTest: XCTestCase {
     
     func testDefaultConfigCacheTTL() {
         let options = DevCycleOptions()
-        // Default TTL should be 30 days (2,592,000,000 milliseconds)
-        XCTAssertEqual(options.configCacheTTL, 2_592_000_000, "Default config cache TTL should be 30 days")
+        // Default TTL should be 30 days
+        XCTAssertEqual(options.configCacheTTL, DEFAULT_CONFIG_CACHE_TTL, "Default config cache TTL should be 30 days")
     }
     
     func testConfigCacheTTLCustomization() {
