@@ -161,6 +161,10 @@ extension DevCycleServiceTests {
         func getOrCreateAnonUserId() -> String {
             return "mock-anon-id"
         }
+
+        func migrateLegacyCache() {
+            // TODO: update implementation for tests
+        }
     }
 
     class MockDevCycleService: DevCycleServiceProtocol {

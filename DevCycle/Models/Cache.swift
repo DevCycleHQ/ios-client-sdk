@@ -15,6 +15,7 @@ protocol CacheServiceProtocol {
     func saveConfig(user: DevCycleUser, fetchDate: Int, configToSave: Data?)
     func getConfig(user: DevCycleUser, ttlMs: Int) -> UserConfig?
     func getOrCreateAnonUserId() -> String
+    func migrateLegacyCache()
 }
 
 struct Cache {
@@ -35,6 +36,8 @@ class CacheService: CacheServiceProtocol {
     private let defaults: UserDefaults = UserDefaults.standard
 
     func load() -> Cache {
+        migrateLegacyCache()
+
         var userConfig: UserConfig?
         var dvcUser: DevCycleUser?
         if let data = defaults.object(forKey: CacheKeys.config) as? Data,
@@ -133,7 +136,12 @@ class CacheService: CacheServiceProtocol {
     }
 
     private func getInt(key: String) -> Int? {
-        return defaults.integer(forKey: key)
+        let value = defaults.integer(forKey: key)
+        // UserDefaults.integer returns 0 if key doesn't exist, so we need to check if key actually exists
+        if defaults.object(forKey: key) == nil {
+            return nil
+        }
+        return value
     }
 
     private func remove(key: String) {
@@ -156,5 +164,59 @@ class CacheService: CacheServiceProtocol {
                 return CacheKeys.identifiedConfigKey
             }
         }
+    }
+
+    func migrateLegacyCache() {
+        migrateConfigIfNeeded(
+            oldKey: CacheKeys.identifiedConfigKey,
+            userType: .identified
+        )
+        migrateConfigIfNeeded(
+            oldKey: CacheKeys.anonymousConfigKey,
+            userType: .anonymous
+        )
+    }
+
+    private enum UserType {
+        case identified, anonymous
+    }
+
+    private func migrateConfigIfNeeded(oldKey: String, userType: UserType) {
+        guard let oldConfigData = defaults.object(forKey: oldKey) as? Data else {
+            return
+        }
+
+        guard let oldUserId = getString(key: "\(oldKey).USER_ID") else {
+            Log.debug("Migration skipped: No user ID found for legacy cache key \(oldKey)")
+            return
+        }
+
+        guard let oldFetchDate = getInt(key: "\(oldKey).FETCH_DATE") else {
+            Log.debug("Migration skipped: No fetch date found for legacy cache key \(oldKey)")
+            return
+        }
+
+        let newKey =
+            userType == .identified
+            ? "\(CacheKeys.identifiedConfigKey)_\(oldUserId)"
+            : "\(CacheKeys.anonymousConfigKey)_\(oldUserId)"
+
+        if defaults.object(forKey: newKey) != nil {
+            Log.debug("New cache key \(newKey) already exists, cleaning up legacy cache \(oldKey)")
+            defaults.removeObject(forKey: oldKey)
+            remove(key: "\(oldKey).USER_ID")
+            remove(key: "\(oldKey).FETCH_DATE")
+            return
+        }
+
+        defaults.set(oldConfigData, forKey: newKey)
+        setString(key: "\(newKey).USER_ID", value: oldUserId)
+        setInt(key: "\(newKey).FETCH_DATE", value: oldFetchDate)
+
+        defaults.removeObject(forKey: oldKey)
+        remove(key: "\(oldKey).USER_ID")
+        remove(key: "\(oldKey).FETCH_DATE")
+
+        Log.debug("Migrated config + user cache from \(oldKey) to \(newKey)")
     }
 }

@@ -6,7 +6,7 @@
 import Foundation
 
 // Default TTL for config cache (30 days in milliseconds)
-internal let DEFAULT_CONFIG_CACHE_TTL: Int = 2_592_000_000
+public let DEFAULT_CONFIG_CACHE_TTL: Int = 2_592_000_000
 
 public class DevCycleOptions {
     private(set) public var eventFlushIntervalMS: Int?
