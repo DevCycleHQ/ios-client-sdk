@@ -149,18 +149,15 @@ class DevCycleUserTest: XCTestCase {
         let configData2 = configJson2.data(using: .utf8)
         let configDataAnon = configJsonAnon.data(using: .utf8)
 
-        let currentTime = Int(Date().timeIntervalSince1970)
-
         // Save configs for different users
-        cacheService.saveConfig(user: user1, fetchDate: currentTime, configToSave: configData1)
-        cacheService.saveConfig(user: user2, fetchDate: currentTime, configToSave: configData2)
-        cacheService.saveConfig(
-            user: anonUser, fetchDate: currentTime, configToSave: configDataAnon)
+        cacheService.saveConfig(user: user1, configToSave: configData1)
+        cacheService.saveConfig(user: user2, configToSave: configData2)
+        cacheService.saveConfig(user: anonUser, configToSave: configDataAnon)
 
         // Verify configs can be retrieved for specific users
-        let retrievedConfig1 = cacheService.getConfig(user: user1, ttlMs: 3_600_000)  // 1 hour TTL
-        let retrievedConfig2 = cacheService.getConfig(user: user2, ttlMs: 3_600_000)
-        let retrievedConfigAnon = cacheService.getConfig(user: anonUser, ttlMs: 3_600_000)
+        let retrievedConfig1 = cacheService.getConfig(user: user1)
+        let retrievedConfig2 = cacheService.getConfig(user: user2)
+        let retrievedConfigAnon = cacheService.getConfig(user: anonUser)
 
         XCTAssertNotNil(retrievedConfig1, "Config for user1 should be retrievable")
         XCTAssertNotNil(retrievedConfig2, "Config for user2 should be retrievable")
@@ -177,12 +174,13 @@ class DevCycleUserTest: XCTestCase {
 
         // Test that a different user cannot retrieve another user's config
         let user3 = try! DevCycleUser.builder().userId("user3").build()
-        let nonExistentConfig = cacheService.getConfig(user: user3, ttlMs: 3_600_000)
+        let nonExistentConfig = cacheService.getConfig(user: user3)
         XCTAssertNil(nonExistentConfig, "User3 should not have any cached config")
     }
 
     func testConfigCacheTTLRespected() {
-        let cacheService = CacheService()
+        // Test with short TTL to verify expiration works
+        let shortTtlCacheService = CacheService(configCacheTTL: 100)  // 100ms TTL
         let user = try! DevCycleUser.builder().userId("test_user").build()
 
         let configJson = createConfigJson(
@@ -190,17 +188,29 @@ class DevCycleUserTest: XCTestCase {
             variableValue: "value")
         let configData = configJson.data(using: .utf8)
 
-        // Save config with old timestamp (2 hours ago)
-        let oldTime = Int(Date().timeIntervalSince1970) - 7200
-        cacheService.saveConfig(user: user, fetchDate: oldTime, configToSave: configData)
+        // Save config
+        shortTtlCacheService.saveConfig(user: user, configToSave: configData)
 
-        // Try to retrieve with 1 hour TTL (should fail)
-        let expiredConfig = cacheService.getConfig(user: user, ttlMs: 3_600_000)
+        // Should be able to retrieve immediately
+        let validConfig = shortTtlCacheService.getConfig(user: user)
+        XCTAssertNotNil(validConfig, "Config should be retrievable immediately after saving")
+
+        // Wait for TTL to expire
+        let expectation = self.expectation(description: "Wait for TTL expiration")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {  // Wait 200ms
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+
+        // Try to retrieve after TTL expires (should fail)
+        let expiredConfig = shortTtlCacheService.getConfig(user: user)
         XCTAssertNil(expiredConfig, "Expired config should not be returned")
 
-        // Try to retrieve with 3 hour TTL (should succeed)
-        let validConfig = cacheService.getConfig(user: user, ttlMs: 10_800_000)
-        XCTAssertNotNil(validConfig, "Valid config should be returned within TTL")
+        // Test with long TTL to verify it works within TTL
+        let longTtlCacheService = CacheService(configCacheTTL: 3_600_000)  // 1 hour TTL
+        longTtlCacheService.saveConfig(user: user, configToSave: configData)
+        let validLongTtlConfig = longTtlCacheService.getConfig(user: user)
+        XCTAssertNotNil(validLongTtlConfig, "Config should be retrievable within long TTL")
     }
 
     func testLegacyCacheMigration() {
@@ -246,34 +256,22 @@ class DevCycleUserTest: XCTestCase {
             defaults.object(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId)") as? Data,
             configData,
             "New identified config data should match original")
-        XCTAssertEqual(
-            defaults.string(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId).USER_ID"),
-            identifiedUserId,
-            "New identified user ID should match")
-        XCTAssertEqual(
-            defaults.integer(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId).FETCH_DATE"),
-            fetchDate,
-            "New identified fetch date should match")
+        XCTAssertNotNil(
+            defaults.object(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId).EXPIRY_DATE"),
+            "New identified expiry date should be set")
 
         XCTAssertEqual(
             defaults.object(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId)") as? Data,
             configData,
             "New anonymous config data should match original")
-        XCTAssertEqual(
-            defaults.string(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId).USER_ID"),
-            anonymousUserId,
-            "New anonymous user ID should match")
-        XCTAssertEqual(
-            defaults.integer(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId).FETCH_DATE"),
-            fetchDate,
-            "New anonymous fetch date should match")
+        XCTAssertNotNil(
+            defaults.object(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId).EXPIRY_DATE"),
+            "New anonymous expiry date should be set")
 
         defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId)")
-        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId).USER_ID")
-        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId).FETCH_DATE")
+        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId).EXPIRY_DATE")
         defaults.removeObject(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId)")
-        defaults.removeObject(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId).USER_ID")
-        defaults.removeObject(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId).FETCH_DATE")
+        defaults.removeObject(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId).EXPIRY_DATE")
     }
 
     func testLegacyCacheMigrationSkipsWhenNoData() {
@@ -294,7 +292,7 @@ class DevCycleUserTest: XCTestCase {
         let legacyConfigData = "{\"variables\": {\"legacy\": \"oldValue\"}}".data(using: .utf8)
         let newConfigData = "{\"variables\": {\"new\": \"newValue\"}}".data(using: .utf8)
         let legacyFetchDate = Int(Date().timeIntervalSince1970) - 3600  // 1 hour ago
-        let newFetchDate = Int(Date().timeIntervalSince1970)  // now
+        let newExpiryDate = Int(Date().timeIntervalSince1970 * 1000) + 3_600_000  // 1 hour from now in ms
 
         defaults.set(legacyConfigData, forKey: "IDENTIFIED_CONFIG")
         defaults.set(userId, forKey: "IDENTIFIED_CONFIG.USER_ID")
@@ -302,7 +300,7 @@ class DevCycleUserTest: XCTestCase {
 
         defaults.set(newConfigData, forKey: "IDENTIFIED_CONFIG_\(userId)")
         defaults.set(userId, forKey: "IDENTIFIED_CONFIG_\(userId).USER_ID")
-        defaults.set(newFetchDate, forKey: "IDENTIFIED_CONFIG_\(userId).FETCH_DATE")
+        defaults.set(newExpiryDate, forKey: "IDENTIFIED_CONFIG_\(userId).EXPIRY_DATE")
 
         cacheService.migrateLegacyCache()
 
@@ -321,17 +319,55 @@ class DevCycleUserTest: XCTestCase {
             newConfigData,
             "New config data should remain unchanged")
         XCTAssertEqual(
-            defaults.string(forKey: "IDENTIFIED_CONFIG_\(userId).USER_ID"),
-            userId,
-            "New user ID should remain unchanged")
-        XCTAssertEqual(
-            defaults.integer(forKey: "IDENTIFIED_CONFIG_\(userId).FETCH_DATE"),
-            newFetchDate,
-            "New fetch date should remain unchanged")
+            defaults.integer(forKey: "IDENTIFIED_CONFIG_\(userId).EXPIRY_DATE"),
+            newExpiryDate,
+            "New expiry date should remain unchanged")
 
         defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(userId)")
         defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(userId).USER_ID")
-        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(userId).FETCH_DATE")
+        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(userId).EXPIRY_DATE")
+    }
+
+    func testLegacyUserCacheCleanup() {
+        let cacheService = CacheService()
+        let defaults = UserDefaults.standard
+
+        // Set up legacy user cache data
+        let legacyUserData = "{\"userId\": \"test_user\", \"email\": \"test@example.com\"}".data(
+            using: .utf8)
+        defaults.set(legacyUserData, forKey: "user")
+
+        // Verify legacy user cache exists
+        XCTAssertNotNil(
+            defaults.object(forKey: "user"), "Legacy user cache should exist before migration")
+
+        // Run migration
+        cacheService.migrateLegacyCache()
+
+        // Verify legacy user cache is cleaned up
+        XCTAssertNil(
+            defaults.object(forKey: "user"), "Legacy user cache should be removed after migration")
+    }
+
+    func testLegacyConfigCacheCleanup() {
+        let cacheService = CacheService()
+        let defaults = UserDefaults.standard
+
+        // Set up legacy config cache data
+        let legacyConfigData = "{\"variables\": {\"test\": \"value\"}}".data(using: .utf8)
+        defaults.set(legacyConfigData, forKey: "config")
+
+        // Verify legacy config cache exists
+        XCTAssertNotNil(
+            defaults.object(forKey: "config"), "Legacy config cache should exist before migration")
+
+        // Run migration
+        cacheService.migrateLegacyCache()
+
+        // Verify legacy config cache is cleaned up
+        XCTAssertNil(
+            defaults.object(forKey: "config"),
+            "Legacy config cache should be removed after migration")
     }
 }
 

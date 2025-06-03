@@ -12,16 +12,17 @@ class RequestConsolidator {
     var service: DevCycleServiceProtocol
     var requestInFlight: Bool
     private var cacheService: CacheServiceProtocol
-    
+
     init(service: DevCycleServiceProtocol, cacheService: CacheServiceProtocol) {
         self.service = service
         self.requestCallbacks = []
         self.requestInFlight = false
         self.cacheService = cacheService
     }
-    
-    func queue(request: URLRequest, user: DevCycleUser, callback: @escaping ConfigCompletionHandler) {
-        if (self.requestInFlight) {
+
+    func queue(request: URLRequest, user: DevCycleUser, callback: @escaping ConfigCompletionHandler)
+    {
+        if self.requestInFlight {
             self.requestCallbacks.append(
                 RequestWithCallback(
                     callback: callback,
@@ -30,16 +31,16 @@ class RequestConsolidator {
             )
             return
         }
-        
+
         self.requestInFlight = true
         service.makeRequest(request: request) { response in
-            if (self.requestCallbacks.isEmpty) {
+            if self.requestCallbacks.isEmpty {
                 guard let config = processConfig(response.data) else {
                     callback((nil, response.error))
                     return
                 }
-                
-                self.cacheService.saveConfig(user: user, fetchDate: Int(Date().timeIntervalSince1970), configToSave: response.data)
+
+                self.cacheService.saveConfig(user: user, configToSave: response.data)
                 self.requestInFlight = false
                 callback((config, response.error))
             } else {
@@ -56,7 +57,7 @@ class RequestConsolidator {
             }
         }
     }
-    
+
     func makeLastRequestInQueue(user: DevCycleUser, complete: (() -> Void)?) {
         guard let lastRequest = self.requestCallbacks.last?.request else {
             print("No last request to make in queue")
@@ -68,8 +69,8 @@ class RequestConsolidator {
                     requestCallback.callback((nil, response.error))
                     return
                 }
-                
-                self.cacheService.saveConfig(user: user, fetchDate: Int(Date().timeIntervalSince1970), configToSave: response.data)
+
+                self.cacheService.saveConfig(user: user, configToSave: response.data)
                 requestCallback.callback((config, response.error))
             }
             self.requestCallbacks = []
