@@ -43,7 +43,7 @@ public class DevCycleClient {
     var inactivityDelayMS: Double = 120000
 
     private var service: DevCycleServiceProtocol?
-    private var cacheService: CacheServiceProtocol = CacheService()  // Will be replaced with proper TTL in initialize()
+    private var cacheService: CacheServiceProtocol = CacheService()
     private var cache: Cache?
     var sseConnection: SSEConnectionProtocol?
     private var flushTimer: Timer?
@@ -65,9 +65,10 @@ public class DevCycleClient {
             return
         }
 
-        // Initialize cache service with TTL from options
-        let ttlMs = self.options?.configCacheTTL ?? DEFAULT_CONFIG_CACHE_TTL  // Default 30 days
-        self.cacheService = CacheService(configCacheTTL: ttlMs)
+        // Only create new cache service if configCacheTTL is specified
+        if let configCacheTTL = self.options?.configCacheTTL {
+            self.cacheService = CacheService(configCacheTTL: configCacheTTL)
+        }
 
         self.config = DVCConfig(sdkKey: sdkKey, user: user)
 
