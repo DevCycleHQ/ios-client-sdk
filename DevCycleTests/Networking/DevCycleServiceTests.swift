@@ -130,16 +130,12 @@ class DevCycleServiceTests: XCTestCase {
 extension DevCycleServiceTests {
     class MockCacheService: CacheServiceProtocol {
         var loadCalled = false
-        var saveUserCalled = false
         var saveConfigCalled = false
-        func load() -> Cache {
+        func load(user: DevCycleUser) -> Cache {
             self.loadCalled = true
-            return Cache(config: nil, user: nil)
+            return Cache(config: nil, anonUserId: nil)
         }
 
-        func save(user: DevCycleUser) {
-            self.saveUserCalled = true
-        }
         func setAnonUserId(anonUserId: String) {
             // TODO: update implementation for tests
         }
@@ -150,16 +146,20 @@ extension DevCycleServiceTests {
             // TODO: update implementation for tests
         }
 
-        func saveConfig(user: DevCycleUser, fetchDate: Int, configToSave: Data?) {
+        func saveConfig(user: DevCycleUser, configToSave: Data?) {
             self.saveConfigCalled = true
         }
 
-        func getConfig(user: DevCycleUser, ttlMs: Int) -> UserConfig? {
+        func getConfig(user: DevCycleUser) -> UserConfig? {
             return nil
         }
 
         func getOrCreateAnonUserId() -> String {
             return "mock-anon-id"
+        }
+
+        func migrateLegacyCache() {
+            // TODO: update implementation for tests
         }
     }
 

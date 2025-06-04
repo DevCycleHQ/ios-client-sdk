@@ -61,4 +61,18 @@ class DevCycleOptionsTest: XCTestCase {
         XCTAssertFalse(options.enableEdgeDB)
         XCTAssertFalse(options.disableRealtimeUpdates)
     }
+    
+    func testDefaultConfigCacheTTL() {
+        let options = DevCycleOptions()
+        // Default TTL should be 30 days
+        XCTAssertEqual(options.configCacheTTL, DEFAULT_CONFIG_CACHE_TTL, "Default config cache TTL should be 30 days")
+    }
+    
+    func testConfigCacheTTLCustomization() {
+        let customTTL = 86400000 // 1 day in milliseconds
+        let options = DevCycleOptions.builder()
+                .configCacheTTL(customTTL)
+                .build()
+        XCTAssertEqual(options.configCacheTTL, customTTL, "Custom config cache TTL should be respected")
+    }
 }

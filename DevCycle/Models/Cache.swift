@@ -7,139 +7,192 @@
 import Foundation
 
 protocol CacheServiceProtocol {
-    func load() -> Cache
-    func save(user: DevCycleUser)
+    func load(user: DevCycleUser) -> Cache
     func setAnonUserId(anonUserId: String)
     func getAnonUserId() -> String?
     func clearAnonUserId()
-    func saveConfig(user: DevCycleUser, fetchDate: Int, configToSave: Data?)
-    func getConfig(user: DevCycleUser, ttlMs: Int) -> UserConfig?
+    func saveConfig(user: DevCycleUser, configToSave: Data?)
+    func getConfig(user: DevCycleUser) -> UserConfig?
     func getOrCreateAnonUserId() -> String
+    func migrateLegacyCache()
 }
 
 struct Cache {
     var config: UserConfig?
-    var user: DevCycleUser?
     var anonUserId: String?
 }
 
 class CacheService: CacheServiceProtocol {
     struct CacheKeys {
-        static let user = "user"
-        static let config = "config"
         static let anonUserId = "ANONYMOUS_USER_ID"
         static let identifiedConfigKey = "IDENTIFIED_CONFIG"
         static let anonymousConfigKey = "ANONYMOUS_CONFIG"
+        static let userIdSuffix = ".USER_ID"
+        static let expiryDateSuffix = ".EXPIRY_DATE"
+
+        // Legacy keys for cleanup
+        static let legacyUser = "user"
+        static let legacyConfig = "config"
+        static let legacyFetchDateSuffix = ".FETCH_DATE"
     }
 
     private let defaults: UserDefaults = UserDefaults.standard
+    private let configCacheTTL: Int
 
-    func load() -> Cache {
-        var userConfig: UserConfig?
-        var dvcUser: DevCycleUser?
-        if let data = defaults.object(forKey: CacheKeys.config) as? Data,
-            let dictionary = try? JSONSerialization.jsonObject(
-                with: data, options: .fragmentsAllowed) as? [String: Any],
-            let config = try? UserConfig(from: dictionary)
-        {
-            userConfig = config
-        }
-        if let data = defaults.object(forKey: CacheKeys.user) as? Data {
-            dvcUser = try? JSONDecoder().decode(DevCycleUser.self, from: data)
-        }
-        let anonUserId = self.getAnonUserId()
-
-        return Cache(config: userConfig, user: dvcUser, anonUserId: anonUserId)
+    init(configCacheTTL: Int = DEFAULT_CONFIG_CACHE_TTL) {
+        self.configCacheTTL = configCacheTTL
     }
 
-    func save(user: DevCycleUser) {
-        if let data = try? JSONEncoder().encode(user) {
-            defaults.set(data, forKey: CacheKeys.user)
-        }
+    func load(user: DevCycleUser) -> Cache {
+        migrateLegacyCache()
+
+        return Cache(config: getConfig(user: user), anonUserId: getAnonUserId())
     }
 
     func setAnonUserId(anonUserId: String) {
-        self.setString(key: CacheKeys.anonUserId, value: anonUserId)
+        defaults.set(anonUserId, forKey: CacheKeys.anonUserId)
     }
 
     func getAnonUserId() -> String? {
-        return self.getString(key: CacheKeys.anonUserId)
+        return defaults.string(forKey: CacheKeys.anonUserId)
     }
 
     func clearAnonUserId() {
-        self.remove(key: CacheKeys.anonUserId)
+        defaults.removeObject(forKey: CacheKeys.anonUserId)
     }
 
-    func saveConfig(user: DevCycleUser, fetchDate: Int, configToSave: Data?) {
+    func saveConfig(user: DevCycleUser, configToSave: Data?) {
         let key = getConfigKeyPrefix(user: user)
         defaults.set(configToSave, forKey: key)
-        if let data = user.userId {
-            self.setString(key: "\(key).USER_ID", value: data)
-        }
-        self.setInt(key: "\(key).FETCH_DATE", value: fetchDate)
+
+        let expiryDate = currentTimeMs() + configCacheTTL
+        defaults.set(expiryDate, forKey: "\(key)\(CacheKeys.expiryDateSuffix)")
     }
 
-    func getConfig(user: DevCycleUser, ttlMs: Int) -> UserConfig? {
+    func getConfig(user: DevCycleUser) -> UserConfig? {
         let key = getConfigKeyPrefix(user: user)
-        var config: UserConfig?
 
-        let savedUserId = self.getString(key: "\(key).USER_ID")
-        let savedFetchDate = self.getInt(key: "\(key).FETCH_DATE")
-
-        if let userId = user.userId, userId != savedUserId {
-            Log.debug("Skipping cached config: user ID does not match")
-            return nil
-        }
-
-        let oldestValidDateMs = Int(Date().timeIntervalSince1970) - ttlMs
-        if let savedFetchDate = savedFetchDate, savedFetchDate < oldestValidDateMs {
-            Log.debug("Skipping cached config: last fetched date is too old")
-            return nil
-        }
-
-        if let data = defaults.object(forKey: key) as? Data,
-            let dictionary = try? JSONSerialization.jsonObject(
-                with: data, options: .fragmentsAllowed) as? [String: Any]
+        // Check if cache has expired
+        if let savedExpiryDate = getIntValue(forKey: "\(key)\(CacheKeys.expiryDateSuffix)"),
+            currentTimeMs() > savedExpiryDate
         {
-            config = try? UserConfig(from: dictionary)
-        } else {
+            Log.debug("Skipping cached config: config has expired")
+            cleanupCacheEntry(key: key)
+            return nil
+        }
+
+        // Try to load and parse cached config
+        guard let data = defaults.object(forKey: key) as? Data,
+            let dictionary = try? JSONSerialization.jsonObject(
+                with: data, options: .fragmentsAllowed) as? [String: Any],
+            let config = try? UserConfig(from: dictionary)
+        else {
             Log.debug("Skipping cached config: no config found")
+            return nil
         }
 
         return config
     }
 
     func getOrCreateAnonUserId() -> String {
-        if let anonId = getAnonUserId() {
-            return anonId
+        if let existingId = getAnonUserId() {
+            return existingId
         }
-        let newAnonId = UUID().uuidString
-        setAnonUserId(anonUserId: newAnonId)
-        return newAnonId
+
+        let newId = UUID().uuidString
+        setAnonUserId(anonUserId: newId)
+        return newId
     }
 
-    private func setString(key: String, value: String) {
-        defaults.set(value, forKey: key)
+    // MARK: - Private Helper Methods
+
+    private func currentTimeMs() -> Int {
+        return Int(Date().timeIntervalSince1970 * 1000)
     }
 
-    private func getString(key: String) -> String? {
-        return defaults.string(forKey: key)
+    private func getIntValue(forKey key: String) -> Int? {
+        return defaults.object(forKey: key) != nil ? defaults.integer(forKey: key) : nil
     }
 
-    private func setInt(key: String, value: Int) {
-        defaults.set(value, forKey: key)
-    }
-
-    private func getInt(key: String) -> Int? {
-        return defaults.integer(forKey: key)
-    }
-
-    private func remove(key: String) {
+    private func cleanupCacheEntry(key: String) {
         defaults.removeObject(forKey: key)
+        defaults.removeObject(forKey: "\(key)\(CacheKeys.expiryDateSuffix)")
+    }
+
+    private func cleanupLegacyCacheEntry(key: String) {
+        defaults.removeObject(forKey: key)
+        defaults.removeObject(forKey: "\(key)\(CacheKeys.userIdSuffix)")
+        defaults.removeObject(forKey: "\(key)\(CacheKeys.legacyFetchDateSuffix)")
     }
 
     private func getConfigKeyPrefix(user: DevCycleUser) -> String {
-        return (user.isAnonymous ?? false)
+        let baseKey =
+            (user.isAnonymous ?? false)
             ? CacheKeys.anonymousConfigKey : CacheKeys.identifiedConfigKey
+
+        if let userId = user.userId {
+            return "\(baseKey)_\(userId)"
+        }
+
+        return baseKey
+    }
+
+    // MARK: - Legacy Cache Migration
+
+    func migrateLegacyCache() {
+        // Migrate config cache
+        migrateConfigIfNeeded(oldKey: CacheKeys.identifiedConfigKey, isIdentified: true)
+        migrateConfigIfNeeded(oldKey: CacheKeys.anonymousConfigKey, isIdentified: false)
+
+        // Clean up legacy user cache
+        cleanupLegacyUserCache()
+
+        // Clean up legacy config cache
+        cleanupLegacyConfigCache()
+    }
+
+    private func cleanupLegacyUserCache() {
+        if defaults.object(forKey: CacheKeys.legacyUser) != nil {
+            defaults.removeObject(forKey: CacheKeys.legacyUser)
+            Log.debug("Cleaned up legacy user cache")
+        }
+    }
+
+    private func cleanupLegacyConfigCache() {
+        if defaults.object(forKey: CacheKeys.legacyConfig) != nil {
+            defaults.removeObject(forKey: CacheKeys.legacyConfig)
+            Log.debug("Cleaned up legacy config cache")
+        }
+    }
+
+    private func migrateConfigIfNeeded(oldKey: String, isIdentified: Bool) {
+        guard let oldConfigData = defaults.object(forKey: oldKey) as? Data,
+            let oldUserId = defaults.string(forKey: "\(oldKey)\(CacheKeys.userIdSuffix)")
+        else {
+            return
+        }
+
+        let newKey =
+            isIdentified
+            ? "\(CacheKeys.identifiedConfigKey)_\(oldUserId)"
+            : "\(CacheKeys.anonymousConfigKey)_\(oldUserId)"
+
+        // If new cache already exists, just cleanup legacy cache
+        if defaults.object(forKey: newKey) != nil {
+            Log.debug("New cache key \(newKey) already exists, cleaning up legacy cache \(oldKey)")
+            cleanupLegacyCacheEntry(key: oldKey)
+            return
+        }
+
+        // Migrate data to new format
+        defaults.set(oldConfigData, forKey: newKey)
+
+        let expiryDate = currentTimeMs() + configCacheTTL
+        defaults.set(expiryDate, forKey: "\(newKey)\(CacheKeys.expiryDateSuffix)")
+
+        // Cleanup old cache
+        cleanupLegacyCacheEntry(key: oldKey)
+
+        Log.debug("Migrated config + user cache from \(oldKey) to \(newKey)")
     }
 }

@@ -65,6 +65,11 @@ public class DevCycleClient {
             return
         }
 
+        // Only create new cache service if configCacheTTL is specified
+        if let configCacheTTL = self.options?.configCacheTTL {
+            self.cacheService = CacheService(configCacheTTL: configCacheTTL)
+        }
+
         self.config = DVCConfig(sdkKey: sdkKey, user: user)
 
         let service = DevCycleService(
@@ -142,10 +147,8 @@ public class DevCycleClient {
         self.service = service
 
         var cachedConfig: UserConfig?
-        if let configCacheTTL = options?.configCacheTTL,
-            let disableConfigCache = options?.disableConfigCache, !disableConfigCache
-        {
-            cachedConfig = cacheService.getConfig(user: user, ttlMs: configCacheTTL)
+        if let disableConfigCache = options?.disableConfigCache, !disableConfigCache {
+            cachedConfig = cacheService.getConfig(user: user)
         }
 
         if cachedConfig != nil {
@@ -160,30 +163,30 @@ public class DevCycleClient {
                 guard let self = self else { return }
                 if let error = error {
                     Log.error("Error getting config: \(error)", tags: ["setup"])
-                    self.cache = self.cacheService.load()
+                    self.cache = self.cacheService.load(user: user)
                 } else {
                     if let config = config {
                         Log.debug("Config: \(config)", tags: ["setup"])
                     }
                     self.config?.userConfig = config
                     self.isConfigCached = false
+                }
 
-                    self.cacheUser(user: user)
-
-                    if self.checkIfEdgeDBEnabled(config: config!, enableEdgeDB: self.enableEdgeDB) {
-                        if !(user.isAnonymous ?? false) {
-                            self.service?.saveEntity(
-                                user: user,
-                                completion: { data, response, error in
-                                    if error != nil {
-                                        Log.error(
-                                            "Error saving user entity for \(user). Error: \(String(describing: error))"
-                                        )
-                                    } else {
-                                        Log.info("Saved user entity")
-                                    }
-                                })
-                        }
+                if let config = config,
+                    self.checkIfEdgeDBEnabled(config: config, enableEdgeDB: self.enableEdgeDB)
+                {
+                    if !(user.isAnonymous ?? false) {
+                        self.service?.saveEntity(
+                            user: user,
+                            completion: { data, response, error in
+                                if error != nil {
+                                    Log.error(
+                                        "Error saving user entity for \(user). Error: \(String(describing: error))"
+                                    )
+                                } else {
+                                    Log.info("Saved user entity")
+                                }
+                            })
                     }
                 }
 
@@ -241,10 +244,6 @@ public class DevCycleClient {
                     }
                 })
         }
-    }
-
-    private func cacheUser(user: DevCycleUser) {
-        self.cacheService.save(user: user)
     }
 
     private func setupSSEConnection() {
@@ -425,7 +424,7 @@ public class DevCycleClient {
                 guard let self = self else { return }
                 if let error = error {
                     Log.error("Error getting config: \(error)", tags: ["identify"])
-                    self.cache = self.cacheService.load()
+                    self.cache = self.cacheService.load(user: updateUser)
                 } else {
                     if let config = config {
                         Log.debug("Config: \(config)", tags: ["identify"])
@@ -434,7 +433,6 @@ public class DevCycleClient {
                     self.isConfigCached = false
                 }
                 self.user = user
-                self.cacheUser(user: user)
                 callback?(error, config?.variables)
             })
     }
@@ -457,7 +455,7 @@ public class DevCycleClient {
     }
 
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
-        self.cache = cacheService.load()
+        self.cache = cacheService.load(user: self.user!)
         self.flushEvents()
 
         let cachedAnonUserId = self.cacheService.getAnonUserId()
@@ -484,7 +482,6 @@ public class DevCycleClient {
                 self.config?.userConfig = config
                 self.isConfigCached = false
                 self.user = anonUser
-                self.cacheUser(user: anonUser)
                 callback?(error, config?.variables)
             })
     }

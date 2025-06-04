@@ -5,13 +5,16 @@
 
 import Foundation
 
+// Default TTL for config cache (30 days in milliseconds)
+public let DEFAULT_CONFIG_CACHE_TTL: Int = 2_592_000_000
+
 public class DevCycleOptions {
     private(set) public var eventFlushIntervalMS: Int?
     private(set) public var disableEventLogging: Bool?
     public var logLevel: LogLevel = .error
     private(set) public var enableEdgeDB: Bool = false
     private(set) public var disableConfigCache: Bool = false
-    private(set) public var configCacheTTL: Int = 604_800_000
+    private(set) public var configCacheTTL: Int = DEFAULT_CONFIG_CACHE_TTL
     private(set) public var disableRealtimeUpdates: Bool = false
     private(set) public var disableAutomaticEventLogging: Bool = false
     private(set) public var disableCustomEventLogging: Bool = false
@@ -75,8 +78,8 @@ public class DevCycleOptions {
             return self
         }
 
-        // The maximum allowed age of a cached config in milliseconds, defaults to 7 days
-        public func configCacheTTL(_ ttl: Int = 604_800_000) -> OptionsBuilder {
+        // The maximum allowed age of a cached config in milliseconds, defaults to 30 days
+        public func configCacheTTL(_ ttl: Int = DEFAULT_CONFIG_CACHE_TTL) -> OptionsBuilder {
             self.options.configCacheTTL = ttl
             return self
         }
