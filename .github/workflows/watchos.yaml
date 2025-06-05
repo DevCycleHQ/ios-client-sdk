@@ -27,3 +27,4 @@ jobs:
 
       - name: Fastlane watchOS Tests
         run: fastlane watchos tests
+        timeout-minutes: 15

@@ -27,3 +27,4 @@ jobs:
 
       - name: Fastlane tvOS Tests
         run: fastlane tvos tests
+        timeout-minutes: 15
