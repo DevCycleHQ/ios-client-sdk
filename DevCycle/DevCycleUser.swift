@@ -30,16 +30,11 @@ public class UserBuilder {
 
     public func userId(_ userId: String) -> UserBuilder {
         self.user.userId = userId
-        self.user.isAnonymous = false
         return self
     }
 
     public func isAnonymous(_ isAnonymous: Bool) -> UserBuilder {
-        if self.user.isAnonymous != nil { return self }
         self.user.isAnonymous = isAnonymous
-        if isAnonymous {
-            self.user.userId = self.cacheService.getOrCreateAnonUserId()
-        }
         return self
     }
 
@@ -74,12 +69,18 @@ public class UserBuilder {
     }
 
     public func build() throws -> DevCycleUser {
-        guard self.user.userId?.trimmingCharacters(in: .whitespacesAndNewlines) != ""
-        else {
-            throw UserError.InvalidUser
+        // Validate the userId
+        let hasValidUserId = self.user.userId != nil && !self.user.userId!.isEmpty
+
+        // Handle the different cases based on isAnonymous and userId
+        if self.user.isAnonymous == false && !hasValidUserId {
+            throw UserError.MissingUserIdAndIsAnonymousFalse
         }
 
-        if self.user.userId == nil {
+        if self.user.isAnonymous == true && !hasValidUserId {
+            self.user.userId = self.cacheService.getOrCreateAnonUserId()
+        } else if !hasValidUserId {
+            // Default case: no userId and isAnonymous not explicitly set to false, make anonymous
             self.user.userId = self.cacheService.getOrCreateAnonUserId()
             self.user.isAnonymous = true
         }

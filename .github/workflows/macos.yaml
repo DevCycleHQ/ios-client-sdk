@@ -30,6 +30,7 @@ jobs:
 
       - name: Fastlane macOS Tests
         run: fastlane mac tests
+        timeout-minutes: 15
         env:
           MATCH_GIT_BASIC_AUTHORIZATION: "${{ env.FASTLANE_GIT_BASIC_AUTHORIZATION }}"
           DEVELOPER_APP_ID: "${{ secrets.DEVELOPER_APP_ID }}"

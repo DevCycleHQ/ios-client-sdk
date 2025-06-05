@@ -27,3 +27,4 @@ jobs:
 
       - name: Fastlane iOS Tests
         run: fastlane ios tests
+        timeout-minutes: 15
