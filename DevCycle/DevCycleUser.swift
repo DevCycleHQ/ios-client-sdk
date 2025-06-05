@@ -69,9 +69,8 @@ public class UserBuilder {
     }
 
     public func build() throws -> DevCycleUser {
-        // First, clean and validate the userId
-        let trimmedUserId = self.user.userId?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let hasValidUserId = trimmedUserId != nil && !trimmedUserId!.isEmpty
+        // Validate the userId
+        let hasValidUserId = self.user.userId != nil && !self.user.userId!.isEmpty
 
         // Handle the different cases based on isAnonymous and userId
         if self.user.isAnonymous == false && !hasValidUserId {
@@ -84,9 +83,6 @@ public class UserBuilder {
             // Default case: no userId and isAnonymous not explicitly set to false, make anonymous
             self.user.userId = self.cacheService.getOrCreateAnonUserId()
             self.user.isAnonymous = true
-        } else if hasValidUserId {
-            // Use the trimmed userId
-            self.user.userId = trimmedUserId
         }
 
         if let customData = self.customData {
