@@ -1,0 +1,79 @@
+{
+    "project": {
+        "_id": "id1",
+        "key": "default"
+    },
+    "environment": {
+        "_id": "id2",
+        "key": "development"
+    },
+    "features": {
+        "new-feature": {
+            "_id": "id3",
+            "key": "new-feature",
+            "type": "release",
+            "_variation": "id4",
+            "variationKey": "id4-key",
+            "variationName": "id4 name",
+            "eval": {
+                "reason": "TARGETING_MATCH",
+                "details": "Platform AND App Version"
+            }
+        }
+    },
+    "featureVariationMap": {
+        "id3": "id4"
+    },
+    "knownVariableKeys": [],
+    "variables": {
+        "bool-var": {
+            "_id": "id5",
+            "key": "bool-var",
+            "type": "Boolean",
+            "value": true,
+            "eval": {
+                "reason": "TARGETING_MATCH",
+                "details": "Platform AND App Version"
+            }
+        },
+        "json-var": {
+            "_id": "id6",
+            "key": "json-var",
+            "type": "JSON",
+            "value": {
+                "key1": "value1",
+                "key2": {
+                    "nestedKey1": "nestedValue1"
+                }
+            },
+            "eval": {
+                "reason": "TARGETING_MATCH",
+                "details": "Platform AND App Version"
+            }
+        },
+        "string-var": {
+            "_id": "id7",
+            "key": "string-var",
+            "type": "String",
+            "value": "string1",
+            "eval": {
+                "reason": "TARGETING_MATCH",
+                "details": "Platform AND App Version"
+            }
+        },
+        "num-var": {
+            "_id": "id8",
+            "key": "num-var",
+            "type": "Number",
+            "value": 4,
+            "eval": {
+                "reason": "TARGETING_MATCH",
+                "details": "Platform AND App Version"
+            }
+        }
+    },
+    "sse": {
+        "url": "https://example.com",
+        "inactivityDelay": 5
+    }
+}
