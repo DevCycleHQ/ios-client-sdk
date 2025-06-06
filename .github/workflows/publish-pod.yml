@@ -51,6 +51,9 @@ jobs:
   update-flutter-sdk:
     uses: DevCycleHQ/flutter-client-sdk/.github/workflows/update-ios-sdk-version.yaml@main
     needs: wait-before-flutter-update
+    permissions:
+      contents: write
+      pull-requests: write
     with:
       target-version: ${{ needs.wait-before-flutter-update.outputs.version }}
     secrets: inherit
