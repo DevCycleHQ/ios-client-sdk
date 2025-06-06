@@ -62,8 +62,19 @@ public struct UserConfig {
             }
         }
         
-        self.features = featureMap as! [String: Feature]
-        self.variables = variablesMap as! [String: Variable]
+        if let features = featureMap as? [String: Feature] {
+            self.features = features
+        } else {
+            Log.warn("Invalid feature map format", tags: ["config", "JSONParsing"])
+            self.features = [:]
+        }
+
+        if let variables = variablesMap as? [String: Variable] {
+            self.variables = variables
+        } else {
+            Log.warn("Invalid variables map format", tags: ["config", "JSONParsing"])
+            self.variables = [:]
+        }
     }
 }
 
