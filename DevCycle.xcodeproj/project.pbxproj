@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0B721685290B21CD004D0AB7 /* SSEMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B721684290B21CD004D0AB7 /* SSEMessage.swift */; };
 		0F2DD75A279EFA6B00540C9D /* CustomData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2DD759279EFA6B00540C9D /* CustomData.swift */; };
+		1E9007402DF36DDF00800012 /* test_config_eval_reason.json in Resources */ = {isa = PBXBuildFile; fileRef = 1E90073F2DF36DDF00800012 /* test_config_eval_reason.json */; };
 		52133B2028DDFB260007691D /* RequestConsolidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */; };
 		52133B2228DE00BC0007691D /* ProcessConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2128DE00BC0007691D /* ProcessConfig.swift */; };
 		52133B2428DE0FEB0007691D /* GetTestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52133B2328DE0FEB0007691D /* GetTestConfig.swift */; };
@@ -83,6 +84,7 @@
 /* Begin PBXFileReference section */
 		0B721684290B21CD004D0AB7 /* SSEMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEMessage.swift; sourceTree = "<group>"; };
 		0F2DD759279EFA6B00540C9D /* CustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomData.swift; sourceTree = "<group>"; };
+		1E90073F2DF36DDF00800012 /* test_config_eval_reason.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_config_eval_reason.json; sourceTree = "<group>"; };
 		52133B1F28DDFB260007691D /* RequestConsolidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestConsolidatorTests.swift; sourceTree = "<group>"; };
 		52133B2128DE00BC0007691D /* ProcessConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessConfig.swift; sourceTree = "<group>"; };
 		52133B2328DE0FEB0007691D /* GetTestConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTestConfig.swift; sourceTree = "<group>"; };
@@ -206,6 +208,7 @@
 				52A1139E27AB235C000B8285 /* EventQueueTests.swift */,
 				5264A78F2768E9F400FEDB43 /* UserConfigTests.swift */,
 				5264A78D2768E94500FEDB43 /* test_config.json */,
+				1E90073F2DF36DDF00800012 /* test_config_eval_reason.json */,
 				0B721684290B21CD004D0AB7 /* SSEMessage.swift */,
 			);
 			path = Models;
@@ -416,6 +419,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5264A78E2768E94600FEDB43 /* test_config.json in Resources */,
+				1E9007402DF36DDF00800012 /* test_config_eval_reason.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

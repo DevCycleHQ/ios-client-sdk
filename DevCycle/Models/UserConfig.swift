@@ -47,7 +47,7 @@ public struct UserConfig {
         let variableKeys = Array(variablesMap.keys)
         
         for key in featureKeys {
-            if let featureDict = featureMap[key] as? [String:String]
+            if let featureDict = featureMap[key] as? [String:Any]
             {
                 let feature = try Feature(from: featureDict)
                 featureMap[key] = feature
@@ -133,20 +133,31 @@ public struct Feature {
     public var variationName: String
     public var evalReason: String?
     
-    init (from dictionary: [String: String]) throws {
-        guard let id = dictionary["_id"] else { throw UserConfigError.MissingProperty("_id in Feature object") }
-        guard let variation = dictionary["_variation"] else { throw UserConfigError.MissingProperty("_variation in Feature object") }
-        guard let key = dictionary["key"] else { throw UserConfigError.MissingProperty("key in Feature object") }
-        guard let type = dictionary["type"] else { throw UserConfigError.MissingProperty("type in Feature object") }
-        guard let variationKey = dictionary["variationKey"] else { throw UserConfigError.MissingProperty("variationKey in Feature object") }
-        guard let variationName = dictionary["variationName"] else { throw UserConfigError.MissingProperty("variationName in Feature object") }
+    init (from dictionary: [String: Any]) throws {
+        guard let id = dictionary["_id"] as? String else {
+            throw UserConfigError.MissingProperty("_id in Feature object")
+        }
+        guard let variation = dictionary["_variation"] as? String else {
+            throw UserConfigError.MissingProperty("_variation in Feature object") }
+        guard let key = dictionary["key"] as? String else {
+            throw UserConfigError.MissingProperty("key in Feature object")
+        }
+        guard let type = dictionary["type"] as? String else {
+            throw UserConfigError.MissingProperty("type in Feature object")
+        }
+        guard let variationKey = dictionary["variationKey"] as? String else {
+            throw UserConfigError.MissingProperty("variationKey in Feature object")
+        }
+        guard let variationName = dictionary["variationName"] as? String else {
+            throw UserConfigError.MissingProperty("variationName in Feature object")
+        }
         self._id = id
         self._variation = variation
         self.key = key
         self.type = type
         self.variationKey = variationKey
         self.variationName = variationName
-        self.evalReason = dictionary["evalReason"]
+        self.evalReason = dictionary["evalReason"] as? String
     }
 }
 
