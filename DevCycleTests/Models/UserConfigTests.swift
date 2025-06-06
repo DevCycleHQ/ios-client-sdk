@@ -123,4 +123,14 @@ class UserConfigTests: XCTestCase {
         XCTAssertNotNil(json)
         XCTAssertNotNil(nestedJson)
     }
+    
+    
+    func testSuccessfulConfigParsingWithNonStringValuesOnFeatures() throws {
+        let data = getConfigData(name: "test_config_eval_reason")
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let config = try UserConfig(from: dictionary)
+        let features = config.features
+        XCTAssertNotNil(config)
+        XCTAssertNotNil(features)
+    }
 }
