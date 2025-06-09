@@ -671,6 +671,43 @@ class DevCycleClientTest: XCTestCase {
             .build()
         await client.close()
     }
+
+    func testFailedConfigFetch() {
+        let expectation = XCTestExpectation(description: "Config fetch fails")
+        let failedService = MockFailedConnectionService()
+        let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(failedService).build(onInitialized: nil)
+
+        client.setup(service: failedService)
+        client.initialize(callback: { error in
+            XCTAssertNotNil(error)
+            // Test that the client's state is initialized
+            XCTAssertTrue(client.initialized)
+
+            // Test that functions that depend on a config fetch behave appropriately even if it fails to get
+            let variable = client.variable(key: "some_non_existent_variable", defaultValue: false)
+            XCTAssertTrue(variable.isDefaulted)
+            XCTAssertFalse(variable.value)
+            
+            _ = client.allFeatures()
+            _ = client.allVariables()
+            
+            do {
+                let user = try DevCycleUser.builder().userId("user1").build()
+                
+                try client.identifyUser(user: user)
+                try client.resetUser()
+                
+                client.track(DevCycleEvent(type: nil, target: nil, clientDate: nil, value: nil, metaData: nil))
+                client.flushEvents()
+            } catch {
+                
+            }
+            expectation.fulfill()
+        })
+
+        wait(for: [expectation], timeout: 1.0)
+        client.close(callback: nil)
+    }
 }
 
 extension DevCycleClientTest {
@@ -705,6 +742,49 @@ extension DevCycleClientTest {
         ) {
             self.publishCallCount += 1
             self.eventPublishCount += events.count
+            XCTAssert(true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                completion((data: nil, urlResponse: nil, error: nil))
+            }
+        }
+
+        func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {
+            DispatchQueue.main.async {
+                completion((data: nil, urlResponse: nil, error: nil))
+            }
+        }
+
+        func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {
+            DispatchQueue.main.async {
+                completion((data: nil, urlResponse: nil, error: nil))
+            }
+        }
+    }
+    
+    private class MockFailedConnectionService: DevCycleServiceProtocol {
+        public var userConfig: UserConfig?
+
+        init(userConfig: UserConfig? = nil) {
+            self.userConfig = userConfig
+        }
+
+        func getConfig(
+            user: DevCycleUser,
+            enableEdgeDB: Bool,
+            extraParams: RequestParams?,
+            completion: @escaping ConfigCompletionHandler
+        ) {
+            // Simulate a failed config fetch by returning an error
+            let error = NSError(domain: "MockFailedConnectionService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch config"])
+            DispatchQueue.main.async {
+                completion((nil, error))
+            }
+        }
+
+        func publishEvents(
+            events: [DevCycleEvent], user: DevCycleUser,
+            completion: @escaping PublishEventsCompletionHandler
+        ) {
             XCTAssert(true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 completion((data: nil, urlResponse: nil, error: nil))
