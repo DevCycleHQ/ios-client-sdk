@@ -147,7 +147,7 @@ public struct Feature {
     
     init (from dictionary: [String: Any]) throws {
         guard let id = dictionary["_id"] as? String else {
-            throw UserConfigError.MissingProperty("String _id in Feature object")
+            throw UserConfigError.MissingProperty("String: _id in Feature object")
         }
         guard let variation = dictionary["_variation"] as? String else {
             throw UserConfigError.MissingProperty("String: _variation in Feature object") }
