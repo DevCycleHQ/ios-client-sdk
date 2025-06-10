@@ -37,22 +37,22 @@ public class DevCycleEvent {
             return self
         }
         
-        public func target(_ target: String) -> EventBuilder {
+        public func target(_ target: String?) -> EventBuilder {
             self.event.target = target
             return self
         }
         
-        public func clientDate(_ clientDate: Date) -> EventBuilder {
+        public func clientDate(_ clientDate: Date?) -> EventBuilder {
             self.event.clientDate = clientDate
             return self
         }
         
-        public func value(_ value: Double) -> EventBuilder {
+        public func value(_ value: Double?) -> EventBuilder {
             self.event.value = value
             return self
         }
         
-        public func metaData(_ metaData: [String:Any]) -> EventBuilder {
+        public func metaData(_ metaData: [String:Any]?) -> EventBuilder {
             self.event.metaData = metaData
             return self
         }

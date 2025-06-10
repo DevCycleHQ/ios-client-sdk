@@ -11,6 +11,7 @@ enum UserConfigError: Error {
     case MissingProperty(String)
     case InvalidVariableType(String)
     case InvalidProperty(String)
+    case InvalidJson(String)
 }
 
 public struct UserConfig {

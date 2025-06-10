@@ -13,7 +13,9 @@ internal func processConfig(_ responseData: Data?) -> UserConfig? {
         return nil
     }
     do {
-        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String:Any] else {
+            throw UserConfigError.InvalidJson("Error with serializing config data to JSON")
+        }
         return try UserConfig(from: dictionary)
     } catch {
         Log.error("Failed to decode config: \(error)", tags: ["service", "request"])

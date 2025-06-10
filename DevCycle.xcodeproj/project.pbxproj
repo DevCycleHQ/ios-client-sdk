@@ -50,6 +50,7 @@
 		52E693EA27567E2600B52375 /* DevCycleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693E927567E2600B52375 /* DevCycleService.swift */; };
 		52E693ED2756816A00B52375 /* DVCConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693EC2756816A00B52375 /* DVCConfig.swift */; };
 		52E693F62758032500B52375 /* DevCycleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E693F52758032500B52375 /* DevCycleServiceTests.swift */; };
+		52E8C1F12DF87C5A0044783D /* DevCycleEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E8C1F02DF87C560044783D /* DevCycleEventTests.swift */; };
 		D9341C12276967DE00BC753F /* DevCycleEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C11276967DE00BC753F /* DevCycleEvent.swift */; };
 		D9341C14276A3C8A00BC753F /* ObjCDevCycleEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9341C13276A3C8A00BC753F /* ObjCDevCycleEvent.swift */; };
 		E66CF1C82901E9C7008734FD /* LDSwiftEventSource.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E66CF1C72901E9C7008734FD /* LDSwiftEventSource.xcframework */; };
@@ -127,6 +128,7 @@
 		52E693E927567E2600B52375 /* DevCycleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleService.swift; sourceTree = "<group>"; };
 		52E693EC2756816A00B52375 /* DVCConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DVCConfig.swift; sourceTree = "<group>"; };
 		52E693F52758032500B52375 /* DevCycleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleServiceTests.swift; sourceTree = "<group>"; };
+		52E8C1F02DF87C560044783D /* DevCycleEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleEventTests.swift; sourceTree = "<group>"; };
 		D9341C11276967DE00BC753F /* DevCycleEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevCycleEvent.swift; sourceTree = "<group>"; };
 		D9341C13276A3C8A00BC753F /* ObjCDevCycleEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjCDevCycleEvent.swift; sourceTree = "<group>"; };
 		E66CF1C72901E9C7008734FD /* LDSwiftEventSource.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = LDSwiftEventSource.xcframework; path = Carthage/Build/LDSwiftEventSource.xcframework; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 		5264A78C2768E87C00FEDB43 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				52E8C1F02DF87C560044783D /* DevCycleEventTests.swift */,
 				5268DB68275020D900D17A40 /* DevCycleUserTest.swift */,
 				524F4E61276D20A500CB9069 /* DVCVariableTests.swift */,
 				5276C9F1275E6E0D00B9A324 /* DevCycleOptionsTest.swift */,
@@ -463,6 +466,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				529F0CA52774D6BE0075AAB4 /* URLSessionMock.swift in Sources */,
+				52E8C1F12DF87C5A0044783D /* DevCycleEventTests.swift in Sources */,
 				52133B2028DDFB260007691D /* RequestConsolidatorTests.swift in Sources */,
 				5276C9F2275E6E0D00B9A324 /* DevCycleOptionsTest.swift in Sources */,
 				5264A7902768E9F400FEDB43 /* UserConfigTests.swift in Sources */,

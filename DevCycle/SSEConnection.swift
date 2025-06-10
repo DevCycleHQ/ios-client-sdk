@@ -94,6 +94,7 @@ class Handler: EventHandler {
 public struct SSEMessage {
     enum SSEMessageError: Error, Equatable {
         case initError(String)
+        case messageError(String)
     }
     struct Data {
         var etag: String?

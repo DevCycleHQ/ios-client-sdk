@@ -273,9 +273,11 @@ public class DevCycleClient {
                     return
                 }
                 do {
-                    let messageDictionary =
+                    guard let messageDictionary =
                         try JSONSerialization.jsonObject(
-                            with: messageData, options: .fragmentsAllowed) as! [String: Any]
+                            with: messageData, options: .fragmentsAllowed) as? [String: Any] else {
+                        throw SSEMessage.SSEMessageError.messageError("Error serializing sse message to JSON")
+                    }
                     let sseMessage = try SSEMessage(from: messageDictionary)
                     if sseMessage.data.type == nil || sseMessage.data.type == "refetchConfig" {
                         if self?.config?.userConfig?.etag == nil

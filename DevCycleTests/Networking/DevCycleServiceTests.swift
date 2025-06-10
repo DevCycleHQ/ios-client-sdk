@@ -81,6 +81,12 @@ class DevCycleServiceTests: XCTestCase {
         let config = processConfig(data)
         XCTAssertNil(config)
     }
+    
+    func testProcessConfigReturnsErrorIfInvalidJson() throws {
+        let data = "{".data(using: .utf8)
+        let config = processConfig(data)
+        XCTAssertNil(config)
+    }
 
     func testFlushingEvents() {
         let service = MockDevCycleService()
