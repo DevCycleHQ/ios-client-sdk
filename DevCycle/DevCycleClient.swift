@@ -146,16 +146,7 @@ public class DevCycleClient {
         }
         self.service = service
 
-        var cachedConfig: UserConfig?
-        if let disableConfigCache = options?.disableConfigCache, !disableConfigCache {
-            cachedConfig = cacheService.getConfig(user: user)
-        }
-
-        if cachedConfig != nil {
-            self.config?.userConfig = cachedConfig
-            self.isConfigCached = true
-            Log.debug("Loaded config from cache")
-        }
+        self.useCachedConfigForUser(user: user)
 
         self.service?.getConfig(
             user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
@@ -425,8 +416,9 @@ public class DevCycleClient {
             completion: { [weak self] config, error in
                 guard let self = self else { return }
                 if let error = error {
-                    Log.error("Error getting config: \(error)", tags: ["identify"])
+                    Log.error("Error getting config: \(error) for user_id \(String(describing: updateUser.userId))", tags: ["identify"])
                     self.cache = self.cacheService.load(user: updateUser)
+                    self.useCachedConfigForUser(user: updateUser)
                 } else {
                     if let config = config {
                         Log.debug("Config: \(config)", tags: ["identify"])
@@ -435,7 +427,7 @@ public class DevCycleClient {
                     self.isConfigCached = false
                 }
                 self.user = user
-                callback?(error, config?.variables)
+                callback?(error, self.config?.userConfig?.variables)
             })
     }
 
@@ -451,6 +443,7 @@ public class DevCycleClient {
                     }
                 }
             } catch {
+                Log.error("Error calling identifyUser for user_id \(String(describing: user.userId))", tags: ["identify"])
                 continuation.resume(throwing: error)
             }
         }
@@ -675,6 +668,19 @@ public class DevCycleClient {
         })
         self.inactivityWorkItem = work
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay), execute: work)
+    }
+
+    private func useCachedConfigForUser(user: DevCycleUser) {
+        var cachedConfig: UserConfig?
+        if let disableConfigCache = options?.disableConfigCache, !disableConfigCache {
+            cachedConfig = cacheService.getConfig(user: user)
+        }
+
+        if cachedConfig != nil {
+            self.config?.userConfig = cachedConfig
+            self.isConfigCached = true
+            Log.debug("Loaded config from cache for user_id \(String(describing: user.userId))")
+        }
     }
 }
 
