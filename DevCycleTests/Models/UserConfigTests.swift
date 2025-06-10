@@ -123,4 +123,228 @@ class UserConfigTests: XCTestCase {
         XCTAssertNotNil(json)
         XCTAssertNotNil(nestedJson)
     }
+    
+    
+    func testSuccessfulConfigParsingWithNonStringValuesOnFeatures() throws {
+        let data = getConfigData(name: "test_config_eval_reason")
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let config = try UserConfig(from: dictionary)
+        let features = config.features
+        XCTAssertNotNil(config)
+        XCTAssertNotNil(features)
+    }
+    
+    func testSuccessfulConfigParsingWithManyUnusedProperties() throws {
+        let data = """
+            {
+                "project": {
+                    "_id": "id1",
+                    "key": "default",
+                    "settings": {
+                        "unused": "data"
+                    }
+                },
+                "environment": {
+                    "_id": "id2",
+                    "key": "development",
+                    "metadata": {
+                        "testing": "unused data"
+                    }
+                },
+                "features": {
+                    "new-feature": {
+                        "_id": "id3",
+                        "key": "new-feature",
+                        "type": "release",
+                        "_variation": "id4",
+                        "variationKey": "id4-key",
+                        "variationName": "id4 name",
+                        "eval": {
+                            "reason": "TARGETING_MATCH",
+                            "details": "Platform AND App Version"
+                        },
+                        "evalReason": "we don't do this anymore"
+                    }
+                },
+                "featureVariationMap": {
+                    "id3": "id4"
+                },
+                "knownVariableKeys": [],
+                "variables": {
+                    "bool-var": {
+                        "_id": "id5",
+                        "key": "bool-var",
+                        "type": "Boolean",
+                        "value": true,
+                        "eval": {
+                            "reason": "TARGETING_MATCH",
+                            "details": "Platform AND App Version"
+                        }
+                    },
+                    "json-var": {
+                        "_id": "id6",
+                        "key": "json-var",
+                        "type": "JSON",
+                        "value": {
+                            "key1": "value1",
+                            "key2": {
+                                "nestedKey1": "nestedValue1"
+                            }
+                        },
+                        "eval": {
+                            "reason": "TARGETING_MATCH",
+                            "details": "Platform AND App Version"
+                        }
+                    },
+                    "string-var": {
+                        "_id": "id7",
+                        "key": "string-var",
+                        "type": "String",
+                        "value": "string1",
+                        "eval": {
+                            "reason": "TARGETING_MATCH",
+                            "details": "Platform AND App Version"
+                        },
+                        "evalReason": "we really don't do this anymore"
+                    },
+                    "num-var": {
+                        "_id": "id8",
+                        "key": "num-var",
+                        "type": "Number",
+                        "value": 4,
+                        "eval": {
+                            "reason": "TARGETING_MATCH",
+                            "details": "Platform AND App Version"
+                        }
+                    }
+                },
+                "sse": {
+                    "url": "https://example.com",
+                    "inactivityDelay": 5,
+                    "questionable": {
+                        "unused": ["values", "here"]
+                    }
+                },
+                "welcome": "to the future",
+                "the_answer": 42,
+                "hitchhiker": false
+            }
+            """.data(using: .utf8)!
+        let dictionary =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
+        let config = try UserConfig(from: dictionary)
+        XCTAssertNotNil(config)
+        XCTAssertNotNil(config.project)
+        XCTAssertNotNil(config.environment)
+        XCTAssertNotNil(config.variables)
+        XCTAssertNotNil(config.featureVariationMap)
+        XCTAssertNotNil(config.features)
+        XCTAssertNotNil(config.sse)
+    }
+    
+    func testConfigWithFeatureKeyAsNumber() throws {
+        // Feature feature-1 has a Number `key` instead of a String
+        let data = """
+            {
+                "project": {
+                    "_id": "id1",
+                    "key": "default"
+                },
+                "environment": {
+                    "_id": "id2",
+                    "key": "development"
+                },
+                "features": {
+                    "feature-1": {
+                        "_id": "id3",
+                        "key": 1,
+                        "type": "release",
+                        "_variation": "id4",
+                        "variationKey": "id4-key",
+                        "variationName": "id4 name",
+                    }
+                },
+                "featureVariationMap": {},
+                "knownVariableKeys": [],
+                "variables": {
+                    "bool-var": {
+                        "_id": "id5",
+                        "key": "bool-var",
+                        "type": "Boolean",
+                        "value": true,
+                        "eval": {
+                            "reason": "TARGETING_MATCH",
+                            "details": "Platform AND App Version"
+                        }
+                    }
+                },
+                "sse": {
+                    "url": "https://example.com",
+                    "inactivityDelay": 5
+                }
+            }
+            """.data(using: .utf8)!
+        let dictionary =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
+        do {
+            _ = try UserConfig(from: dictionary)
+        } catch {
+            let stringError = String(describing: UserConfigError.MissingProperty("String: key in Feature object"))
+            XCTAssertEqual(String(describing: error), stringError)
+        }
+    }
+    
+    func testConfigWithVariableIdMissing() throws {
+        // Variable bool-var is missing the `_id` property
+        let data = """
+            {
+                "project": {
+                    "_id": "id1",
+                    "key": "default"
+                },
+                "environment": {
+                    "_id": "id2",
+                    "key": "development"
+                },
+                "features": {
+                    "feature-1": {
+                        "_id": "id3",
+                        "key": "feature-1",
+                        "type": "release",
+                        "_variation": "id4",
+                        "variationKey": "id4-key",
+                        "variationName": "id4 name",
+                    }
+                },
+                "featureVariationMap": {},
+                "knownVariableKeys": [],
+                "variables": {
+                    "bool-var": {
+                        "key": "bool-var",
+                        "type": "Boolean",
+                        "value": true,
+                        "eval": {
+                            "reason": "TARGETING_MATCH",
+                            "details": "Platform AND App Version"
+                        }
+                    }
+                },
+                "sse": {
+                    "url": "https://example.com",
+                    "inactivityDelay": 5
+                }
+            }
+            """.data(using: .utf8)!
+        let dictionary =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
+        do {
+            _ = try UserConfig(from: dictionary)
+        } catch {
+            let stringError = String(describing: UserConfigError.MissingProperty("_id in Variable object"))
+            XCTAssertEqual(String(describing: error), stringError)
+        }
+    }
 }

@@ -10,6 +10,7 @@ enum UserConfigError: Error {
     case MissingInConfig(String)
     case MissingProperty(String)
     case InvalidVariableType(String)
+    case InvalidProperty(String)
 }
 
 public struct UserConfig {
@@ -47,7 +48,7 @@ public struct UserConfig {
         let variableKeys = Array(variablesMap.keys)
         
         for key in featureKeys {
-            if let featureDict = featureMap[key] as? [String:String]
+            if let featureDict = featureMap[key] as? [String:Any]
             {
                 let feature = try Feature(from: featureDict)
                 featureMap[key] = feature
@@ -62,8 +63,19 @@ public struct UserConfig {
             }
         }
         
-        self.features = featureMap as! [String: Feature]
-        self.variables = variablesMap as! [String: Variable]
+        if let features = featureMap as? [String: Feature] {
+            self.features = features
+        } else {
+            Log.warn("Invalid feature map format", tags: ["config", "JSONParsing"])
+            throw UserConfigError.InvalidProperty("features")
+        }
+
+        if let variables = variablesMap as? [String: Variable] {
+            self.variables = variables
+        } else {
+            Log.warn("Invalid variables map format", tags: ["config", "JSONParsing"])
+            throw UserConfigError.InvalidProperty("variables")
+        }
     }
 }
 
@@ -133,20 +145,31 @@ public struct Feature {
     public var variationName: String
     public var evalReason: String?
     
-    init (from dictionary: [String: String]) throws {
-        guard let id = dictionary["_id"] else { throw UserConfigError.MissingProperty("_id in Feature object") }
-        guard let variation = dictionary["_variation"] else { throw UserConfigError.MissingProperty("_variation in Feature object") }
-        guard let key = dictionary["key"] else { throw UserConfigError.MissingProperty("key in Feature object") }
-        guard let type = dictionary["type"] else { throw UserConfigError.MissingProperty("type in Feature object") }
-        guard let variationKey = dictionary["variationKey"] else { throw UserConfigError.MissingProperty("variationKey in Feature object") }
-        guard let variationName = dictionary["variationName"] else { throw UserConfigError.MissingProperty("variationName in Feature object") }
+    init (from dictionary: [String: Any]) throws {
+        guard let id = dictionary["_id"] as? String else {
+            throw UserConfigError.MissingProperty("String: _id in Feature object")
+        }
+        guard let variation = dictionary["_variation"] as? String else {
+            throw UserConfigError.MissingProperty("String: _variation in Feature object") }
+        guard let key = dictionary["key"] as? String else {
+            throw UserConfigError.MissingProperty("String: key in Feature object")
+        }
+        guard let type = dictionary["type"] as? String else {
+            throw UserConfigError.MissingProperty("String: type in Feature object")
+        }
+        guard let variationKey = dictionary["variationKey"] as? String else {
+            throw UserConfigError.MissingProperty("String: variationKey in Feature object")
+        }
+        guard let variationName = dictionary["variationName"] as? String else {
+            throw UserConfigError.MissingProperty("String: variationName in Feature object")
+        }
         self._id = id
         self._variation = variation
         self.key = key
         self.type = type
         self.variationKey = variationKey
         self.variationName = variationName
-        self.evalReason = dictionary["evalReason"]
+        self.evalReason = dictionary["evalReason"] as? String
     }
 }
 
