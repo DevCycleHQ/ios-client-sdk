@@ -91,3 +91,5 @@ fastlane/fastlane-buildlog
 iOSInjectionProject/
 .DS_Store
 *.DS_Store
+
+**/contents.xcworkspacedata

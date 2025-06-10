@@ -60,7 +60,7 @@ class RequestConsolidator {
 
     func makeLastRequestInQueue(user: DevCycleUser, complete: (() -> Void)?) {
         guard let lastRequest = self.requestCallbacks.last?.request else {
-            print("No last request to make in queue")
+            Log.debug("No last request to make in queue")
             return
         }
         service.makeRequest(request: lastRequest) { response in
