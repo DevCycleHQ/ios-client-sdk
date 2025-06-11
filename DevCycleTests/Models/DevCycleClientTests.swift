@@ -635,7 +635,7 @@ class DevCycleClientTest: XCTestCase {
     func testAsyncIdentifyUser() async throws {
         let client = try await self.builder.user(self.user).sdkKey("my_sdk_key").service(service)
             .build()
-        client.config?.userConfig = self.userConfig
+        client.config = DVCConfig(sdkKey: "my_sdk_key", user: self.user)
 
         let variables = try await client.identifyUser(user: self.user)
         XCTAssertNotNil(variables)
@@ -646,7 +646,7 @@ class DevCycleClientTest: XCTestCase {
     func testAsyncResetUser() async throws {
         let client = try await self.builder.user(self.user).sdkKey("my_sdk_key").service(service)
             .build()
-        client.config?.userConfig = self.userConfig
+        client.config = DVCConfig(sdkKey: "my_sdk_key", user: self.user)
 
         let variables = try await client.resetUser()
         XCTAssertNotNil(variables)
