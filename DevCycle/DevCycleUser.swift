@@ -20,90 +20,115 @@ enum UserError: Error {
 public class UserBuilder {
     private let cacheService: CacheServiceProtocol = CacheService()
 
-    var user: DevCycleUser
+    var userId: String?
+    var isAnonymous: Bool?
+    var email: String?
+    var name: String?
+    var language: String?
+    var country: String?
     var customData: [String: Any]?
     var privateCustomData: [String: Any]?
 
     init() {
-        self.user = DevCycleUser()
     }
 
     public func userId(_ userId: String) -> UserBuilder {
-        self.user.userId = userId
+        self.userId = userId
         return self
     }
 
     public func isAnonymous(_ isAnonymous: Bool) -> UserBuilder {
-        self.user.isAnonymous = isAnonymous
+        self.isAnonymous = isAnonymous
         return self
     }
 
-    public func email(_ email: String) -> UserBuilder {
-        self.user.email = email
+    public func email(_ email: String?) -> UserBuilder {
+        self.email = email
         return self
     }
 
-    public func name(_ name: String) -> UserBuilder {
-        self.user.name = name
+    public func name(_ name: String?) -> UserBuilder {
+        self.name = name
         return self
     }
 
-    public func language(_ language: String) -> UserBuilder {
-        self.user.language = language
+    public func language(_ language: String?) -> UserBuilder {
+        self.language = language
         return self
     }
 
-    public func country(_ country: String) -> UserBuilder {
-        self.user.country = country
+    public func country(_ country: String?) -> UserBuilder {
+        self.country = country
         return self
     }
 
-    public func customData(_ customData: [String: Any]) -> UserBuilder {
+    public func customData(_ customData: [String: Any]?) -> UserBuilder {
         self.customData = customData
         return self
     }
 
-    public func privateCustomData(_ privateCustomData: [String: Any]) -> UserBuilder {
+    public func privateCustomData(_ privateCustomData: [String: Any]?) -> UserBuilder {
         self.privateCustomData = privateCustomData
         return self
     }
 
-    public func build() throws -> DevCycleUser {
-        // Validate the userId
-        let hasValidUserId = self.user.userId != nil && !self.user.userId!.isEmpty
+    private func cleanup() {
+        self.userId = nil
+        self.isAnonymous = nil
+        self.email = nil
+        self.name = nil
+        self.language = nil
+        self.country = nil
+        self.customData = nil
+        self.privateCustomData = nil
+    }
 
-        // Handle the different cases based on isAnonymous and userId
-        if self.user.isAnonymous == false && !hasValidUserId {
+    public func build() throws -> DevCycleUser {
+        let hasValidUserId = self.userId != nil && !self.userId!.isEmpty
+
+        if self.isAnonymous == false && !hasValidUserId {
             throw UserError.MissingUserIdAndIsAnonymousFalse
         }
 
-        if self.user.isAnonymous == true && !hasValidUserId {
-            self.user.userId = self.cacheService.getOrCreateAnonUserId()
-        } else if !hasValidUserId {
-            // Default case: no userId and isAnonymous not explicitly set to false, make anonymous
-            self.user.userId = self.cacheService.getOrCreateAnonUserId()
-            self.user.isAnonymous = true
+        let finalUserId: String
+        let finalIsAnonymous: Bool
+
+        if !hasValidUserId {
+            // Default case: no userId provided, make anonymous
+            finalUserId = self.cacheService.getOrCreateAnonUserId()
+            finalIsAnonymous = true
+        } else if let userId = self.userId {
+            // Valid userId provided, use it
+            finalUserId = userId
+            finalIsAnonymous = self.isAnonymous ?? false
+        } else {
+            throw UserError.InvalidUser
         }
 
-        if let customData = self.customData {
-            self.user.customData = try CustomData.customDataFromDic(customData)
+        let customDataConverted = try self.customData.map { try CustomData.customDataFromDic($0) }
+        let privateCustomDataConverted = try self.privateCustomData.map {
+            try CustomData.customDataFromDic($0)
         }
 
-        if let privateCustomData = self.privateCustomData {
-            self.user.privateCustomData = try CustomData.customDataFromDic(privateCustomData)
-        }
+        let user = DevCycleUser(
+            userId: finalUserId,
+            isAnonymous: finalIsAnonymous,
+            email: self.email,
+            name: self.name,
+            language: self.language,
+            country: self.country,
+            customData: customDataConverted,
+            privateCustomData: privateCustomDataConverted
+        )
 
-        let result = self.user
-        self.user = DevCycleUser()
-        self.customData = nil
-        self.privateCustomData = nil
-        return result
+        self.cleanup()
+        return user
     }
 }
 
 public class DevCycleUser: Codable {
-    public var userId: String?
-    public var isAnonymous: Bool?
+    public var userId: String
+    public var isAnonymous: Bool
     public var email: String?
     public var name: String?
     public var language: String?
@@ -121,7 +146,20 @@ public class DevCycleUser: Codable {
     internal var appVersion: String?
     internal var appBuild: Int?
 
-    init() {
+    init(
+        userId: String, isAnonymous: Bool, email: String? = nil, name: String? = nil,
+        language: String? = nil, country: String? = nil, customData: CustomData? = nil,
+        privateCustomData: CustomData? = nil
+    ) {
+        self.userId = userId
+        self.isAnonymous = isAnonymous
+        self.email = email
+        self.name = name
+        self.language = language
+        self.country = country
+        self.customData = customData
+        self.privateCustomData = privateCustomData
+
         let platform = PlatformDetails()
         self.lastSeenDate = Date()
         self.createdDate = Date()

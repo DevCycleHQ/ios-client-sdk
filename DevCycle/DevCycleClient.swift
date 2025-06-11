@@ -166,7 +166,7 @@ public class DevCycleClient {
                 if let config = config,
                     self.checkIfEdgeDBEnabled(config: config, enableEdgeDB: self.enableEdgeDB)
                 {
-                    if !(user.isAnonymous ?? false) {
+                    if !user.isAnonymous {
                         self.service?.saveEntity(
                             user: user,
                             completion: { data, response, error in
@@ -264,10 +264,13 @@ public class DevCycleClient {
                     return
                 }
                 do {
-                    guard let messageDictionary =
-                        try JSONSerialization.jsonObject(
-                            with: messageData, options: .fragmentsAllowed) as? [String: Any] else {
-                        throw SSEMessage.SSEMessageError.messageError("Error serializing sse message to JSON")
+                    guard
+                        let messageDictionary =
+                            try JSONSerialization.jsonObject(
+                                with: messageData, options: .fragmentsAllowed) as? [String: Any]
+                    else {
+                        throw SSEMessage.SSEMessageError.messageError(
+                            "Error serializing sse message to JSON")
                     }
                     let sseMessage = try SSEMessage(from: messageDictionary)
                     if sseMessage.data.type == nil || sseMessage.data.type == "refetchConfig" {
@@ -396,14 +399,14 @@ public class DevCycleClient {
     }
 
     public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
-        guard let currentUser = self.user, let userId = currentUser.userId,
-            let incomingUserId = user.userId
+        guard let currentUser = self.user, !currentUser.userId.isEmpty,
+            !user.userId.isEmpty
         else {
             throw ClientError.InvalidUser
         }
         self.flushEvents()
         var updateUser: DevCycleUser = currentUser
-        if userId == incomingUserId {
+        if currentUser.userId == user.userId {
             updateUser.update(with: user)
         } else {
             updateUser = user
@@ -416,7 +419,9 @@ public class DevCycleClient {
             completion: { [weak self] config, error in
                 guard let self = self else { return }
                 if let error = error {
-                    Log.error("Error getting config: \(error) for user_id \(String(describing: updateUser.userId))", tags: ["identify"])
+                    Log.error(
+                        "Error getting config: \(error) for user_id \(String(describing: updateUser.userId))",
+                        tags: ["identify"])
                     self.cache = self.cacheService.load(user: updateUser)
                     self.useCachedConfigForUser(user: updateUser)
                 } else {
@@ -443,7 +448,9 @@ public class DevCycleClient {
                     }
                 }
             } catch {
-                Log.error("Error calling identifyUser for user_id \(String(describing: user.userId))", tags: ["identify"])
+                Log.error(
+                    "Error calling identifyUser for user_id \(String(describing: user.userId))",
+                    tags: ["identify"])
                 continuation.resume(throwing: error)
             }
         }

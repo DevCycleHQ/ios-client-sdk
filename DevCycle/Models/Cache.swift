@@ -127,11 +127,11 @@ class CacheService: CacheServiceProtocol {
 
     private func getConfigKeyPrefix(user: DevCycleUser) -> String {
         let baseKey =
-            (user.isAnonymous ?? false)
+            user.isAnonymous
             ? CacheKeys.anonymousConfigKey : CacheKeys.identifiedConfigKey
 
-        if let userId = user.userId {
-            return "\(baseKey)_\(userId)"
+        if !user.userId.isEmpty {
+            return "\(baseKey)_\(user.userId)"
         }
 
         return baseKey

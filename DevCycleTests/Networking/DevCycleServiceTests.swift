@@ -81,7 +81,7 @@ class DevCycleServiceTests: XCTestCase {
         let config = processConfig(data)
         XCTAssertNil(config)
     }
-    
+
     func testProcessConfigReturnsErrorIfInvalidJson() throws {
         let data = "{".data(using: .utf8)
         let config = processConfig(data)
@@ -196,11 +196,11 @@ extension DevCycleServiceTests {
 
             let userEncoder = JSONEncoder()
             userEncoder.dateEncodingStrategy = .iso8601
-            guard let userId = user.userId, let userData = try? userEncoder.encode(user) else {
+            guard let userData = try? userEncoder.encode(user) else {
                 return completion((nil, nil, ClientError.MissingUser))
             }
 
-            let eventPayload = self.generateEventPayload(events, userId, nil)
+            let eventPayload = self.generateEventPayload(events, user.userId, nil)
             guard
                 let userBody = try? JSONSerialization.jsonObject(
                     with: userData, options: .fragmentsAllowed)
