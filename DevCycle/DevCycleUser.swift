@@ -100,7 +100,7 @@ public class UserBuilder {
         } else if let userId = self.userId {
             // Valid userId provided, use it
             finalUserId = userId
-            finalIsAnonymous = self.isAnonymous ?? false
+            finalIsAnonymous = false
         } else {
             throw UserError.InvalidUser
         }

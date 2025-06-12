@@ -92,7 +92,7 @@ class DevCycleUserTest: XCTestCase {
             .build()
         XCTAssertNotNil(user)
         XCTAssert(user.userId == "my_user")
-        XCTAssertTrue(user.isAnonymous)
+        XCTAssertFalse(user.isAnonymous)
     }
 
     func testBuilderWithUserIdAndIsAnonymousFalse() {
