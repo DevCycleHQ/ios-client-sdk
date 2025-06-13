@@ -10,7 +10,7 @@ import XCTest
 
 class DevCycleUserTest: XCTestCase {
     func testCreateUser() {
-        let user = DevCycleUser()
+        let user = DevCycleUser(userId: "test", isAnonymous: false)
         #if os(tvOS)
             XCTAssert(user.platform == "tvOS")
             XCTAssertNotNil(user.platformVersion)
@@ -39,23 +39,23 @@ class DevCycleUserTest: XCTestCase {
         let user = try! DVCUser.builder()
             .build()
         XCTAssertNotNil(user)
-        XCTAssert(UUID(uuidString: user.userId!) != nil)
-        XCTAssertTrue(user.isAnonymous!)
+        XCTAssert(UUID(uuidString: user.userId) != nil)
+        XCTAssertTrue(user.isAnonymous)
     }
 
     func testBuilderReturnsAnonUserIfNoUserIdOrIsAnonymous() {
         let user = try! DevCycleUser.builder()
             .build()
         XCTAssertNotNil(user)
-        XCTAssert(UUID(uuidString: user.userId!) != nil)
-        XCTAssertTrue(user.isAnonymous!)
+        XCTAssert(UUID(uuidString: user.userId) != nil)
+        XCTAssertTrue(user.isAnonymous)
     }
 
     func testBuilderReturnsAnonUserIfEmptyStringUserId() {
         let user = try! DevCycleUser.builder().userId("").build()
         XCTAssertNotNil(user)
-        XCTAssert(UUID(uuidString: user.userId!) != nil)
-        XCTAssertTrue(user.isAnonymous!)
+        XCTAssert(UUID(uuidString: user.userId) != nil)
+        XCTAssertTrue(user.isAnonymous)
     }
 
     func testBuilderThrowsErrorIfNoUserIdAndIsAnonymousIsFalse() {
@@ -75,14 +75,14 @@ class DevCycleUserTest: XCTestCase {
         let user = try! DevCycleUser.builder().userId("my_user").build()
         XCTAssertNotNil(user)
         XCTAssert(user.userId == "my_user")
-        XCTAssertNil(user.isAnonymous)
+        XCTAssertFalse(user.isAnonymous)
     }
 
     func testBuilderReturnsUserIfIsAnonymousSet() {
         let user = try! DevCycleUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(user)
-        XCTAssert(user.isAnonymous!)
-        XCTAssert(UUID(uuidString: user.userId!) != nil)
+        XCTAssertTrue(user.isAnonymous)
+        XCTAssert(UUID(uuidString: user.userId) != nil)
     }
 
     func testBuilderWithUserIdAndIsAnonymousTrue() {
@@ -92,7 +92,7 @@ class DevCycleUserTest: XCTestCase {
             .build()
         XCTAssertNotNil(user)
         XCTAssert(user.userId == "my_user")
-        XCTAssertTrue(user.isAnonymous!)
+        XCTAssertFalse(user.isAnonymous)
     }
 
     func testBuilderWithUserIdAndIsAnonymousFalse() {
@@ -102,7 +102,7 @@ class DevCycleUserTest: XCTestCase {
             .build()
         XCTAssertNotNil(user)
         XCTAssert(user.userId == "my_user")
-        XCTAssertFalse(user.isAnonymous!)
+        XCTAssertFalse(user.isAnonymous)
     }
 
     func testToStringOnlyOutputsNonNilProperties() {
@@ -136,12 +136,12 @@ class DevCycleUserTest: XCTestCase {
 
         let anonUser = try! DevCycleUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser)
-        XCTAssert(anonUser.isAnonymous!)
+        XCTAssertTrue(anonUser.isAnonymous)
         XCTAssertEqual(anonUser.userId, "123")
 
         let anonUser2 = try! DevCycleUser.builder().isAnonymous(true).build()
         XCTAssertNotNil(anonUser2)
-        XCTAssert(anonUser2.isAnonymous!)
+        XCTAssert(anonUser2.isAnonymous)
         XCTAssertEqual(anonUser2.userId, "123")
 
         cacheService.clearAnonUserId()
