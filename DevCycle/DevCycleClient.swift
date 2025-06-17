@@ -270,6 +270,13 @@ public class DevCycleClient {
             Log.error("Failed to parse SSE URL in config")
             return
         }
+
+        if self.sseConnection != nil {
+            Log.debug("Closing existing SSE connection")
+            self.sseConnection?.close()
+            self.sseConnection = nil
+        }
+
         if let inactivityDelay = self.config?.userConfig?.sse?.inactivityDelay {
             self.inactivityDelayMS = Double(inactivityDelay)
         }
