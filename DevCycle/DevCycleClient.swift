@@ -166,7 +166,7 @@ public class DevCycleClient {
                 if let config = config,
                     self.checkIfEdgeDBEnabled(config: config, enableEdgeDB: self.enableEdgeDB)
                 {
-                    if !(user.isAnonymous ?? false) {
+                    if !user.isAnonymous {
                         self.service?.saveEntity(
                             user: user,
                             completion: { data, response, error in
@@ -399,14 +399,14 @@ public class DevCycleClient {
     }
 
     public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
-        guard let currentUser = self.user, let userId = currentUser.userId,
-            let incomingUserId = user.userId
+        guard let currentUser = self.user, !currentUser.userId.isEmpty,
+            !user.userId.isEmpty
         else {
             throw ClientError.InvalidUser
         }
         self.flushEvents()
         var updateUser: DevCycleUser = currentUser
-        if userId == incomingUserId {
+        if currentUser.userId == user.userId {
             updateUser.update(with: user)
         } else {
             updateUser = user
