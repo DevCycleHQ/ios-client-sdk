@@ -166,7 +166,7 @@ public class DevCycleClient {
                 if let config = config,
                     self.checkIfEdgeDBEnabled(config: config, enableEdgeDB: self.enableEdgeDB)
                 {
-                    if !user.isAnonymous {
+                    if !(user.isAnonymous ?? false) {
                         self.service?.saveEntity(
                             user: user,
                             completion: { data, response, error in
@@ -399,14 +399,14 @@ public class DevCycleClient {
     }
 
     public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
-        guard let currentUser = self.user, !currentUser.userId.isEmpty,
-            !user.userId.isEmpty
+        guard let currentUser = self.user, let userId = currentUser.userId,
+            let incomingUserId = user.userId
         else {
             throw ClientError.InvalidUser
         }
         self.flushEvents()
         var updateUser: DevCycleUser = currentUser
-        if currentUser.userId == user.userId {
+        if userId == incomingUserId {
             updateUser.update(with: user)
         } else {
             updateUser = user
@@ -626,14 +626,12 @@ public class DevCycleClient {
                 throw ClientError.MissingSDKKeyOrUser
             }
 
-            let result = self.client
             if let service = service {
-                result.initialize(service: service, callback: onInitialized)
+                self.client.initialize(service: service, callback: onInitialized)
             } else {
-                result.initialize(callback: onInitialized)
+                self.client.initialize(callback: onInitialized)
             }
-            self.client = DevCycleClient()
-            return result
+            return self.client
         }
 
         @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
