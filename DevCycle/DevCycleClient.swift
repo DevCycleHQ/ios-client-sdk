@@ -21,6 +21,7 @@ enum ClientError: Error {
     case InvalidUser
     case MissingUserOrFeatureVariationsMap
     case MissingUser
+    case ConfigFetchFailed
 }
 
 public typealias ClientInitializedHandler = (Error?) -> Void
@@ -164,9 +165,10 @@ public class DevCycleClient {
                     }
                 } else if let config = config {
                     Log.debug("Config: \(config)", tags: ["setup"])
-                    self.config?.userConfig = config
-                    self.isConfigCached = false
-                    self.setupSSEConnection()
+                    self.updateUserConfig(config)
+                } else {
+                    Log.error("No config returned for setup", tags: ["setup"])
+                    finalError = ClientError.ConfigFetchFailed
                 }
 
                 if let config = config,
@@ -233,11 +235,23 @@ public class DevCycleClient {
                     guard let self = self else { return }
                     if let error = error {
                         Log.error("Error getting config: \(error)", tags: ["refetchConfig"])
+                    } else if let config = config {
+                        self.updateUserConfig(config)
                     } else {
-                        self.config?.userConfig = config
-                        self.isConfigCached = false
+                        Log.error("No config returned for refetchConfig", tags: ["refetchConfig"])
                     }
                 })
+        }
+    }
+
+    private func updateUserConfig(_ config: UserConfig) {
+        let oldSSEURL = self.config?.userConfig?.sse?.url
+        self.config?.userConfig = config
+        self.isConfigCached = false
+
+        let newSSEURL = config.sse?.url
+        if newSSEURL != nil && oldSSEURL != newSSEURL {
+            self.setupSSEConnection()
         }
     }
 
@@ -450,11 +464,13 @@ public class DevCycleClient {
 
                 if let config = config {
                     Log.debug("IdentifyUser config: \(config)", tags: ["identify"])
+                    self.updateUserConfig(config)
+                    self.user = user
+                    callback?(nil, self.config?.userConfig?.variables)
+                } else {
+                    Log.error("No config returned for identifyUser", tags: ["identify"])
+                    callback?(ClientError.ConfigFetchFailed, nil)
                 }
-                self.config?.userConfig = config
-                self.isConfigCached = false
-                self.user = user
-                callback?(nil, self.config?.userConfig?.variables)
             })
     }
 
@@ -504,11 +520,13 @@ public class DevCycleClient {
 
                 if let config = config {
                     Log.debug("ResetUser config: \(config)", tags: ["reset"])
+                    self.updateUserConfig(config)
+                    self.user = anonUser
+                    callback?(nil, config.variables)
+                } else {
+                    Log.error("No config returned for resetUser", tags: ["reset"])
+                    callback?(ClientError.ConfigFetchFailed, nil)
                 }
-                self.config?.userConfig = config
-                self.isConfigCached = false
-                self.user = anonUser
-                callback?(nil, config?.variables)
             })
     }
 
