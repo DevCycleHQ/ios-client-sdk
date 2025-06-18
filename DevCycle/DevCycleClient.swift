@@ -626,14 +626,12 @@ public class DevCycleClient {
                 throw ClientError.MissingSDKKeyOrUser
             }
 
-            let result = self.client
             if let service = service {
-                result.initialize(service: service, callback: onInitialized)
+                self.client.initialize(service: service, callback: onInitialized)
             } else {
-                result.initialize(callback: onInitialized)
+                self.client.initialize(callback: onInitialized)
             }
-            self.client = DevCycleClient()
-            return result
+            return self.client
         }
 
         @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)

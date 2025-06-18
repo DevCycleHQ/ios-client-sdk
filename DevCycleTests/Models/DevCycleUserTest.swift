@@ -23,7 +23,7 @@ class DevCycleUserTest: XCTestCase {
             XCTAssert(user.platform == "watchOS")
             XCTAssertNotNil(user.platformVersion)
             XCTAssert(user.deviceModel.contains("Watch"))
-        #elseif os(OSX)
+        #elseif os(macOS)
             XCTAssert(user.platform == "macOS")
             XCTAssertNotNil(user.platformVersion)
             XCTAssertNotNil(user.deviceModel)

@@ -14,9 +14,6 @@ jobs:
       - name: Checkout Project
         uses: actions/checkout@v4
 
-      - name: Setup Fastlane Auth
-        run: echo "FASTLANE_GIT_BASIC_AUTHORIZATION=$(echo -n taplytics-robot:${{ secrets.AUTOMATION_USER_TOKEN }} | base64)" >> "$GITHUB_ENV"
-
       - name: "Select Latest Xcode"
         uses: maxim-lobanov/setup-xcode@c51a66b42363123fa82a6cfe02c60af4281dab93
         with:
@@ -31,12 +28,3 @@ jobs:
       - name: Fastlane macOS Tests
         run: fastlane mac tests
         timeout-minutes: 15
-        env:
-          MATCH_GIT_BASIC_AUTHORIZATION: "${{ env.FASTLANE_GIT_BASIC_AUTHORIZATION }}"
-          DEVELOPER_APP_ID: "${{ secrets.DEVELOPER_APP_ID }}"
-          MATCH_PASSWORD: "${{ secrets.MATCH_PASSWORD }}"
-          TEMP_KEYCHAIN_PASSWORD: "${{ secrets.TEMP_KEYCHAIN_PASSWORD }}"
-          TEMP_KEYCHAIN_USER: "${{ secrets.TEMP_KEYCHAIN_USER }}"
-          APPLE_KEY_ID: "${{ secrets.APPLE_KEY_ID }}"
-          APPLE_ISSUER_ID: "${{ secrets.APPLE_ISSUER_ID }}"
-          APPLE_KEY_CONTENT: "${{ secrets.APPLE_KEY_CONTENT }}"
