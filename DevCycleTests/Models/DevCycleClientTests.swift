@@ -675,35 +675,41 @@ class DevCycleClientTest: XCTestCase {
     func testFailedConfigFetch() {
         let expectation = XCTestExpectation(description: "Config fetch fails")
         let failedService = MockFailedConnectionService()
-        let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(failedService).build(onInitialized: nil)
+        let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(
+            failedService
+        ).build(onInitialized: nil)
 
-        client.setup(service: failedService)
-        client.initialize(callback: { error in
-            XCTAssertNotNil(error)
-            // Test that the client's state is initialized
-            XCTAssertTrue(client.initialized)
+        client.setup(
+            service: failedService,
+            callback: { error in
+                XCTAssertNotNil(error)
+                // Test that the client's state is initialized
+                XCTAssertTrue(client.initialized)
 
-            // Test that functions that depend on a config fetch behave appropriately even if it fails to get
-            let variable = client.variable(key: "some_non_existent_variable", defaultValue: false)
-            XCTAssertTrue(variable.isDefaulted)
-            XCTAssertFalse(variable.value)
-            
-            _ = client.allFeatures()
-            _ = client.allVariables()
-            
-            do {
-                let user = try DevCycleUser.builder().userId("user1").build()
-                
-                try client.identifyUser(user: user)
-                try client.resetUser()
-                
-                client.track(DevCycleEvent(type: nil, target: nil, clientDate: nil, value: nil, metaData: nil))
-                client.flushEvents()
-            } catch {
-                
-            }
-            expectation.fulfill()
-        })
+                // Test that functions that depend on a config fetch behave appropriately even if it fails to get
+                let variable = client.variable(
+                    key: "some_non_existent_variable", defaultValue: false)
+                XCTAssertTrue(variable.isDefaulted)
+                XCTAssertFalse(variable.value)
+
+                _ = client.allFeatures()
+                _ = client.allVariables()
+
+                do {
+                    let user = try DevCycleUser.builder().userId("user1").build()
+
+                    try client.identifyUser(user: user)
+                    try client.resetUser()
+
+                    client.track(
+                        DevCycleEvent(
+                            type: nil, target: nil, clientDate: nil, value: nil, metaData: nil))
+                    client.flushEvents()
+                } catch {
+
+                }
+                expectation.fulfill()
+            })
 
         wait(for: [expectation], timeout: 1.0)
         client.close(callback: nil)
@@ -760,7 +766,7 @@ extension DevCycleClientTest {
             }
         }
     }
-    
+
     private class MockFailedConnectionService: DevCycleServiceProtocol {
         public var userConfig: UserConfig?
 
@@ -775,7 +781,9 @@ extension DevCycleClientTest {
             completion: @escaping ConfigCompletionHandler
         ) {
             // Simulate a failed config fetch by returning an error
-            let error = NSError(domain: "MockFailedConnectionService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch config"])
+            let error = NSError(
+                domain: "MockFailedConnectionService", code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Failed to fetch config"])
             DispatchQueue.main.async {
                 completion((nil, error))
             }

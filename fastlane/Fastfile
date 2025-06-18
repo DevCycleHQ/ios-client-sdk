@@ -39,6 +39,8 @@ platform :tvos do
       buildlog_path: "./fastlane/fastlane-buildlog",
       scheme: "DevCycle",
       workspace: "DevCycle.xcworkspace",
+      devices: ["Apple TV 4K (3rd generation)"],
+      ensure_devices_found: true,
       result_bundle: true
     )
   end
@@ -51,6 +53,9 @@ platform :watchos do
       derived_data_path: "~/Library/Developer/Xcode/DerivedData",
       buildlog_path: "./fastlane/fastlane-buildlog",
       scheme: "DevCycle",
+      workspace: "DevCycle.xcworkspace",
+      devices: ["Apple Watch Series 10 (46mm)"],
+      ensure_devices_found: true,
       result_bundle: true
     )
   end
