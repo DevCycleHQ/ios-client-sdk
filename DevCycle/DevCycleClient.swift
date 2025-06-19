@@ -423,13 +423,16 @@ public class DevCycleClient {
         }
     }
 
-    public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
+    public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) {
         guard let currentUser = self.user, !currentUser.userId.isEmpty,
             !user.userId.isEmpty
         else {
-            throw ClientError.InvalidUser
+            callback?(ClientError.InvalidUser, nil)
+            return
         }
+
         self.flushEvents()
+
         var updateUser: DevCycleUser = currentUser
         if currentUser.userId == user.userId {
             updateUser.update(with: user)
@@ -484,19 +487,15 @@ public class DevCycleClient {
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     public func identifyUser(user: DevCycleUser) async throws -> [String: Variable]? {
         return try await withCheckedThrowingContinuation { continuation in
-            do {
-                try self.identifyUser(user: user) { error, variables in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                    } else {
-                        continuation.resume(returning: variables)
-                    }
+            self.identifyUser(user: user) { error, variables in
+                if let error = error {
+                    Log.error(
+                        "Error calling identifyUser for user_id \(String(describing: user.userId))",
+                        tags: ["identify"])
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: variables)
                 }
-            } catch {
-                Log.error(
-                    "Error calling identifyUser for user_id \(String(describing: user.userId))",
-                    tags: ["identify"])
-                continuation.resume(throwing: error)
             }
         }
     }
