@@ -135,12 +135,7 @@ class DevCycleServiceTests: XCTestCase {
 
 extension DevCycleServiceTests {
     class MockCacheService: CacheServiceProtocol {
-        var loadCalled = false
         var saveConfigCalled = false
-        func load(user: DevCycleUser) -> Cache {
-            self.loadCalled = true
-            return Cache(config: nil, anonUserId: nil)
-        }
 
         func setAnonUserId(anonUserId: String) {
             // TODO: update implementation for tests

@@ -21,6 +21,7 @@ enum ClientError: Error {
     case InvalidUser
     case MissingUserOrFeatureVariationsMap
     case MissingUser
+    case ConfigFetchFailed
 }
 
 public typealias ClientInitializedHandler = (Error?) -> Void
@@ -43,14 +44,13 @@ public class DevCycleClient {
     var inactivityDelayMS: Double = 120000
 
     private var service: DevCycleServiceProtocol?
-    private var cacheService: CacheServiceProtocol = CacheService()
-    private var cache: Cache?
+    internal var cacheService: CacheServiceProtocol = CacheService()
     var sseConnection: SSEConnectionProtocol?
     private var flushTimer: Timer?
     private var closed: Bool = false
     private var inactivityWorkItem: DispatchWorkItem?
     private var variableInstanceDictonary = [String: NSMapTable<AnyObject, AnyObject>]()
-    private var isConfigCached: Bool = false
+    internal var isConfigCached: Bool = false
     private var disableAutomaticEventLogging: Bool = false
     private var disableCustomEventLogging: Bool = false
 
@@ -152,15 +152,23 @@ public class DevCycleClient {
             user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
             completion: { [weak self] config, error in
                 guard let self = self else { return }
+
+                var finalError: Error? = error
+
                 if let error = error {
                     Log.error("Error getting config: \(error)", tags: ["setup"])
-                    self.cache = self.cacheService.load(user: user)
-                } else {
-                    if let config = config {
-                        Log.debug("Config: \(config)", tags: ["setup"])
+
+                    // If network failed but we have a cached config, don't return error
+                    if self.config?.userConfig != nil {
+                        Log.info("Using cached config due to network error")
+                        finalError = nil
                     }
-                    self.config?.userConfig = config
-                    self.isConfigCached = false
+                } else if let config = config {
+                    Log.debug("Config: \(config)", tags: ["setup"])
+                    self.updateUserConfig(config)
+                } else {
+                    Log.error("No config returned for setup", tags: ["setup"])
+                    finalError = ClientError.ConfigFetchFailed
                 }
 
                 if let config = config,
@@ -181,12 +189,10 @@ public class DevCycleClient {
                     }
                 }
 
-                self.setupSSEConnection()
-
                 for handler in self.configCompletionHandlers {
-                    handler(error)
+                    handler(finalError)
                 }
-                callback?(error)
+                callback?(finalError)
                 self.initialized = true
                 self.configCompletionHandlers = []
             })
@@ -229,11 +235,23 @@ public class DevCycleClient {
                     guard let self = self else { return }
                     if let error = error {
                         Log.error("Error getting config: \(error)", tags: ["refetchConfig"])
+                    } else if let config = config {
+                        self.updateUserConfig(config)
                     } else {
-                        self.config?.userConfig = config
-                        self.isConfigCached = false
+                        Log.error("No config returned for refetchConfig", tags: ["refetchConfig"])
                     }
                 })
+        }
+    }
+
+    private func updateUserConfig(_ config: UserConfig) {
+        let oldSSEURL = self.config?.userConfig?.sse?.url
+        self.config?.userConfig = config
+        self.isConfigCached = false
+
+        let newSSEURL = config.sse?.url
+        if newSSEURL != nil && oldSSEURL != newSSEURL {
+            self.setupSSEConnection()
         }
     }
 
@@ -252,6 +270,13 @@ public class DevCycleClient {
             Log.error("Failed to parse SSE URL in config")
             return
         }
+
+        if self.sseConnection != nil {
+            Log.debug("Closing existing SSE connection")
+            self.sseConnection?.close()
+            self.sseConnection = nil
+        }
+
         if let inactivityDelay = self.config?.userConfig?.sse?.inactivityDelay {
             self.inactivityDelayMS = Double(inactivityDelay)
         }
@@ -418,21 +443,41 @@ public class DevCycleClient {
             user: updateUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
             completion: { [weak self] config, error in
                 guard let self = self else { return }
+
                 if let error = error {
                     Log.error(
                         "Error getting config: \(error) for user_id \(String(describing: updateUser.userId))",
                         tags: ["identify"])
-                    self.cache = self.cacheService.load(user: updateUser)
+
+                    // Try to use cached config for the new user
                     self.useCachedConfigForUser(user: updateUser)
-                } else {
-                    if let config = config {
-                        Log.debug("Config: \(config)", tags: ["identify"])
+
+                    // If we have a cached config, proceed without error
+                    if self.config?.userConfig != nil {
+                        Log.info(
+                            "Using cached config for identifyUser due to network error: \(error)",
+                            tags: ["identify"])
+                        self.user = user
+                        callback?(nil, self.config?.userConfig?.variables)
+                        return
+                    } else {
+                        // No cached config available, return error and don't change client state
+                        Log.error(
+                            "Error getting config for identifyUser: \(error)", tags: ["identify"])
+                        callback?(error, nil)
+                        return
                     }
-                    self.config?.userConfig = config
-                    self.isConfigCached = false
                 }
-                self.user = user
-                callback?(error, self.config?.userConfig?.variables)
+
+                if let config = config {
+                    Log.debug("IdentifyUser config: \(config)", tags: ["identify"])
+                    self.updateUserConfig(config)
+                    self.user = user
+                    callback?(nil, self.config?.userConfig?.variables)
+                } else {
+                    Log.error("No config returned for identifyUser", tags: ["identify"])
+                    callback?(ClientError.ConfigFetchFailed, nil)
+                }
             })
     }
 
@@ -457,7 +502,6 @@ public class DevCycleClient {
     }
 
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
-        self.cache = cacheService.load(user: self.user!)
         self.flushEvents()
 
         let cachedAnonUserId = self.cacheService.getAnonUserId()
@@ -470,7 +514,10 @@ public class DevCycleClient {
             user: anonUser, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
             completion: { [weak self] config, error in
                 guard let self = self else { return }
-                guard error == nil else {
+
+                if let error = error {
+                    Log.error("Error getting config for resetUser: \(error)", tags: ["reset"])
+                    // Restore previous anonymous user ID on error and don't change client state
                     if let previousAnonUserId = cachedAnonUserId {
                         self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
                     }
@@ -479,12 +526,14 @@ public class DevCycleClient {
                 }
 
                 if let config = config {
-                    Log.debug("Config: \(config)", tags: ["reset"])
+                    Log.debug("ResetUser config: \(config)", tags: ["reset"])
+                    self.updateUserConfig(config)
+                    self.user = anonUser
+                    callback?(nil, config.variables)
+                } else {
+                    Log.error("No config returned for resetUser", tags: ["reset"])
+                    callback?(ClientError.ConfigFetchFailed, nil)
                 }
-                self.config?.userConfig = config
-                self.isConfigCached = false
-                self.user = anonUser
-                callback?(error, config?.variables)
             })
     }
 
@@ -676,12 +725,10 @@ public class DevCycleClient {
     }
 
     private func useCachedConfigForUser(user: DevCycleUser) {
-        var cachedConfig: UserConfig?
-        if let disableConfigCache = options?.disableConfigCache, !disableConfigCache {
-            cachedConfig = cacheService.getConfig(user: user)
-        }
-
-        if cachedConfig != nil {
+        // Load cached config by default, unless explicitly disabled
+        if options?.disableConfigCache != true,
+            let cachedConfig = cacheService.getConfig(user: user)
+        {
             self.config?.userConfig = cachedConfig
             self.isConfigCached = true
             Log.debug("Loaded config from cache for user_id \(String(describing: user.userId))")

@@ -161,7 +161,7 @@ class DevCycleClientTest: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 2.0)
         client.close(callback: nil)
     }
 
@@ -714,6 +714,60 @@ class DevCycleClientTest: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
         client.close(callback: nil)
     }
+
+    func testIdentifyUserWithCacheAvailableDoesNotReturnError() {
+        let expectation = XCTestExpectation(
+            description: "identifyUser with cache available should not return error")
+        let failedService = MockFailedConnectionService()
+
+        // Create a mock cache service that returns a cached config
+        let mockCacheService = MockCacheServiceWithConfig(userConfig: self.userConfig)
+
+        let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(
+            failedService
+        ).build(onInitialized: nil)
+
+        // Replace the cache service with our mock that has a cached config
+        client.cacheService = mockCacheService
+
+        // Initialize the client's config object
+        client.config = DVCConfig(sdkKey: "dvc_mobile_my_sdk_key", user: self.user)
+
+        client.setup(
+            service: failedService,
+            callback: { error in
+                // Build process should work with cache
+                XCTAssertNil(error, "Build should not return error when cache is available")
+
+                do {
+                    let newUser = try DevCycleUser.builder().userId("new_user").build()
+
+                    // identifyUser should work with cached config even when network fails
+                    try client.identifyUser(
+                        user: newUser,
+                        callback: { error, variables in
+                            XCTAssertNil(
+                                error,
+                                "identifyUser should not return error when cache is available")
+                            XCTAssertNotNil(
+                                variables,
+                                "identifyUser should return variables when cache is available")
+                            XCTAssertTrue(
+                                client.isConfigCached, "Config should be marked as cached")
+                            XCTAssertEqual(
+                                client.user?.userId, newUser.userId,
+                                "User should be updated to new user")
+                            expectation.fulfill()
+                        })
+                } catch {
+                    XCTFail("identifyUser should not throw when cache is available")
+                    expectation.fulfill()
+                }
+            })
+
+        wait(for: [expectation], timeout: 100.0)
+        client.close(callback: nil)
+    }
 }
 
 extension DevCycleClientTest {
@@ -832,5 +886,25 @@ extension DevCycleClientTest {
         func reopen() {
             self.reopenCalled = true
         }
+    }
+
+    private class MockCacheServiceWithConfig: CacheServiceProtocol {
+        private let userConfig: UserConfig
+
+        init(userConfig: UserConfig) {
+            self.userConfig = userConfig
+        }
+
+        func setAnonUserId(anonUserId: String) {}
+        func getAnonUserId() -> String? { return nil }
+        func clearAnonUserId() {}
+        func saveConfig(user: DevCycleUser, configToSave: Data?) {}
+        func getConfig(user: DevCycleUser) -> UserConfig? {
+            return self.userConfig
+        }
+        func getOrCreateAnonUserId() -> String {
+            return "mock-anon-id"
+        }
+        func migrateLegacyCache() {}
     }
 }

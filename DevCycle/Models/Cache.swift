@@ -7,7 +7,6 @@
 import Foundation
 
 protocol CacheServiceProtocol {
-    func load(user: DevCycleUser) -> Cache
     func setAnonUserId(anonUserId: String)
     func getAnonUserId() -> String?
     func clearAnonUserId()
@@ -15,11 +14,6 @@ protocol CacheServiceProtocol {
     func getConfig(user: DevCycleUser) -> UserConfig?
     func getOrCreateAnonUserId() -> String
     func migrateLegacyCache()
-}
-
-struct Cache {
-    var config: UserConfig?
-    var anonUserId: String?
 }
 
 class CacheService: CacheServiceProtocol {
@@ -41,12 +35,7 @@ class CacheService: CacheServiceProtocol {
 
     init(configCacheTTL: Int = DEFAULT_CONFIG_CACHE_TTL) {
         self.configCacheTTL = configCacheTTL
-    }
-
-    func load(user: DevCycleUser) -> Cache {
         migrateLegacyCache()
-
-        return Cache(config: getConfig(user: user), anonUserId: getAnonUserId())
     }
 
     func setAnonUserId(anonUserId: String) {
