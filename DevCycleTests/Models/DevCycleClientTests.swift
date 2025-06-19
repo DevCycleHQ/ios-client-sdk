@@ -768,6 +768,66 @@ class DevCycleClientTest: XCTestCase {
         wait(for: [expectation], timeout: 100.0)
         client.close(callback: nil)
     }
+
+    func testIdentifyUserWithInvalidUserCallsCallbackWithError() {
+        let expectation = XCTestExpectation(
+            description: "identifyUser with invalid user should call callback with error")
+
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
+            onInitialized: nil)
+        client.config?.userConfig = self.userConfig
+
+        // Test with empty user ID
+        let emptyUser = DevCycleUser(userId: "", isAnonymous: false)
+
+        client.identifyUser(
+            user: emptyUser,
+            callback: { error, variables in
+                XCTAssertNotNil(error, "identifyUser should return error for empty user ID")
+                XCTAssertNil(variables, "identifyUser should return nil variables for invalid user")
+
+                if let clientError = error as? ClientError {
+                    XCTAssertEqual(
+                        clientError, ClientError.InvalidUser, "Error should be InvalidUser")
+                } else {
+                    XCTFail("Error should be of type ClientError.InvalidUser")
+                }
+
+                expectation.fulfill()
+            })
+
+        wait(for: [expectation], timeout: 1.0)
+        client.close(callback: nil)
+    }
+
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func testAsyncIdentifyUserWithInvalidUserCallsCallbackWithError() async throws {
+        let expectation = XCTestExpectation(
+            description: "identifyUser with invalid user should call callback with error")
+
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
+            onInitialized: nil)
+        client.config?.userConfig = self.userConfig
+
+        // Test with empty user ID
+        let emptyUser = DevCycleUser(userId: "", isAnonymous: false)
+
+        do {
+            let _ = try await client.identifyUser(user: emptyUser)
+            XCTFail("identifyUser should throw error for empty user ID")
+        } catch {
+            XCTAssertNotNil(error, "identifyUser should return error for empty user ID")
+            if let clientError = error as? ClientError {
+                XCTAssertEqual(
+                    clientError, ClientError.InvalidUser, "Error should be InvalidUser")
+            } else {
+                XCTFail("Error should be of type ClientError.InvalidUser")
+            }
+
+            expectation.fulfill()
+            client.close(callback: nil)
+        }
+    }
 }
 
 extension DevCycleClientTest {
