@@ -41,7 +41,7 @@ public class DVCVariable<T> {
     public var key: String
     public var type: DVCVariableTypes?
     public var handler: VariableValueHandler<T>?
-    public var eval: EvalReason?
+    public var eval: EvalReason? = nil
     public var isDefaulted: Bool
 
     public var value: T
@@ -52,7 +52,9 @@ public class DVCVariable<T> {
         self.value = value ?? defaultValue
         self.defaultValue = defaultValue
         self.isDefaulted = value == nil
-        self.eval = eval
+        if (eval != nil) {
+            self.eval = eval
+        }
 
         let classString = String(describing: T.self)
         do {
@@ -73,7 +75,9 @@ public class DVCVariable<T> {
         var defaulted = false
         self.key = variable.key
         self.defaultValue = defaultValue
-        self.eval = variable.eval
+        if (variable.eval != nil) {
+            self.eval = variable.eval
+        }
 
         let classString = String(describing: T.self)
         do {
