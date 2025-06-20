@@ -381,7 +381,7 @@ public class DevCycleClient {
                 key: key,
                 value: nil,
                 defaultValue: defaultValue,
-                evalReason: nil
+                eval: EvalReason.defaultReason(details: "Invalid Variable Key")
             )
         }
 
@@ -406,7 +406,7 @@ public class DevCycleClient {
                         key: key,
                         value: nil,
                         defaultValue: defaultValue,
-                        evalReason: nil
+                        eval: EvalReason.defaultReason(details: "User Not Targeted")
                     )
                 }
 

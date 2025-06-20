@@ -144,7 +144,7 @@ public struct Feature {
     public var type: String
     public var variationKey: String
     public var variationName: String
-    public var evalReason: String?
+    public let eval: EvalReason?
     
     init (from dictionary: [String: Any]) throws {
         guard let id = dictionary["_id"] as? String else {
@@ -170,7 +170,7 @@ public struct Feature {
         self.type = type
         self.variationKey = variationKey
         self.variationName = variationName
-        self.evalReason = dictionary["evalReason"] as? String
+        self.eval = EvalReason(from: dictionary["eval"] as? [String: Any] ?? [:])
     }
 }
 
@@ -179,7 +179,7 @@ public struct Variable {
     public var key: String
     public var type: DVCVariableTypes
     public var value: Any
-    public var evalReason: String?
+    public let eval: EvalReason?
     
     init (from dictionary: [String: Any]) throws {
         guard let id = dictionary["_id"] as? String else {
@@ -198,12 +198,32 @@ public struct Variable {
         self._id = id
         self.key = key
         self.type = varType
-        self.evalReason = dictionary["evalReason"] as? String
+        self.eval = EvalReason(from: dictionary["eval"] as? [String: Any] ?? [:])
         
         if (type == "Boolean") {
             self.value = value as? Bool ?? value
         } else {
             self.value = value
         }
+    }
+}
+
+public struct EvalReason {
+    public let reason: String
+    public let details: String?
+    public let targetId: String?
+
+    init(from dictionary: [String: Any]) {
+        self.reason = dictionary["reason"] as? String ?? ""
+        self.details = dictionary["details"] as? String
+        self.targetId = dictionary["target_id"] as? String
+    }
+
+    static func defaultReason(details: String) -> EvalReason {
+        var defaultReason = [
+            "reason": "DEFAULT",
+            "details": details
+        ]
+        return EvalReason(from: defaultReason)
     }
 }
