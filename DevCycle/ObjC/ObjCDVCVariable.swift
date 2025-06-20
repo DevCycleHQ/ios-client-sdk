@@ -13,7 +13,7 @@ public typealias DVCVariableValueHandler = (Any) -> Void
 public class ObjCDVCVariable: NSObject {
     @objc public var key: String
     @objc public var type: String?
-    @objc public var evalReason: String?
+    @objc public var eval: ObjCEvalReason?
     @objc public var isDefaulted: Bool
     @objc public var handler: DVCVariableValueHandler?
     
@@ -25,10 +25,14 @@ public class ObjCDVCVariable: NSObject {
         self.dvcVariable = dvcVariable
         self.key = dvcVariable.key
         self.type = dvcVariable.type?.rawValue
-        self.evalReason = dvcVariable.evalReason
         self.isDefaulted = dvcVariable.isDefaulted
         self.value = dvcVariable.value
         self.defaultValue = dvcVariable.defaultValue
+        
+        if (dvcVariable.eval != nil) {
+            self.eval = ObjCEvalReason(dvcVariable.eval!)
+        }
+        
         super.init()
         
         let _ = dvcVariable.onUpdate { [weak self] value in
@@ -42,10 +46,13 @@ public class ObjCDVCVariable: NSObject {
     func setValues<T>(dvcVariable: DVCVariable<T>) {
         self.key = dvcVariable.key
         self.type = dvcVariable.type?.rawValue
-        self.evalReason = dvcVariable.evalReason
         self.isDefaulted = dvcVariable.isDefaulted
         self.value = dvcVariable.value
         self.defaultValue = dvcVariable.defaultValue
+        
+        if ((dvcVariable.eval) != nil) {
+            self.eval = ObjCEvalReason(dvcVariable.eval!)
+        }
     }
     
     @objc public func onUpdate(handler: @escaping DVCVariableValueHandler) -> ObjCDVCVariable {

@@ -189,7 +189,7 @@ public class ObjCDevCycleClient: NSObject {
                 key: key,
                 value: nil,
                 defaultValue: defaultValue,
-                evalReason: nil
+                eval: EvalReason.defaultReason(details: "User Not Targeted")
             )
         )
     }
