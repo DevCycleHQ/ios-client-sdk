@@ -41,18 +41,20 @@ public class DVCVariable<T> {
     public var key: String
     public var type: DVCVariableTypes?
     public var handler: VariableValueHandler<T>?
-    public var evalReason: String?
+    public var eval: EvalReason? = nil
     public var isDefaulted: Bool
 
     public var value: T
     public var defaultValue: T
 
-    public init(key: String, value: T?, defaultValue: T, evalReason: String?) {
+    public init(key: String, value: T?, defaultValue: T, eval: EvalReason?) {
         self.key = key
         self.value = value ?? defaultValue
         self.defaultValue = defaultValue
         self.isDefaulted = value == nil
-        self.evalReason = evalReason
+        if (eval != nil) {
+            self.eval = eval
+        }
 
         let classString = String(describing: T.self)
         do {
@@ -63,6 +65,7 @@ public class DVCVariable<T> {
                     + "String / Boolean / NSNumber / Int / NSDictionary")
             self.value = defaultValue
             self.isDefaulted = true
+            self.eval = EvalReason.defaultReason(details: "Invalid Variable Type")
         }
 
         addNotificationObserver()
@@ -72,7 +75,9 @@ public class DVCVariable<T> {
         var defaulted = false
         self.key = variable.key
         self.defaultValue = defaultValue
-        self.evalReason = variable.evalReason
+        if (variable.eval != nil) {
+            self.eval = variable.eval
+        }
 
         let classString = String(describing: T.self)
         do {
@@ -84,6 +89,7 @@ public class DVCVariable<T> {
             )
             self.value = defaultValue
             self.isDefaulted = true
+            self.eval = EvalReason.defaultReason(details: "Invalid Variable Type")
             addNotificationObserver()
             return
         }
@@ -94,6 +100,7 @@ public class DVCVariable<T> {
             Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
             self.value = defaultValue
             defaulted = true
+            self.eval = EvalReason.defaultReason(details: "Variable Type Mismatch")
         }
 
         self.isDefaulted = defaulted
@@ -102,12 +109,12 @@ public class DVCVariable<T> {
 
     func update(from variable: Variable) {
         self.type = variable.type
-        self.evalReason = variable.evalReason
 
         if let value = variable.value as? T {
             let oldValue = self.value
             self.value = value
             self.isDefaulted = false
+            self.eval = variable.eval
             if let handler = self.handler,
                 !isEqual(oldValue, variable.value)
             {
@@ -115,6 +122,7 @@ public class DVCVariable<T> {
             }
         } else {
             Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
+            self.eval = EvalReason.defaultReason(details: "Variable Type Mismatch")
         }
     }
 
@@ -129,12 +137,14 @@ public class DVCVariable<T> {
             self.handler?(value)
         } else if !self.isDefaulted {
             self.isDefaulted = true
+            self.eval = EvalReason.defaultReason(details: "User Not Targeted")
         }
     }
 
     private func resetToDefault() {
         self.value = self.defaultValue
         self.isDefaulted = true
+        self.eval = EvalReason.defaultReason(details: "User Not Targeted")
     }
 
     private func addNotificationObserver() {
