@@ -63,7 +63,7 @@ public class DVCVariable<T> {
                     + "String / Boolean / NSNumber / Int / NSDictionary")
             self.value = defaultValue
             self.isDefaulted = true
-            self.eval = EvalReason.defaultReason(details: "Invalid Variable Type")
+            self.eval = EvalReason.defaultReason(details: DVCDefaultDetails.invalidVariableType.rawValue)
         }
 
         addNotificationObserver()
@@ -85,7 +85,7 @@ public class DVCVariable<T> {
             )
             self.value = defaultValue
             self.isDefaulted = true
-            self.eval = EvalReason.defaultReason(details: "Invalid Variable Type")
+            self.eval = EvalReason.defaultReason(details: DVCDefaultDetails.invalidVariableType.rawValue)
             addNotificationObserver()
             return
         }
@@ -96,7 +96,7 @@ public class DVCVariable<T> {
             Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
             self.value = defaultValue
             defaulted = true
-            self.eval = EvalReason.defaultReason(details: "Variable Type Mismatch")
+            self.eval = EvalReason.defaultReason(details: DVCDefaultDetails.variableTypeMismatch.rawValue)
         }
 
         self.isDefaulted = defaulted
@@ -118,7 +118,7 @@ public class DVCVariable<T> {
             }
         } else {
             Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
-            self.eval = EvalReason.defaultReason(details: "Variable Type Mismatch")
+            self.eval = EvalReason.defaultReason(details: DVCDefaultDetails.variableTypeMismatch.rawValue)
         }
     }
 
@@ -133,14 +133,14 @@ public class DVCVariable<T> {
             self.handler?(value)
         } else if !self.isDefaulted {
             self.isDefaulted = true
-            self.eval = EvalReason.defaultReason(details: "User Not Targeted")
+            self.eval = EvalReason.defaultReason(details: DVCDefaultDetails.userNotTargeted.rawValue)
         }
     }
 
     private func resetToDefault() {
         self.value = self.defaultValue
         self.isDefaulted = true
-        self.eval = EvalReason.defaultReason(details: "User Not Targeted")
+        self.eval = EvalReason.defaultReason(details: DVCDefaultDetails.userNotTargeted.rawValue)
     }
 
     private func addNotificationObserver() {

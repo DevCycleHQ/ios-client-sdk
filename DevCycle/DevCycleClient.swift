@@ -381,7 +381,7 @@ public class DevCycleClient {
                 key: key,
                 value: nil,
                 defaultValue: defaultValue,
-                eval: EvalReason.defaultReason(details: "Invalid Variable Key")
+                eval: EvalReason.defaultReason(details: DVCDefaultDetails.invalidVariableKey.rawValue)
             )
         }
 
@@ -406,7 +406,7 @@ public class DevCycleClient {
                         key: key,
                         value: nil,
                         defaultValue: defaultValue,
-                        eval: EvalReason.defaultReason(details: "User Not Targeted")
+                        eval: EvalReason.defaultReason(details: DVCDefaultDetails.userNotTargeted.rawValue)
                     )
                 }
 
@@ -416,19 +416,22 @@ public class DevCycleClient {
 
             if !self.closed && !self.disableAutomaticEventLogging {                
                 self.eventQueue.updateAggregateEvents(
-                    variableKey: variable.key, variableIsDefaulted: variable.isDefaulted, metadata: createVariableEventMetaData(variableEval: variable.eval))
+                    variableKey: variable.key,
+                    variableIsDefaulted: variable.isDefaulted,
+                    metadata: createVariableEventMetaData(variableEval: variable.eval
+                ))
             }
 
             return variable
         }
     }
 
-    private func createVariableEventMetaData(variableEval: EvalReason?) -> [String: Any]? {
+    private func createVariableEventMetaData(variableEval: EvalReason?) -> [String: [String: String]]? {
         if let eval = variableEval {
             if let targetId = eval.targetId {
-                return ["eval": ["reason": eval.reason, "details": eval.details, "target_id": targetId]]
+                return ["eval": ["reason": eval.reason, "details": eval.details ?? "", "target_id": targetId]]
             }
-            return ["eval": ["reason": eval.reason, "details": eval.details]]
+            return ["eval": ["reason": eval.reason, "details": eval.details ?? ""]]
         }
         return nil
     }

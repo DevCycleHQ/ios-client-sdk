@@ -233,3 +233,10 @@ public struct EvalReason {
         return EvalReason(reason: "DEFAULT", details: details)
     }
 }
+
+internal enum DVCDefaultDetails: String {
+    case userNotTargeted = "User Not Targeted"
+    case invalidVariableKey = "Invalid Variable Key"
+    case invalidVariableType = "Invalid Variable Type"
+    case variableTypeMismatch = "Variable Type Mismatch"
+}
