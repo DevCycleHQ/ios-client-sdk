@@ -490,15 +490,15 @@ public class DevCycleClient {
         self._identifyUser(user: user, currentUser: currentUser, callback: callback)
     }
 
-    public func identifyUser(user: DevCycleUser, callback: @escaping IdentifyCompletedHandler) {
+    public func identifyUser(user: DevCycleUser, completion: IdentifyCompletedHandler?) {
         guard let currentUser = self.user, !currentUser.userId.isEmpty,
             !user.userId.isEmpty
         else {
-            callback(ClientError.InvalidUser, nil)
+            completion?(ClientError.InvalidUser, nil)
             return
         }
 
-        self._identifyUser(user: user, currentUser: currentUser, callback: callback)
+        self._identifyUser(user: user, currentUser: currentUser, callback: completion)
     }
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
