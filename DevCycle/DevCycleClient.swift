@@ -490,7 +490,7 @@ public class DevCycleClient {
         self._identifyUser(user: user, currentUser: currentUser, callback: callback)
     }
 
-    public func identifyUser(user: DevCycleUser, completion: IdentifyCompletedHandler?) {
+    public func identifyUser(user: DevCycleUser, completion: IdentifyCompletedHandler? = nil) {
         guard let currentUser = self.user, !currentUser.userId.isEmpty,
             !user.userId.isEmpty
         else {
