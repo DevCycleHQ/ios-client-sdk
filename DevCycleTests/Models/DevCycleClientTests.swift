@@ -190,12 +190,19 @@ class DevCycleClientTest: XCTestCase {
         let variable2Value = client.variableValue(key: "bool-var", defaultValue: false)
         XCTAssertTrue(variable2Value)
         
-        let variableInvalid = client.variable(key: "title_text", defaultValue: "Default")
-        XCTAssertEqual(variableInvalid.value, "Default")
-        XCTAssertEqual(variableInvalid.eval?.reason, "DEFAULT")
-        XCTAssertEqual(variableInvalid.eval?.details, "User Not Targeted")
-        XCTAssertNil(variableInvalid.eval?.targetId)
-
+        let defaultVariable = client.variable(key: "title_text", defaultValue: "Default")
+        XCTAssertEqual(defaultVariable.value, "Default")
+        XCTAssertEqual(defaultVariable.eval?.reason, "DEFAULT")
+        XCTAssertEqual(defaultVariable.eval?.details, "User Not Targeted")
+        XCTAssertNil(defaultVariable.eval?.targetId)
+        
+        // This variable call returns early and does not trigger any variable defaulted event
+        let invalidVariable = client.variable(key: "INVALID Variable!", defaultValue: "fail")
+        XCTAssertEqual(invalidVariable.value, "fail")
+        XCTAssertEqual(invalidVariable.eval?.reason, "DEFAULT")
+        XCTAssertEqual(invalidVariable.eval?.details, "Invalid Variable Key")
+        XCTAssertNil(invalidVariable.eval?.targetId)
+        
         let expectation = XCTestExpectation(description: "EventQueue has events with Eval metadata")
         // Add a slight delay to ensure events are queued correctly
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {

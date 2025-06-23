@@ -356,7 +356,112 @@ class DVCVariableTests: XCTestCase {
                 "eval": {
                     "reason": "TARGETING_MATCH",
                     "details": "Audience Match -> app AND appVersion",
+                    "target_id": "test_target_id"
+                }
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
+        let variableFromApi = try Variable(from: variableDict)
+        let variable = DVCVariable(
+            key: "my_key", value: nil, defaultValue: "my_default", eval: nil)
+        XCTAssertNotNil(variable)
+
+        variable.update(from: variableFromApi)
+        XCTAssertNotNil(variable)
+        XCTAssertEqual(variable.key, "my_key")
+        XCTAssertEqual(variable.value, "my_value")
+        XCTAssertEqual(variable.type, DVCVariableTypes.String)
+        XCTAssertEqual(variable.defaultValue, "my_default")
+        XCTAssertFalse(variable.isDefaulted)
+        XCTAssertNotNil(variable.eval)
+        XCTAssertEqual(variable.eval?.reason, "TARGETING_MATCH")
+        XCTAssertEqual(variable.eval?.details, "Audience Match -> app AND appVersion")
+        XCTAssertEqual(variable.eval?.targetId, "test_target_id")
+    }
+    
+    func testVariableEvalWithReasonButNoDetailsOrTarget() throws {
+        let data = """
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "String",
+                "value": "my_value",
+                "eval": {
+                    "reason": "TARGETING_MATCH"
+                }
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
+        let variableFromApi = try Variable(from: variableDict)
+        let variable = DVCVariable(
+            key: "my_key", value: nil, defaultValue: "my_default", eval: nil)
+        XCTAssertNotNil(variable)
+
+        variable.update(from: variableFromApi)
+        XCTAssertNotNil(variable)
+        XCTAssertEqual(variable.key, "my_key")
+        XCTAssertEqual(variable.value, "my_value")
+        XCTAssertEqual(variable.type, DVCVariableTypes.String)
+        XCTAssertEqual(variable.defaultValue, "my_default")
+        XCTAssertFalse(variable.isDefaulted)
+        XCTAssertNotNil(variable.eval)
+        XCTAssertEqual(variable.eval?.reason, "TARGETING_MATCH")
+        XCTAssertNil(variable.eval?.details)
+        XCTAssertNil(variable.eval?.targetId)
+    }
+    
+    func testVariableEvalWithoutReasonButDetails() throws {
+        let data = """
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "String",
+                "value": "my_value",
+                "eval": {
+                    "details": "Audience Match -> app AND appVersion",
+                    "target_id": "test_target_id"
+                }
+            }
+            """.data(using: .utf8)!
+        let variableDict =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
+        let variableFromApi = try Variable(from: variableDict)
+        let variable = DVCVariable(
+            key: "my_key", value: nil, defaultValue: "my_default", eval: nil)
+        XCTAssertNotNil(variable)
+
+        variable.update(from: variableFromApi)
+        XCTAssertNotNil(variable)
+        XCTAssertEqual(variable.key, "my_key")
+        XCTAssertEqual(variable.value, "my_value")
+        XCTAssertEqual(variable.type, DVCVariableTypes.String)
+        XCTAssertEqual(variable.defaultValue, "my_default")
+        XCTAssertFalse(variable.isDefaulted)
+        XCTAssertNil(variable.eval)
+    }
+    
+    func testVariableEvalWithNonStringValues() throws {
+        let data = """
+            {
+                "_id": "variable_id",
+                "key": "my_key",
+                "type": "String",
+                "value": "my_value",
+                "eval": {
+                    "reason": "TARGETING_MATCH",
+                    "details": "Audience Match -> app AND appVersion",
                     "target_id": "test_target_id",
+                    "new_non_string": 610,
+                    "isTest": true,
+                    "really": {
+                        "isTest": true,
+                        "howMuch": 99.99
+                    }
                 }
             }
             """.data(using: .utf8)!

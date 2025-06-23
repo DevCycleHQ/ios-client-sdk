@@ -418,8 +418,8 @@ public class DevCycleClient {
                 self.eventQueue.updateAggregateEvents(
                     variableKey: variable.key,
                     variableIsDefaulted: variable.isDefaulted,
-                    metadata: createVariableEventMetaData(variableEval: variable.eval
-                ))
+                    metadata: createVariableEventMetaData(variableEval: variable.eval)
+                )
             }
 
             return variable

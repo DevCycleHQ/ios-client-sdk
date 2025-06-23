@@ -93,7 +93,7 @@ public class DVCVariable<T> {
         if let value = variable.value as? T {
             self.value = value
         } else {
-            Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
+            Log.warn("Variable \(variable.key) does not match type of default value \(T.self)")
             self.value = defaultValue
             defaulted = true
             self.eval = EvalReason.defaultReason(details: DVCDefaultDetails.variableTypeMismatch.rawValue)
@@ -117,7 +117,7 @@ public class DVCVariable<T> {
                 handler(value)
             }
         } else {
-            Log.warn("Variable \(variable.key) does not match type of default value \(T.self))")
+            Log.warn("Variable \(variable.key) does not match type of default value \(T.self)")
             self.eval = EvalReason.defaultReason(details: DVCDefaultDetails.variableTypeMismatch.rawValue)
         }
     }
