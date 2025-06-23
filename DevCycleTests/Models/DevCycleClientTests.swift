@@ -431,13 +431,13 @@ class DevCycleClientTest: XCTestCase {
         XCTAssertEqual(service.numberOfConfigCalls, 2)
 
         let user2 = try! DevCycleUser.builder().userId("user2").build()
-        try! client.identifyUser(user: user2)
+        try! client.identifyUser(user: user2, callback: nil)
         XCTAssertEqual(client.lastIdentifiedUser?.userId, user2.userId)
         client.refetchConfig(sse: true, lastModified: 456, etag: "etag")
         XCTAssertEqual(service.numberOfConfigCalls, 4)
 
         let user3 = try! DevCycleUser.builder().userId("user3").build()
-        try! client.identifyUser(user: user3)
+        try! client.identifyUser(user: user3, callback: nil)
         XCTAssertEqual(client.lastIdentifiedUser?.userId, user3.userId)
         client.refetchConfig(sse: true, lastModified: 789, etag: "etag")
         XCTAssertEqual(service.numberOfConfigCalls, 6)
@@ -698,7 +698,7 @@ class DevCycleClientTest: XCTestCase {
                 do {
                     let user = try DevCycleUser.builder().userId("user1").build()
 
-                    try client.identifyUser(user: user)
+                    try client.identifyUser(user: user, callback: nil)
                     try client.resetUser()
 
                     client.track(
@@ -793,6 +793,29 @@ class DevCycleClientTest: XCTestCase {
                     XCTFail("Error should be of type ClientError.InvalidUser")
                 }
 
+                expectation.fulfill()
+            })
+
+        wait(for: [expectation], timeout: 1.0)
+        client.close(callback: nil)
+    }
+
+    func testIdentifyUserWithCallbackSuccess() {
+        let expectation = XCTestExpectation(
+            description: "identifyUser with callback should succeed")
+
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
+            onInitialized: nil)
+        client.config?.userConfig = self.userConfig
+
+        let newUser = try! DevCycleUser.builder().userId("new_user").build()
+
+        client.identifyUser(
+            user: newUser,
+            callback: { error, variables in
+                XCTAssertNil(error, "identifyUser should not return error for valid user")
+                // Variables can be nil or non-nil depending on the config
+                // The important thing is that no error occurred
                 expectation.fulfill()
             })
 
