@@ -28,10 +28,7 @@ public class ObjCDVCVariable: NSObject {
         self.isDefaulted = dvcVariable.isDefaulted
         self.value = dvcVariable.value
         self.defaultValue = dvcVariable.defaultValue
-        
-        if (dvcVariable.eval != nil) {
-            self.eval = ObjCEvalReason(dvcVariable.eval!)
-        }
+        self.eval = ObjCEvalReason(dvcVariable.eval ?? nil)
         
         super.init()
         
@@ -49,10 +46,7 @@ public class ObjCDVCVariable: NSObject {
         self.isDefaulted = dvcVariable.isDefaulted
         self.value = dvcVariable.value
         self.defaultValue = dvcVariable.defaultValue
-        
-        if ((dvcVariable.eval) != nil) {
-            self.eval = ObjCEvalReason(dvcVariable.eval!)
-        }
+        self.eval = ObjCEvalReason(dvcVariable.eval ?? nil)
     }
     
     @objc public func onUpdate(handler: @escaping DVCVariableValueHandler) -> ObjCDVCVariable {

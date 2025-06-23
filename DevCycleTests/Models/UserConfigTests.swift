@@ -161,7 +161,8 @@ class UserConfigTests: XCTestCase {
                         "variationName": "id4 name",
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         },
                         "evalReason": "we don't do this anymore"
                     }
@@ -178,7 +179,8 @@ class UserConfigTests: XCTestCase {
                         "value": true,
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     },
                     "json-var": {
@@ -193,7 +195,8 @@ class UserConfigTests: XCTestCase {
                         },
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     },
                     "string-var": {
@@ -203,7 +206,8 @@ class UserConfigTests: XCTestCase {
                         "value": "string1",
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         },
                         "evalReason": "we really don't do this anymore"
                     },
@@ -214,7 +218,8 @@ class UserConfigTests: XCTestCase {
                         "value": 4,
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     }
                 },
@@ -275,7 +280,8 @@ class UserConfigTests: XCTestCase {
                         "value": true,
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     }
                 },
@@ -327,7 +333,8 @@ class UserConfigTests: XCTestCase {
                         "value": true,
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     }
                 },

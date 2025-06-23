@@ -68,10 +68,13 @@
     XCTAssertTrue([variable.type isEqualToString:@"String"]);
     XCTAssertEqual(variable.value, @"default-value");
     XCTAssertEqual(variable.defaultValue, @"default-value");
-    
-//    XCTAssertEqual(variable.eval.reason, @"DEFAULT");
-//    XCTAssertEqual(variable.eval.details, @"User Not Targeted");
+
+    XCTAssertNotNil(variable.eval);
+    XCTAssertTrue([variable.eval.reason isEqualToString:@"DEFAULT"]);
+    XCTAssertTrue([variable.eval.details isEqualToString:@"User Not Targeted"]);
+    XCTAssertNil(variable.eval.targetId);
 }
+
 // TODO: these should all be non-deafulted
 - (void)testVariableValueStringDefault {
     DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];

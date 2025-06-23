@@ -52,9 +52,7 @@ public class DVCVariable<T> {
         self.value = value ?? defaultValue
         self.defaultValue = defaultValue
         self.isDefaulted = value == nil
-        if (eval != nil) {
-            self.eval = eval
-        }
+        self.eval = eval
 
         let classString = String(describing: T.self)
         do {

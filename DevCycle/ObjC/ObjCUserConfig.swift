@@ -57,14 +57,18 @@ public class ObjCVariable: NSObject {
 
 @objc(EvalReason)
 public class ObjCEvalReason: NSObject {
-    private(set) var reason: String
-    private(set) var details: String?
-    private(set) var targetId: String?
+    @objc public private(set) var reason: String
+    @objc public private(set) var details: String?
+    @objc public private(set) var targetId: String?
 
-    init(_ evalReason: EvalReason) {
-        self.reason = evalReason.reason
-        self.details = evalReason.details
-        self.targetId = evalReason.targetId
+    init?(_ evalReason: EvalReason?) {
+        guard let eval = evalReason else {
+            return nil
+        }
+         
+        self.reason = eval.reason
+        self.details = eval.details
+        self.targetId = eval.targetId
     }
 
     override public var description: String {
