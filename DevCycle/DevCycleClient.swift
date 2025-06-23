@@ -479,7 +479,7 @@ public class DevCycleClient {
             })
     }
 
-    @available(*, deprecated, message: "Use the non-throwing identifyUser method instead")
+    @available(*, deprecated, message: "Use the non-throwing or async identifyUser method instead")
     public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
         guard let currentUser = self.user, !currentUser.userId.isEmpty,
             !user.userId.isEmpty
