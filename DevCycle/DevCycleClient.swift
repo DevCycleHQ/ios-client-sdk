@@ -423,13 +423,11 @@ public class DevCycleClient {
         }
     }
 
-    public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
-        guard let currentUser = self.user, !currentUser.userId.isEmpty,
-            !user.userId.isEmpty
-        else {
-            throw ClientError.InvalidUser
-        }
+    private func _identifyUser(
+        user: DevCycleUser, currentUser: DevCycleUser, callback: IdentifyCompletedHandler? = nil
+    ) {
         self.flushEvents()
+
         var updateUser: DevCycleUser = currentUser
         if currentUser.userId == user.userId {
             updateUser.update(with: user)
@@ -481,22 +479,46 @@ public class DevCycleClient {
             })
     }
 
+    @available(*, deprecated, message: "Use the non-throwing or async identifyUser method instead")
+    public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {
+        guard let currentUser = self.user, !currentUser.userId.isEmpty,
+            !user.userId.isEmpty
+        else {
+            throw ClientError.InvalidUser
+        }
+
+        self._identifyUser(user: user, currentUser: currentUser, callback: callback)
+    }
+
+    public func identifyUser(user: DevCycleUser, completion: IdentifyCompletedHandler? = nil) {
+        guard let currentUser = self.user, !currentUser.userId.isEmpty,
+            !user.userId.isEmpty
+        else {
+            completion?(ClientError.InvalidUser, nil)
+            return
+        }
+
+        self._identifyUser(user: user, currentUser: currentUser, callback: completion)
+    }
+
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     public func identifyUser(user: DevCycleUser) async throws -> [String: Variable]? {
+        guard let currentUser = self.user, !currentUser.userId.isEmpty,
+            !user.userId.isEmpty
+        else {
+            throw ClientError.InvalidUser
+        }
+
         return try await withCheckedThrowingContinuation { continuation in
-            do {
-                try self.identifyUser(user: user) { error, variables in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                    } else {
-                        continuation.resume(returning: variables)
-                    }
+            self._identifyUser(user: user, currentUser: currentUser) { error, variables in
+                if let error = error {
+                    Log.error(
+                        "Error calling identifyUser for user_id \(String(describing: user.userId))",
+                        tags: ["identify"])
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: variables)
                 }
-            } catch {
-                Log.error(
-                    "Error calling identifyUser for user_id \(String(describing: user.userId))",
-                    tags: ["identify"])
-                continuation.resume(throwing: error)
             }
         }
     }
