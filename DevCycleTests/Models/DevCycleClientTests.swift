@@ -165,6 +165,68 @@ class DevCycleClientTest: XCTestCase {
         client.close(callback: nil)
     }
 
+    func testFlushEventsWithEvalReasons() throws{
+        let data = getConfigData(name: "test_config_eval_reason")
+        let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
+        let evalReasonConfig = try UserConfig(from: dictionary)
+
+        let options = DevCycleOptions.builder().eventFlushIntervalMS(100).build()
+        let service = MockService(userConfig: evalReasonConfig)
+
+        let client = try! DevCycleClient.builder().user(self.user).sdkKey("my_sdk_key").options(options).build(
+            onInitialized: nil)
+        client.setup(service: service)
+        client.config?.userConfig = evalReasonConfig
+        client.initialized = true
+
+        XCTAssertTrue(client.initialized)
+
+        let variable1 = client.variable(key: "string-var", defaultValue: "test_string")
+        XCTAssertEqual(variable1.value, "string1")
+        XCTAssertEqual(variable1.eval?.reason, "TARGETING_MATCH")
+        XCTAssertEqual(variable1.eval?.details, "Platform AND App Version")
+        XCTAssertEqual(variable1.eval?.targetId, "target_id_1")
+        
+        let variable2Value = client.variableValue(key: "bool-var", defaultValue: false)
+        XCTAssertTrue(variable2Value)
+        
+        let variableInvalid = client.variable(key: "title_text", defaultValue: "Default")
+        XCTAssertEqual(variableInvalid.value, "Default")
+        XCTAssertEqual(variableInvalid.eval?.reason, "DEFAULT")
+        XCTAssertEqual(variableInvalid.eval?.details, "User Not Targeted")
+        XCTAssertNil(variableInvalid.eval?.targetId)
+
+        let expectation = XCTestExpectation(description: "EventQueue has events with Eval metadata")
+        // Add a slight delay to ensure events are queued correctly
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 0.5)
+        
+        let variableEvaluatedEvents = client.eventQueue.aggregateEventQueue.variableEvaluated
+        XCTAssertEqual(variableEvaluatedEvents.count, 2)
+        
+        let variableDefaultedEvents = client.eventQueue.aggregateEventQueue.variableDefaulted
+        XCTAssertEqual(variableDefaultedEvents.count, 1)
+        
+        let expectedEvaluatedMetadata = ["eval": ["reason": "TARGETING_MATCH", "details": "Platform AND App Version", "target_id": "target_id_1"]]
+        XCTAssertEqual(variableEvaluatedEvents["bool-var"]?.metaData as! [String: [String:String]], expectedEvaluatedMetadata)
+        XCTAssertEqual(variableEvaluatedEvents["string-var"]?.metaData as! [String: [String:String]], expectedEvaluatedMetadata)
+        
+        let expectedDefaultedMetadata = ["eval": ["reason": "DEFAULT", "details": "User Not Targeted"]]
+        XCTAssertEqual(variableDefaultedEvents["title_text"]?.metaData as! [String : [String : String?]], expectedDefaultedMetadata)
+        
+        client.flushEvents()
+        
+        let publishExpectation = XCTestExpectation(description: "EventQueue publishes an event")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            XCTAssertTrue(service.publishCallCount == 1)
+            publishExpectation.fulfill()
+        }
+        wait(for: [publishExpectation], timeout: 0.5)
+        client.close(callback: nil)
+    }
+
     func testFlushEventsWithOneEventInQueueAndCallback() {
         let expectation = XCTestExpectation(description: "EventQueue publishes an event")
         let options = DevCycleOptions.builder().flushEventsIntervalMs(100).build()

@@ -17,7 +17,8 @@
             "variationName": "id4 name",
             "eval": {
                 "reason": "TARGETING_MATCH",
-                "details": "Platform AND App Version"
+                "details": "Platform AND App Version",
+                "target_id": "target_id_1"
             }
         }
     },
@@ -33,7 +34,8 @@
             "value": true,
             "eval": {
                 "reason": "TARGETING_MATCH",
-                "details": "Platform AND App Version"
+                "details": "Platform AND App Version",
+                "target_id": "target_id_1"
             }
         },
         "json-var": {
@@ -48,7 +50,8 @@
             },
             "eval": {
                 "reason": "TARGETING_MATCH",
-                "details": "Platform AND App Version"
+                "details": "Platform AND App Version",
+                "target_id": "target_id_1"
             }
         },
         "string-var": {
@@ -58,7 +61,8 @@
             "value": "string1",
             "eval": {
                 "reason": "TARGETING_MATCH",
-                "details": "Platform AND App Version"
+                "details": "Platform AND App Version",
+                "target_id": "target_id_1"
             }
         },
         "num-var": {
@@ -68,7 +72,8 @@
             "value": 4,
             "eval": {
                 "reason": "TARGETING_MATCH",
-                "details": "Platform AND App Version"
+                "details": "Platform AND App Version",
+                "target_id": "target_id_1"
             }
         }
     },

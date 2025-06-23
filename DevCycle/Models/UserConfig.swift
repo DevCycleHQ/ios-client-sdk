@@ -223,11 +223,13 @@ public struct EvalReason {
         self.targetId = dict["target_id"] as? String
     }
 
+    init(reason: String, details: String) {
+        self.reason = reason
+        self.details = details
+        self.targetId = nil
+    }
+
     static func defaultReason(details: String) -> EvalReason {
-        let defaultReason = [
-            "reason": "DEFAULT",
-            "details": details
-        ]
-        return EvalReason(from: defaultReason)!
+        return EvalReason(reason: "DEFAULT", details: details)
     }
 }

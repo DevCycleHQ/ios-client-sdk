@@ -414,13 +414,23 @@ public class DevCycleClient {
                     variable, forKey: defaultValue as AnyObject)
             }
 
-            if !self.closed && !self.disableAutomaticEventLogging {
+            if !self.closed && !self.disableAutomaticEventLogging {                
                 self.eventQueue.updateAggregateEvents(
-                    variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+                    variableKey: variable.key, variableIsDefaulted: variable.isDefaulted, metadata: createVariableEventMetaData(variableEval: variable.eval))
             }
 
             return variable
         }
+    }
+
+    private func createVariableEventMetaData(variableEval: EvalReason?) -> [String: Any]? {
+        if let eval = variableEval {
+            if let targetId = eval.targetId {
+                return ["eval": ["reason": eval.reason, "details": eval.details, "target_id": targetId]]
+            }
+            return ["eval": ["reason": eval.reason, "details": eval.details]]
+        }
+        return nil
     }
 
     public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {

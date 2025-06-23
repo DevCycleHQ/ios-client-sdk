@@ -88,18 +88,18 @@ struct DVCAggregateEvents {
         self.variableEvaluated = [:]
     }
     
-    mutating func track(variableKey: String, eventType: DVCEventTypes) {
+    mutating func track(variableKey: String, eventType: DVCEventTypes, metadata: [String: Any]?) {
         if (eventType == DVCEventTypes.VariableEvaluated) {
             if let variableEvaluatedEvent = self.variableEvaluated[variableKey] {
                 variableEvaluatedEvent.value = variableEvaluatedEvent.value! + 1
             } else {
-                self.variableEvaluated[variableKey] = DevCycleEvent(type: "variableEvaluated", target: variableKey, clientDate: nil, value: 1, metaData: nil)
+                self.variableEvaluated[variableKey] = DevCycleEvent(type: "variableEvaluated", target: variableKey, clientDate: nil, value: 1, metaData: metadata)
             }
         } else {
             if let variableDefaultedEvent = self.variableDefaulted[variableKey] {
                 variableDefaultedEvent.value = variableDefaultedEvent.value! + 1
             } else {
-                self.variableDefaulted[variableKey] = DevCycleEvent(type: "variableDefaulted", target: variableKey, clientDate: nil, value: 1, metaData: nil)
+                self.variableDefaulted[variableKey] = DevCycleEvent(type: "variableDefaulted", target: variableKey, clientDate: nil, value: 1, metaData: metadata)
             }
         }
     }
