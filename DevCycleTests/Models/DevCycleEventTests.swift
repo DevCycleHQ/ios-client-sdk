@@ -26,7 +26,7 @@ class DevCycleEventTests: XCTestCase {
     func testCreateEventWithAllFields() throws {
         // Test creating an event with all fields populated
         let date = Date()
-        let metaData: [String: Any] = ["key1": "value1", "key2": 123, "key3": true]
+        let metaData: EvalMetaData = ["key1": "value1", "key2": 123, "key3": true]
         
         let event = try DevCycleEvent.builder()
             .type("test_event")

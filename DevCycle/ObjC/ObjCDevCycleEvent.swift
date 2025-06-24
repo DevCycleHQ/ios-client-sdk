@@ -52,7 +52,7 @@ public class ObjCDevCycleEvent: NSObject {
             eventBuilder = eventBuilder.value(eventValue as? Double)
         }
         if let eventMetaData = self.metaData {
-            eventBuilder = eventBuilder.metaData(eventMetaData as? [String : Any])
+            eventBuilder = eventBuilder.metaData(eventMetaData as? EvalMetaData)
         }
         
         do {

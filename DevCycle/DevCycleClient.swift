@@ -426,7 +426,7 @@ public class DevCycleClient {
         }
     }
 
-    private func createVariableEventMetaData(variableEval: EvalReason?) -> [String: [String: String]]? {
+    private func createVariableEventMetaData(variableEval: EvalReason?) -> EvalMetaData? {
         if let eval = variableEval {
             if let targetId = eval.targetId {
                 return ["eval": ["reason": eval.reason, "details": eval.details ?? "", "target_id": targetId]]

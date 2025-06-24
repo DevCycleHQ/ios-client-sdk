@@ -234,6 +234,8 @@ public struct EvalReason {
     }
 }
 
+public typealias EvalMetaData = [String: Any]
+
 internal enum DVCDefaultDetails: String {
     case userNotTargeted = "User Not Targeted"
     case invalidVariableKey = "Invalid Variable Key"

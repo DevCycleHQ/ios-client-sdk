@@ -68,7 +68,7 @@ class EventQueue {
         }
     }
     
-    func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool, metadata: [String: Any]?) {
+    func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool, metadata: EvalMetaData?) {
         eventDispatchQueue.async {
             self.aggregateEventQueue.track(
                 variableKey: variableKey,

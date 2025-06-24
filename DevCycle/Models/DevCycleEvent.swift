@@ -15,9 +15,9 @@ public class DevCycleEvent {
     var target: String?
     var clientDate: Date?
     var value: Double?
-    var metaData: [String: Any]?
+    var metaData: EvalMetaData?
     
-    init (type: String?, target: String?, clientDate: Date?, value: Double?, metaData: [String: Any]?) {
+    init (type: String?, target: String?, clientDate: Date?, value: Double?, metaData: EvalMetaData?) {
         self.type =  type
         self.target = target
         self.clientDate = clientDate
@@ -52,7 +52,7 @@ public class DevCycleEvent {
             return self
         }
         
-        public func metaData(_ metaData: [String:Any]?) -> EventBuilder {
+        public func metaData(_ metaData: EvalMetaData?) -> EventBuilder {
             self.event.metaData = metaData
             return self
         }
@@ -88,7 +88,7 @@ struct DVCAggregateEvents {
         self.variableEvaluated = [:]
     }
     
-    mutating func track(variableKey: String, eventType: DVCEventTypes, metadata: [String: Any]?) {
+    mutating func track(variableKey: String, eventType: DVCEventTypes, metadata: EvalMetaData?) {
         if (eventType == DVCEventTypes.VariableEvaluated) {
             if let variableEvaluatedEvent = self.variableEvaluated[variableKey] {
                 variableEvaluatedEvent.value = variableEvaluatedEvent.value! + 1
