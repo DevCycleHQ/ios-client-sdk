@@ -43,6 +43,8 @@ public class DVCVariable<T> {
     public var handler: VariableValueHandler<T>?
     public var eval: EvalReason? = nil
     public var isDefaulted: Bool
+    @available(*, deprecated, message: "Use eval instead")
+    public var evalReason: String?
 
     public var value: T
     public var defaultValue: T
