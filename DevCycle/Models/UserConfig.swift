@@ -144,7 +144,7 @@ public struct Feature {
     public var type: String
     public var variationKey: String
     public var variationName: String
-    public var evalReason: String?
+    public let eval: EvalReason?
     
     init (from dictionary: [String: Any]) throws {
         guard let id = dictionary["_id"] as? String else {
@@ -170,7 +170,7 @@ public struct Feature {
         self.type = type
         self.variationKey = variationKey
         self.variationName = variationName
-        self.evalReason = dictionary["evalReason"] as? String
+        self.eval = EvalReason(from: dictionary["eval"] as? [String: Any])
     }
 }
 
@@ -179,7 +179,7 @@ public struct Variable {
     public var key: String
     public var type: DVCVariableTypes
     public var value: Any
-    public var evalReason: String?
+    public let eval: EvalReason?
     
     init (from dictionary: [String: Any]) throws {
         guard let id = dictionary["_id"] as? String else {
@@ -198,7 +198,7 @@ public struct Variable {
         self._id = id
         self.key = key
         self.type = varType
-        self.evalReason = dictionary["evalReason"] as? String
+        self.eval = EvalReason(from: dictionary["eval"] as? [String: Any])
         
         if (type == "Boolean") {
             self.value = value as? Bool ?? value
@@ -206,4 +206,39 @@ public struct Variable {
             self.value = value
         }
     }
+}
+
+public struct EvalReason {
+    public let reason: String
+    public let details: String?
+    public let targetId: String?
+
+    init?(from dictionary: [String: Any]?) {
+        guard let dict = dictionary, let reason = dict["reason"] as? String else {
+            return nil
+        }
+        
+        self.reason = reason
+        self.details = dict["details"] as? String
+        self.targetId = dict["target_id"] as? String
+    }
+
+    init(reason: String, details: String) {
+        self.reason = reason
+        self.details = details
+        self.targetId = nil
+    }
+
+    static func defaultReason(details: String) -> EvalReason {
+        return EvalReason(reason: "DEFAULT", details: details)
+    }
+}
+
+public typealias EvalMetaData = [String: Any]
+
+internal enum DVCDefaultDetails: String {
+    case userNotTargeted = "User Not Targeted"
+    case invalidVariableKey = "Invalid Variable Key"
+    case invalidVariableType = "Invalid Variable Type"
+    case variableTypeMismatch = "Variable Type Mismatch"
 }

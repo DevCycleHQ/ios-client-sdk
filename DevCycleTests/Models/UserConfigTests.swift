@@ -161,7 +161,8 @@ class UserConfigTests: XCTestCase {
                         "variationName": "id4 name",
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         },
                         "evalReason": "we don't do this anymore"
                     }
@@ -178,7 +179,8 @@ class UserConfigTests: XCTestCase {
                         "value": true,
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     },
                     "json-var": {
@@ -193,7 +195,8 @@ class UserConfigTests: XCTestCase {
                         },
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     },
                     "string-var": {
@@ -203,7 +206,8 @@ class UserConfigTests: XCTestCase {
                         "value": "string1",
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         },
                         "evalReason": "we really don't do this anymore"
                     },
@@ -214,7 +218,8 @@ class UserConfigTests: XCTestCase {
                         "value": 4,
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     }
                 },
@@ -275,7 +280,8 @@ class UserConfigTests: XCTestCase {
                         "value": true,
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     }
                 },
@@ -327,7 +333,8 @@ class UserConfigTests: XCTestCase {
                         "value": true,
                         "eval": {
                             "reason": "TARGETING_MATCH",
-                            "details": "Platform AND App Version"
+                            "details": "Platform AND App Version",
+                            "target_id": "test_target_id"
                         }
                     }
                 },
@@ -345,6 +352,106 @@ class UserConfigTests: XCTestCase {
         } catch {
             let stringError = String(describing: UserConfigError.MissingProperty("_id in Variable object"))
             XCTAssertEqual(String(describing: error), stringError)
+        }
+    }
+    
+    func testSuccessfulConfigParsingWithUnexpectedTypeForEvalFields() throws {
+        let data = """
+            {
+                "project": {
+                    "_id": "id1",
+                    "key": "default",
+                    "settings": {
+                        "unused": "data"
+                    }
+                },
+                "environment": {
+                    "_id": "id2",
+                    "key": "development",
+                    "metadata": {
+                        "testing": "unused data"
+                    }
+                },
+                "features": {
+                    "new-feature": {
+                        "_id": "id3",
+                        "key": "new-feature",
+                        "type": "release",
+                        "_variation": "id4",
+                        "variationKey": "id4-key",
+                        "variationName": "id4 name",
+                        "eval": "this should be ignored"
+                    }
+                },
+                "featureVariationMap": {
+                    "id3": "id4"
+                },
+                "knownVariableKeys": [],
+                "variables": {
+                    "bool-var": {
+                        "_id": "id5",
+                        "key": "bool-var",
+                        "type": "Boolean",
+                        "value": true,
+                        "eval": "this should be ignored"
+                    },
+                    "json-var": {
+                        "_id": "id6",
+                        "key": "json-var",
+                        "type": "JSON",
+                        "value": {
+                            "key1": "value1",
+                            "key2": {
+                                "nestedKey1": "nestedValue1"
+                            }
+                        },
+                        "eval": false
+                    },
+                    "string-var": {
+                        "_id": "id7",
+                        "key": "string-var",
+                        "type": "String",
+                        "value": "string1",
+                        "eval": 610
+                    },
+                    "num-var": {
+                        "_id": "id8",
+                        "key": "num-var",
+                        "type": "Number",
+                        "value": 4,
+                        "eval": "not a dictionary"
+                    }
+                },
+                "sse": {
+                    "url": "https://example.com",
+                    "inactivityDelay": 5,
+                    "questionable": {
+                        "unused": ["values", "here"]
+                    }
+                },
+                "welcome": "to the future",
+                "the_answer": 42,
+                "hitchhiker": false
+            }
+            """.data(using: .utf8)!
+        let dictionary =
+            try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            as! [String: Any]
+        let config = try UserConfig(from: dictionary)
+        XCTAssertNotNil(config)
+        XCTAssertNotNil(config.project)
+        XCTAssertNotNil(config.environment)
+        XCTAssertNotNil(config.variables)
+        XCTAssertNotNil(config.featureVariationMap)
+        XCTAssertNotNil(config.features)
+        XCTAssertNotNil(config.sse)
+        
+        for (_, feature) in config.features {
+            XCTAssertNil(feature.eval)
+        }
+        
+        for (_, variable) in config.variables {
+            XCTAssertNil(variable.eval)
         }
     }
 }

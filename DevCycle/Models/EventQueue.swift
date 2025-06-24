@@ -68,11 +68,12 @@ class EventQueue {
         }
     }
     
-    func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool) {
+    func updateAggregateEvents(variableKey: String, variableIsDefaulted: Bool, metadata: EvalMetaData?) {
         eventDispatchQueue.async {
             self.aggregateEventQueue.track(
                 variableKey: variableKey,
-                eventType: variableIsDefaulted ? DVCEventTypes.VariableDefaulted : DVCEventTypes.VariableEvaluated
+                eventType: variableIsDefaulted ? DVCEventTypes.VariableDefaulted : DVCEventTypes.VariableEvaluated,
+                metadata: metadata
             )
         }
     }

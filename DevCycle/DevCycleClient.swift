@@ -381,7 +381,7 @@ public class DevCycleClient {
                 key: key,
                 value: nil,
                 defaultValue: defaultValue,
-                evalReason: nil
+                eval: EvalReason.defaultReason(details: DVCDefaultDetails.invalidVariableKey.rawValue)
             )
         }
 
@@ -406,7 +406,7 @@ public class DevCycleClient {
                         key: key,
                         value: nil,
                         defaultValue: defaultValue,
-                        evalReason: nil
+                        eval: EvalReason.defaultReason(details: DVCDefaultDetails.userNotTargeted.rawValue)
                     )
                 }
 
@@ -414,13 +414,26 @@ public class DevCycleClient {
                     variable, forKey: defaultValue as AnyObject)
             }
 
-            if !self.closed && !self.disableAutomaticEventLogging {
+            if !self.closed && !self.disableAutomaticEventLogging {                
                 self.eventQueue.updateAggregateEvents(
-                    variableKey: variable.key, variableIsDefaulted: variable.isDefaulted)
+                    variableKey: variable.key,
+                    variableIsDefaulted: variable.isDefaulted,
+                    metadata: createVariableEventMetaData(variableEval: variable.eval)
+                )
             }
 
             return variable
         }
+    }
+
+    private func createVariableEventMetaData(variableEval: EvalReason?) -> EvalMetaData? {
+        if let eval = variableEval {
+            if let targetId = eval.targetId {
+                return ["eval": ["reason": eval.reason, "details": eval.details ?? "", "target_id": targetId]]
+            }
+            return ["eval": ["reason": eval.reason, "details": eval.details ?? ""]]
+        }
+        return nil
     }
 
     public func identifyUser(user: DevCycleUser, callback: IdentifyCompletedHandler? = nil) throws {

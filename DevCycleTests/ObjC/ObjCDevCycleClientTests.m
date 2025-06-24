@@ -66,10 +66,15 @@
     DVCVariable *variable = [client stringVariableWithKey:@"my-key" defaultValue:@"default-value"];
     XCTAssertNotNil(variable);
     XCTAssertTrue([variable.type isEqualToString:@"String"]);
-    XCTAssertNil(variable.evalReason);
     XCTAssertEqual(variable.value, @"default-value");
     XCTAssertEqual(variable.defaultValue, @"default-value");
+
+    XCTAssertNotNil(variable.eval);
+    XCTAssertTrue([variable.eval.reason isEqualToString:@"DEFAULT"]);
+    XCTAssertTrue([variable.eval.details isEqualToString:@"User Not Targeted"]);
+    XCTAssertNil(variable.eval.targetId);
 }
+
 // TODO: these should all be non-deafulted
 - (void)testVariableValueStringDefault {
     DevCycleUser *user = [DevCycleUser initializeWithUserId:@"my_user"];
