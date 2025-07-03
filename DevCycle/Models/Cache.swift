@@ -18,14 +18,17 @@ protocol CacheServiceProtocol {
 
 class CacheService: CacheServiceProtocol {
     struct CacheKeys {
-        static let platform = PlatformDetails()
-        static let versionPrefix = "VERSION_\(platform.sdkVersion)"
+        static let versionPrefix = "VERSION_\(PlatformDetails().sdkVersion)."
         
         static let anonUserId = "ANONYMOUS_USER_ID"
-        static let identifiedConfigKey = "\(versionPrefix).IDENTIFIED_CONFIG"
-        static let anonymousConfigKey = "\(versionPrefix).ANONYMOUS_CONFIG"
+        static let identifiedConfig = "IDENTIFIED_CONFIG"
+        static let anonymousConfig = "ANONYMOUS_CONFIG"
+
         static let userIdSuffix = ".USER_ID"
         static let expiryDateSuffix = ".EXPIRY_DATE"
+
+        static let identifiedConfigKey = "\(versionPrefix)\(identifiedConfig)"
+        static let anonymousConfigKey = "\(versionPrefix)\(anonymousConfig)"
 
         // Legacy keys for cleanup
         static let legacyUser = "user"
@@ -39,6 +42,7 @@ class CacheService: CacheServiceProtocol {
     init(configCacheTTL: Int = DEFAULT_CONFIG_CACHE_TTL) {
         self.configCacheTTL = configCacheTTL
         migrateLegacyCache()
+        clearDeprecatedCachedConfigs()
     }
 
     func setAnonUserId(anonUserId: String) {
@@ -127,6 +131,24 @@ class CacheService: CacheServiceProtocol {
         }
 
         return baseKey
+    }
+
+    private func clearDeprecatedCachedConfigs() {
+        let deprecatedKeys: [String] = defaults.dictionaryRepresentation().keys.compactMap { key in
+            // Only include keys that contain one of these patterns
+            guard key.contains(CacheKeys.identifiedConfig) || key.contains(CacheKeys.anonymousConfig) else {
+                return nil
+            }
+
+            return key.starts(with: CacheKeys.versionPrefix) ? nil : key
+        }
+
+        for key in deprecatedKeys {
+            if defaults.object(forKey: key) != nil {
+                defaults.removeObject(forKey: key)
+                Log.debug("Cleaned up cached config: \(key)")
+            }
+        }
     }
 
     // MARK: - Legacy Cache Migration
