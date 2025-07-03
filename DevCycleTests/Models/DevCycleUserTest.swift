@@ -240,16 +240,17 @@ class DevCycleUserTest: XCTestCase {
 
         let identifiedUserId = "identified_user_123"
         let anonymousUserId = "anon_user_456"
+        let versionPrefix = "VERSION_\(PlatformDetails().sdkVersion)"
         let configData = "{\"variables\": {\"test\": \"value\"}}".data(using: .utf8)
         let fetchDate = Int(Date().timeIntervalSince1970)
 
-        defaults.set(configData, forKey: "IDENTIFIED_CONFIG")
-        defaults.set(identifiedUserId, forKey: "IDENTIFIED_CONFIG.USER_ID")
-        defaults.set(fetchDate, forKey: "IDENTIFIED_CONFIG.FETCH_DATE")
+        defaults.set(configData, forKey: "\(versionPrefix).IDENTIFIED_CONFIG")
+        defaults.set(identifiedUserId, forKey: "\(versionPrefix).IDENTIFIED_CONFIG.USER_ID")
+        defaults.set(fetchDate, forKey: "\(versionPrefix).IDENTIFIED_CONFIG.FETCH_DATE")
 
-        defaults.set(configData, forKey: "ANONYMOUS_CONFIG")
-        defaults.set(anonymousUserId, forKey: "ANONYMOUS_CONFIG.USER_ID")
-        defaults.set(fetchDate, forKey: "ANONYMOUS_CONFIG.FETCH_DATE")
+        defaults.set(configData, forKey: "\(versionPrefix).ANONYMOUS_CONFIG")
+        defaults.set(anonymousUserId, forKey: "\(versionPrefix).ANONYMOUS_CONFIG.USER_ID")
+        defaults.set(fetchDate, forKey: "\(versionPrefix).ANONYMOUS_CONFIG.FETCH_DATE")
 
         cacheService.migrateLegacyCache()
 
@@ -274,25 +275,25 @@ class DevCycleUserTest: XCTestCase {
             "Legacy anonymous fetch date should be removed")
 
         XCTAssertEqual(
-            defaults.object(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId)") as? Data,
+            defaults.object(forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(identifiedUserId)") as? Data,
             configData,
             "New identified config data should match original")
         XCTAssertNotNil(
-            defaults.object(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId).EXPIRY_DATE"),
+            defaults.object(forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(identifiedUserId).EXPIRY_DATE"),
             "New identified expiry date should be set")
 
         XCTAssertEqual(
-            defaults.object(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId)") as? Data,
+            defaults.object(forKey: "\(versionPrefix).ANONYMOUS_CONFIG_\(anonymousUserId)") as? Data,
             configData,
             "New anonymous config data should match original")
         XCTAssertNotNil(
-            defaults.object(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId).EXPIRY_DATE"),
+            defaults.object(forKey: "\(versionPrefix).ANONYMOUS_CONFIG_\(anonymousUserId).EXPIRY_DATE"),
             "New anonymous expiry date should be set")
 
-        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId)")
-        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(identifiedUserId).EXPIRY_DATE")
-        defaults.removeObject(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId)")
-        defaults.removeObject(forKey: "ANONYMOUS_CONFIG_\(anonymousUserId).EXPIRY_DATE")
+        defaults.removeObject(forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(identifiedUserId)")
+        defaults.removeObject(forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(identifiedUserId).EXPIRY_DATE")
+        defaults.removeObject(forKey: "\(versionPrefix).ANONYMOUS_CONFIG_\(anonymousUserId)")
+        defaults.removeObject(forKey: "\(versionPrefix).ANONYMOUS_CONFIG_\(anonymousUserId).EXPIRY_DATE")
     }
 
     func testLegacyCacheMigrationSkipsWhenNoData() {
@@ -310,6 +311,7 @@ class DevCycleUserTest: XCTestCase {
         let defaults = UserDefaults.standard
 
         let userId = "test_user_123"
+        let versionPrefix = "VERSION_\(PlatformDetails().sdkVersion)"
         let legacyConfigData = "{\"variables\": {\"legacy\": \"oldValue\"}}".data(using: .utf8)
         let newConfigData = "{\"variables\": {\"new\": \"newValue\"}}".data(using: .utf8)
         let legacyFetchDate = Int(Date().timeIntervalSince1970) - 3600  // 1 hour ago
@@ -319,9 +321,9 @@ class DevCycleUserTest: XCTestCase {
         defaults.set(userId, forKey: "IDENTIFIED_CONFIG.USER_ID")
         defaults.set(legacyFetchDate, forKey: "IDENTIFIED_CONFIG.FETCH_DATE")
 
-        defaults.set(newConfigData, forKey: "IDENTIFIED_CONFIG_\(userId)")
-        defaults.set(userId, forKey: "IDENTIFIED_CONFIG_\(userId).USER_ID")
-        defaults.set(newExpiryDate, forKey: "IDENTIFIED_CONFIG_\(userId).EXPIRY_DATE")
+        defaults.set(newConfigData, forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(userId)")
+        defaults.set(userId, forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(userId).USER_ID")
+        defaults.set(newExpiryDate, forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(userId).EXPIRY_DATE")
 
         cacheService.migrateLegacyCache()
 
@@ -336,17 +338,17 @@ class DevCycleUserTest: XCTestCase {
             "Legacy fetch date should be removed when new cache exists")
 
         XCTAssertEqual(
-            defaults.object(forKey: "IDENTIFIED_CONFIG_\(userId)") as? Data,
+            defaults.object(forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(userId)") as? Data,
             newConfigData,
             "New config data should remain unchanged")
         XCTAssertEqual(
-            defaults.integer(forKey: "IDENTIFIED_CONFIG_\(userId).EXPIRY_DATE"),
+            defaults.integer(forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(userId).EXPIRY_DATE"),
             newExpiryDate,
             "New expiry date should remain unchanged")
 
-        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(userId)")
-        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(userId).USER_ID")
-        defaults.removeObject(forKey: "IDENTIFIED_CONFIG_\(userId).EXPIRY_DATE")
+        defaults.removeObject(forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(userId)")
+        defaults.removeObject(forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(userId).USER_ID")
+        defaults.removeObject(forKey: "\(versionPrefix).IDENTIFIED_CONFIG_\(userId).EXPIRY_DATE")
     }
 
     func testLegacyUserCacheCleanup() {
@@ -389,6 +391,40 @@ class DevCycleUserTest: XCTestCase {
         XCTAssertNil(
             defaults.object(forKey: "config"),
             "Legacy config cache should be removed after migration")
+    }
+    
+    func testOtherSDKVersionConfigCacheCleanup() {
+        let cacheService = CacheService()
+        let defaults = UserDefaults.standard
+
+        let userId = "test_user_123"
+        let versionPrefix = "VERSION_\(PlatformDetails().sdkVersion)"
+        let oldSdkCacheKey = "VERSION_1.23.0.IDENTIFIED_CONFIG_\(userId)"
+        let currentSdkCacheKey = "\(versionPrefix).IDENTIFIED_CONFIG_\(userId)"
+        
+        // Set up legacy config cache data
+        let legacyConfigData = "{\"variables\": {\"legacy\": \"oldValue\"}}".data(using: .utf8)
+        let newConfigData = "{\"variables\": {\"new\": \"newValue\"}}".data(using: .utf8)
+        
+        defaults.set(legacyConfigData, forKey: oldSdkCacheKey)
+        defaults.set(newConfigData, forKey: currentSdkCacheKey)
+
+        // Verify legacy config cache exists
+        XCTAssertNotNil(
+            defaults.object(forKey: oldSdkCacheKey), "Legacy config cache should exist before migration")
+
+        // Run migration
+        cacheService.migrateLegacyCache()
+
+        // Verify legacy config cache is cleaned up
+        XCTAssertNil(
+            defaults.object(forKey: oldSdkCacheKey),
+            "Legacy config cache should be removed after migration")
+        
+        XCTAssertEqual(
+            defaults.object(forKey: currentSdkCacheKey) as? Data,
+            newConfigData,
+            "New config data should remain unchanged")
     }
 }
 

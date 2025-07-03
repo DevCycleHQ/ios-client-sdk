@@ -42,7 +42,6 @@ class CacheService: CacheServiceProtocol {
     init(configCacheTTL: Int = DEFAULT_CONFIG_CACHE_TTL) {
         self.configCacheTTL = configCacheTTL
         migrateLegacyCache()
-        clearDeprecatedCachedConfigs()
     }
 
     func setAnonUserId(anonUserId: String) {
@@ -133,7 +132,7 @@ class CacheService: CacheServiceProtocol {
         return baseKey
     }
 
-    private func clearDeprecatedCachedConfigs() {
+    private func cleanupDeprecatedCachedConfigs() {
         let deprecatedKeys: [String] = defaults.dictionaryRepresentation().keys.compactMap { key in
             // Only include keys that contain one of these patterns
             guard key.contains(CacheKeys.identifiedConfig) || key.contains(CacheKeys.anonymousConfig) else {
@@ -163,6 +162,9 @@ class CacheService: CacheServiceProtocol {
 
         // Clean up legacy config cache
         cleanupLegacyConfigCache()
+        
+        // Clean up config cache from other SDK versions
+        cleanupDeprecatedCachedConfigs()
     }
 
     private func cleanupLegacyUserCache() {
