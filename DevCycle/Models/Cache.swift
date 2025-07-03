@@ -18,9 +18,12 @@ protocol CacheServiceProtocol {
 
 class CacheService: CacheServiceProtocol {
     struct CacheKeys {
+        static let platform = PlatformDetails()
+        static let versionPrefix = "VERSION_\(platform.sdkVersion)"
+        
         static let anonUserId = "ANONYMOUS_USER_ID"
-        static let identifiedConfigKey = "IDENTIFIED_CONFIG"
-        static let anonymousConfigKey = "ANONYMOUS_CONFIG"
+        static let identifiedConfigKey = "\(versionPrefix).IDENTIFIED_CONFIG"
+        static let anonymousConfigKey = "\(versionPrefix).ANONYMOUS_CONFIG"
         static let userIdSuffix = ".USER_ID"
         static let expiryDateSuffix = ".EXPIRY_DATE"
 
