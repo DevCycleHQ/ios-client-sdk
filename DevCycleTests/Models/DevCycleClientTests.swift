@@ -888,38 +888,36 @@ class DevCycleClientTest: XCTestCase {
                 do {
                     let newUser = try DevCycleUser.builder().userId("new_user").build()
 
-                    // identifyUser should work with cached config even when network fails
+                    // identifyUser should work with defaults even when network fails and the cached config is invalid
                     try client.identifyUser(
                         user: newUser,
                         callback: { error, variables in
-                            XCTAssertNil(
-                                error,
-                                "identifyUser should not return error when cache is available")
-                            XCTAssertNotNil(
-                                variables,
-                                "identifyUser should return variables when cache is available")
-                            XCTAssertTrue(
-                                client.isConfigCached, "Config should be marked as cached")
                             XCTAssertEqual(
-                                client.user?.userId, newUser.userId,
-                                "User should be updated to new user")
-                            XCTAssertNil(
-                                defaults.object(forKey: newUserCacheKey),
-                                "Cached config should be nil"
+                                error?.localizedDescription,
+                                "Failed to fetch config",
+                                "identifyUser should throw failed to fetch config error"
                             )
                             XCTAssertNil(
+                                variables,
+                                "identifyUser should not change to the new User and continue to return variables for 'my_user'")
+                            XCTAssertFalse(
+                                client.isConfigCached, "Config should still be marked as cached for 'my_user'")
+                            XCTAssertEqual(
+                                client.user?.userId, self.user.userId,
+                                "User should not be updated to new user")
+                            XCTAssertNil(
                                 client.cacheService.getConfig(user: newUser),
-                                "Cached config should be nil"
+                                "Cached config should be cleared for the 'new_user'"
                             )
                             expectation.fulfill()
                         })
                 } catch {
-                    XCTFail("identifyUser should not throw when cache is available but invalid")
+                    XCTFail("identifyUser should throw when the cached config is available but invalid")
                     expectation.fulfill()
                 }
             })
 
-        wait(for: [expectation], timeout: 100.0)
+        wait(for: [expectation], timeout: 10.0)
         client.close(callback: nil)
 
         // Cleanup explicitly configured cache entries

@@ -739,12 +739,17 @@ public class DevCycleClient {
 
     private func useCachedConfigForUser(user: DevCycleUser) {
         // Load cached config by default, unless explicitly disabled
-        if options?.disableConfigCache != true,
-            let cachedConfig = cacheService.getConfig(user: user)
+        if options?.disableConfigCache != true
         {
-            self.config?.userConfig = cachedConfig
-            self.isConfigCached = true
-            Log.debug("Loaded config from cache for user_id \(String(describing: user.userId))")
+            let cachedConfig = cacheService.getConfig(user: user)
+            if let cachedConfig = cachedConfig {
+                self.config?.userConfig = cachedConfig
+                self.isConfigCached = true
+                Log.debug("Loaded config from cache for user_id \(String(describing: user.userId))")
+            } else {
+                self.config?.userConfig = nil
+                self.isConfigCached = false
+            }
         }
     }
 }
