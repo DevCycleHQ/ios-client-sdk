@@ -73,14 +73,20 @@ class CacheService: CacheServiceProtocol {
         // Try to load and parse cached config
         guard let data = defaults.object(forKey: key) as? Data,
             let dictionary = try? JSONSerialization.jsonObject(
-                with: data, options: .fragmentsAllowed) as? [String: Any],
-            let config = try? UserConfig(from: dictionary)
+                with: data, options: .fragmentsAllowed) as? [String: Any]
         else {
             Log.debug("Skipping cached config: no config found")
             return nil
         }
 
-        return config
+        do {
+            let config = try UserConfig(from: dictionary)
+            return config
+        } catch {
+            Log.warn("Skipping cached config: error parsing cached config. Deleting cached config")
+            cleanupCacheEntry(key: key)
+            return nil
+        }
     }
 
     func getOrCreateAnonUserId() -> String {
