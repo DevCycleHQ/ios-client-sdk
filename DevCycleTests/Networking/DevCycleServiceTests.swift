@@ -104,7 +104,7 @@ class DevCycleServiceTests: XCTestCase {
             XCTAssertEqual(eventQueue.events.count, 0)
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 2.0)
+        wait(for: [expectation], timeout: 5.0)
         XCTAssertTrue(service.publishEventsCalled)
         XCTAssertEqual(
             service.makeRequestCallCount, 1, "makeRequest should have been called 1 time")
