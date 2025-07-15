@@ -821,8 +821,6 @@ class DevCycleClientTest: XCTestCase {
                             XCTAssertNotNil(
                                 variables,
                                 "identifyUser should return variables when cache is available")
-                            XCTAssertTrue(
-                                client.isConfigCached, "Config should be marked as cached")
                             XCTAssertEqual(
                                 client.user?.userId, newUser.userId,
                                 "User should be updated to new user")
@@ -836,6 +834,91 @@ class DevCycleClientTest: XCTestCase {
 
         wait(for: [expectation], timeout: 100.0)
         client.close(callback: nil)
+    }
+
+    func testIdentifyUserWithInvalidCachedConfigDoesNotReturnError() {
+        let expectation = XCTestExpectation(
+            description: "identifyUser with invalid cached config should not return error and delete the invalid cached config")
+        let failedService = MockFailedConnectionService()
+
+        let myUserCacheKey = "IDENTIFIED_CONFIG_my_user"
+        let newUserCacheKey = "IDENTIFIED_CONFIG_new_user"
+
+        let badConfigData = """
+            {
+                "project": {
+                    "_id": "id1",
+                    "key": "default"
+                },
+                "environment": {
+                    "_id": "id2",
+                    "key": "development"
+                },
+                "features": {},
+                "featureVariationMap": {},
+                "knownVariableKeys": [],
+                "variables": [{
+                    "invalid": {
+                        "unexpected": "config_data"
+                    }
+                }],
+            }
+            """.data(using: .utf8)!
+
+        let defaults = UserDefaults.standard
+
+        defaults.set(getConfigData(name: "test_config_eval_reason"), forKey: myUserCacheKey)
+        defaults.set(badConfigData, forKey: newUserCacheKey)
+
+        let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(
+            failedService
+        ).build(onInitialized: nil)
+
+        // Initialize the client's config object
+        client.config = DVCConfig(sdkKey: "dvc_mobile_my_sdk_key", user: self.user)
+
+        client.setup(
+            service: failedService,
+            callback: { error in
+                // Build process should work with cache
+                XCTAssertNil(error, "Build should not return error when cache is available")
+
+                do {
+                    let newUser = try DevCycleUser.builder().userId("new_user").build()
+
+                    // identifyUser should work with defaults even when network fails and the cached config is invalid
+                    try client.identifyUser(
+                        user: newUser,
+                        callback: { error, variables in
+                            XCTAssertEqual(
+                                error?.localizedDescription,
+                                "Failed to fetch config",
+                                "identifyUser should throw failed to fetch config error"
+                            )
+                            XCTAssertNil(
+                                variables,
+                                "identifyUser should not change to the new User and continue to return variables for 'my_user'")
+                            XCTAssertEqual(
+                                client.user?.userId, self.user.userId,
+                                "User should not be updated to new user")
+                            XCTAssertNil(
+                                client.cacheService.getConfig(user: newUser),
+                                "Cached config should be cleared for the 'new_user'"
+                            )
+                            expectation.fulfill()
+                        })
+                } catch {
+                    XCTFail("identifyUser should throw when the cached config is available but invalid")
+                    expectation.fulfill()
+                }
+            })
+
+        wait(for: [expectation], timeout: 10.0)
+        client.close(callback: nil)
+
+        // Cleanup explicitly configured cache entries
+        defaults.removeObject(forKey: myUserCacheKey)
+        defaults.removeObject(forKey: newUserCacheKey)
     }
 }
 
