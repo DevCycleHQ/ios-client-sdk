@@ -821,8 +821,6 @@ class DevCycleClientTest: XCTestCase {
                             XCTAssertNotNil(
                                 variables,
                                 "identifyUser should return variables when cache is available")
-                            XCTAssertTrue(
-                                client.isConfigCached, "Config should be marked as cached")
                             XCTAssertEqual(
                                 client.user?.userId, newUser.userId,
                                 "User should be updated to new user")
@@ -900,8 +898,6 @@ class DevCycleClientTest: XCTestCase {
                             XCTAssertNil(
                                 variables,
                                 "identifyUser should not change to the new User and continue to return variables for 'my_user'")
-                            XCTAssertFalse(
-                                client.isConfigCached, "Config should not be marked as cached for 'my_user'")
                             XCTAssertEqual(
                                 client.user?.userId, self.user.userId,
                                 "User should not be updated to new user")

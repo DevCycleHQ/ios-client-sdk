@@ -50,7 +50,6 @@ public class DevCycleClient {
     private var closed: Bool = false
     private var inactivityWorkItem: DispatchWorkItem?
     private var variableInstanceDictonary = [String: NSMapTable<AnyObject, AnyObject>]()
-    internal var isConfigCached: Bool = false
     private var disableAutomaticEventLogging: Bool = false
     private var disableCustomEventLogging: Bool = false
 
@@ -146,7 +145,7 @@ public class DevCycleClient {
         }
         self.service = service
 
-        self.useCachedConfigForUser(user: user)
+        let _ = self.useCachedConfigForUser(user: user)
 
         self.service?.getConfig(
             user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
@@ -247,7 +246,6 @@ public class DevCycleClient {
     private func updateUserConfig(_ config: UserConfig) {
         let oldSSEURL = self.config?.userConfig?.sse?.url
         self.config?.userConfig = config
-        self.isConfigCached = false
 
         let newSSEURL = config.sse?.url
         if newSSEURL != nil && oldSSEURL != newSSEURL {
@@ -463,10 +461,8 @@ public class DevCycleClient {
                         tags: ["identify"])
 
                     // Try to use cached config for the new user
-                    self.useCachedConfigForUser(user: updateUser)
-
                     // If we have a cached config, proceed without error
-                    if self.config?.userConfig != nil {
+                    if self.useCachedConfigForUser(user: updateUser), self.config?.userConfig != nil {
                         Log.info(
                             "Using cached config for identifyUser due to network error: \(error)",
                             tags: ["identify"])
@@ -737,19 +733,16 @@ public class DevCycleClient {
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay), execute: work)
     }
 
-    private func useCachedConfigForUser(user: DevCycleUser) {
+    private func useCachedConfigForUser(user: DevCycleUser) -> Bool {
         // Load cached config by default, unless explicitly disabled
-        if options?.disableConfigCache != true
+        if options?.disableConfigCache != true,
+            let cachedConfig = cacheService.getConfig(user: user)
         {
-            if let cachedConfig = cacheService.getConfig(user: user) {
-                self.config?.userConfig = cachedConfig
-                self.isConfigCached = true
-                Log.debug("Loaded config from cache for user_id \(String(describing: user.userId))")
-            } else {
-                self.config?.userConfig = nil
-                self.isConfigCached = false
-            }
+            self.config?.userConfig = cachedConfig
+            Log.debug("Loaded config from cache for user_id \(String(describing: user.userId))")
+            return true
         }
+        return false
     }
 }
 
