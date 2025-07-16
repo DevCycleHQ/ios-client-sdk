@@ -232,6 +232,10 @@ public struct EvalReason {
     static func defaultReason(details: String) -> EvalReason {
         return EvalReason(reason: "DEFAULT", details: details)
     }
+
+    public static func openFeatureEvalReason(reason: String) -> EvalReason {
+        return EvalReason(reason: reason, details: "")
+    }
 }
 
 public typealias EvalMetaData = [String: Any]
