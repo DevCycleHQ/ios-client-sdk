@@ -234,8 +234,8 @@ public struct EvalReason {
     }
 
     #if DEBUG
-    public static func openFeatureEvalReason(reason: String) -> EvalReason {
-        return EvalReason(reason: reason, details: "")
+    public static func createOFEvalReason(reason: String) -> EvalReason {
+        return EvalReason(reason: reason, details: "OpenFeature Testing")
     }
     #endif
 }
