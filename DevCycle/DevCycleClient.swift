@@ -158,7 +158,7 @@ public class DevCycleClient {
                     Log.error("Error getting config: \(error)", tags: ["setup"])
 
                     // If network failed but we have a cached config, don't return error
-                    if self.config?.userConfig != nil {
+                    if self.config?.getUserConfig() != nil {
                         Log.info("Using cached config due to network error")
                         finalError = nil
                     }
@@ -245,7 +245,7 @@ public class DevCycleClient {
 
     private func updateUserConfig(_ config: UserConfig) {
         let oldSSEURL = self.config?.userConfig?.sse?.url
-        self.config?.userConfig = config
+        self.config?.setUserConfig(config: config)
 
         let newSSEURL = config.sse?.url
         if newSSEURL != nil && oldSSEURL != newSSEURL {
@@ -260,7 +260,7 @@ public class DevCycleClient {
             return
         }
 
-        guard let sseURL = self.config?.userConfig?.sse?.url else {
+        guard let sseURL = self.config?.getUserConfig()?.sse?.url else {
             Log.error("No SSE URL in config")
             return
         }
@@ -275,7 +275,7 @@ public class DevCycleClient {
             self.sseConnection = nil
         }
 
-        if let inactivityDelay = self.config?.userConfig?.sse?.inactivityDelay {
+        if let inactivityDelay = self.config?.getUserConfig()?.sse?.inactivityDelay {
             self.inactivityDelayMS = Double(inactivityDelay)
         }
         self.sseConnection = SSEConnection(
@@ -297,7 +297,7 @@ public class DevCycleClient {
                     }
                     let sseMessage = try SSEMessage(from: messageDictionary)
                     if sseMessage.data.type == nil || sseMessage.data.type == "refetchConfig" {
-                        if self?.config?.userConfig?.etag == nil
+                        if self?.config?.getUserConfig()?.etag == nil
                             || sseMessage.data.etag != self?.config?.userConfig?.etag
                         {
                             self?.refetchConfig(
@@ -395,7 +395,7 @@ public class DevCycleClient {
             {
                 variable = variableFromDictionary
             } else {
-                if let config = self.config?.userConfig,
+                if let config = self.config?.getUserConfig(),
                     let variableFromApi = config.variables[key]
                 {
                     variable = DVCVariable(from: variableFromApi, defaultValue: defaultValue)
@@ -462,12 +462,12 @@ public class DevCycleClient {
 
                     // Try to use cached config for the new user
                     // If we have a cached config, proceed without error
-                    if self.useCachedConfigForUser(user: updateUser), self.config?.userConfig != nil {
+                    if self.useCachedConfigForUser(user: updateUser), self.config?.getUserConfig() != nil {
                         Log.info(
                             "Using cached config for identifyUser due to network error: \(error)",
                             tags: ["identify"])
                         self.user = user
-                        callback?(nil, self.config?.userConfig?.variables)
+                        callback?(nil, self.config?.getUserConfig()?.variables)
                         return
                     } else {
                         // No cached config available, return error and don't change client state
@@ -482,7 +482,7 @@ public class DevCycleClient {
                     Log.debug("IdentifyUser config: \(config)", tags: ["identify"])
                     self.updateUserConfig(config)
                     self.user = user
-                    callback?(nil, self.config?.userConfig?.variables)
+                    callback?(nil, self.config?.getUserConfig()?.variables)
                 } else {
                     Log.error("No config returned for identifyUser", tags: ["identify"])
                     callback?(ClientError.ConfigFetchFailed, nil)
@@ -564,11 +564,11 @@ public class DevCycleClient {
     }
 
     public func allFeatures() -> [String: Feature] {
-        return self.config?.userConfig?.features ?? [:]
+        return self.config?.getUserConfig()?.features ?? [:]
     }
 
     public func allVariables() -> [String: Variable] {
-        return self.config?.userConfig?.variables ?? [:]
+        return self.config?.getUserConfig()?.variables ?? [:]
     }
 
     public func track(_ event: DevCycleEvent) {
@@ -738,7 +738,7 @@ public class DevCycleClient {
         if options?.disableConfigCache != true,
             let cachedConfig = cacheService.getConfig(user: user)
         {
-            self.config?.userConfig = cachedConfig
+            self.config?.setUserConfig(config: cachedConfig)
             Log.debug("Loaded config from cache for user_id \(String(describing: user.userId))")
             return true
         }
