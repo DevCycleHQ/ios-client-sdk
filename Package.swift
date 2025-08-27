@@ -36,7 +36,11 @@ let package = Package(
             name: "DevCycleTests",
             dependencies: ["DevCycle"],
             path: "DevCycleTests",
-            exclude: ["ObjC"]
+            exclude: ["ObjC"],
+            resources: [
+                .process("Models/test_config.json"),
+                .process("Models/test_config_eval_reason.json"),
+            ]
         ),
         .testTarget(
             name: "DevCycleTests-ObjC",
