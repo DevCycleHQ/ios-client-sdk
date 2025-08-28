@@ -165,7 +165,7 @@ class DevCycleClientTest: XCTestCase {
         client.close(callback: nil)
     }
 
-    func testFlushEventsWithEvalReasons() throws{
+    func testFlushEventsWithEvalReasons() throws {
         let data = getConfigData(name: "test_config_eval_reason")
         let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String:Any]
         let evalReasonConfig = try UserConfig(from: dictionary)
