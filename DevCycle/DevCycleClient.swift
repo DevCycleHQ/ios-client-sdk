@@ -370,19 +370,6 @@ public class DevCycleClient {
     }
 
     func getVariable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
-        let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
-        if regex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) != nil {
-            Log.error(
-                "The variable key \(key) is invalid. It must contain only lowercase letters, numbers, hyphens and underscores. The default value will always be returned for this call."
-            )
-            return DVCVariable(
-                key: key,
-                value: nil,
-                defaultValue: defaultValue,
-                eval: EvalReason.defaultReason(details: DVCDefaultDetails.invalidVariableKey.rawValue)
-            )
-        }
-
         return variableQueue.sync {
             var variable: DVCVariable<T>
             if self.variableInstanceDictonary[key] == nil {
@@ -404,7 +391,8 @@ public class DevCycleClient {
                         key: key,
                         value: nil,
                         defaultValue: defaultValue,
-                        eval: EvalReason.defaultReason(details: DVCDefaultDetails.userNotTargeted.rawValue)
+                        eval: EvalReason.defaultReason(
+                            details: DVCDefaultDetails.userNotTargeted.rawValue)
                     )
                 }
 
@@ -412,7 +400,7 @@ public class DevCycleClient {
                     variable, forKey: defaultValue as AnyObject)
             }
 
-            if !self.closed && !self.disableAutomaticEventLogging {                
+            if !self.closed && !self.disableAutomaticEventLogging {
                 self.eventQueue.updateAggregateEvents(
                     variableKey: variable.key,
                     variableIsDefaulted: variable.isDefaulted,
@@ -427,7 +415,11 @@ public class DevCycleClient {
     private func createVariableEventMetaData(variableEval: EvalReason?) -> EvalMetaData? {
         if let eval = variableEval {
             if let targetId = eval.targetId {
-                return ["eval": ["reason": eval.reason, "details": eval.details ?? "", "target_id": targetId]]
+                return [
+                    "eval": [
+                        "reason": eval.reason, "details": eval.details ?? "", "target_id": targetId,
+                    ]
+                ]
             }
             return ["eval": ["reason": eval.reason, "details": eval.details ?? ""]]
         }
@@ -462,7 +454,9 @@ public class DevCycleClient {
 
                     // Try to use cached config for the new user
                     // If we have a cached config, proceed without error
-                    if self.useCachedConfigForUser(user: updateUser), self.config?.getUserConfig() != nil {
+                    if self.useCachedConfigForUser(user: updateUser),
+                        self.config?.getUserConfig() != nil
+                    {
                         Log.info(
                             "Using cached config for identifyUser due to network error: \(error)",
                             tags: ["identify"])
