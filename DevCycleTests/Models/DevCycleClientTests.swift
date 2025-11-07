@@ -327,6 +327,125 @@ class DevCycleClientTest: XCTestCase {
         client.close(callback: nil)
     }
 
+    func testVariableKeyWithDotsIsValid() {
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
+            onInitialized: nil)
+        let variable1 = client.variable(key: "key.with.dots", defaultValue: true)
+        XCTAssertTrue(variable1.value)
+        XCTAssertEqual(variable1.eval?.reason, "DEFAULT")
+        XCTAssertEqual(variable1.eval?.details, "User Not Targeted")
+        
+        let variable2 = client.variable(key: "test.key_123", defaultValue: "default")
+        XCTAssertEqual(variable2.value, "default")
+        XCTAssertEqual(variable2.eval?.reason, "DEFAULT")
+        
+        let variable3 = client.variable(key: "a.b.c.d.e", defaultValue: 42)
+        XCTAssertEqual(variable3.value, 42)
+        client.close(callback: nil)
+    }
+
+    func testVariableKeyWithInvalidCharactersReturnsDefault() {
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
+            onInitialized: nil)
+        
+        let invalidKeys = [
+            "UPPERCASE",
+            "MixedCase",
+            "key with spaces",
+            "key@special",
+            "key#hash",
+            "key$dollar",
+            "key%percent",
+            "key^caret",
+            "key&",
+            "key*asterisk",
+            "key(open",
+            "key)close",
+            "key+plus",
+            "key=equals",
+            "key[open",
+            "key]close",
+            "key{open",
+            "key}close",
+            "key|pipe",
+            "key\\backslash",
+            "key/slash",
+            "key:colon",
+            "key;semcolon",
+            "key\"quote",
+            "key'apostrophe",
+            "key<less",
+            "key>greater",
+            "key?question",
+            "key~tilde",
+            "key`backtick"
+        ]
+        
+        for invalidKey in invalidKeys {
+            let variable = client.variable(key: invalidKey, defaultValue: "default")
+            XCTAssertEqual(variable.value, "default")
+            XCTAssertEqual(variable.eval?.reason, "DEFAULT")
+            XCTAssertEqual(variable.eval?.details, "Invalid Variable Key")
+            XCTAssertTrue(variable.isDefaulted)
+        }
+        client.close(callback: nil)
+    }
+
+    func testVariableKeyLengthValidation() {
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
+            onInitialized: nil)
+        
+        let emptyKey = client.variable(key: "", defaultValue: "default")
+        XCTAssertEqual(emptyKey.value, "default")
+        XCTAssertEqual(emptyKey.eval?.reason, "DEFAULT")
+        XCTAssertEqual(emptyKey.eval?.details, "Invalid Variable Key")
+        XCTAssertTrue(emptyKey.isDefaulted)
+        
+        let singleChar = client.variable(key: "a", defaultValue: "default")
+        XCTAssertEqual(singleChar.value, "default")
+        XCTAssertEqual(singleChar.eval?.reason, "DEFAULT")
+        XCTAssertEqual(singleChar.eval?.details, "User Not Targeted")
+        
+        let maxLengthKey = String(repeating: "a", count: 100)
+        let maxKey = client.variable(key: maxLengthKey, defaultValue: "default")
+        XCTAssertEqual(maxKey.value, "default")
+        XCTAssertEqual(maxKey.eval?.reason, "DEFAULT")
+        XCTAssertEqual(maxKey.eval?.details, "User Not Targeted")
+        
+        let tooLongKey = String(repeating: "a", count: 101)
+        let longKey = client.variable(key: tooLongKey, defaultValue: "default")
+        XCTAssertEqual(longKey.value, "default")
+        XCTAssertEqual(longKey.eval?.reason, "DEFAULT")
+        XCTAssertEqual(longKey.eval?.details, "Invalid Variable Key")
+        XCTAssertTrue(longKey.isDefaulted)
+        
+        client.close(callback: nil)
+    }
+
+    func testVariableKeyWithValidCharacters() {
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
+            onInitialized: nil)
+        
+        let validKeys = [
+            "lowercase",
+            "with123numbers",
+            "with-hyphens",
+            "with_underscores",
+            "with.dots",
+            "mixed-123_key.test",
+            "a1.b2_c3-d4",
+            "test.key_123-value"
+        ]
+        
+        for validKey in validKeys {
+            let variable = client.variable(key: validKey, defaultValue: "default")
+            XCTAssertEqual(variable.value, "default")
+            XCTAssertEqual(variable.eval?.reason, "DEFAULT")
+            XCTAssertEqual(variable.eval?.details, "User Not Targeted")
+        }
+        client.close(callback: nil)
+    }
+
     func testVariableMethodReturnsDefaultedVariableWhenKeyIsNotInConfig() {
         let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
             onInitialized: nil)

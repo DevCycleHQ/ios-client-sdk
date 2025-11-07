@@ -14,6 +14,9 @@ import Foundation
     import AppKit
 #endif
 
+private let variableKeyRegex: NSRegularExpression? = try? NSRegularExpression(
+    pattern: "^[a-z0-9-_.]+$")
+
 enum ClientError: Error {
     case NotImplemented
     case MissingSDKKeyOrUser
@@ -370,16 +373,28 @@ public class DevCycleClient {
     }
 
     func getVariable<T>(key: String, defaultValue: T) -> DVCVariable<T> {
-        let regex = try? NSRegularExpression(pattern: ".*[^a-z0-9(\\-)(_)].*")
-        if regex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) != nil {
+        if key.count < 1 || key.count > 100 {
             Log.error(
-                "The variable key \(key) is invalid. It must contain only lowercase letters, numbers, hyphens and underscores. The default value will always be returned for this call."
+                "The variable key \(key) is invalid. It must be between 1 and 100 characters. The default value will always be returned for this call."
             )
             return DVCVariable(
                 key: key,
                 value: nil,
                 defaultValue: defaultValue,
-                eval: EvalReason.defaultReason(details: DVCDefaultDetails.invalidVariableKey.rawValue)
+                eval: EvalReason.defaultReason(
+                    details: DVCDefaultDetails.invalidVariableKey.rawValue)
+            )
+        }
+        if variableKeyRegex?.firstMatch(in: key, range: NSMakeRange(0, key.count)) == nil {
+            Log.error(
+                "The variable key \(key) is invalid. It must contain only lowercase letters, numbers, hyphens, dots and underscores. The default value will always be returned for this call."
+            )
+            return DVCVariable(
+                key: key,
+                value: nil,
+                defaultValue: defaultValue,
+                eval: EvalReason.defaultReason(
+                    details: DVCDefaultDetails.invalidVariableKey.rawValue)
             )
         }
 
@@ -404,7 +419,8 @@ public class DevCycleClient {
                         key: key,
                         value: nil,
                         defaultValue: defaultValue,
-                        eval: EvalReason.defaultReason(details: DVCDefaultDetails.userNotTargeted.rawValue)
+                        eval: EvalReason.defaultReason(
+                            details: DVCDefaultDetails.userNotTargeted.rawValue)
                     )
                 }
 
@@ -412,7 +428,7 @@ public class DevCycleClient {
                     variable, forKey: defaultValue as AnyObject)
             }
 
-            if !self.closed && !self.disableAutomaticEventLogging {                
+            if !self.closed && !self.disableAutomaticEventLogging {
                 self.eventQueue.updateAggregateEvents(
                     variableKey: variable.key,
                     variableIsDefaulted: variable.isDefaulted,
@@ -427,7 +443,11 @@ public class DevCycleClient {
     private func createVariableEventMetaData(variableEval: EvalReason?) -> EvalMetaData? {
         if let eval = variableEval {
             if let targetId = eval.targetId {
-                return ["eval": ["reason": eval.reason, "details": eval.details ?? "", "target_id": targetId]]
+                return [
+                    "eval": [
+                        "reason": eval.reason, "details": eval.details ?? "", "target_id": targetId,
+                    ]
+                ]
             }
             return ["eval": ["reason": eval.reason, "details": eval.details ?? ""]]
         }
@@ -462,7 +482,9 @@ public class DevCycleClient {
 
                     // Try to use cached config for the new user
                     // If we have a cached config, proceed without error
-                    if self.useCachedConfigForUser(user: updateUser), self.config?.getUserConfig() != nil {
+                    if self.useCachedConfigForUser(user: updateUser),
+                        self.config?.getUserConfig() != nil
+                    {
                         Log.info(
                             "Using cached config for identifyUser due to network error: \(error)",
                             tags: ["identify"])
