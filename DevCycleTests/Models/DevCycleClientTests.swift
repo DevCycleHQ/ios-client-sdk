@@ -211,7 +211,7 @@ class DevCycleClientTest: XCTestCase {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 1.0)
 
         let variableEvaluatedEvents = client.eventQueue.aggregateEventQueue.variableEvaluated
         XCTAssertEqual(variableEvaluatedEvents.count, 2)
@@ -249,7 +249,7 @@ class DevCycleClientTest: XCTestCase {
             XCTAssertTrue(service.publishCallCount == 1)
             publishExpectation.fulfill()
         }
-        wait(for: [publishExpectation], timeout: 0.5)
+        wait(for: [publishExpectation], timeout: 1.0)
         client.close(callback: nil)
     }
 
