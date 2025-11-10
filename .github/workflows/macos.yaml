@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build_macos:
     runs-on: macos-15
     steps:
       - name: Checkout Project
