@@ -8,8 +8,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: macos-latest
+  build_watchos:
+    runs-on: macos-26
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4

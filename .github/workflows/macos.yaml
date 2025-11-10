@@ -8,8 +8,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: macos-latest
+  build_macos:
+    runs-on: macos-15
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
@@ -17,7 +17,7 @@ jobs:
       - name: "Select Latest Xcode"
         uses: maxim-lobanov/setup-xcode@c51a66b42363123fa82a6cfe02c60af4281dab93
         with:
-          xcode-version: latest-stable
+          xcode-version: 16.4
 
       - name: "Carthage Cached Bootstrap"
         uses: DevCycleHQ/carthage-bootstrap@v1.2.0
