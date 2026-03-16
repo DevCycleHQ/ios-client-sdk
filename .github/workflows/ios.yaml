@@ -8,11 +8,11 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: macos-latest
+  build_ios:
+    runs-on: macos-26
     steps:
       - name: Checkout Project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Select Latest Xcode"
         uses: maxim-lobanov/setup-xcode@c51a66b42363123fa82a6cfe02c60af4281dab93
