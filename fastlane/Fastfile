@@ -54,7 +54,7 @@ platform :watchos do
       buildlog_path: "./fastlane/fastlane-buildlog",
       scheme: "DevCycle",
       workspace: "DevCycle.xcworkspace",
-      devices: ["Apple Watch Series 10 (46mm)"],
+      devices: ["Apple Watch Series 11 (46mm)"],
       ensure_devices_found: true,
       result_bundle: true
     )
