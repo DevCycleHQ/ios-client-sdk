@@ -206,12 +206,8 @@ class DevCycleClientTest: XCTestCase {
         XCTAssertEqual(invalidVariable.eval?.details, "User Not Targeted")
         XCTAssertNil(invalidVariable.eval?.targetId)
 
-        let expectation = XCTestExpectation(description: "EventQueue has events with Eval metadata")
-        // Add a slight delay to ensure events are queued correctly
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 1.0)
+        // Synchronously drain the event dispatch queue to ensure all async aggregate events are tracked
+        client.eventQueue.eventDispatchQueue.sync {}
 
         let variableEvaluatedEvents = client.eventQueue.aggregateEventQueue.variableEvaluated
         XCTAssertEqual(variableEvaluatedEvents.count, 2)
