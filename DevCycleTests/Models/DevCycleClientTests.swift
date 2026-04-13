@@ -617,6 +617,28 @@ class DevCycleClientTest: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
     }
 
+    func testSetupEstablishesSSEConnectionWhenURLMatchesCachedConfig() {
+        let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(
+            service
+        ).build(onInitialized: nil)
+
+        // Pre-populate config as if loaded from cache so oldSSEURL matches what MockService returns
+        let dvConfig = DVCConfig(sdkKey: "dvc_mobile_my_sdk_key", user: self.user)
+        dvConfig.setUserConfig(config: self.userConfig)
+        client.config = dvConfig
+        client.sseConnection = nil
+
+        let expectation = XCTestExpectation(description: "SSE connection established")
+
+        client.setup(service: service, callback: { _ in
+            XCTAssertNotNil(client.sseConnection)
+            expectation.fulfill()
+        })
+
+        wait(for: [expectation], timeout: 1.0)
+        client.close(callback: nil)
+    }
+
     func testIdentifyUserClearsCachedAnonymousUserId() {
         // Build Anon User, generates a new UUID
         let anonUser1 = try! DevCycleUser.builder().isAnonymous(true).build()
