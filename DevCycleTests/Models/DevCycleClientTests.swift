@@ -618,9 +618,13 @@ class DevCycleClientTest: XCTestCase {
     }
 
     func testSetupEstablishesSSEConnectionWhenURLMatchesCachedConfig() {
+        // Use a failed service for initial build so SSE is not established before the test scenario
+        let failedService = MockFailedConnectionService()
+        let initExpectation = XCTestExpectation(description: "initialized")
         let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(
-            service
-        ).build(onInitialized: nil)
+            failedService
+        ).build(onInitialized: { _ in initExpectation.fulfill() })
+        wait(for: [initExpectation], timeout: 1.0)
 
         // Pre-populate config as if loaded from cache so oldSSEURL matches what MockService returns
         let dvConfig = DVCConfig(sdkKey: "dvc_mobile_my_sdk_key", user: self.user)
