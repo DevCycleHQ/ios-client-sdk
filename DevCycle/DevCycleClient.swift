@@ -246,9 +246,11 @@ public class DevCycleClient {
     private func updateUserConfig(_ config: UserConfig) {
         let oldSSEURL = self.config?.userConfig?.sse?.url
         self.config?.setUserConfig(config: config)
-
-        let newSSEURL = config.sse?.url
-        if newSSEURL != nil && oldSSEURL != newSSEURL {
+        
+        if let newSSEURL = config.sse?.url,
+           self.options?.disableRealtimeUpdates != true,
+           oldSSEURL != newSSEURL || self.sseConnection == nil
+        {
             self.setupSSEConnection()
         }
     }

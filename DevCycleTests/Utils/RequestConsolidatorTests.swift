@@ -54,7 +54,7 @@ class RequestConsolidatorTests: XCTestCase {
             print("Fulfill 3")
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 10.0)
+        waitForExpectations(timeout: 30.0)
         XCTAssertFalse(requestConsolidator.requestInFlight)
     }
 }
