@@ -12,6 +12,7 @@ protocol CacheServiceProtocol {
     func clearAnonUserId()
     func saveConfig(user: DevCycleUser, configToSave: Data?)
     func getConfig(user: DevCycleUser) -> UserConfig?
+    func clearConfigForUser(user: DevCycleUser)
     func getOrCreateAnonUserId() -> String
     func migrateLegacyCache()
 }
@@ -32,34 +33,45 @@ class CacheService: CacheServiceProtocol {
 
     private let defaults: UserDefaults = UserDefaults.standard
     private let configCacheTTL: Int
+    private let cacheKeyPrefix: String?
 
-    init(configCacheTTL: Int = DEFAULT_CONFIG_CACHE_TTL) {
+    init(configCacheTTL: Int = DEFAULT_CONFIG_CACHE_TTL, cacheKeyPrefix: String? = nil) {
         self.configCacheTTL = configCacheTTL
-        migrateLegacyCache()
+        let normalizedPrefix = (cacheKeyPrefix?.isEmpty == false) ? cacheKeyPrefix : nil
+        self.cacheKeyPrefix = normalizedPrefix
+        // Legacy migration touches un-prefixed keys, so only run it for un-prefixed instances.
+        if normalizedPrefix == nil {
+            migrateLegacyCache()
+        }
     }
 
     func setAnonUserId(anonUserId: String) {
-        defaults.set(anonUserId, forKey: CacheKeys.anonUserId)
+        defaults.set(anonUserId, forKey: anonUserIdStorageKey())
     }
 
     func getAnonUserId() -> String? {
-        return defaults.string(forKey: CacheKeys.anonUserId)
+        return defaults.string(forKey: anonUserIdStorageKey())
     }
 
     func clearAnonUserId() {
-        defaults.removeObject(forKey: CacheKeys.anonUserId)
+        defaults.removeObject(forKey: anonUserIdStorageKey())
     }
 
     func saveConfig(user: DevCycleUser, configToSave: Data?) {
-        let key = getConfigKeyPrefix(user: user)
+        let key = getConfigStorageKey(user: user)
         defaults.set(configToSave, forKey: key)
 
         let expiryDate = currentTimeMs() + configCacheTTL
         defaults.set(expiryDate, forKey: "\(key)\(CacheKeys.expiryDateSuffix)")
     }
 
+    func clearConfigForUser(user: DevCycleUser) {
+        let key = getConfigStorageKey(user: user)
+        cleanupCacheEntry(key: key)
+    }
+
     func getConfig(user: DevCycleUser) -> UserConfig? {
-        let key = getConfigKeyPrefix(user: user)
+        let key = getConfigStorageKey(user: user)
 
         // Check if cache has expired
         if let savedExpiryDate = getIntValue(forKey: "\(key)\(CacheKeys.expiryDateSuffix)"),
@@ -125,16 +137,25 @@ class CacheService: CacheServiceProtocol {
         defaults.removeObject(forKey: "\(key)\(CacheKeys.legacyFetchDateSuffix)")
     }
 
-    private func getConfigKeyPrefix(user: DevCycleUser) -> String {
+    private func getConfigStorageKey(user: DevCycleUser) -> String {
         let baseKey =
             user.isAnonymous
             ? CacheKeys.anonymousConfigKey : CacheKeys.identifiedConfigKey
 
-        if !user.userId.isEmpty {
-            return "\(baseKey)_\(user.userId)"
-        }
+        let userKey = user.userId.isEmpty ? baseKey : "\(baseKey)_\(user.userId)"
 
-        return baseKey
+        return applyPrefix(to: userKey)
+    }
+
+    private func anonUserIdStorageKey() -> String {
+        return applyPrefix(to: CacheKeys.anonUserId)
+    }
+
+    private func applyPrefix(to key: String) -> String {
+        if let prefix = cacheKeyPrefix, !prefix.isEmpty {
+            return "\(prefix):\(key)"
+        }
+        return key
     }
 
     // MARK: - Legacy Cache Migration

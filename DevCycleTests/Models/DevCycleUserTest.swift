@@ -390,6 +390,47 @@ class DevCycleUserTest: XCTestCase {
             defaults.object(forKey: "config"),
             "Legacy config cache should be removed after migration")
     }
+
+    func testCacheKeyPrefixIsolatesAnonUserIdAcrossInstances() {
+        // Multi-instance: two SDK instances pointing at different orgs must not
+        // share an anonymous user id, otherwise both tag the same person.
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "ANONYMOUS_USER_ID")
+        defaults.removeObject(forKey: "orgA:ANONYMOUS_USER_ID")
+        defaults.removeObject(forKey: "orgB:ANONYMOUS_USER_ID")
+
+        let orgA = CacheService(cacheKeyPrefix: "orgA")
+        let orgB = CacheService(cacheKeyPrefix: "orgB")
+
+        orgA.setAnonUserId(anonUserId: "anon-a")
+        orgB.setAnonUserId(anonUserId: "anon-b")
+
+        XCTAssertEqual(orgA.getAnonUserId(), "anon-a")
+        XCTAssertEqual(orgB.getAnonUserId(), "anon-b")
+        XCTAssertNil(defaults.string(forKey: "ANONYMOUS_USER_ID"),
+                     "Prefixed instances must not write to the un-namespaced key")
+
+        orgA.clearAnonUserId()
+        XCTAssertNil(orgA.getAnonUserId())
+        XCTAssertEqual(orgB.getAnonUserId(), "anon-b",
+                       "Clearing one prefixed instance must not affect another")
+
+        orgB.clearAnonUserId()
+    }
+
+    func testCacheKeyPrefixDoesNotAffectUnprefixedInstance() {
+        // Backwards compat: existing installs without a prefix must keep using
+        // the original ANONYMOUS_USER_ID key.
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "ANONYMOUS_USER_ID")
+
+        let cacheService = CacheService()
+        cacheService.setAnonUserId(anonUserId: "legacy-anon")
+
+        XCTAssertEqual(defaults.string(forKey: "ANONYMOUS_USER_ID"), "legacy-anon",
+                       "Unprefixed CacheService must continue to use the legacy key")
+        cacheService.clearAnonUserId()
+    }
 }
 
 extension DevCycleUserTest {

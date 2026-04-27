@@ -20,6 +20,7 @@ public class DevCycleOptions {
     private(set) public var disableCustomEventLogging: Bool = false
     private(set) public var apiProxyURL: String?
     private(set) public var eventsApiProxyURL: String?
+    private(set) public var cacheKeyPrefix: String?
 
     public class OptionsBuilder {
         var options: DevCycleOptions
@@ -99,6 +100,13 @@ public class DevCycleOptions {
         // Allows the SDK to use a proxy to send to for the events API
         public func eventsApiProxyURL(_ proxyURL: String) -> OptionsBuilder {
             self.options.eventsApiProxyURL = proxyURL
+            return self
+        }
+
+        // Namespaces config cache keys to prevent collisions across instances sharing UserDefaults.
+        // Note: anon user IDs from DevCycleUser.builder() are not yet namespaced — pass an explicit userId.
+        public func cacheKeyPrefix(_ prefix: String) -> OptionsBuilder {
+            self.options.cacheKeyPrefix = prefix
             return self
         }
 
