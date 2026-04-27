@@ -37,6 +37,15 @@ enum APIError: Error {
             return ["api"]
         }
     }
+
+    var isDefinitiveError: Bool {
+        switch self {
+        case .StatusResponse(let status, _):
+            return status == 400 || status == 401 || status == 403
+        case .NoResponse:
+            return false
+        }
+    }
 }
 
 struct NetworkingConstants {
