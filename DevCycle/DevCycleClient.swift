@@ -518,6 +518,7 @@ public class DevCycleClient {
             updateUser = user
         }
 
+        let previousUser = self.lastIdentifiedUser
         self.lastIdentifiedUser = user
 
         self.service?.getConfig(
@@ -530,8 +531,16 @@ public class DevCycleClient {
                         "Error getting config: \(error) for user_id \(String(describing: updateUser.userId))",
                         tags: ["identify"])
 
-                    // Try to use cached config for the new user
-                    // If we have a cached config, proceed without error
+                    if self.isDefinitiveError(error) {
+                        self.cacheService.clearConfigForUser(user: updateUser)
+                        self.lastIdentifiedUser = previousUser
+                        Log.error(
+                            "Definitive error on identifyUser, clearing cache and restoring previous user: \(error)",
+                            tags: ["identify"])
+                        callback?(error, nil)
+                        return
+                    }
+
                     if self.useCachedConfigForUser(user: updateUser),
                         self.config?.getUserConfig() != nil
                     {
@@ -539,10 +548,11 @@ public class DevCycleClient {
                             "Using cached config for identifyUser due to network error: \(error)",
                             tags: ["identify"])
                         self.user = user
+                        self.performBackgroundRefresh()
                         callback?(nil, self.config?.getUserConfig()?.variables)
                         return
                     } else {
-                        // No cached config available, return error and don't change client state
+                        self.lastIdentifiedUser = previousUser
                         Log.error(
                             "Error getting config for identifyUser: \(error)", tags: ["identify"])
                         callback?(error, nil)
@@ -585,6 +595,7 @@ public class DevCycleClient {
     public func resetUser(callback: IdentifyCompletedHandler? = nil) throws {
         self.flushEvents()
 
+        let previousUser = self.lastIdentifiedUser
         let cachedAnonUserId = self.cacheService.getAnonUserId()
         self.cacheService.clearAnonUserId()
         let anonUser = try DevCycleUser.builder().isAnonymous(true).build()
@@ -598,7 +609,20 @@ public class DevCycleClient {
 
                 if let error = error {
                     Log.error("Error getting config for resetUser: \(error)", tags: ["reset"])
-                    // Restore previous anonymous user ID on error and don't change client state
+                    if self.isDefinitiveError(error) {
+                        // Roll back: drop the new anon user's cache and restore previous state.
+                        self.cacheService.clearConfigForUser(user: anonUser)
+                        if let previousAnonUserId = cachedAnonUserId {
+                            self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
+                        }
+                        self.lastIdentifiedUser = previousUser
+                        Log.error(
+                            "Definitive error on resetUser, clearing anonymous user cache and restoring previous user: \(error)",
+                            tags: ["reset"])
+                        callback?(error, nil)
+                        return
+                    }
+                    // Transient error: only restore the previous anon ID (matches pre-existing behavior).
                     if let previousAnonUserId = cachedAnonUserId {
                         self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
                     }
