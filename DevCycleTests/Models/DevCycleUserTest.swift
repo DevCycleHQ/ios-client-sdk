@@ -200,8 +200,8 @@ class DevCycleUserTest: XCTestCase {
     }
 
     func testConfigCacheTTLRespected() {
-        // Test with short TTL to verify expiration works
-        let shortTtlCacheService = CacheService(configCacheTTL: 100)  // 100ms TTL
+        // 2s TTL is generous enough to survive loaded CI runners (100ms was flaky).
+        let shortTtlCacheService = CacheService(configCacheTTL: 2_000)
         let user = try! DevCycleUser.builder().userId("test_user").build()
 
         let configJson = createConfigJson(
@@ -209,21 +209,17 @@ class DevCycleUserTest: XCTestCase {
             variableValue: "value")
         let configData = configJson.data(using: .utf8)
 
-        // Save config
         shortTtlCacheService.saveConfig(user: user, configToSave: configData)
 
-        // Should be able to retrieve immediately
         let validConfig = shortTtlCacheService.getConfig(user: user)
         XCTAssertNotNil(validConfig, "Config should be retrievable immediately after saving")
 
-        // Wait for TTL to expire
         let expectation = self.expectation(description: "Wait for TTL expiration")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {  // Wait 200ms
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.2) {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 1.0, handler: nil)
+        waitForExpectations(timeout: 4.0, handler: nil)
 
-        // Try to retrieve after TTL expires (should fail)
         let expiredConfig = shortTtlCacheService.getConfig(user: user)
         XCTAssertNil(expiredConfig, "Expired config should not be returned")
 
@@ -430,6 +426,42 @@ class DevCycleUserTest: XCTestCase {
         XCTAssertEqual(defaults.string(forKey: "ANONYMOUS_USER_ID"), "legacy-anon",
                        "Unprefixed CacheService must continue to use the legacy key")
         cacheService.clearAnonUserId()
+    }
+
+    func testEmptyCacheKeyPrefixIsTreatedAsUnprefixed() {
+        // An empty prefix string must behave identically to nil — same key namespace
+        // and legacy migration must still run for those installs.
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "ANONYMOUS_USER_ID")
+        defaults.set("legacy".data(using: .utf8), forKey: "user")
+
+        let cacheService = CacheService(cacheKeyPrefix: "")
+        cacheService.setAnonUserId(anonUserId: "anon-empty")
+
+        XCTAssertEqual(defaults.string(forKey: "ANONYMOUS_USER_ID"), "anon-empty",
+                       "Empty prefix must use the un-prefixed key, same as nil")
+        XCTAssertNil(defaults.object(forKey: "user"),
+                     "Empty prefix must run legacy migration cleanup, same as nil")
+
+        cacheService.clearAnonUserId()
+    }
+
+    func testPrefixedCacheServiceDoesNotMigrateUnprefixedLegacyData() {
+        // A prefixed instance must not consume or erase another instance's legacy
+        // entries — that would defeat the isolation guarantee of cacheKeyPrefix.
+        let defaults = UserDefaults.standard
+        defaults.set("{\"variables\": {}}".data(using: .utf8), forKey: "config")
+        defaults.set("legacy-user".data(using: .utf8), forKey: "user")
+
+        _ = CacheService(cacheKeyPrefix: "orgA")
+
+        XCTAssertNotNil(defaults.object(forKey: "config"),
+                        "Prefixed instance must not delete an unprefixed legacy config entry")
+        XCTAssertNotNil(defaults.object(forKey: "user"),
+                        "Prefixed instance must not delete an unprefixed legacy user entry")
+
+        defaults.removeObject(forKey: "config")
+        defaults.removeObject(forKey: "user")
     }
 }
 
