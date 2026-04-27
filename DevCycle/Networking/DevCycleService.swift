@@ -37,6 +37,18 @@ enum APIError: Error {
             return ["api"]
         }
     }
+
+    /// Auth/configuration errors per OpenFeature ADR 0009: HTTP 400, 401, 403.
+    /// Distinguishes "something is misconfigured, retrying won't help" from
+    /// transient network/server errors.
+    var isDefinitiveError: Bool {
+        switch self {
+        case .StatusResponse(let status, _):
+            return status == 400 || status == 401 || status == 403
+        case .NoResponse:
+            return false
+        }
+    }
 }
 
 struct NetworkingConstants {
