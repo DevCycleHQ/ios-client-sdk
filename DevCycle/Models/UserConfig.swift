@@ -217,7 +217,7 @@ public struct EvalReason {
         guard let dict = dictionary, let reason = dict["reason"] as? String else {
             return nil
         }
-        
+
         self.reason = reason
         self.details = dict["details"] as? String
         self.targetId = dict["target_id"] as? String
@@ -227,6 +227,18 @@ public struct EvalReason {
         self.reason = reason
         self.details = details
         self.targetId = nil
+    }
+
+    /// Returns a copy with `reason` replaced, preserving `details` and `targetId`.
+    /// Used to mark cached evaluations with `"CACHED"` per OpenFeature ADR 0009.
+    public func withReason(_ reason: String) -> EvalReason {
+        EvalReason(reason: reason, details: details, targetId: targetId)
+    }
+
+    private init(reason: String, details: String?, targetId: String?) {
+        self.reason = reason
+        self.details = details
+        self.targetId = targetId
     }
 
     static func defaultReason(details: String) -> EvalReason {
