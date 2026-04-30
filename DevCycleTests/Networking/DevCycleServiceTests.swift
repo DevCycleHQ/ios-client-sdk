@@ -155,6 +155,10 @@ extension DevCycleServiceTests {
             return nil
         }
 
+        func clearConfigForUser(user: DevCycleUser) {
+            // TODO: update implementation for tests
+        }
+
         func getOrCreateAnonUserId() -> String {
             return "mock-anon-id"
         }
