@@ -136,6 +136,7 @@ class DevCycleServiceTests: XCTestCase {
 extension DevCycleServiceTests {
     class MockCacheService: CacheServiceProtocol {
         var saveConfigCalled = false
+        var clearConfigForUserCalled = false
 
         func setAnonUserId(anonUserId: String) {
             // TODO: update implementation for tests
@@ -156,7 +157,7 @@ extension DevCycleServiceTests {
         }
 
         func clearConfigForUser(user: DevCycleUser) {
-            // TODO: update implementation for tests
+            clearConfigForUserCalled = true
         }
 
         func getOrCreateAnonUserId() -> String {

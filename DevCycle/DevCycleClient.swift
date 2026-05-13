@@ -238,7 +238,7 @@ public class DevCycleClient {
                     guard let self = self else { return }
                     if let error = error {
                         Log.error("Error getting config: \(error)", tags: ["refetchConfig"])
-                        if self.isDefinitiveError(error) {
+                        if self.isNonRetryableError(error) {
                             self.notifyConfigUpdated(error: error)
                         }
                     } else if let config = config {
@@ -282,10 +282,10 @@ public class DevCycleClient {
             }
 
             if let error = error {
-                if self.isDefinitiveError(error) {
-                    // Keep cached values usable on definitive errors; only TTL evicts the cache.
+                if self.isNonRetryableError(error) {
+                    // Keep cached values usable on non-retryable errors; only TTL evicts the cache.
                     Log.error(
-                        "Background refresh failed with definitive error, keeping cached config and notifying observers: \(error)",
+                        "Background refresh failed with non-retryable error, keeping cached config and notifying observers: \(error)",
                         tags: ["backgroundRefresh"])
                     self.notifyConfigUpdated(error: error)
                 } else {
@@ -305,9 +305,9 @@ public class DevCycleClient {
         }
     }
 
-    private func isDefinitiveError(_ error: Error) -> Bool {
+    private func isNonRetryableError(_ error: Error) -> Bool {
         guard let apiError = error as? APIError else { return false }
-        return apiError.isDefinitiveError
+        return apiError.isNonRetryableError
     }
 
     private func updateUserConfig(_ config: UserConfig) {
@@ -523,11 +523,11 @@ public class DevCycleClient {
                         "Error getting config: \(error) for user_id \(String(describing: updateUser.userId))",
                         tags: ["identify"])
 
-                    if self.isDefinitiveError(error) {
+                    if self.isNonRetryableError(error) {
                         self.cacheService.clearConfigForUser(user: updateUser)
                         self.lastIdentifiedUser = previousUser
                         Log.error(
-                            "Definitive error on identifyUser, clearing cache and restoring previous user: \(error)",
+                            "Non-retryable error on identifyUser, clearing cache and restoring previous user: \(error)",
                             tags: ["identify"])
                         callback?(error, nil)
                         return
@@ -601,7 +601,7 @@ public class DevCycleClient {
 
                 if let error = error {
                     Log.error("Error getting config for resetUser: \(error)", tags: ["reset"])
-                    if self.isDefinitiveError(error) {
+                    if self.isNonRetryableError(error) {
                         self.cacheService.clearConfigForUser(user: anonUser)
                         if let previousAnonUserId = cachedAnonUserId {
                             self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)

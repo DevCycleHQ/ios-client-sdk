@@ -38,7 +38,7 @@ enum APIError: Error {
         }
     }
 
-    var isDefinitiveError: Bool {
+    var isNonRetryableError: Bool {
         switch self {
         case .StatusResponse(let status, _):
             return status == 400 || status == 401 || status == 403

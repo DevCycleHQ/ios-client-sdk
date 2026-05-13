@@ -1146,10 +1146,19 @@ class DevCycleClientTest: XCTestCase {
 
     func testOnConfigUpdatedReceivesEventWhenRegisteredAfterRefreshCompletes() {
         let setupExpectation = XCTestExpectation(description: "setup completes via cache")
+        let backgroundRefreshExpectation = XCTestExpectation(
+            description: "background getConfig completed (mock service)")
         let refreshExpectation = XCTestExpectation(description: "buffered onConfigUpdated event is replayed to a late registrant")
 
         let mockCacheService = MockCacheServiceWithConfig(userConfig: self.userConfig)
         let successService = MockService(userConfig: self.userConfig)
+
+        successService.onGetConfigFinished = { [weak successService] in
+            guard let successService = successService,
+                successService.numberOfConfigCalls == 2
+            else { return }
+            backgroundRefreshExpectation.fulfill()
+        }
 
         let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(
             successService
@@ -1161,13 +1170,9 @@ class DevCycleClientTest: XCTestCase {
             XCTAssertNil(error)
             setupExpectation.fulfill()
         })
-        wait(for: [setupExpectation], timeout: 5.0)
-
-        // Let the refresh complete before any handler is registered, so we exercise
-        // the replay path used by callers that attach onConfigUpdated after setup().
-        let settle = XCTestExpectation(description: "refresh has had time to complete")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { settle.fulfill() }
-        wait(for: [settle], timeout: 1.0)
+        // Wait until init and the cache-driven background refresh have both finished on the main queue,
+        // so onConfigUpdated registration exercises the buffered replay path
+        wait(for: [setupExpectation, backgroundRefreshExpectation], timeout: 5.0)
 
         client.onConfigUpdated { error in
             XCTAssertNil(error, "Buffered onConfigUpdated event should be replayed to a late registrant")
@@ -1354,6 +1359,8 @@ extension DevCycleClientTest {
         public var userConfig: UserConfig?
         public var saveEntityCallCount: Int = 0
         public var userForSaveEntity: DevCycleUser?
+        /// Invoked on the main queue immediately after each `getConfig` completion returns (for deterministic tests).
+        public var onGetConfigFinished: (() -> Void)?
 
         init(userConfig: UserConfig? = nil) {
             self.userConfig = userConfig
@@ -1370,6 +1377,7 @@ extension DevCycleClientTest {
 
             DispatchQueue.main.async {
                 completion((self.userConfig, nil))
+                self.onGetConfigFinished?()
             }
         }
 
