@@ -200,8 +200,8 @@ class DevCycleUserTest: XCTestCase {
     }
 
     func testConfigCacheTTLRespected() {
-        // Test with short TTL to verify expiration works
-        let shortTtlCacheService = CacheService(configCacheTTL: 100)  // 100ms TTL
+        // 2s TTL is generous enough to survive loaded CI runners (100ms was flaky).
+        let shortTtlCacheService = CacheService(configCacheTTL: 2_000)
         let user = try! DevCycleUser.builder().userId("test_user").build()
 
         let configJson = createConfigJson(
@@ -209,21 +209,17 @@ class DevCycleUserTest: XCTestCase {
             variableValue: "value")
         let configData = configJson.data(using: .utf8)
 
-        // Save config
         shortTtlCacheService.saveConfig(user: user, configToSave: configData)
 
-        // Should be able to retrieve immediately
         let validConfig = shortTtlCacheService.getConfig(user: user)
         XCTAssertNotNil(validConfig, "Config should be retrievable immediately after saving")
 
-        // Wait for TTL to expire
         let expectation = self.expectation(description: "Wait for TTL expiration")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {  // Wait 200ms
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.2) {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 1.0, handler: nil)
+        waitForExpectations(timeout: 4.0, handler: nil)
 
-        // Try to retrieve after TTL expires (should fail)
         let expiredConfig = shortTtlCacheService.getConfig(user: user)
         XCTAssertNil(expiredConfig, "Expired config should not be returned")
 
