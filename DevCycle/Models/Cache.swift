@@ -12,7 +12,6 @@ protocol CacheServiceProtocol {
     func clearAnonUserId()
     func saveConfig(user: DevCycleUser, configToSave: Data?)
     func getConfig(user: DevCycleUser) -> UserConfig?
-    func clearConfigForUser(user: DevCycleUser)
     func getOrCreateAnonUserId() -> String
     func migrateLegacyCache()
 }
@@ -57,11 +56,6 @@ class CacheService: CacheServiceProtocol {
 
         let expiryDate = currentTimeMs() + configCacheTTL
         defaults.set(expiryDate, forKey: "\(key)\(CacheKeys.expiryDateSuffix)")
-    }
-
-    func clearConfigForUser(user: DevCycleUser) {
-        let key = getConfigKeyPrefix(user: user)
-        cleanupCacheEntry(key: key)
     }
 
     func getConfig(user: DevCycleUser) -> UserConfig? {
