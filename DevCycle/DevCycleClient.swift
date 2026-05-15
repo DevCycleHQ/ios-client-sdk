@@ -140,9 +140,6 @@ public class DevCycleClient {
         #endif
     }
 
-    /// On a cache hit, returns synchronously from the persisted config and refreshes
-    /// in the background (observe via `onConfigUpdated(_:)`). On a cache miss, falls
-    /// back to the network-first path.
     func setup(service: DevCycleServiceProtocol, callback: ClientInitializedHandler? = nil) {
         guard let user = self.user else {
             callback?(ClientError.MissingSDKKeyOrUser)
@@ -150,41 +147,36 @@ public class DevCycleClient {
         }
         self.service = service
 
-        let cacheHit = self.useCachedConfigForUser(user: user)
+        let _ = self.useCachedConfigForUser(user: user)
 
-        if cacheHit {
-            self.deliverInitializationComplete(error: nil, callback: callback)
-            self.performBackgroundRefresh()
-        } else {
-            self.service?.getConfig(
-                user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
-                completion: { [weak self] config, error in
-                    guard let self = self else { return }
+        self.service?.getConfig(
+            user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil,
+            completion: { [weak self] config, error in
+                guard let self = self else { return }
 
-                    var finalError: Error? = error
+                var finalError: Error? = error
 
-                    if let error = error {
-                        Log.error("Error getting config: \(error)", tags: ["setup"])
+                if let error = error {
+                    Log.error("Error getting config: \(error)", tags: ["setup"])
 
-                        if self.config?.getUserConfig() != nil {
-                            Log.info("Using cached config due to network error")
-                            finalError = nil
-                        }
-                    } else if let config = config {
-                        Log.debug("Config: \(config)", tags: ["setup"])
-                        self.updateUserConfig(config)
-                    } else {
-                        Log.error("No config returned for setup", tags: ["setup"])
-                        finalError = ClientError.ConfigFetchFailed
+                    if self.config?.getUserConfig() != nil {
+                        Log.info("Using cached config due to network error")
+                        finalError = nil
                     }
+                } else if let config = config {
+                    Log.debug("Config: \(config)", tags: ["setup"])
+                    self.updateUserConfig(config)
+                } else {
+                    Log.error("No config returned for setup", tags: ["setup"])
+                    finalError = ClientError.ConfigFetchFailed
+                }
 
-                    if let config = config {
-                        self.syncUserToEdgeDBIfEnabled(user: user, config: config)
-                    }
+                if let config = config {
+                    self.syncUserToEdgeDBIfEnabled(user: user, config: config)
+                }
 
-                    self.deliverInitializationComplete(error: finalError, callback: callback)
-                })
-        }
+                self.deliverInitializationComplete(error: finalError, callback: callback)
+            })
 
         self.flushTimer = Timer.scheduledTimer(
             withTimeInterval: TimeInterval(self.flushEventsInterval),
@@ -265,43 +257,6 @@ public class DevCycleClient {
                 handler(error)
             }
             callback?(error)
-        }
-    }
-
-    private func performBackgroundRefresh() {
-        guard !self.closed, let user = self.lastIdentifiedUser else { return }
-        self.service?.getConfig(user: user, enableEdgeDB: self.enableEdgeDB, extraParams: nil) {
-            [weak self] config, error in
-            guard let self = self, !self.closed else { return }
-
-            guard user === self.lastIdentifiedUser else {
-                Log.warn(
-                    "Background refresh result is for stale user context, ignoring",
-                    tags: ["backgroundRefresh"])
-                return
-            }
-
-            if let error = error {
-                if self.isNonRetryableError(error) {
-                    // Keep cached values usable on non-retryable errors; only TTL evicts the cache.
-                    Log.error(
-                        "Background refresh failed with non-retryable error, keeping cached config and notifying observers: \(error)",
-                        tags: ["backgroundRefresh"])
-                    self.notifyConfigUpdated(error: error)
-                } else {
-                    Log.warn(
-                        "Background refresh failed with transient error, keeping cached config: \(error)",
-                        tags: ["backgroundRefresh"])
-                }
-            } else if let config = config {
-                self.updateUserConfig(config)
-                self.syncUserToEdgeDBIfEnabled(user: user, config: config)
-                self.notifyConfigUpdated(error: nil)
-            } else {
-                Log.warn(
-                    "Background refresh returned nil config with no error",
-                    tags: ["backgroundRefresh"])
-            }
         }
     }
 
@@ -523,16 +478,6 @@ public class DevCycleClient {
                         "Error getting config: \(error) for user_id \(String(describing: updateUser.userId))",
                         tags: ["identify"])
 
-                    if self.isNonRetryableError(error) {
-                        self.cacheService.clearConfigForUser(user: updateUser)
-                        self.lastIdentifiedUser = previousUser
-                        Log.error(
-                            "Non-retryable error on identifyUser, clearing cache and restoring previous user: \(error)",
-                            tags: ["identify"])
-                        callback?(error, nil)
-                        return
-                    }
-
                     if self.useCachedConfigForUser(user: updateUser),
                         self.config?.getUserConfig() != nil
                     {
@@ -540,7 +485,6 @@ public class DevCycleClient {
                             "Using cached config for identifyUser due to network error: \(error)",
                             tags: ["identify"])
                         self.user = user
-                        self.performBackgroundRefresh()
                         callback?(nil, self.config?.getUserConfig()?.variables)
                         return
                     } else {
@@ -601,18 +545,6 @@ public class DevCycleClient {
 
                 if let error = error {
                     Log.error("Error getting config for resetUser: \(error)", tags: ["reset"])
-                    if self.isNonRetryableError(error) {
-                        self.cacheService.clearConfigForUser(user: anonUser)
-                        if let previousAnonUserId = cachedAnonUserId {
-                            self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
-                        }
-                        self.lastIdentifiedUser = previousUser
-                        Log.error(
-                            "Definitive error on resetUser, clearing anonymous user cache and restoring previous user: \(error)",
-                            tags: ["reset"])
-                        callback?(error, nil)
-                        return
-                    }
                     if let previousAnonUserId = cachedAnonUserId {
                         self.cacheService.setAnonUserId(anonUserId: previousAnonUserId)
                     }
