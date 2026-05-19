@@ -274,6 +274,7 @@ class DevCycleClientTest: XCTestCase {
         }
 
         wait(for: [expectation], timeout: 2.0)
+        client.close(callback: nil)
     }
 
     func testCloseFlushesRemainingEvents() {
@@ -357,6 +358,7 @@ class DevCycleClientTest: XCTestCase {
         let variableValue = client.variableValue(
             key: "some_non_existent_variable", defaultValue: false)
         XCTAssertFalse(variableValue)
+        client.close(callback: nil)
     }
 
     func testVariableStringDefaultValue() {
@@ -375,6 +377,7 @@ class DevCycleClientTest: XCTestCase {
         let varNSString = client.variable(key: "some_non_existent_variable", defaultValue: nsString)
         XCTAssertEqual(varNSString.defaultValue, nsString)
         XCTAssertEqual(varNSString.type, DVCVariableTypes.String)
+        client.close(callback: nil)
     }
 
     func testVariableBooleanDefaultValue() {
@@ -388,6 +391,7 @@ class DevCycleClientTest: XCTestCase {
         XCTAssert(variable.isDefaulted)
         XCTAssertEqual(variable.defaultValue, true)
         XCTAssertEqual(variable.type, DVCVariableTypes.Boolean)
+        client.close(callback: nil)
     }
 
     func testVariableNumberDefaultValue() {
@@ -407,6 +411,7 @@ class DevCycleClientTest: XCTestCase {
         let variableNum = client.variable(key: "some_non_existent_variable", defaultValue: nsNum)
         XCTAssertEqual(variableNum.defaultValue, nsNum)
         XCTAssertEqual(variableNum.type, DVCVariableTypes.Number)
+        client.close(callback: nil)
     }
 
     func testVariableJSONDefaultValue() {
@@ -428,6 +433,7 @@ class DevCycleClientTest: XCTestCase {
             key: "some_non_existent_variable", defaultValue: nsDicDefault)
         XCTAssertEqual(variable2.defaultValue, nsDicDefault)
         XCTAssertEqual(variable2.type, DVCVariableTypes.JSON)
+        client.close(callback: nil)
     }
 
     func testVariableMethodReturnsCorrectVariableForKey() {
@@ -579,23 +585,30 @@ class DevCycleClientTest: XCTestCase {
 
         let expectation = XCTestExpectation(description: "reopen gets called when foregrounded")
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             XCTAssert(mockSSEConnection.reopenCalled)
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 2.0)
+        wait(for: [expectation], timeout: 5.0)
         client.close(callback: nil)
     }
 
     func testSseReopenDoesntGetCalledWhenForegroundedBeforeInactivityDelay() {
-        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
-            onInitialized: nil)
-        client.initialized = true
+        // Use disableRealtimeUpdates so setupSSEConnection() never replaces the mock during init.
+        // Wait for initialization to complete before injecting the mock to avoid a race where the
+        // pending getConfig callback fires during wait() and closes the mock connection.
+        let options = DevCycleOptions.builder().disableRealtimeUpdates(true).build()
+        let initExpectation = XCTestExpectation(description: "client initialized")
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").options(options).build {
+            _ in initExpectation.fulfill()
+        }
+        wait(for: [initExpectation], timeout: 2.0)
 
         let mockSSEConnection = MockSSEConnection()
         mockSSEConnection.connected = true
         client.sseConnection = mockSSEConnection
         client.inactivityDelayMS = 120000
+
         #if os(iOS) || os(tvOS)
             NotificationCenter.default.post(
                 name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -607,14 +620,10 @@ class DevCycleClientTest: XCTestCase {
                 name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
 
-        let expectation = XCTestExpectation(description: "reopen doesn't called when foregrounded")
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            XCTAssertFalse(mockSSEConnection.reopenCalled)
-            XCTAssertFalse(mockSSEConnection.closeCalled)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 2.0)
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1))
+        XCTAssertFalse(mockSSEConnection.reopenCalled)
+        XCTAssertFalse(mockSSEConnection.closeCalled)
+        client.close(callback: nil)
     }
 
     func testSetupEstablishesSSEConnectionWhenURLMatchesCachedConfig() {
