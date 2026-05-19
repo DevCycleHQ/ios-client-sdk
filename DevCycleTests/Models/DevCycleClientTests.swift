@@ -620,7 +620,6 @@ class DevCycleClientTest: XCTestCase {
                 name: NSApplication.willBecomeActiveNotification, object: nil)
         #endif
 
-        RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1))
         XCTAssertFalse(mockSSEConnection.reopenCalled)
         XCTAssertFalse(mockSSEConnection.closeCalled)
         client.close(callback: nil)
