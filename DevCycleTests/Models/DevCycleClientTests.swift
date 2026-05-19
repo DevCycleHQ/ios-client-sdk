@@ -617,6 +617,32 @@ class DevCycleClientTest: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
     }
 
+    func testSetupEstablishesSSEConnectionWhenURLMatchesCachedConfig() {
+        // Use a failed service for initial build so SSE is not established before the test scenario
+        let failedService = MockFailedConnectionService()
+        let initExpectation = XCTestExpectation(description: "initialized")
+        let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(
+            failedService
+        ).build(onInitialized: { _ in initExpectation.fulfill() })
+        wait(for: [initExpectation], timeout: 1.0)
+
+        // Pre-populate config as if loaded from cache so oldSSEURL matches what MockService returns
+        let dvConfig = DVCConfig(sdkKey: "dvc_mobile_my_sdk_key", user: self.user)
+        dvConfig.setUserConfig(config: self.userConfig)
+        client.config = dvConfig
+        client.sseConnection = nil
+
+        let expectation = XCTestExpectation(description: "SSE connection established")
+
+        client.setup(service: service, callback: { _ in
+            XCTAssertNotNil(client.sseConnection)
+            expectation.fulfill()
+        })
+
+        wait(for: [expectation], timeout: 1.0)
+        client.close(callback: nil)
+    }
+
     func testIdentifyUserClearsCachedAnonymousUserId() {
         // Build Anon User, generates a new UUID
         let anonUser1 = try! DevCycleUser.builder().isAnonymous(true).build()
@@ -939,15 +965,119 @@ class DevCycleClientTest: XCTestCase {
         defaults.removeObject(forKey: myUserCacheKey)
         defaults.removeObject(forKey: newUserCacheKey)
     }
+
+    func testCacheHitEstablishesSSEConnectionFromCachedSSEURL() {
+        let setupExpectation = XCTestExpectation(description: "setup completes via cache")
+
+        // Regression: SSE used to wait for a successful background refresh,
+        // so offline cold-starts had cached values but no realtime updates.
+        let mockCacheService = MockCacheServiceWithConfig(userConfig: self.userConfig)
+        let failedService = MockFailedConnectionService()
+
+        let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(
+            failedService
+        ).build(onInitialized: nil)
+        client.cacheService = mockCacheService
+        client.config = DVCConfig(sdkKey: "dvc_mobile_my_sdk_key", user: self.user)
+        XCTAssertNil(client.sseConnection, "Precondition: no SSE connection before setup")
+
+        client.setup(service: failedService, callback: { error in
+            XCTAssertNil(error, "Setup should succeed via cached config")
+            XCTAssertNotNil(
+                client.sseConnection,
+                "SSE connection should be established from the cached SSE URL during setup"
+            )
+            setupExpectation.fulfill()
+        })
+
+        wait(for: [setupExpectation], timeout: 5.0)
+        client.close(callback: nil)
+    }
+
+    func testRefetchConfigNotifiesConfigUpdatedObservers() {
+        // SSE-driven refetches must reach onConfigUpdated, otherwise observers
+        // miss realtime updates.
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key").build(
+            onInitialized: nil)
+        client.initialized = true
+        client.lastIdentifiedUser = self.user
+
+        let observerExpectation = XCTestExpectation(
+            description: "onConfigUpdated fires after refetchConfig success")
+        client.onConfigUpdated { error in
+            XCTAssertNil(error, "refetchConfig success should pass nil error")
+            observerExpectation.fulfill()
+        }
+
+        client.refetchConfig(sse: true, lastModified: 123, etag: "etag")
+        wait(for: [observerExpectation], timeout: 2.0)
+        client.close(callback: nil)
+    }
+
+    func testRefetchConfigNotifiesObserversOnDefinitiveError() {
+        // SSE-driven 401/403 must reach onConfigUpdated so observers can react
+        // to a revoked SDK key.
+        let authErrorService = MockAuthErrorService()
+        let client = try! self.builder.user(self.user).sdkKey("my_sdk_key")
+            .service(authErrorService).build(onInitialized: nil)
+        client.initialized = true
+        client.lastIdentifiedUser = self.user
+
+        let observerExpectation = XCTestExpectation(
+            description: "onConfigUpdated fires with error after refetchConfig auth failure")
+        client.onConfigUpdated { error in
+            XCTAssertNotNil(error, "refetchConfig definitive error should pass error to observers")
+            observerExpectation.fulfill()
+        }
+
+        client.refetchConfig(sse: true, lastModified: 123, etag: "etag")
+        wait(for: [observerExpectation], timeout: 2.0)
+        client.close(callback: nil)
+    }
+
+    // MARK: - Helpers
+
+    private func makeEdgeDBEnabledConfig() -> UserConfig {
+        let data = getConfigData(name: "test_config")
+        var dict = try! JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as! [String: Any]
+        var project = dict["project"] as! [String: Any]
+        project["settings"] = ["edgeDB": ["enabled": true]]
+        dict["project"] = project
+        return try! UserConfig(from: dict)
+    }
 }
 
 extension DevCycleClientTest {
+    private class MockAuthErrorService: DevCycleServiceProtocol {
+        func getConfig(
+            user: DevCycleUser, enableEdgeDB: Bool, extraParams: RequestParams?,
+            completion: @escaping ConfigCompletionHandler
+        ) {
+            DispatchQueue.main.async {
+                completion((nil, APIError.StatusResponse(status: 401, message: "Unauthorized")))
+            }
+        }
+        func publishEvents(events: [DevCycleEvent], user: DevCycleUser, completion: @escaping PublishEventsCompletionHandler) {
+            DispatchQueue.main.async { completion((nil, nil, nil)) }
+        }
+        func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {
+            DispatchQueue.main.async { completion((nil, nil, nil)) }
+        }
+        func makeRequest(request: URLRequest, completion: @escaping DevCycle.CompletionHandler) {
+            DispatchQueue.main.async { completion((nil, nil, nil)) }
+        }
+    }
+
     private class MockService: DevCycleServiceProtocol {
         public var publishCallCount: Int = 0
         public var userForGetConfig: DevCycleUser?
         public var numberOfConfigCalls: Int = 0
         public var eventPublishCount: Int = 0
         public var userConfig: UserConfig?
+        public var saveEntityCallCount: Int = 0
+        public var userForSaveEntity: DevCycleUser?
+        /// Invoked on the main queue immediately after each `getConfig` completion returns (for deterministic tests).
+        public var onGetConfigFinished: (() -> Void)?
 
         init(userConfig: UserConfig? = nil) {
             self.userConfig = userConfig
@@ -964,6 +1094,7 @@ extension DevCycleClientTest {
 
             DispatchQueue.main.async {
                 completion((self.userConfig, nil))
+                self.onGetConfigFinished?()
             }
         }
 
@@ -980,6 +1111,8 @@ extension DevCycleClientTest {
         }
 
         func saveEntity(user: DevCycleUser, completion: @escaping SaveEntityCompletionHandler) {
+            self.saveEntityCallCount += 1
+            self.userForSaveEntity = user
             DispatchQueue.main.async {
                 completion((data: nil, urlResponse: nil, error: nil))
             }
