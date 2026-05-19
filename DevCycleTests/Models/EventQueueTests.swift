@@ -16,7 +16,7 @@ class EventQueueTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Events are serially queued")
         let event1 = try! DVCEvent.builder().type("dvcEvent").build()
         eventQueue.queue(event1)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             XCTAssert(eventQueue.events.first?.type == "dvcEvent")
             expectation.fulfill()
         }
@@ -30,7 +30,7 @@ class EventQueueTests: XCTestCase {
         let event2 = try! DevCycleEvent.builder().type("event2").build()
         eventQueue.queue(event1)
         eventQueue.queue(event2)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             XCTAssert(eventQueue.events.first?.type == "event1")
             XCTAssert(eventQueue.events.last?.type == "event2")
             expectation.fulfill()
@@ -91,7 +91,7 @@ private class MockService: DevCycleServiceProtocol {
         events: [DevCycleEvent], user: DevCycleUser,
         completion: @escaping PublishEventsCompletionHandler
     ) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             completion((nil, nil, nil))
         }
     }
@@ -116,7 +116,7 @@ class MockWithErrorCodeService: DevCycleServiceProtocol {
         completion: @escaping PublishEventsCompletionHandler
     ) {
         let error = NSError(domain: "api.devcycle.com", code: self.errorCode)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             completion((nil, nil, error))
         }
     }
