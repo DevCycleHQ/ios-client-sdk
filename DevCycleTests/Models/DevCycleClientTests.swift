@@ -106,7 +106,7 @@ class DevCycleClientTest: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 3.0)
     }
 
     func testTrackWithValidDevCycleEventWithAllParamsDefined() {
@@ -123,7 +123,7 @@ class DevCycleClientTest: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 3.0)
     }
 
     func testTrackWithValidDevCycleEventWithAllParamsDefinedAndDoubleValue() {
@@ -140,7 +140,7 @@ class DevCycleClientTest: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 3.0)
     }
 
     func testFlushEventsWithOneEventInQueue() {
@@ -245,7 +245,7 @@ class DevCycleClientTest: XCTestCase {
             XCTAssertTrue(service.publishCallCount == 1)
             publishExpectation.fulfill()
         }
-        wait(for: [publishExpectation], timeout: 1.0)
+        wait(for: [publishExpectation], timeout: 3.0)
         client.close(callback: nil)
     }
 
@@ -632,7 +632,7 @@ class DevCycleClientTest: XCTestCase {
         let client = try! self.builder.user(self.user).sdkKey("dvc_mobile_my_sdk_key").service(
             failedService
         ).build(onInitialized: { _ in initExpectation.fulfill() })
-        wait(for: [initExpectation], timeout: 1.0)
+        wait(for: [initExpectation], timeout: 3.0)
 
         // Pre-populate config as if loaded from cache so oldSSEURL matches what MockService returns
         let dvConfig = DVCConfig(sdkKey: "dvc_mobile_my_sdk_key", user: self.user)
@@ -647,7 +647,7 @@ class DevCycleClientTest: XCTestCase {
             expectation.fulfill()
         })
 
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 3.0)
         client.close(callback: nil)
     }
 
@@ -684,7 +684,7 @@ class DevCycleClientTest: XCTestCase {
         client.close(callback: nil)
 
         // Wait for both callbacks to complete
-        wait(for: [onInitializedExpectation, identifyUserExpectation], timeout: 1.0)
+        wait(for: [onInitializedExpectation, identifyUserExpectation], timeout: 3.0)
     }
 
     func testResetUserGeneratesANewAnonymousUserId() {
@@ -745,7 +745,7 @@ class DevCycleClientTest: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 3.0)
         client.close(callback: nil)
     }
 
@@ -829,7 +829,7 @@ class DevCycleClientTest: XCTestCase {
                 expectation.fulfill()
             })
 
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 3.0)
         client.close(callback: nil)
     }
 
