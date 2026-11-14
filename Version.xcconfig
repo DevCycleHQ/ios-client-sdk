@@ -1,0 +1,2 @@
+// SDK version for the DevCycle framework target. Bumped by release-please.
+MARKETING_VERSION = 1.26.0 // x-release-please-version
