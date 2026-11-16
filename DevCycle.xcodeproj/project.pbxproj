@@ -84,6 +84,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DC0A11CE2F0000000000A001 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		0B721684290B21CD004D0AB7 /* SSEMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEMessage.swift; sourceTree = "<group>"; };
 		0F2DD759279EFA6B00540C9D /* CustomData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomData.swift; sourceTree = "<group>"; };
 		1E90073F2DF36DDF00800012 /* test_config_eval_reason.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_config_eval_reason.json; sourceTree = "<group>"; };
@@ -223,6 +224,7 @@
 		5268DB2427501C8600D17A40 = {
 			isa = PBXGroup;
 			children = (
+				DC0A11CE2F0000000000A001 /* Version.xcconfig */,
 				5268DB4E27501CFC00D17A40 /* DevCycle */,
 				5268DB5A27501CFC00D17A40 /* DevCycleTests */,
 				5268DB2F27501C8600D17A40 /* Products */,
@@ -632,6 +634,7 @@
 		};
 		5268DB5F27501CFC00D17A40 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DC0A11CE2F0000000000A001 /* Version.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -652,7 +655,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 1.26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.devcycle.Devcycle-SDK";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -671,6 +673,7 @@
 		};
 		5268DB6027501CFC00D17A40 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DC0A11CE2F0000000000A001 /* Version.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -691,7 +694,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 1.26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.devcycle.Devcycle-SDK";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
