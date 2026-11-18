@@ -5,7 +5,6 @@
       "release-type": "simple",
       "include-component-in-tag": false,
       "extra-files": [
-        "DevCycle.podspec",
         "Version.xcconfig",
         "DevCycle/Models/PlatformDetails.swift"
       ]

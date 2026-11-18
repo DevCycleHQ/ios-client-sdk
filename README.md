@@ -1,6 +1,5 @@
 # DevCycle iOS / macOS Client SDK
 
-[![CocoaPods compatible](https://img.shields.io/cocoapods/v/DevCycle.svg)](https://cocoapods.org/pods/DevCycle)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-4BC51D.svg?style=flat)](https://swift.org/package-manager/)
 
@@ -14,15 +13,6 @@ all around the world.
 This version of the DevCycle Client SDK supports iOS 12.0+ / tvOS 12.0+ / watchOS 7.0+ / macOS 10.13+
 
 ## Installation
-
-### CocoaPods
-
-The SDK can be installed into your iOS project by adding the following to your cocoapod spec:
-
-```swift
-pod 'DevCycle'
-```
-Then, run `pod install`.
 
 ### Swift Package Manager
 
@@ -79,7 +69,7 @@ And in your target dependencies:
 )
 ```
 
-The OpenFeature provider requires iOS 14.0+ / tvOS 14.0+ / watchOS 7.0+ / macOS 11.0+ and is only available via Swift Package Manager. It cannot be installed with CocoaPods or Carthage.
+The OpenFeature provider requires iOS 14.0+ / tvOS 14.0+ / watchOS 7.0+ / macOS 11.0+ and is only available via Swift Package Manager. It cannot be installed with Carthage.
 
 ## Usage
 
