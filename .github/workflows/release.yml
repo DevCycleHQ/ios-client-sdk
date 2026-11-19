@@ -26,19 +26,8 @@ jobs:
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       # Uses GITHUB_TOKEN, so CI does not run on the release PR by itself.
-      # The tag it creates publishes to Swift Package Manager and Carthage.
+      # The tag it creates publishes to Swift Package Manager and Carthage only;
+      # CocoaPods is no longer published.
       - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         id: release
 
-  publish-pod:
-    name: Publish to CocoaPods
-    needs: release-please
-    if: needs.release-please.outputs.release_created == 'true'
-    uses: ./.github/workflows/publish-pod.yml
-    with:
-      tag: ${{ needs.release-please.outputs.tag_name }}
-    secrets: inherit
-    # update-flutter-sdk inside publish-pod.yml needs these
-    permissions:
-      contents: write
-      pull-requests: write
